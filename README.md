@@ -65,7 +65,7 @@ a **ProtocolBuffer** if need be to increase throughput and decrease size
 
 ## Classification Terms:
 
-<p align="center"><img src="https://en.wikipedia.org/wiki/Soil_gradation#/media/File:Sample_Net-withGraphic.png"/></p>
+<p align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0f/Sample_Net-withGraphic.png"/></p>
 
 ### Sand
 
