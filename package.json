@@ -1,0 +1,19 @@
+{
+  "name": "@algodex/service",
+  "version": "2.0.0",
+  "description": "Algodex Message Broker",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Michael Feher",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "bullmq": "^1.46.0",
+    "ioredis": "^4.27.9",
+    "pouchdb-adapter-http": "^7.2.2",
+    "pouchdb-core": "^7.2.2",
+    "set-interval-async": "^2.0.3",
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v19.3.0"
+  }
+}

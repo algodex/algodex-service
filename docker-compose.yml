@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  html:
+    image: nginx
+    volumes:
+      - ./index.html:/var/www/html/index.html
+      - ./.docker/config/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+    depends_on:
+      - service
+  # Core concepts
+  broker:
+    build: .
+    entrypoint: node
+    depends_on:
+      - events
+    command: ./packages/broker/server.js
+  worker:
+    build: .
+    entrypoint: node
+    depends_on:
+      - events
+    command:
+      - ./packages/worker/server.js
+  service:
+    build: .
+    entrypoint: node
+    depends_on:
+      - events
+    command:
+      - ./packages/service/server.js
+    ports:
+      - "9001:9001"
+
+
+  # Storage and Events
+  events:
+    image: redis:6.2
+    volumes:
+      - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - events_vol:/data
+  queue:
+    image: redis:6.2
+    ports:
+      - 6379:6379
+    volumes:
+      - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - queue_vol:/data
+  couchdb:
+    image: couchdb
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=dex
+    volumes:
+      - couchdb_vol:/var/lib/couchdb
+    ports:
+      - "5984:5984"
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=events:events:6379,queue:queue:6379
+    ports:
+      - "8081:8081"
+volumes:
+  couchdb_vol:
+  events_vol:
+  queue_vol:
