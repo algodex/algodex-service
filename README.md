@@ -5,6 +5,9 @@ is simple duplication of workers and servers. If this model breaks down
 we can then start to partition the keys. These concepts are universal and 
 don't require ECMAScript, we are using it for simplicity and sanity.
 
+
+<p align="center"><img src="/docs/images/dream.drawio.png?raw=true"/></p>
+
 ## Core Packages
 
 - Sockets/REST(optional): https://github.com/uNetworking/uWebSockets.js/
