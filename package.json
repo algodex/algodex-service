@@ -10,10 +10,12 @@
   "license": "UNLICENSED",
   "dependencies": {
     "bullmq": "^1.46.0",
+    "dotenv": "^10.0.0",
     "ioredis": "^4.27.9",
     "pouchdb-adapter-http": "^7.2.2",
     "pouchdb-core": "^7.2.2",
     "set-interval-async": "^2.0.3",
-    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v19.3.0"
+    "uWebSockets.js": "github:uNetworking/uWebSockets.js#v19.3.0",
+    "ws": "^8.2.1"
   }
 }

@@ -8,7 +8,11 @@
 
 <script>
     var socket = new WebSocket('ws://localhost:9001/');
-
+    socket.onopen = function (event) {
+        console.log('Opened!')
+        // socket.send(`asset/${15322902}`);
+        socket.send(`assets`);
+    };
     // Listen for messages
     socket.addEventListener('message', function (event) {
         console.log('Message from server ', event);

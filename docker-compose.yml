@@ -8,29 +8,28 @@ services:
       - ./.docker/config/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "80:80"
-    depends_on:
-      - service
   # Core concepts
   broker:
     build: .
     entrypoint: node
     depends_on:
       - events
-    command: ./packages/broker/server.js
+    command:
+      - ./services/broker.js
   worker:
     build: .
     entrypoint: node
     depends_on:
       - events
     command:
-      - ./packages/worker/server.js
+      - ./services/broker.js
   service:
     build: .
     entrypoint: node
     depends_on:
       - events
     command:
-      - ./packages/service/server.js
+      - ./services/broker.js
     ports:
       - "9001:9001"
 
@@ -38,13 +37,15 @@ services:
   # Storage and Events
   events:
     image: redis:6.2
+    ports:
+      - "6379:6379"
     volumes:
       - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
       - events_vol:/data
   queue:
     image: redis:6.2
     ports:
-      - 6379:6379
+      - "6380:6379"
     volumes:
       - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
       - queue_vol:/data

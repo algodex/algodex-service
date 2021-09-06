@@ -14,5 +14,3 @@ FROM builder as production
 USER node
 
 RUN npm install
-
-COMMAND

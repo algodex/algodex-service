@@ -67,7 +67,7 @@ a **ProtocolBuffer** if need be to increase throughput and decrease size
 
 <p align="center"><img src="https://upload.wikimedia.org/wikipedia/commons/0/0f/Sample_Net-withGraphic.png"/></p>
 
-### Sand
+### Sand (Dropplets)
 
 Free flowing data that can easily be serialized in all systems. It is granular in nature and
 should be the minimum viable for your data model. Sand should be sent directly to the client
@@ -88,7 +88,7 @@ as it flows in. Rolling window is large but still limited.
 }
 ```
 
-### Pebbles
+### Pebbles (Streams)
 
 This data can be free flowing as long as we restrict the window. It can include many
 bits of sand by abusing key definitions. These should not be streamed into client storage and only used upon request.
@@ -117,7 +117,7 @@ They can be cached in a local store as long as there is good business reasons to
 }
 ```
 
-### Rocks
+### Rocks (Lakes)
 
 Rocks are bulky, data which should not be streamed to any device other than
 stream workers/processors. They can be requested directly from the database with
@@ -154,7 +154,7 @@ to fetch associated documents from the database
 }
 ```
 
-### Boulders
+### Boulders (Oceans)
 
 Boulders are immovable, raw bulk data that either shouldn't be processed or fetched by any clients.
 This data can be mapped and reduced but should never be called on directly.
