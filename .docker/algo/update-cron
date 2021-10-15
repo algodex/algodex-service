@@ -1,0 +1,1 @@
+30 * * * * /root/node/update.sh -d /root/node/data >/root/node/update.log 2>&1

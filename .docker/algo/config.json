@@ -1,0 +1,6 @@
+{
+  "Version": 16,
+  "Archival": true,
+  "EnableDeveloperAPI": true,
+  "EndpointAddress": ":8080"
+}
