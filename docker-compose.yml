@@ -8,31 +8,56 @@ services:
       - ./.docker/config/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "80:80"
-  # Core concepts
   broker:
     build: .
-    entrypoint: node
+    entrypoint: npm
     depends_on:
       - events
+    environment:
+      - APP_CONTEXT=broker
+      - REDIS_ADDRESS=queue
+      - REDIS_MQ_ADDRESS=events
     command:
-      - ./services/broker.js
+      - start
   worker:
     build: .
-    entrypoint: node
+    entrypoint: npm
+    environment:
+      - APP_CONTEXT=worker
+      - REDIS_ADDRESS=queue
+      - REDIS_MQ_ADDRESS=events
+      - COUCHDB_URL=http://admin:dex@couchdb:5984/dex
     depends_on:
       - events
     command:
-      - ./services/broker.js
+      - start
   service:
     build: .
-    entrypoint: node
+    entrypoint: npm
     depends_on:
       - events
+    environment:
+      - APP_CONTEXT=socket
+      - REDIS_ADDRESS=queue
+      - REDIS_MQ_ADDRESS=events
     command:
-      - ./services/broker.js
+      - start
     ports:
       - "9001:9001"
 
+#  algorand:
+#    build:
+#      context: .docker/algo
+##    deploy:
+##      resources:
+##        limits:
+##          cpus: '2'
+##          memory: 1024M
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./.docker/config/algo.json:/root/node/data/config.json
+#      - algod:/root/node/data
 
   # Storage and Events
   events:
@@ -71,3 +96,4 @@ volumes:
   couchdb_vol:
   events_vol:
   queue_vol:
+  algod:

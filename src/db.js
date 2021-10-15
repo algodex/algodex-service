@@ -8,11 +8,11 @@ PouchDB.prototype.getExistingBlocks = async function (start){
         selector: {_id: {'$gte': start}},
     })
 }
-
+let url = process.env['COUCHDB_URL'] || 'http://admin:dex@localhost:5984/dex';
 // Singleton factory pattern for Database
 module.exports = function() {
     if(typeof db === 'undefined'){
-        db = new PouchDB('http://admin:dex@localhost:5984/dex')
+        db = new PouchDB(url);
     }
     return db;
 }
