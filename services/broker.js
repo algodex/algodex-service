@@ -3,8 +3,8 @@ const {setIntervalAsync} = require('set-interval-async/dynamic');
 
 module.exports = ({connections, queues}) => {
     console.log(`Broker Publisher working with ${Object.keys(queues).length} Queues`)
-    // TODO: Move to Algod
-    const explorer = new SwaggerClient('https://algoexplorerapi.io/v2/swagger.json');
+    // TODO: Move to Algod and remove hard coding
+    const explorer = new SwaggerClient('https://testnet.algoexplorerapi.io/v2/swagger.json');
 
     /**
      * Holds Status from AlgoExplorer
