@@ -1,25 +1,23 @@
-const IORedis = require('ioredis');
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
-const redis = new IORedis(6379, "queue");
 const PouchDB = require('pouchdb-core');
 PouchDB.plugin(require('pouchdb-adapter-http'));
 
-const db = new PouchDB('http://admin:dex@couchdb:5984/dex')
+module.exports = ({connections, queues, db}) =>{
+    // Lighten the load on the broker and do batch processing
+    const orders = new Worker('blocks', async (job)=>{
+        console.log(`Worker found block ${job.data.rnd}`);
+        // Save to database
+        return db.post({_id: `${job.data.rnd}`, ...job.data}).then(function (response) {
+            console.log(response)
+        }).catch(function (err) {
+            console.log(err);
+        });
 
-// Lighten the load on the broker and do batch processing
-const orders = new Worker('orders', async (job)=>{
-    console.log(`Worker found ${job.data.length} orders`);
+    }, { connection: connections.queue, concurrency: 50 });
 
-    // Save to database
-    return db.post({orderbook: job.data}).then(function (response) {
-        console.log(response)
-    }).catch(function (err) {
-        console.log(err);
+    orders.on('error', (err) => {
+        console.error(err);
     });
+}
 
-}, { connection: redis, concurrency: 50 });
-
-orders.on('error', (err) => {
-    console.error(err);
-});
