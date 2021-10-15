@@ -1,42 +1,37 @@
-const Redis  = require('ioredis');
-const Queue = require('bullmq').Queue;
-const {buy, sell, asset} = require('./faker');
-const {setIntervalAsync} =require('set-interval-async/dynamic');
-const queue = new Redis(6379, "queue");
-const events  = new Redis(6379, "events");
+const SwaggerClient = require('swagger-client');
+const {setIntervalAsync} = require('set-interval-async/dynamic');
 
-const assets = new Queue('assets', { connection: queue });
-const orders = new Queue('orders', { connection: queue });
-
-// Fake chain data every 30 seconds
-setIntervalAsync(async ()=>{
-    console.log(`Publish ${asset.id} with ${buy.length} Buy(s) and ${sell.length} Sell(s)`)
+module.exports = ({connections, queues}) => {
+    console.log(`Broker Publisher working with ${Object.keys(queues).length} Queues`)
+    // TODO: Move to Algod
+    const explorer = new SwaggerClient('https://algoexplorerapi.io/v2/swagger.json');
 
     /**
-     * WARNING!! This is not optimized. It pushes all data to the events bus which
-     * gets subscribed to in the Client Service layer. The Client service will
-     * send all events to it's own websocket subscribers which results in TONS of data.
-     * It's just an example of how well the messages flow even in un-ideal situations
+     * Holds Status from AlgoExplorer
+     * @type {{}}
      */
+    let round = {}
 
-    // Push to subscribers
-    events.publish(`assets`, JSON.stringify(asset));
-    events.publish(`orders`, JSON.stringify({buy, sell}));
+// Fake chain data every 30 seconds
+    setIntervalAsync(async () => {
+        explorer.then(
+            async client => {
+                let {obj} = await client.apis.node.GetStatus();
+                console.log(obj['last-round'], round['last-round']);
+                if (round['last-round'] === obj['last-round']) {
+                    console.log('Waiting....')
+                } else {
+                    console.log('New block found');
+                    // Publish Block Event
+                    let blockres = await client.apis.block.GetBlock({round: obj['last-round']});
+                    await queues.blocks.add('blocks', blockres.obj.block, {removeOnComplete: true});
+                    // await redis_events.publish(`block`, JSON.stringify(await client.apis.block.GetBlock(round['last-round'])));
+                    console.log('New block sent');
+                    round = obj;
+                }
+            },
+            reason => console.error('failed to load the spec: ' + reason)
+        )
 
-    // Note: We may not need a Queue+Worker at all, just send to database
-    async function addJobs(){
-        await assets.add('assets', asset, {removeOnComplete: true});
-        await orders.add('orders', buy.map((tx)=>{
-            tx._id = 'order'
-            tx.type = 'buy';
-            return tx;
-        }), {removeOnComplete: true});
-        await orders.add('orders', sell.map((tx)=>{
-            tx.type = 'sell';
-            return tx;
-        }), {removeOnComplete: true});
-    }
-    // Fire off Queue Jobs
-    await addJobs();
-
-}, 3000)
+    }, 1000)
+}
