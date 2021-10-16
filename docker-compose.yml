@@ -13,10 +13,12 @@ services:
     entrypoint: npm
     depends_on:
       - events
+      - queues
     environment:
       - APP_CONTEXT=broker
-      - REDIS_ADDRESS=queue
-      - REDIS_MQ_ADDRESS=events
+      - REDIS_ADDRESS=events
+      - REDIS_MQ_ADDRESS=queues
+      - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     command:
       - start
   worker:
@@ -24,11 +26,13 @@ services:
     entrypoint: npm
     environment:
       - APP_CONTEXT=worker
-      - REDIS_ADDRESS=queue
-      - REDIS_MQ_ADDRESS=events
+      - REDIS_ADDRESS=events
+      - REDIS_MQ_ADDRESS=queues
       - COUCHDB_URL=http://admin:dex@couchdb:5984/dex
+      - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     depends_on:
       - events
+      - queues
     command:
       - start
   service:
@@ -36,10 +40,12 @@ services:
     entrypoint: npm
     depends_on:
       - events
+      - queues
     environment:
       - APP_CONTEXT=socket
-      - REDIS_ADDRESS=queue
-      - REDIS_MQ_ADDRESS=events
+      - REDIS_ADDRESS=events
+      - REDIS_MQ_ADDRESS=queues
+      - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     command:
       - start
     ports:
@@ -48,29 +54,19 @@ services:
 #  algorand:
 #    build:
 #      context: .docker/algo
-##    deploy:
-##      resources:
-##        limits:
-##          cpus: '2'
-##          memory: 1024M
 #    ports:
 #      - "8080:8080"
 #    volumes:
-#      - ./.docker/config/algo.json:/root/node/data/config.json
 #      - algod:/root/node/data
 
   # Storage and Events
   events:
     image: redis:6.2
-    ports:
-      - "6379:6379"
     volumes:
       - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
       - events_vol:/data
-  queue:
+  queues:
     image: redis:6.2
-    ports:
-      - "6380:6379"
     volumes:
       - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
       - queue_vol:/data
@@ -81,17 +77,6 @@ services:
       - COUCHDB_PASSWORD=dex
     volumes:
       - couchdb_vol:/var/lib/couchdb
-    ports:
-      - "5984:5984"
-  redis-commander:
-    container_name: redis-commander
-    hostname: redis-commander
-    image: rediscommander/redis-commander:latest
-    restart: always
-    environment:
-      - REDIS_HOSTS=events:events:6379,queue:queue:6379
-    ports:
-      - "8081:8081"
 volumes:
   couchdb_vol:
   events_vol:
