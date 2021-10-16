@@ -11,7 +11,7 @@
     socket.onopen = function (event) {
         console.log('Opened!')
         // socket.send(`asset/${15322902}`);
-        socket.send(`assets`);
+        socket.send(`blocks`);
     };
     // Listen for messages
     socket.addEventListener('message', function (event) {
