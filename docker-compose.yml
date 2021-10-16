@@ -3,6 +3,8 @@ version: '3.8'
 services:
   html:
     image: nginx
+    depends_on:
+      - service
     volumes:
       - ./index.html:/var/www/html/index.html
       - ./.docker/config/default.conf:/etc/nginx/conf.d/default.conf
@@ -51,13 +53,13 @@ services:
     ports:
       - "9001:9001"
 
-#  algorand:
-#    build:
-#      context: .docker/algo
-#    ports:
-#      - "8080:8080"
-#    volumes:
-#      - algod:/root/node/data
+  algorand:
+    build:
+      context: .docker/algo
+    ports:
+      - "8080:8080"
+    volumes:
+      - algod:/root/node/data
 
   # Storage and Events
   events:
