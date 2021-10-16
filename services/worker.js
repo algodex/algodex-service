@@ -1,7 +1,5 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
-const PouchDB = require('pouchdb-core');
-PouchDB.plugin(require('pouchdb-adapter-http'));
 
 module.exports = ({queues, db}) =>{
     // Lighten the load on the broker and do batch processing
