@@ -9,20 +9,17 @@
   "author": "Michael Feher",
   "license": "UNLICENSED",
   "dependencies": {
-    "bullmq": "^1.46.0",
+    "bullmq": "^1.50.2",
     "commander": "^8.2.0",
     "dotenv": "^10.0.0",
-    "ioredis": "^4.27.9",
-    "node-jq": "^2.0.0",
+    "ioredis": "^4.28.0",
     "pouchdb-adapter-http": "^7.2.2",
     "pouchdb-core": "^7.2.2",
-    "pouchdb-find": "^7.2.2",
-    "set-interval-async": "^2.0.3",
-    "swagger-js": "^1.0.0",
+    "swagger-client": "^3.17.0",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v19.3.0",
-    "ws": "^8.2.1"
+    "ws": "^8.2.3"
   },
   "devDependencies": {
-    "nodemon": "^2.0.12"
+    "nodemon": "^2.0.13"
   }
 }
