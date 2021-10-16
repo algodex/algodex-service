@@ -1,10 +1,11 @@
 const SwaggerClient = require('swagger-client');
 
 let client, indexer;
+const ALGODEX_EXPLORER = process.env['ALGODEX_EXPLORER'] || 'https://testnet.algoexplorerapi.io';
 
 async function getAPI(){
     if(typeof client === 'undefined'){
-        client = await new SwaggerClient('https://testnet.algoexplorerapi.io/v2/swagger.json');
+        client = await new SwaggerClient(`${ALGODEX_EXPLORER}/v2/swagger.json`);
         client.spec.host='testnet.algoexplorerapi.io';
     }
     return client.apis;
@@ -12,7 +13,7 @@ async function getAPI(){
 
 async function getIndexAPI(){
     if(typeof indexer === 'undefined'){
-        indexer = await new SwaggerClient('https://testnet.algoexplorerapi.io/idx2/swagger.json');
+        indexer = await new SwaggerClient(`${ALGODEX_EXPLORER}/idx2/swagger.json`);
         indexer.spec.host='testnet.algoexplorerapi.io';
     }
     return indexer.apis;
@@ -35,13 +36,18 @@ async function getCurrentBlock(){
     let {round} = health;
     return round;
 }
-async function getBlock(round){
+async function getBlock({round}){
     let api = await getAPI();
     let {obj} = await api.block.GetBlock({round});
     let {block} = obj;
     return block;
 }
 
+async function waitForBlock({round}){
+    let api = await getAPI();
+    let {obj} = await api.block.WaitForBlock({round});
+    return obj;
+}
 async function getAppsBlockStart(apps){
     for(const app of apps){
         app.genesis = await getGenesisBlock(app.id);
@@ -59,5 +65,6 @@ async function getAppsBlockRange(apps){
 
 module.exports = {
     getAppsBlockRange,
-    getBlock
+    getBlock,
+    waitForBlock
 }
