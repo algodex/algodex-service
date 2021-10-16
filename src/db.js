@@ -1,6 +1,6 @@
 const PouchDB = require('pouchdb-core');
 PouchDB.plugin(require('pouchdb-adapter-http'));
-PouchDB.plugin(require('pouchdb-find'));
+
 let db;
 
 const url = process.env['COUCHDB_URL'] || 'http://admin:dex@couchdb:5984/dex';
