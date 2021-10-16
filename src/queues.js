@@ -7,7 +7,7 @@ let queues, connection;
 module.exports = function() {
     if(typeof connection === 'undefined'){
         // Define connection
-        connection = new Redis(process.env['REDIS_MQ_ADDRESS'] || 6379, process.env['REDIS_MQ_ADDRESS'] || "queue");
+        connection = new Redis(parseInt(process.env['REDIS_MQ_PORT'] || 6379), process.env['REDIS_MQ_ADDRESS'] || "queues");
     }
 
     if(typeof queues === 'undefined'){
