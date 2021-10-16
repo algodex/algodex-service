@@ -1,7 +1,8 @@
 // Slow but simple WebSocket Server, no hard dependency on Linux like uws
 const WebSocketServer = require('ws').WebSocketServer;
 
-module.exports = ({events, queues}) => {
+module.exports = ({events}) => {
+    console.log('Starting Socket Service');
     const wss = new WebSocketServer({ port: 9001 })
 
     wss.on('connection', function connection(ws) {
@@ -35,7 +36,11 @@ module.exports = ({events, queues}) => {
 
         // Send brokers messages to the client
         client.on("message", (channel, message) => {
-           ws.send(message);
+           console.log(`Channel ${channel} with: ${message}`)
+           ws.send(JSON.stringify({
+               type: channel,
+               data: JSON.parse(message),
+           }));
         });
     });
 
