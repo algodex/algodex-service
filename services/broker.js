@@ -1,37 +1,58 @@
-const SwaggerClient = require('swagger-client');
-const {setIntervalAsync} = require('set-interval-async/dynamic');
+const {getBlock, waitForBlock} = require('../src/explorer');
 
-module.exports = ({connections, queues}) => {
+module.exports = ({queues, events}) => {
     console.log(`Broker Publisher working with ${Object.keys(queues).length} Queues`)
-    // TODO: Move to Algod and remove hard coding
-    const explorer = new SwaggerClient('https://testnet.algoexplorerapi.io/v2/swagger.json');
 
     /**
-     * Holds Status from AlgoExplorer
-     * @type {{}}
+     * Store the result of WaitForBlocks
+     *
+     * Use genesis block as a flag for "fresh init"
+     * @type {{"last-round": number}}
      */
-    let round = {}
+    let round = {
+        'last-round': 1
+    }
 
-// Fake chain data every 30 seconds
-    setIntervalAsync(async () => {
-        explorer.then(
-            async client => {
-                let {obj} = await client.apis.node.GetStatus();
-                console.log(obj['last-round'], round['last-round']);
-                if (round['last-round'] === obj['last-round']) {
-                    console.log('Waiting....')
-                } else {
-                    console.log('New block found');
-                    // Publish Block Event
-                    let blockres = await client.apis.block.GetBlock({round: obj['last-round']});
-                    await queues.blocks.add('blocks', blockres.obj.block, {removeOnComplete: true});
-                    // await redis_events.publish(`block`, JSON.stringify(await client.apis.block.GetBlock(round['last-round'])));
-                    console.log('New block sent');
-                    round = obj;
-                }
-            },
-            reason => console.error('failed to load the spec: ' + reason)
-        )
+    /**
+     * Run the Broker
+     * @returns {Promise<void>}
+     */
+    async function run(){
+        // Wait for the next block
+        let obj = await waitForBlock({
+            round: round['last-round'],
+        });
 
-    }, 1000)
+        // Just in case the wait fails, skip if we are on the same block
+        if (round['last-round'] === obj['last-round']) {
+            console.log('Waiting....')
+        }
+
+        // Submit the next round to the Queue and Publish event
+        else {
+            console.log(`Last Round: ${round['last-round']}, New Algorand Round: ${obj['last-round']}`);
+
+            let roundNumber = round['last-round'];
+            if(round['last-round'] !== 1){
+                // Bump the last round, after WaitForBlock is complete
+                roundNumber++;
+            } else {
+                // Use the WaitForBlock round number if we don't have one stored
+                roundNumber = obj['last-round'];
+            }
+            let block = await getBlock({round: roundNumber });
+            await queues.blocks.add('blocks', block, {removeOnComplete: true});
+            await events.publish(`blocks`, JSON.stringify(block.rnd));
+            console.log(`Block ${roundNumber}: Published and Queued`);
+
+            // Update last round cache
+            round = obj;
+
+            //Rerun forever
+            run();
+        }
+    }
+
+    // Kick off the wrapper
+    run();
 }
