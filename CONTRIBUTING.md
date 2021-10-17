@@ -18,6 +18,10 @@ cp local.env .env
 
 ## 📝 Commit Guidelines and Github Flow [WIP]
 
-  - [ ] semantic versioning
-  - [ ] conventional commits
-  - [ ] image builds
+  - [X] semantic versioning
+  - [X] conventional commits
+  - [X] image builds
+
+<p align="center">
+  <img alt="Kill all humans" src="https://github.com/semantic-release/semantic-release/raw/master/media/bender.png">
+</p>

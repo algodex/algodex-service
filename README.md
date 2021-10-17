@@ -1,5 +1,6 @@
 # Algodex Gradation
 
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![@algodex/service](https://github.com/algodex/algodex-node-gradation/actions/workflows/package.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-node-gradation/actions/workflows/package.yml)
 [![algodex/service:image](https://github.com/algodex/algodex-node-gradation/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-node-gradation/actions/workflows/docker-image.yml)
 
@@ -336,5 +337,9 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
   ...
 ]
 ```
+
+<p align="center">
+  <img alt="Kill all humans" src="https://github.com/semantic-release/semantic-release/raw/master/media/bender.png">
+</p>
 
 
