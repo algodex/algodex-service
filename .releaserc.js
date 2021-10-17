@@ -1,5 +1,5 @@
 module.exports = {
-    branches: ['main', 'development'],
+    branches: ['main'],
     plugins: [
         [
             'semantic-release-gitmoji',
@@ -25,7 +25,12 @@ module.exports = {
             }
         }
         ],
+        '@semantic-release/npm',
+        ["@semantic-release/git", {
+            "assets": ["package.json"],
+            "message": "🔖 ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }],
         '@semantic-release/github',
-        //'@semantic-release/npm'
+
     ]
 }

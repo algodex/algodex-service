@@ -1,7 +1,7 @@
-name: @algodex/service
+name: '@algodex/service'
 on:
   push:
-    tags: [ 'v*.*.*' ]
+    branches: [ main, development ]
   workflow_dispatch:
 jobs:
   test:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [ 12.x, 14.x, 16.x ]
+        node-version: [ 16.x ]
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -20,14 +20,13 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
-  build:
+  release:
     needs: [test]
-    name: Build Docker Image
+    name: Release
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
-
     steps:
       # Checkout Repo
       - name: Checkout repository
@@ -38,6 +37,7 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
       - run: npm install
-      - run: npm publish
+      - run: npm run semantic-release
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
