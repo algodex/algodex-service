@@ -2,47 +2,78 @@
 const WebSocketServer = require('ws').WebSocketServer;
 
 module.exports = ({events}) => {
-    console.log('Starting Socket Service');
-    const wss = new WebSocketServer({ port: 9001 })
+  console.debug({
+    msg: '🧙‍ Starting Socket Service',
+  });
+  const wss = new WebSocketServer({port: 9001});
 
-    wss.on('connection', function connection(ws) {
-        let state = [`assets`];
-        // Subscribe to channels
-        let client = events.duplicate();
+  wss.on('connection', function connection(ws) {
+    const shutdown = (...args) => {
+      console.log({
+        msg: '💥 Shutting Down',
+        args,
+      });
+      ws.close();
+      process.exit(0);
+    };
 
-        client.subscribe(...state, (err, count) => {
-            (err) ? console.error("Failed to subscribe: %s", err.message) :
-                console.log(`This client is currently subscribed to ${count} channels.`)
-        });
+    process.on('SIGTERM', shutdown);
+    process.on('SIGINT', shutdown);
 
-        ws.on('message', function (message) {
-            state.push(message)
-            if(message.includes("cancel")){
-                client.unsubscribe(...state)
-                state = []
-            } else {
-                // Subscribe to channels
-                client.subscribe(message, (err, count) => {
-                    (err) ? console.error("Failed to subscribe: %s", err.message) :
-                        console.log(`This client is currently subscribed to ${count} channels.`)
-                });
-            }
+    let state = [`assets`];
+    // Subscribe to channels
+    const clientEvents = events.duplicate();
 
-        });
-
-        ws.on('close', ()=>{
-            client.removeAllListeners()
-        })
-
-        // Send brokers messages to the client
-        client.on("message", (channel, message) => {
-           console.log(`Channel ${channel} with: ${message}`)
-           ws.send(JSON.stringify({
-               type: channel,
-               data: JSON.parse(message),
-           }));
-        });
+    clientEvents.subscribe(...state, (err, count) => {
+      (err) ? console.error('Failed to subscribe: %s', err.message) :
+      console.debug({
+        msg: '👋 Subscribed',
+        events: state,
+        count,
+      });
     });
+
+    ws.on('message', function(message) {
+      console.log({
+        msg: '⚡ Client Event',
+        message,
+      });
+      state.push(message.toString());
+      if (message.includes('cancel')) {
+        clientEvents.unsubscribe(...state);
+        state = [];
+      } else {
+        // Subscribe to channels
+        clientEvents.subscribe(message, (err, count) => {
+          (err) ? console.error('Failed to subscribe: %s', err.message) :
+          console.debug({
+            msg: '➕ Adding Subscription',
+            events: state,
+            count,
+          });
+        });
+      }
+    });
+
+    ws.on('close', ()=>{
+      clientEvents.removeAllListeners();
+    });
+
+    // Send brokers messages to the client
+    clientEvents.on('message', (channel, message) => {
+      console.log({
+        msg: '⚡ Redis Event',
+        channel,
+        message,
+        sockets: wss.clients.size,
+        clients: clientEvents.serverInfo.connected_clients,
+      });
+      ws.send(JSON.stringify({
+        type: channel,
+        data: JSON.parse(message),
+      }));
+    });
+  });
 
 // NOTE: Example of uWebSockets, a much faster WebSocket implementation
 // const uWebSockets = require('uWebSockets.js');
@@ -63,7 +94,8 @@ module.exports = ({events}) => {
 // })
 // // If you want REST requests
 // .get('/*', (res, req) => {
-//     res.writeStatus('200 OK').writeHeader('IsExample', 'Yes').end('Hello there!');
+// res.writeStatus('200 OK').writeHeader('IsExample', 'Yes')
+// .end('Hello there!');
 // })
 // // Set listener ports and start
 // .listen(9001, (listenSocket) => {
@@ -71,6 +103,6 @@ module.exports = ({events}) => {
 //         console.log('Listening to port 9001');
 //     }
 // });
-}
+};
 
 

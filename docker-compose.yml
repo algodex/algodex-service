@@ -56,6 +56,14 @@ services:
   algorand:
     build:
       context: .docker/algo
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 2048M
+        reservations:
+          cpus: '0.25'
+          memory: 1024M
     ports:
       - "8080:8080"
     volumes:
