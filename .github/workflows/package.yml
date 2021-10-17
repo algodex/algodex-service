@@ -38,11 +38,7 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
       - run: npm install
-      - run: npm run semantic-release
+      - run: npx semantic-release --debug
         env:
-          GIT_AUTHOR_NAME: PhearZero
-          GIT_AUTHOR_EMAIL: git@phearzero.com
-          GIT_COMMITTER_NAME: PhearZero
-          GIT_COMMITTER_EMAIL: git@phearzero.com
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
