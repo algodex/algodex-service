@@ -1,7 +1,7 @@
 {
   "name": "@algodex/service",
   "version": "0.0.0-development",
-  "description": "Algodex Message Broker",
+  "description": "Algodex Services",
   "main": "server.js",
   "scripts": {
     "test": "npm run test-unit && npm run lint",

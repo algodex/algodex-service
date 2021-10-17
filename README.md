@@ -1,5 +1,8 @@
 # Algodex Gradation
 
+[![@algodex/service](https://github.com/algodex/algodex-node-gradation/actions/workflows/package.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-node-gradation/actions/workflows/package.yml)
+[![algodex/service:image](https://github.com/algodex/algodex-node-gradation/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-node-gradation/actions/workflows/docker-image.yml)
+
 Inspired by:
 https://en.wikipedia.org/wiki/Soil_gradation
 
