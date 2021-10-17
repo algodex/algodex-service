@@ -34,11 +34,13 @@ jobs:
       # Setup Node and Publish
       - uses: actions/setup-node@v2
         with:
+          cache: npm
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
       - run: npm install
       - run: npm run semantic-release
         env:
+          GIT_AUTHOR_NAME: PhearZero
+          GIT_AUTHOR_EMAIL: git@phearzero.com
           NODE_AUTH_TOKEN: ${{ secrets.GH_TOKEN }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
