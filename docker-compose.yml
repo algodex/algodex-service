@@ -11,7 +11,7 @@ services:
     ports:
       - "80:80"
   broker:
-    build: .
+    image: ghcr.io/algodex/algodex-node-gradation:${GHCR_TARGET}
     entrypoint: npm
     depends_on:
       - events
@@ -24,7 +24,7 @@ services:
     command:
       - start
   worker:
-    build: .
+    image: ghcr.io/algodex/algodex-node-gradation:${GHCR_TARGET}
     entrypoint: npm
     environment:
       - APP_CONTEXT=worker
@@ -38,7 +38,7 @@ services:
     command:
       - start
   service:
-    build: .
+    image: ghcr.io/algodex/algodex-node-gradation:${GHCR_TARGET}
     entrypoint: npm
     depends_on:
       - events

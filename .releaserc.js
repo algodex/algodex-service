@@ -28,7 +28,7 @@ module.exports = {
         '@semantic-release/npm',
         ["@semantic-release/git", {
             "assets": ["package.json"],
-            "message": "🔖 ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+            "message": "🔖 ${nextRelease.version} \n\n${nextRelease.notes}"
         }],
         '@semantic-release/github',
 
