@@ -1,7 +1,7 @@
 name: '@algodex/service'
 on:
   push:
-    branches: [ main, development ]
+    branches: [ main ]
     paths-ignore:
       - 'package.json'
   workflow_dispatch:
