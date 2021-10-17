@@ -2,6 +2,8 @@ name: '@algodex/service-pull-request'
 on:
   pull_request:
     branches: [ main, development ]
+    paths-ignore:
+      - 'package.json'
 jobs:
   test:
     name: Test Codebase
