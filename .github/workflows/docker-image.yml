@@ -1,0 +1,166 @@
+name: 'algodex/service:image'
+on:
+  push:
+    branches: [ main, development ]
+    # Publish semver tags as releases.
+    tags: [ 'v*.*.*' ]
+  workflow_dispatch:
+env:
+  # Use docker.io for Docker Hub if empty
+  REGISTRY: ghcr.io
+  # github.repository as <account>/<repo>
+  IMAGE_NAME: ${{ github.repository }}
+jobs:
+  test:
+    name: Test Codebase
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 16.x ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+  build:
+    needs: [test]
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # Checkout Repo
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Extract the name of the branch
+      # https://stackoverflow.com/questions/58033366/how-to-get-current-branch-within-github-actions
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      # Use Cache for docker
+      # https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker Github release
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+      # Setup Buildx
+      # https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+      # This ugly bit is necessary if you don't want your cache to grow forever
+      # till it hits GitHub's limit of 5GB.
+      # Temp fix
+      # https://evilmartians.com/chronicles/build-images-on-github-actions-with-docker-layer-caching
+      # https://github.com/docker/build-push-action/issues/252
+      # https://github.com/moby/buildkit/issues/1896
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+    outputs:
+      branch: ${{ steps.extract_branch.outputs.branch }}
+
+#  deploy:
+#    name: Deploy to ECS
+#    needs: [build, proxy]
+#    runs-on: ubuntu-latest
+#    if: github.event_name != 'pull_request'
+#    environment: algodex-cluster-${{ needs.build.outputs.branch }}
+#    steps:
+#      # Checkout Repo
+#      - name: Checkout repository
+#        uses: actions/checkout@v2
+#
+#      # Install Docker Compose
+#      # https://docs.docker.com/cloud/ecs-integration/#install-the-docker-compose-cli-on-linux
+#      - name: Install Compose
+#        run: curl -L https://raw.githubusercontent.com/docker/compose-cli/main/scripts/install/install_linux.sh | sh
+#      # Prepare AWS
+#      # https://github.com/aws-actions/configure-aws-credentials
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v1
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-west-1
+#
+#      # Login against a Docker registry except on PR
+#      # https://github.com/docker/login-action
+#      - name: Log into registry ${{ env.REGISTRY }}
+#        if: github.event_name != 'pull_request'
+#        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+#        with:
+#          registry: ${{ env.REGISTRY }}
+#          username: ${{ github.actor }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#
+#      # ECS Context Creations
+#      # https://docs.docker.com/cloud/ecs-integration/#create-aws-context
+#      - shell: bash
+#        name: Create the ECS Context
+#        run: docker context create ecs us-west-1 --from-env
+#
+#      # Use ECS Context
+#      # https://docs.docker.com/cloud/ecs-integration/#create-aws-context
+#      - shell: bash
+#        name: Use ECS Context
+#        run: docker context use us-west-1
+#
+#      # Use .env file
+#      # https://github.com/marketplace/actions/create-env-file
+#      - name: Copy .env file
+#        shell: bash
+#        run: cp ./env/${{ needs.build.outputs.branch }}-launch.env .env
+#
+#      # Deploy
+#      # https://docs.docker.com/cloud/ecs-integration/#create-aws-context
+#      - shell: bash
+#        if: github.event_name != 'pull_request'
+#        name: Deploy to AWS ECS
+#        run: docker compose -p algodex-cluster-${{ needs.build.outputs.branch }}-services up

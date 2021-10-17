@@ -1,18 +1,21 @@
-FROM node:15-alpine AS builder
-EXPOSE 3000
+FROM node:16-alpine AS base
 
 WORKDIR /app
+
+RUN chown -R node /app \
+    && apk add --no-cache libc6-compat \
+    && ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
+
 ADD ./ ./
 
-RUN chown -R node /app && apk add libc6-compat && ln -s /lib/libc.musl-x86_64.so.1 /lib/ld-linux-x86-64.so.2
-
-
+RUN chown node:node -R ./
 
 ENTRYPOINT node
 
-FROM builder as production
+FROM base as production
+
 USER node
 
 RUN npm install
 
-COMMAND
+EXPOSE 3000

@@ -7,13 +7,43 @@
 <body>
 
 <script>
-    var socket = new WebSocket('ws://localhost:9001/');
+    let retry = 0;
+    (
+    function run(){
+        console.log({
+            msg: '🚀 Connecting to Service...',
+            retry
+        });
+        const ws = new WebSocket('ws://localhost:9001/');
+        window.ws = ws;
+        ws.onopen = function () {
+            console.log({
+                msg: '🎉 Connected to Service!',
+                retry
+            });
+            // socket.send(`asset/${15322902}`);
+            ws.send(`blocks`);
+        };
+        // Listen for messages
+        ws.addEventListener('message', function (event) {
+            console.log({msg: '📝 Message Received', event: event.data});
+            document.body.innerHTML = event.data;
+            let {type} = JSON.parse(event.data);
+            if(type === 'SHUTDOWN')  ws.close();
+        });
 
-    // Listen for messages
-    socket.addEventListener('message', function (event) {
-        console.log('Message from server ', event);
-        document.body.innerHTML = event.data;
-    });
+        ws.onclose = function({reason}) {
+            console.log({
+                msg: '💥 Socket Closing',
+                reason,
+                retry,
+            });
+            setTimeout(function() {
+                retry++;
+                run();
+            }, 1000);
+        };
+    })();
 </script>
 </body>
 </html>

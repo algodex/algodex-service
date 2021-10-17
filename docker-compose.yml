@@ -3,37 +3,71 @@ version: '3.8'
 services:
   html:
     image: nginx
+    depends_on:
+      - service
     volumes:
       - ./index.html:/var/www/html/index.html
       - ./.docker/config/default.conf:/etc/nginx/conf.d/default.conf
     ports:
       - "80:80"
-    depends_on:
-      - service
-  # Core concepts
   broker:
     build: .
-    entrypoint: node
+    entrypoint: npm
     depends_on:
       - events
-    command: ./packages/broker/server.js
+      - queues
+    environment:
+      - APP_CONTEXT=broker
+      - REDIS_ADDRESS=events
+      - REDIS_MQ_ADDRESS=queues
+      - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
+    command:
+      - start
   worker:
     build: .
-    entrypoint: node
+    entrypoint: npm
+    environment:
+      - APP_CONTEXT=worker
+      - REDIS_ADDRESS=events
+      - REDIS_MQ_ADDRESS=queues
+      - COUCHDB_URL=http://admin:dex@couchdb:5984/dex
+      - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     depends_on:
       - events
+      - queues
     command:
-      - ./packages/worker/server.js
+      - start
   service:
     build: .
-    entrypoint: node
+    entrypoint: npm
     depends_on:
       - events
+      - queues
+    environment:
+      - APP_CONTEXT=socket
+      - REDIS_ADDRESS=events
+      - REDIS_MQ_ADDRESS=queues
+      - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     command:
-      - ./packages/service/server.js
+      - start
     ports:
       - "9001:9001"
 
+  algorand:
+    build:
+      context: .docker/algo
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 2048M
+        reservations:
+          cpus: '0.25'
+          memory: 1024M
+    ports:
+      - "8080:8080"
+    volumes:
+      - algod:/root/node/data
 
   # Storage and Events
   events:
@@ -41,10 +75,8 @@ services:
     volumes:
       - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
       - events_vol:/data
-  queue:
+  queues:
     image: redis:6.2
-    ports:
-      - 6379:6379
     volumes:
       - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
       - queue_vol:/data
@@ -54,19 +86,9 @@ services:
       - COUCHDB_USER=admin
       - COUCHDB_PASSWORD=dex
     volumes:
-      - couchdb_vol:/var/lib/couchdb
-    ports:
-      - "5984:5984"
-  redis-commander:
-    container_name: redis-commander
-    hostname: redis-commander
-    image: rediscommander/redis-commander:latest
-    restart: always
-    environment:
-      - REDIS_HOSTS=events:events:6379,queue:queue:6379
-    ports:
-      - "8081:8081"
+      - couchdb_vol:/opt/couchdb/data
 volumes:
   couchdb_vol:
   events_vol:
   queue_vol:
+  algod:
