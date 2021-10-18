@@ -1,4 +1,5 @@
 const os = require('os');
+const {InvalidParameter} = require('./Errors');
 
 /**
  * Create an Array of consecutive numbers
@@ -7,6 +8,9 @@ const os = require('os');
  * @return {array<number>}
  */
 const createConsecutiveArray = function( start, length) {
+  if (start > length) {
+    throw new InvalidParameter('Start must be less than length!');
+  }
   const arr = new Array(length-start);
   let idx = start;
   for (let i = 0; i < arr.length; i++) {
@@ -23,6 +27,9 @@ const createConsecutiveArray = function( start, length) {
  * @return {{}}
  */
 const createConsecutiveObject = function(start, length) {
+  if (start > length) {
+    throw new InvalidParameter('Start must be less than length!');
+  }
   return createConsecutiveArray(start, length)
       .reduce((previousValue, currentValue)=>{
         previousValue[currentValue] = true;
@@ -36,6 +43,9 @@ const createConsecutiveObject = function(start, length) {
  * @return {Array<Array<number>>}
  */
 const cpuChunkArray = function(arr) {
+  if (!Array.isArray(arr)) {
+    throw new InvalidParameter('Must be an Array!');
+  }
   const chunks = [];
   const chunk = arr.length / os.cpus().length;
   for (let i = 0, l = arr.length; i < l; i += chunk) {
@@ -44,16 +54,8 @@ const cpuChunkArray = function(arr) {
   return chunks;
 };
 
-const useGracefulExit = function(cb) {
-  process.on('exit', cb);
-  process.on('SIGINT', cb);
-  process.on('SIGUSR1', cb);
-  process.on('SIGUSR2', cb);
-};
-
 module.exports = {
   cpuChunkArray,
-  useGracefulExit,
   createConsecutiveArray,
   createConsecutiveObject,
 };
