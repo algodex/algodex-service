@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  algorand:
+    build:
+      context: .docker/algo
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${ALGORAND_DATA}:/root/node/data
+  couchdb:
+    image: couchdb
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=dex
+    ports:
+      - "5984:5984"
+    volumes:
+      - ${COUCHDB_DATA}:/opt/couchdb/data

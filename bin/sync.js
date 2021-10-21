@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 require('dotenv').config();
 const cluster = require('cluster');
 const process = require('process');
@@ -32,7 +34,7 @@ const compare = async function() {
   existingBlocks.forEach((block)=>{
     delete rounds[block];
   });
-
+  console.log(`Crushing ${rounds.length}`);
   // Chunk the keys for Multi-Threaded workers
   const chunks = cpuChunkArray(Object.keys(rounds).map((r)=>parseInt(r)));
   console.log(start, current);

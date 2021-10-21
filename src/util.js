@@ -1,5 +1,7 @@
+const fs = require('fs');
+const path = require('path');
 const os = require('os');
-const {InvalidParameter} = require('./Errors');
+const {InvalidParameter} = require('./errors');
 
 /**
  * Create an Array of consecutive numbers
@@ -54,7 +56,31 @@ const cpuChunkArray = function(arr) {
   return chunks;
 };
 
+
+/**
+ * Get all files from a path
+ * @param {string} dirPath
+ * @param {Array<string>} [arrayOfFiles]
+ * @return {Array<string>}
+ */
+const getAllFiles = function(dirPath, arrayOfFiles) {
+  const files = fs.readdirSync(dirPath);
+
+  arrayOfFiles = arrayOfFiles || [];
+
+  files.forEach(function(file) {
+    if (fs.statSync(dirPath + '/' + file).isDirectory()) {
+      arrayOfFiles = getAllFiles(dirPath + '/' + file, arrayOfFiles);
+    } else {
+      arrayOfFiles.push(path.join(dirPath, '/', file));
+    }
+  });
+
+  return arrayOfFiles;
+};
+
 module.exports = {
+  getAllFiles,
   cpuChunkArray,
   createConsecutiveArray,
   createConsecutiveObject,

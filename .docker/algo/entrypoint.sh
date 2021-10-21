@@ -8,6 +8,6 @@
 
 #./goal node catchup 17240000#ANXS5ZTSXG7MOGLJIISRTAQE5V45XTYEDSMSALKFMQQ5QYDELIBQ -d $ALGORAND_DATA
 
-./goal node status -w 1000
+#./goal node status -w 1000
 
-#./carpenter -d $ALGORAND_DATA
+./carpenter -d $ALGORAND_DATA

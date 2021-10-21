@@ -1,11 +1,12 @@
 // Slow but simple WebSocket Server, no hard dependency on Linux like uws
-const WebSocketServer = require('ws').WebSocketServer;
-
+const {WebSocketServer} = require('ws');
+// const getLogger = require('../src/logger');
 module.exports = ({events}) => {
+  const PORT = process.env.PORT || 9001;
   console.debug({
-    msg: '🧙‍ Starting Socket Service',
+    msg: `🚀 Starting Socket Service on port ${PORT}`,
   });
-  const wss = new WebSocketServer({port: 9001});
+  const wss = new WebSocketServer({port: PORT});
 
   wss.on('connection', function connection(ws) {
     const shutdown = (...args) => {
@@ -27,7 +28,7 @@ module.exports = ({events}) => {
     clientEvents.subscribe(...state, (err, count) => {
       (err) ? console.error('Failed to subscribe: %s', err.message) :
       console.debug({
-        msg: '👋 Subscribed',
+        msg: '✅ Subscribed',
         events: state,
         count,
       });
@@ -35,8 +36,8 @@ module.exports = ({events}) => {
 
     ws.on('message', function(message) {
       console.log({
-        msg: '⚡ Client Event',
-        message,
+        msg: '⚡ Client Message',
+        message: message.toString(),
       });
       state.push(message.toString());
       if (message.includes('cancel')) {
@@ -47,7 +48,7 @@ module.exports = ({events}) => {
         clientEvents.subscribe(message, (err, count) => {
           (err) ? console.error('Failed to subscribe: %s', err.message) :
           console.debug({
-            msg: '➕ Adding Subscription',
+            msg: '➕ Subscription(s)',
             events: state,
             count,
           });
@@ -61,12 +62,12 @@ module.exports = ({events}) => {
 
     // Send brokers messages to the client
     clientEvents.on('message', (channel, message) => {
-      console.log({
-        msg: '⚡ Redis Event',
+      console.debug({
+        msg: '⚡ Sub',
         channel,
         message,
         sockets: wss.clients.size,
-        clients: clientEvents.serverInfo.connected_clients,
+        clients: parseInt(clientEvents.serverInfo.connected_clients),
       });
       ws.send(JSON.stringify({
         type: channel,

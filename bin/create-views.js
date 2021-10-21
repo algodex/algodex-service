@@ -73,17 +73,16 @@ function run() {
   const dd = loadViews();
 
   require('../src/db')()
-    .get('_design/dex')
-    .then(({_rev})=>{
-      console.log('Found');
-      dd._rev = _rev;
-      return save(dd);
-    }).catch((e)=>{
-    if (e.reason === 'missing') {
-      return save(dd);
-    }
-  });
-
+      .get('_design/dex')
+      .then(({_rev})=>{
+        console.log('Found');
+        dd._rev = _rev;
+        return save(dd);
+      }).catch((e)=>{
+        if (e.reason === 'missing') {
+          return save(dd);
+        }
+      });
 }
 
 if (process.env.NODE_ENV !== 'test') {

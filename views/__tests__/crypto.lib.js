@@ -24,7 +24,6 @@ describe('Crypto', () => {
             .substring(2, 15);
       const a = crypto.recode(s, 'btoa');
       const b = btoa(s);
-      console.log(`${s}, ${a}, ${b} `);
       expect(a).toEqual(b);
     }
   });

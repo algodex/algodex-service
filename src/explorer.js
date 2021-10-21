@@ -1,5 +1,6 @@
+// const algosdk = require('algosdk');
 const SwaggerClient = require('swagger-client');
-const {InvalidConfiguration} = require('./Errors');
+const InvalidConfiguration = require('./errors/InvalidConfiguration');
 
 let client; let indexer;
 
@@ -9,12 +10,57 @@ let client; let indexer;
  */
 function _getAlgorandURL() {
   if (
-    typeof process.env['ALGODEX_EXPLORER'] === 'undefined'
+    typeof process.env['ALGORAND_EXPLORER'] === 'undefined'
   ) {
     throw new InvalidConfiguration('Algorand API not configured!');
   }
 
-  return process.env['ALGODEX_EXPLORER'];
+  return process.env['ALGORAND_EXPLORER'];
+}
+
+/**
+ *
+ * @return {string}
+ * @private
+ */
+function _getAlgorandDaemonURL() {
+  if (
+    typeof process.env.ALGORAND_DAEMON === 'undefined' ||
+    typeof process.env.ALGORAND_DAEMON_PORT === 'undefined'
+  ) {
+    throw new InvalidConfiguration('Algorand API not configured!');
+  }
+
+  return `${process.env.ALGORAND_DAEMON}:${process.env.ALGORAND_DAEMON_PORT}`;
+}
+
+/**
+ *
+ * @return {object}
+ * @private
+ */
+function _getAlgorandConfig() {
+  if (
+    typeof process.env.ALGORAND_DAEMON === 'undefined' ||
+    typeof process.env.ALGORAND_DAEMON_TOKEN === 'undefined' ||
+    typeof process.env.ALGORAND_DAEMON_PORT === 'undefined'
+  ) {
+    throw new InvalidConfiguration('Algorand Daemon not configured!');
+  }
+
+  const auth = {
+    requestInterceptor: (req) => {
+      req.headers['X-Algo-API-Token'] = process.env.ALGORAND_DAEMON_TOKEN;
+      return req;
+    },
+  };
+
+  return {
+    auth,
+    server: process.env.ALGORAND_DAEMON,
+    token: process.env.ALGORAND_DAEMON_TOKEN,
+    client: process.env.ALGORAND_DAEMON_PORT,
+  };
 }
 
 /**
@@ -22,10 +68,18 @@ function _getAlgorandURL() {
  * @return {Promise<*>}
  */
 async function _getAPI() {
-  const url = _getAlgorandURL();
+  const url = _getAlgorandDaemonURL();
   if (typeof client === 'undefined') {
-    client = await new SwaggerClient(`${url}/v2/swagger.json`);
-    client.spec.host=url.replace('https://', '');
+    client = await new SwaggerClient(`${_getAlgorandURL()}/v2/swagger.json`);
+    client.spec.host=url.replace('http://', '');
+    client.spec.schemes = ['http'];
+    client.spec.securityDefinitions = {
+      ApiKeyAuth: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'X-API-Key',
+      },
+    };
   }
   return client.apis;
 }
@@ -81,7 +135,8 @@ async function _getCurrentBlock() {
  */
 async function getBlock({round}) {
   const api = await _getAPI();
-  const {obj} = await api.block.GetBlock({round}); // eslint-disable-line
+  const {auth} = _getAlgorandConfig();
+  const {obj} = await api.block.GetBlock({round}, auth); // eslint-disable-line
   const {block} = obj;
   return block;
 }
@@ -93,8 +148,9 @@ async function getBlock({round}) {
  */
 async function waitForBlock({round}) {
   const api = await _getAPI();
+  const {auth} = _getAlgorandConfig();
   // eslint-disable-next-line
-  const {obj} = await api.block.WaitForBlock({round}); // eslint-disable-line
+  const {obj} = await api.block.WaitForBlock({round}, auth); // eslint-disable-line
   return obj;
 }
 

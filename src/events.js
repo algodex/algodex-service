@@ -1,5 +1,5 @@
 const Redis = require('ioredis');
-const {InvalidConfiguration} = require('./Errors');
+const {InvalidConfiguration} = require('./errors');
 
 let events;
 

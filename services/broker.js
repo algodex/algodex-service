@@ -1,65 +1,62 @@
 const {getBlock, waitForBlock} = require('../src/explorer');
+const getLogger = require('../src/logger');
+const log = getLogger();
 
-module.exports = ({queues, events}) => {
-  console.log({
-    msg: 'Broker Starting',
-    queues: Object.keys(queues).length,
-  });
+log.info({
+  msg: '🎉 Broker Starting',
+});
 
+/**
+ *
+ * @param {object} queues
+ * @param {object} events
+ * @param {number|string} round
+ * @return {Promise<void>}
+ */
+module.exports = async function run(
+    {
+      queues,
+      events,
+      round,
+      skip = false,
+    },
+) {
   /**
-     * Store the result of WaitForBlocks
-     *
-     * Use genesis block as a flag for "fresh init"
-     * @type {{"last-round": number}}
-     */
-  let round = {
-    'last-round': 1,
-  };
+   * Store the result of WaitForBlocks
+   *
+   * Use genesis block as a flag for "fresh init"
+   * @type {{"last-round": number}}
+   */
+  // Wait for the next block
+  const {'last-round': current} = await waitForBlock({round});
 
-  /**
-     * Run the Broker
-     * @return {Promise<void>}
-     */
-  async function run() {
-    // Wait for the next block
-    const obj = await waitForBlock({
-      round: round['last-round'],
+  // Just in case the wait fails, skip if we are on the same block
+  if (round === current) {
+    log.debug('Waiting....');
+  } else { // Submit the next round to the Queue and Publish event
+    log.info({
+      msg: 'Processing Next Round',
+      round,
+      current,
     });
 
-    // Just in case the wait fails, skip if we are on the same block
-    if (round['last-round'] === obj['last-round']) {
-      console.log('Waiting....');
-    } else { // Submit the next round to the Queue and Publish event
-      console.debug({
-        msg: 'Processing Next Round',
-        round: round['last-round'],
-        next: obj['last-round'],
-      });
+    const block = await getBlock({round});
+    await queues.blocks.add('blocks', block, {removeOnComplete: true});
+    await events.publish(`blocks`, JSON.stringify(block.rnd));
+    log.info({
+      msg: 'Published and Queued',
+      round,
+    });
 
-      let roundNumber = round['last-round'];
-      if (round['last-round'] !== 1) {
-        // Bump the last round, after WaitForBlock is complete
-        roundNumber++;
-      } else {
-        // Use the WaitForBlock round number if we don't have one stored
-        roundNumber = obj['last-round'];
-      }
-      const block = await getBlock({round: roundNumber});
-      await queues.blocks.add('blocks', block, {removeOnComplete: true});
-      await events.publish(`blocks`, JSON.stringify(block.rnd));
-      console.log({
-        msg: 'Published and Queued',
-        round: roundNumber,
-      });
-
+    if (skip) {
+      round = current;
+    } else {
       // Update last round cache
-      round = obj;
-
-      // Rerun forever
-      run();
+      round++;
     }
-  }
 
-  // Kick off the wrapper
-  run();
+
+    // Rerun forever
+    run({queues, events, round});
+  }
 };
