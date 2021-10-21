@@ -1,6 +1,14 @@
 version: '3.8'
 
 services:
+  html:
+    image: nginx
+    volumes:
+      - ./index.html:/var/www/html/index.html
+      - ./.docker/config/default.conf:/etc/nginx/nginx.conf
+      - ./tmp:/wow
+    ports:
+      - "80:80"
   algorand:
     build:
       context: .docker/algo
