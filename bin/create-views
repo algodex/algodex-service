@@ -1,0 +1,99 @@
+#!/usr/bin/env node
+require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+const {program} = require('commander');
+
+program.version(require('../package.json').version);
+program.parse(process.argv);
+
+
+/**
+ * Load Views
+ * Based on Couchapp folder structure
+ * @return {{language: string, _id: string, views: {}}}
+ */
+function loadViews() {
+  const {PROJECT_ROOT} = require('../constants');
+  const {getAllFiles} = require('../src/util');
+  const viewPath = path.join(PROJECT_ROOT, 'views');
+
+  return getAllFiles(viewPath)
+      .filter((file) => {
+        return !file.match('__tests__');
+      })
+      .reduce((previousValue, file)=>{
+        const key = path.basename(path.dirname(file));
+        const filename = path.parse(file).name;
+        let fn = fs.readFileSync(file).toString();
+
+        if (filename === 'map') {
+          fn = fn.replace('module.exports = ', '');
+          fn = fn.replace('../lib', 'views/lib');
+        }
+
+        if (typeof previousValue.views[key] === 'undefined') {
+          previousValue.views[key] = {};
+        }
+        previousValue.views[key][filename] = fn;
+
+        return previousValue;
+      }, {
+        _id: '_design/dex',
+        views: {},
+        language: 'javascript',
+      });
+}
+
+/**
+ * Save a design document
+ * @param {object} dd
+ * @return {*}
+ */
+function save(dd) {
+  return require('../src/db')()
+      .put(dd)
+      .then(console.log)
+      .catch(console.error);
+}
+
+/**
+ * Run this command
+ */
+function run() {
+  // Check configuration and get program arguments;
+  if ( typeof program.args[0] === 'undefined' &&
+    typeof process.env.COUCHDB_URL === 'undefined'
+  ) {
+    throw new Error('Must pass in database or specify ENV variable!');
+  } else if (typeof process.env.COUCHDB_URL === 'undefined') {
+    process.env.COUCHDB_URL = program.args[0];
+  }
+
+  const dd = loadViews();
+
+  require('../src/db')()
+    .get('_design/dex')
+    .then(({_rev})=>{
+      console.log('Found');
+      dd._rev = _rev;
+      return save(dd);
+    }).catch((e)=>{
+    if (e.reason === 'missing') {
+      return save(dd);
+    }
+  });
+
+}
+
+if (process.env.NODE_ENV !== 'test') {
+  run();
+} else {
+  module.exports = {
+    run,
+    save,
+    loadViews,
+  };
+}
+
+
