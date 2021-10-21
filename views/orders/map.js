@@ -1,5 +1,5 @@
 module.exports = function(doc) {
-  crypto = require('views/lib/crypto');
+  crypto = require('../lib/crypto');
   doc.txns.forEach((txn) => {
     if (txn.txn && txn.txn.type) {
       const isAlgodex = txn.txn.apid === 22045503 || txn.txn.apid === 22045522;

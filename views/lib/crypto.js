@@ -6,7 +6,7 @@
  * LastModified: Dec 25 1999
  * This library is free.  You can redistribute it and/or modify it.
  */
-module.exports.crypto = function(target, type) {
+module.exports.recode = function(target, type) {
   const base64EncodeChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'; // eslint-disable-line
   const base64DecodeChars = [
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
@@ -114,5 +114,5 @@ module.exports.crypto = function(target, type) {
     return out;
   }
 
-  return type === 'bota' ? base64encode(target) : base64decode(target);
+  return type === 'btoa' ? base64encode(target) : base64decode(target);
 };
