@@ -14,13 +14,20 @@ services:
     image: ghcr.io/algodex/algodex-node-gradation:${GHCR_TARGET}
     entrypoint: npm
     depends_on:
+      - algorand
       - events
       - queues
+      - couchdb
     environment:
       - APP_CONTEXT=broker
       - REDIS_ADDRESS=events
+      - REDIS_PORT=6379
       - REDIS_MQ_ADDRESS=queues
+      - REDIS_MQ_PORT=6379
       - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
+      - ALGORAND_DAEMON=http://localhost
+      - ALGORAND_DAEMON_TOKEN=308c0179ca4846ffaf06de22b1231b181313973a081721ea357c612a3bbcef04
+      - ALGORAND_DAEMON_PORT=8080
     command:
       - start
   worker:
@@ -29,12 +36,15 @@ services:
     environment:
       - APP_CONTEXT=worker
       - REDIS_ADDRESS=events
+      - REDIS_PORT=6379
       - REDIS_MQ_ADDRESS=queues
+      - REDIS_MQ_PORT=6379
       - COUCHDB_URL=http://admin:dex@couchdb:5984/dex
       - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     depends_on:
       - events
       - queues
+      - couchdb
     command:
       - start
   service:
@@ -43,10 +53,13 @@ services:
     depends_on:
       - events
       - queues
+      - couchdb
     environment:
       - APP_CONTEXT=socket
       - REDIS_ADDRESS=events
+      - REDIS_PORT=6379
       - REDIS_MQ_ADDRESS=queues
+      - REDIS_MQ_PORT=6379
       - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     command:
       - start
@@ -59,15 +72,15 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'
+#          cpus: '0.50'
           memory: 2048M
         reservations:
-          cpus: '0.25'
+#          cpus: '0.25'
           memory: 1024M
     ports:
       - "8080:8080"
     volumes:
-      - algod:/root/node/data
+      - ${ALGORAND_DATA}:/root/node/data
 
   # Storage and Events
   events:
@@ -86,9 +99,7 @@ services:
       - COUCHDB_USER=admin
       - COUCHDB_PASSWORD=dex
     volumes:
-      - couchdb_vol:/opt/couchdb/data
+      - ${COUCHDB_DATA}:/opt/couchdb/data
 volumes:
-  couchdb_vol:
   events_vol:
   queue_vol:
-  algod:
