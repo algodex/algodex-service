@@ -1,3 +1,8 @@
+build
+pkg
+src/models/**/*
+!src/models/README.md
+
 # Logs
 logs
 *.log

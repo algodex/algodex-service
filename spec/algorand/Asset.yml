@@ -1,0 +1,66 @@
+# https://testnet.algoexplorerapi.io/idx2/v2/assets?asset-id=15322902
+#  {
+#    "asset": {
+#      "created-at-round": 13596306,
+#      "deleted": false,
+#      "index": 15322902,
+#      "params": {
+#        "clawback": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+#        "creator": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+#        "decimals": 6,
+#        "default-frozen": false,
+#        "freeze": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+#        "manager": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+#        "name": "Lamps",
+#        "name-b64": "TGFtcHM=",
+#        "reserve": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+#        "total": 100000000000,
+#        "unit-name": "LAMP",
+#        "unit-name-b64": "TEFNUA=="
+#      }
+#    },
+#    "current-round": 17345879
+#  }
+title: Asset
+description: 'Asset Model from Index'
+properties:
+  created_at_round:
+    type: integer
+  deleted:
+    type: boolean
+  index:
+    type: integer
+  params:
+    type: object
+    properties:
+      clawback:
+        type: string
+      creator:
+        type: string
+      decimals:
+        type: integer
+      default_frozen:
+        type: boolean
+      freeze:
+        type: string
+      manager:
+        type: string
+      name:
+        type: string
+      name_b64:
+        type: string
+      reserve:
+        type: string
+      total:
+        type: integer
+      unit_name:
+        type: string
+      unit_name_b64:
+        type: string
+  current-round:
+    type: integer
+required:
+  - created_at_round
+  - deleted
+  - index
+  - params
