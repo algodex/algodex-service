@@ -1,7 +1,7 @@
 name: '@algodex/service-pull-request'
 on:
   pull_request:
-    branches: [ main, development ]
+    branches: [ main, development, beta, next ]
 jobs:
   test:
     name: Test Codebase

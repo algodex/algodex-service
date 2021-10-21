@@ -1,7 +1,7 @@
 name: 'algodex/service:image'
 on:
   push:
-    branches: [ main, development ]
+    branches: [ main, development, beta, next ]
     # Publish semver tags as releases.
     tags: [ 'v*.*.*' ]
   workflow_dispatch:
