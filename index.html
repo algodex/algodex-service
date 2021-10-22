@@ -34,27 +34,31 @@
   // import getDatabase from '@exports/db';
   console.log(createConsecutiveObject, getDatabase);
   const db = await getDatabase();
-  db.info().then((info)=>{
-    document.getElementById("db").innerHTML=`DOCS: ${info.doc_count} HOST: ${info.host}`;
+  db.query('dex/orders').then(function (res) {
+    return db.info().then((info)=>{
+      document.getElementById("db").innerHTML=`ORDERS: ${res.rows.length} DOCS: ${info.doc_count} HOST: ${info.host}`;
+    });
+  }).catch(function (err) {
+    // some error
+    console.log(err);
   });
 
   db.changes({
     since: 'now',
     live: true,
   }).on('change', (changes)=>{
-    db.info().then((info)=>{
-      document.getElementById("db").innerHTML=`DOCS: ${info.doc_count} HOST: ${info.host}`;
+    db.query('dex/orders', {
+      limit: 1000
+    }).then(function (res) {
+      return db.info().then((info)=>{
+        document.getElementById("db").innerHTML=`ORDERS: ${res.rows.length} DOCS: ${info.doc_count} HOST: ${info.host}`;
+      });
+    }).catch(function (err) {
+      // some error
+      console.log(err);
     });
   })
   let retry = 0;
-
-  // const log = console.log;
-  // console.log = function(info) {
-  //   const br = document.createElement("br");
-  //   document.getElementById("root").innerHTML=info.msg || 'loading';
-  //   document.getElementById("root").appendChild(br);
-  //   log(...arguments);
-  // };
 
   function update(id, str, inner=false, br=false){
     const el = document.createTextNode(str);
