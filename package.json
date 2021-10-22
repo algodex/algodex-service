@@ -3,19 +3,41 @@
   "version": "1.0.1",
   "description": "Algodex Services",
   "main": "server.js",
+  "type": "module",
+  "eslintConfig": {
+    "globals": {
+      "emit": true
+    },
+    "env": {
+      "browser": true,
+      "commonjs": true,
+      "es2021": true
+    },
+    "extends": [
+      "google"
+    ],
+    "parser": "@babel/eslint-parser",
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module"
+    },
+    "rules": {}
+  },
   "redisMemoryServer": {
     "version": "6.0.10",
     "debug": "1"
   },
   "scripts": {
-    "dev": "concurrently -n commander,redis,service,init,frontend \"redis-commander\" \"node ./bin/start-redis.js\" \"nodemon server.js\" \"node ./bin/create-views.js\" \"snowpack dev --port 8082\"",
+    "dev": "concurrently -n clean,commander,redis,service,init,frontend \"rimraf node_modules/.cache\" \"redis-commander\" \"node --experimental-json-modules ./bin/start-redis.js\" \"nodemon --experimental-json-modules server.js\" \"node --experimental-json-modules ./bin/create-views.js\" \"snowpack dev --port 8082\"",
     "test": "npm run test-unit && npm run lint",
     "test-unit": "jest",
+    "start": "nodemon --experimental-json-modules server.js",
     "devz": "concurrently \"npm:dev-socket\" \"npm:dev-frontend\"",
-    "dev-backend": "node server-dev.js",
+    "dev-backend": "concurrently -n commander,redis,service \"redis-commander\" \"node --experimental-json-modules ./bin/start-redis.js\" \"nodemon --experimental-json-modules server.js\"",
     "dev-test": "jest --watch",
     "dev-socket": "nodemon server.js ",
     "dev-frontend": "snowpack dev",
+    "dev-create-views": "node --experimental-json-modules ./bin/create-views.js",
     "lint": "eslint src/*.js services/*.js bin/*.js views/**/*.js server.js --fix",
     "prepare": "husky install"
   },
@@ -29,14 +51,19 @@
     "bullmq": "^1.50.2",
     "commander": "^8.2.0",
     "ioredis": "^4.28.0",
+    "module": "^1.2.5",
     "pino": "^7.0.3",
     "pino-sentry": "^0.9.0",
+    "pouchdb": "^7.2.2",
     "pouchdb-adapter-http": "^7.2.2",
+    "pouchdb-browser": "^7.2.2",
     "pouchdb-core": "^7.2.2",
     "swagger-client": "^3.17.0",
     "ws": "^8.2.3"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.15.8",
+    "@babel/plugin-syntax-top-level-await": "^7.14.5",
     "@pika/pack": "^0.5.0",
     "@pika/plugin-build-node": "^0.9.2",
     "@pika/plugin-build-types": "^0.9.2",
@@ -65,6 +92,8 @@
     "redis-commander": "^0.7.2",
     "redis-memory-server": "^0.5.0",
     "redisdown": "^0.1.12",
+    "rimraf": "^3.0.2",
+    "rollup-plugin-node-polyfills": "^0.2.1",
     "semantic-release": "^17.0.7",
     "semantic-release-gitmoji": "^1.4.2",
     "snowpack": "^3.8.8",

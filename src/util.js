@@ -1,7 +1,12 @@
-const fs = require('fs');
-const path = require('path');
-const os = require('os');
-const {InvalidParameter} = require('./errors');
+// import fs from 'fs';
+// import path from 'path';
+// import os from 'os';
+import {InvalidParameter} from './errors/index.js';
+
+// const fs = require('fs');
+// const path = require('path');
+// const os = require('os');
+// const {InvalidParameter} = require('./errors');
 
 /**
  * Create an Array of consecutive numbers
@@ -9,7 +14,8 @@ const {InvalidParameter} = require('./errors');
  * @param {number} length
  * @return {array<number>}
  */
-const createConsecutiveArray = function( start, length) {
+export function createConsecutiveArray( start, length) {
+// const createConsecutiveArray = function( start, length) {
   if (start > length) {
     throw new InvalidParameter('Start must be less than length!');
   }
@@ -20,7 +26,7 @@ const createConsecutiveArray = function( start, length) {
     idx++;
   }
   return arr;
-};
+}
 
 /**
  * Create an Object keyed by consecutive numbers
@@ -28,7 +34,8 @@ const createConsecutiveArray = function( start, length) {
  * @param {number} length
  * @return {{}}
  */
-const createConsecutiveObject = function(start, length) {
+export function createConsecutiveObject(start, length) {
+// const createConsecutiveObject = function(start, length) {
   if (start > length) {
     throw new InvalidParameter('Start must be less than length!');
   }
@@ -37,51 +44,53 @@ const createConsecutiveObject = function(start, length) {
         previousValue[currentValue] = true;
         return previousValue;
       }, {});
-};
+}
 
-/**
- * Chunk an array of numbers to cpu slices
- * @param {Array<number>} arr
- * @return {Array<Array<number>>}
- */
-const cpuChunkArray = function(arr) {
-  if (!Array.isArray(arr)) {
-    throw new InvalidParameter('Must be an Array!');
-  }
-  const chunks = [];
-  const chunk = arr.length / os.cpus().length;
-  for (let i = 0, l = arr.length; i < l; i += chunk) {
-    chunks.push(arr.slice(i, i + chunk));
-  }
-  return chunks;
-};
+// /**
+//  * Chunk an array of numbers to cpu slices
+//  * @param {Array<number>} arr
+//  * @return {Array<Array<number>>}
+//  */
+// export function cpuChunkArray(arr) {
+// // const cpuChunkArray = function(arr) {
+//   if (!Array.isArray(arr)) {
+//     throw new InvalidParameter('Must be an Array!');
+//   }
+//   const chunks = [];
+//   const chunk = arr.length / os.cpus().length;
+//   for (let i = 0, l = arr.length; i < l; i += chunk) {
+//     chunks.push(arr.slice(i, i + chunk));
+//   }
+//   return chunks;
+// }
 
 
-/**
- * Get all files from a path
- * @param {string} dirPath
- * @param {Array<string>} [arrayOfFiles]
- * @return {Array<string>}
- */
-const getAllFiles = function(dirPath, arrayOfFiles) {
-  const files = fs.readdirSync(dirPath);
+// /**
+//  * Get all files from a path
+//  * @param {string} dirPath
+//  * @param {Array<string>} [arrayOfFiles]
+//  * @return {Array<string>}
+//  */
+// export function getAllFiles(dirPath, arrayOfFiles) {
+// // const getAllFiles = function(dirPath, arrayOfFiles) {
+//   const files = fs.readdirSync(dirPath);
+//
+//   arrayOfFiles = arrayOfFiles || [];
+//
+//   files.forEach(function(file) {
+//     if (fs.statSync(dirPath + '/' + file).isDirectory()) {
+//       arrayOfFiles = getAllFiles(dirPath + '/' + file, arrayOfFiles);
+//     } else {
+//       arrayOfFiles.push(path.join(dirPath, '/', file));
+//     }
+//   });
+//
+//   return arrayOfFiles;
+// }
 
-  arrayOfFiles = arrayOfFiles || [];
-
-  files.forEach(function(file) {
-    if (fs.statSync(dirPath + '/' + file).isDirectory()) {
-      arrayOfFiles = getAllFiles(dirPath + '/' + file, arrayOfFiles);
-    } else {
-      arrayOfFiles.push(path.join(dirPath, '/', file));
-    }
-  });
-
-  return arrayOfFiles;
-};
-
-module.exports = {
-  getAllFiles,
-  cpuChunkArray,
-  createConsecutiveArray,
-  createConsecutiveObject,
-};
+// module.exports = {
+//   getAllFiles,
+//   cpuChunkArray,
+//   createConsecutiveArray,
+//   createConsecutiveObject,
+// };

@@ -1,10 +1,15 @@
-const Redis = require('ioredis');
-const {InvalidConfiguration} = require('./errors');
-const {isWindows} = require('nodemon/lib/utils');
+import Redis from 'ioredis';
+import {InvalidConfiguration} from '../../src/errors/index.js';
+const isWindows = process.platform === "win32";
+
+// const Redis = require('ioredis');
+// const {InvalidConfiguration} = require('./errors');
+// const {isWindows} = require('nodemon/lib/utils');
 
 let queues; let connection;
 
-module.exports.spec = `{
+// module.exports.spec = `{
+export const spec = `{
   "title": "Queues",
   "type": "object",
   "properties": {
@@ -31,8 +36,11 @@ module.exports.spec = `{
  *
  * @return {{assets: Queue, blocks: Queue, connection: Redis, orders: Queue}}
  */
-module.exports = function getQueues() {
-  const Queue = isWindows ? require('bull') : require('bullmq').Queue;
+export default async function getQueues() {
+// module.exports = function getQueues() {
+  const Queue = isWindows ?
+    (await import('bull')).default :
+    (await import('bullmq')).Queue;
 
   if (
     typeof process.env['REDIS_MQ_PORT'] === 'undefined' ||

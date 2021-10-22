@@ -1,14 +1,14 @@
-const Redis = require('ioredis');
-const {InvalidConfiguration} = require('./errors');
+import Redis from 'ioredis';
+import {InvalidConfiguration} from '../../src/errors/index.js';
 
+// const Redis = require('ioredis');
+// const {InvalidConfiguration} = require('./errors');
 let events;
 
 /**
  * Get Events
  *
- * Return a singleton instance of Redis. Optionally
- * pass in an instance to use as the singleton.
- * Passing in redis is useful for testing.
+ * Return a singleton instance of Redis.
  *
  * @example
  *   const getEvents = require('./src/events');
@@ -16,7 +16,8 @@ let events;
  *
  * @return {Redis}
  */
-module.exports = function() {
+export default function getEvents() {
+// module.exports = function() {
   if (
     typeof process.env['REDIS_PORT'] === 'undefined' ||
     typeof process.env['REDIS_ADDRESS'] === 'undefined'

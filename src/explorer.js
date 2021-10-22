@@ -1,6 +1,9 @@
+import SwaggerClient from 'swagger-client';
+import {InvalidConfiguration} from './errors/index.js';
+
 // const algosdk = require('algosdk');
-const SwaggerClient = require('swagger-client');
-const InvalidConfiguration = require('./errors/InvalidConfiguration');
+// const SwaggerClient = require('swagger-client');
+// const InvalidConfiguration = require('./errors/InvalidConfiguration');
 
 let client; let indexer;
 
@@ -133,7 +136,8 @@ async function _getCurrentBlock() {
  * @param {number }round
  * @return {Promise<*>}
  */
-async function getBlock({round}) {
+export async function getBlock({round}) {
+// async function getBlock({round}) {
   const api = await _getAPI();
   const {auth} = _getAlgorandConfig();
   const {obj} = await api.block.GetBlock({round}, auth); // eslint-disable-line
@@ -146,7 +150,8 @@ async function getBlock({round}) {
  * @param {number} round
  * @return {Promise<*>}
  */
-async function waitForBlock({round}) {
+export async function waitForBlock({round}) {
+// async function waitForBlock({round}) {
   const api = await _getAPI();
   const {auth} = _getAlgorandConfig();
   // eslint-disable-next-line
@@ -172,18 +177,19 @@ async function _getAppsBlockStart(apps) {
  * @param {Array<{id: number, genesis: number}>} apps
  * @return {Promise<{current: *, start: number}>}
  */
-async function getAppsBlockRange(apps) {
+export async function getAppsBlockRange(apps) {
+// async function getAppsBlockRange(apps) {
   return {
     start: await _getAppsBlockStart(apps),
     current: await _getCurrentBlock(),
   };
 }
 
-module.exports = {
-  getAppsBlockRange,
-  getBlock,
-  waitForBlock,
-};
+// module.exports = {
+//   getAppsBlockRange,
+//   getBlock,
+//   waitForBlock,
+// };
 
 
 // if(process.env.NODE_ENV === 'test'){

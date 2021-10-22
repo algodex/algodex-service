@@ -1,10 +1,15 @@
 #!/usr/bin/env node
-require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
-const {program} = require('commander');
-
-program.version(require('../package.json').version);
+import fs from 'fs';
+import path from 'path';
+import {program} from 'commander';
+import {VIEWS_ROOT} from '../constants.js';
+import {getAllFiles} from './utils/index.js';
+import {getDatabase} from '../src/index.js';
+import dotenv from 'dotenv';
+import {fileURLToPath} from 'url';
+dotenv.config();
+const pkg = (await import('../package.json')).version;
+program.version(pkg);
 program.parse(process.argv);
 
 
@@ -14,22 +19,24 @@ program.parse(process.argv);
  * @return {{language: string, _id: string, views: {}}}
  */
 function loadViews() {
-  const {PROJECT_ROOT} = require('../constants');
-  const {getAllFiles} = require('../src/util');
-  const viewPath = path.join(PROJECT_ROOT, 'views');
-
-  return getAllFiles(viewPath)
+  // const viewPath = path.join(PROJECT_ROOT, 'views');
+  // url.URL(url.pathToFileURL(readDir))
+  return getAllFiles(VIEWS_ROOT)
       .filter((file) => {
-        return !file.match('__tests__');
+        return !file.pathname.match('__tests__');
       })
       .reduce((previousValue, file)=>{
-        const key = path.basename(path.dirname(file));
-        const filename = path.parse(file).name;
-        let fn = fs.readFileSync(file).toString();
+        const filePath = fileURLToPath(file);
+        const key = path.basename(path.dirname(filePath));
+        const filename = path.parse(fileURLToPath(file)).name;
+        let fn = fs.readFileSync(fileURLToPath(file)).toString();
 
-        if (filename === 'map') {
+        if (filename === 'map' || filename === 'reduce') {
           fn = fn.replace('module.exports = ', '');
           fn = fn.replace('../lib', 'views/lib');
+          if (filename === 'reduce') {
+            fn = fn.replace('\n', '');
+          }
         }
 
         if (typeof previousValue.views[key] === 'undefined') {
@@ -51,7 +58,7 @@ function loadViews() {
  * @return {*}
  */
 function save(dd) {
-  return require('../src/db')()
+  return getDatabase()
       .put(dd)
       .then(console.log)
       .catch(console.error);
@@ -72,7 +79,7 @@ function run() {
 
   const dd = loadViews();
 
-  require('../src/db')()
+  getDatabase()
       .get('_design/dex')
       .then(({_rev})=>{
         console.log('Found');
@@ -87,12 +94,6 @@ function run() {
 
 if (process.env.NODE_ENV !== 'test') {
   run();
-} else {
-  module.exports = {
-    run,
-    save,
-    loadViews,
-  };
 }
 
 

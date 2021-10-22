@@ -1,13 +1,15 @@
-const {isWindows} = require('nodemon/lib/utils');
-const getLogger = require('../src/logger');
+import getLogger from '../src/logger.js';
+// const {isWindows} = require('nodemon/lib/utils');
+// const getLogger = require('../src/logger');
 const log = getLogger();
+const isWindows = process.platform === 'win32';
 /**
  * Windows Worker
  *
  * Patch bull to be the same interface as BullMQ.Worker
  * in a Windows environment.
  */
-class WinWorker {
+export class WinWorker {
   /**
    * Return a Worker
    * @param {string} queue
@@ -16,19 +18,38 @@ class WinWorker {
    * @return {Queue}
    */
   constructor(queue, processFn, {concurrency}) {
-    const queueInst = require('../src/queues')()[queue];
+    return this.getQueue(queue, concurrency, processFn);
+  }
+
+  /**
+   * MonkeyPatch an Async GetQueue
+   * @param {string} queue
+   * @param {number} concurrency
+   * @param {function} processFn
+   * @return {Promise<*>}
+   */
+  async getQueue(queue, concurrency, processFn) {
+    const getQ = (await import('../services/messages/queues.js')).default;
+    const queueInst = (await getQ())[queue];
+    console.log(queueInst);
     queueInst.process(queue, concurrency, processFn);
     return queueInst;
   }
 }
 
-module.exports = ({queue, queues}) =>{
+/**
+ * Get the dictionary of Queues
+ * @param {string} queue
+ * @param {object} queues
+ * @return {Promise<void>}
+ */
+export default async function run({queue, queues}) {
   const Worker = isWindows ? WinWorker : require('bullmq').Worker;
 
   // Lighten the load on the broker and do batch processing
-  const worker = new Worker(
+  const worker = await new Worker(
       queue,
-      require(`../src/worker/${queue}`),
+      (await import(`../services/worker/${queue}.js`)).default,
       {connection: queues.connection, concurrency: 1},
   );
 

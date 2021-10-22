@@ -1,7 +1,7 @@
 /**
  * Standard Error
  */
-class DexError extends Error {
+export default class DexError extends Error {
   /**
    * Invalid Configuration
    * @param {string} message
@@ -14,4 +14,4 @@ class DexError extends Error {
 }
 
 
-module.exports = DexError;
+// module.exports = DexError;

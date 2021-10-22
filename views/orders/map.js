@@ -17,7 +17,7 @@ module.exports = function(doc) {
               assetId: parseInt(parts[4]),
             },
           };
-          emit(doc._id, res);
+          emit(res.order.assetId, res);
         }
       }
     }

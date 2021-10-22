@@ -1,7 +1,14 @@
 // Slow but simple WebSocket Server, no hard dependency on Linux like uws
-const {WebSocketServer} = require('ws');
+import {WebSocketServer} from 'ws';
+// const {WebSocketServer} = require('ws');
+
 // const getLogger = require('../src/logger');
-module.exports = ({events}) => {
+// module.exports = ({events}) => {
+/**
+ * Run the socket server
+ * @param {Redis} events
+ */
+export default function run({events}) {
   const PORT = process.env.PORT || 9001;
   console.debug({
     msg: `🚀 Starting Socket Service on port ${PORT}`,

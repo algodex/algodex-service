@@ -1,33 +1,35 @@
-const fs = require('fs');
-const path = require('path');
-const {PROJECT_ROOT} = require('../constants');
-
+import fs from 'fs';
+import path from 'path';
+import {PROJECT_ROOT} from '../constants';
+import {pathToFileURL} from 'url';
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 describe('Algodex Test Suite', ()=>{
   describe('Core Components', ()=> {
-    fs.readdirSync(path.join(PROJECT_ROOT, 'src', '__tests__'))
+    fs.readdirSync(pathToFileURL(path.join('./src', '__tests__')))
         .map((file) => {
-          require(`../src/__tests__/${file}`);
+          import(`../src/__tests__/${file}`);
         });
   });
   describe('Services', ()=> {
-    fs.readdirSync(path.join(PROJECT_ROOT, 'services', '__tests__'))
+    fs.readdirSync(pathToFileURL(path.join('./services', '__tests__')))
         .map((file) => {
-          require(`../services/__tests__/${file}`);
+          import(`../services/__tests__/${file}`);
         });
   });
   describe('Map Reduce', ()=> {
-    fs.readdirSync(path.join(PROJECT_ROOT, 'views', '__tests__'))
+    fs.readdirSync(pathToFileURL(path.join('./views', '__tests__')))
         .map((file) => {
-          require(`../views/__tests__/${file}`);
+          import(`../views/__tests__/${file}`);
         });
   });
   describe('Commands', ()=> {
-    fs.readdirSync(path.join(PROJECT_ROOT, 'bin', '__tests__'))
+    fs.readdirSync(pathToFileURL(path.join('./bin', '__tests__')))
         .map((file) => {
-          require(`../bin/__tests__/${file}`);
+          import(`../bin/__tests__/${file}`);
         });
   });
-  test('Fail until ready', ()=>{
-    expect(1).toEqual(2);
-  });
+  // test('Fail until ready', ()=>{
+  //   expect(1).toEqual(2);
+  // });
 });

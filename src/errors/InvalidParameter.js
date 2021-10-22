@@ -1,14 +1,16 @@
-const DexError = require('./DexError');
+import DexError from './DexError.js';
+import getMessage from '../message.js';
+// const DexError = require('./DexError');
 /**
  * Invalid Parameter
  */
-class InvalidParameter extends DexError {
+export default class InvalidParameter extends DexError {
+// class InvalidParameter extends DexError {
   /**
    * Invalid Parameter
    * @param {string} description
    */
   constructor(description) {
-    const getMessage = require('../message');
     super(
         getMessage({
           name: 'InvalidParameter',
@@ -19,4 +21,4 @@ class InvalidParameter extends DexError {
   }
 }
 
-module.exports = InvalidParameter;
+// module.exports = InvalidParameter;

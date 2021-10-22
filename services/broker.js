@@ -1,5 +1,7 @@
-const {getBlock, waitForBlock} = require('../src/explorer');
-const getLogger = require('../src/logger');
+import {getBlock, waitForBlock} from '../src/explorer.js';
+import getLogger from '../src/logger.js';
+// const {getBlock, waitForBlock} = require('../src/explorer');
+// const getLogger = require('../src/logger');
 const log = getLogger();
 
 log.info({
@@ -13,7 +15,7 @@ log.info({
  * @param {number|string} round
  * @return {Promise<void>}
  */
-module.exports = async function run(
+export default async function run(
     {
       queues,
       events,

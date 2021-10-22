@@ -1,16 +1,20 @@
 #!/usr/bin/env node
 
-require('dotenv').config();
-const cluster = require('cluster');
-const process = require('process');
+import dotenv from 'dotenv';
+dotenv.config();
+import {
+  createConsecutiveObject,
+  getAppsBlockRange,
+  getBlock,
+  getDatabase,
+} from '../src/index.js';
+import getQueues from '../services/messages/queues.js';
+import {cpuChunkArray} from './utils/index.js';
+import cluster from 'cluster';
+import process from 'process';
 
-const {createConsecutiveObject, cpuChunkArray} = require('../src/util');
-const {getAppsBlockRange, getBlock} = require('../src/explorer');
-const getQueues = require('../src/queues');
-const getDatabase = require('../src/db');
-
-const queues = getQueues();
-const db = getDatabase();
+const queues = await getQueues();
+const db = await getDatabase();
 
 
 const compare = async function() {
@@ -65,8 +69,11 @@ const queue = async function() {
 };
 
 
-// Run the Sync
-(async () => {
+/**
+ * Run Sync
+ * @return {Promise<void>}
+ */
+export default async function run() {
   if (!cluster.isWorker) {
     console.log(`Primary ${process.pid} is running`);
     await compare();
@@ -82,4 +89,9 @@ const queue = async function() {
   if (cluster.isWorker) {
     await queue();
   }
-})();
+}
+
+if (process.env.NODE_ENV !== 'test') {
+  run();
+}
+

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-
-require('dotenv').config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 (async ()=>{
-  const {DexError} = require('../src/errors');
-  const getMessage = require('../src/message');
+  const {DexError} = await import('../src/errors/index.js');
+  const getMessage = await import('../src/message.js');
 
-  const {RedisMemoryServer} = require('redis-memory-server');
+  const {RedisMemoryServer} = await import('redis-memory-server');
   const redisServer = new RedisMemoryServer({
     instance: {
       port: 6379,
