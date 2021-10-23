@@ -1,8 +1,10 @@
 import getLogger from '../src/logger.js';
+import {Worker as BullWorker} from 'bullmq';
 // const {isWindows} = require('nodemon/lib/utils');
 // const getLogger = require('../src/logger');
 const log = getLogger();
 const isWindows = process.platform === 'win32';
+
 /**
  * Windows Worker
  *
@@ -44,7 +46,7 @@ export class WinWorker {
  * @return {Promise<void>}
  */
 export default async function run({queue, queues}) {
-  const Worker = isWindows ? WinWorker : require('bullmq').Worker;
+  const Worker = isWindows ? WinWorker : BullWorker;
 
   // Lighten the load on the broker and do batch processing
   const worker = await new Worker(
