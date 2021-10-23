@@ -4,6 +4,8 @@ module.exports = function(keys, values, rereduce) {
   } else {
     return {
       'id': values[0].assetId,
+      'type': values.map((val)=>val.type),
+      'apat': values.map((val)=>val.apat),
       'o': values[0].price,
       'l': Math.min.apply(null, values.map((val)=>val.price)),
       'h': Math.max.apply(null, values.map((val)=>val.price)),
