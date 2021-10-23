@@ -8,7 +8,7 @@ module.exports = function(keys, values, rereduce) {
       'l': Math.min.apply(null, values.map((val)=>val.price)),
       'h': Math.max.apply(null, values.map((val)=>val.price)),
       'c': values[values.length],
-      'sum': sum(values.map((val)=>val.price)),
+      'avg': sum(values.map((val)=>val.price))/values.length,
       'count': values.length,
 
     };

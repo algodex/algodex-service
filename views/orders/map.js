@@ -10,9 +10,12 @@ module.exports = function(doc) {
       const day = date.getUTCDate();
       const year = date.getUTCFullYear();
       const hour = date.getHours();
+      const min = date.getMinutes();
+      const sec = date.getSeconds();
 
       if (txn.txn && txn.txn.type) {
-        const isAlgodex = txn.txn.apid === 22045503 || txn.txn.apid === 22045522;
+        const isAlgodex = ( txn.txn.apid === 22045503 ||
+          txn.txn.apid === 22045522);
         if (txn.txn.type === 'appl' && isAlgodex) {
           if (typeof txn.txn.apaa !== 'undefined') {
             const orderInfo = crypto.recode(txn.txn.apaa[1], 'aota');
@@ -28,12 +31,9 @@ module.exports = function(doc) {
               price: parseFloat(parseInt(parts[2]))/parseInt(parts[1]),
               block: doc._id,
               ts: doc.ts,
-              hour: newdate,
             };
 
-            emit(
-                [year, month, day, hour, res.assetId], res,
-            );
+            emit([res.assetId, year, month, day, hour, min, sec], res);
           }
         }
       }
