@@ -10,7 +10,8 @@ describe('Algorand Suite', ()=>{
     process.env.ALGORAND_EXPLORER = 'https://testnet.algoexplorerapi.io';
     process.env.ALGORAND_DAEMON = 'localhost';
     process.env.ALGORAND_DAEMON_PORT = 8080;
-    process.env.ALGORAND_DAEMON_TOKEN = '308c0179ca4846ffaf06de22b1231b181313973a081721ea357c612a3bbcef04';
+    process.env.ALGORAND_DAEMON_TOKEN =
+      '308c0179ca4846ffaf06de22b1231b181313973a081721ea357c612a3bbcef04';
     const block = await explorer.getBlock({round: 1986});
     expect(block).toEqual(require(
         `${PROJECT_ROOT}/tests/fixtures/block-testnet-1986.json`,
@@ -24,7 +25,8 @@ describe('Algorand Suite', ()=>{
     process.env.ALGORAND_EXPLORER = 'https://testnet.algoexplorerapi.io';
     process.env.ALGORAND_DAEMON = 'localhost';
     process.env.ALGORAND_DAEMON_PORT = 8080;
-    process.env.ALGORAND_DAEMON_TOKEN = '308c0179ca4846ffaf06de22b1231b181313973a081721ea357c612a3bbcef04';
+    process.env.ALGORAND_DAEMON_TOKEN =
+      '308c0179ca4846ffaf06de22b1231b181313973a081721ea357c612a3bbcef04';
     const block = await explorer.waitForBlock({round: 1986});
     expect(block['last-round']).toBeGreaterThan(0);
   });
@@ -47,7 +49,8 @@ describe('Algorand Suite', ()=>{
     process.env.ALGORAND_EXPLORER = 'https://testnet.algoexplorerapi.io';
     process.env.ALGORAND_DAEMON = 'localhost';
     process.env.ALGORAND_DAEMON_PORT = 8080;
-    process.env.ALGORAND_DAEMON_TOKEN = '308c0179ca4846ffaf06de22b1231b181313973a081721ea357c612a3bbcef04';
+    process.env.ALGORAND_DAEMON_TOKEN =
+      '308c0179ca4846ffaf06de22b1231b181313973a081721ea357c612a3bbcef04';
     const range = await explorer.getAppsBlockRange(apps);
 
     expect(range.start).toEqual(15915387);

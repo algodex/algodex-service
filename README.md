@@ -1,5 +1,6 @@
 # Algodex Gradation
 
+[![doc-coverage](./docs/badge.svg)](https://esdoc.org/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![@algodex/service](https://github.com/algodex/algodex-node-gradation/actions/workflows/package.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-node-gradation/actions/workflows/package.yml)
 [![algodex/service:image](https://github.com/algodex/algodex-node-gradation/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-node-gradation/actions/workflows/docker-image.yml)
@@ -144,8 +145,7 @@ to fetch associated documents from the database
     "order_asset_15322902_tx3",
     "order_asset_15322902_tx4",
     "order_asset_15322902_tx5",
-    "order_asset_15322902_tx6",
-    ...
+    "order_asset_15322902_tx6"
   ],
   "sell": [
     "order_asset_15322902_tx1",
@@ -153,8 +153,7 @@ to fetch associated documents from the database
     "order_asset_15322902_tx3",
     "order_asset_15322902_tx4",
     "order_asset_15322902_tx5",
-    "order_asset_15322902_tx6",
-    ...
+    "order_asset_15322902_tx6"
   ]
 }
 ```
@@ -198,8 +197,7 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
-      "order_asset_15322902_tx",
-      ...
+      "order_asset_15322902_tx"
     ],
     "sell": [
       "order_asset_15322902_tx",
@@ -207,8 +205,7 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
-      "order_asset_15322902_tx",
-      ...
+      "order_asset_15322902_tx"
     ]
   },
   {
@@ -219,8 +216,7 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
-      "order_asset_15322902_tx",
-      ...
+      "order_asset_15322902_tx"
     ],
     "sell": [
       "order_asset_15322902_tx",
@@ -228,8 +224,7 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
-      "order_asset_15322902_tx",
-      ...
+      "order_asset_15322902_tx"
     ]
   },
   {
@@ -240,8 +235,7 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
-      "order_asset_15322902_tx",
-      ...
+      "order_asset_15322902_tx"
     ],
     "sell": [
       "order_asset_15322902_tx",
@@ -249,8 +243,7 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
-      "order_asset_15322902_tx",
-      ...
+      "order_asset_15322902_tx"
     ]
   },
   {
@@ -261,8 +254,7 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
-      "order_asset_15322902_tx",
-      ...
+      "order_asset_15322902_tx"
     ],
     "sell": [
       "order_asset_15322902_tx",
@@ -270,8 +262,7 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
       "order_asset_15322902_tx",
-      "order_asset_15322902_tx",
-      ...
+      "order_asset_15322902_tx"
     ]
   },
   {
@@ -334,7 +325,6 @@ that can be sent to the client should be emitted immediately. The **Boulder** ca
     "unit-name": "LAMP",
     "unit-name-b64": "TEFNUA=="
   }
-  ...
 ]
 ```
 

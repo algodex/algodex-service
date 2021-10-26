@@ -1,75 +1,75 @@
+#!/usr/bin/env node
+
 /**
  * Server configures the Queues and starts a Service based on Context
  */
 import dotenv from 'dotenv';
 dotenv.config();
 
-const env = typeof import.meta.env === 'undefined' ?
-  process.env :
-  import.meta.env;
+import {
+  getDatabase,
+  getQueues,
+  getEvents,
+  getEnvironment,
+} from './src/index.js';
 
-// Configure database
-import getDatabase from './src/db.js';
+// Configure Database
 const db = await getDatabase();
-
-// Configure Queues
-import getQueues from './services/messages/queues.js';
+// Configure Redis
 const queues = await getQueues();
-
-import getEvents from './services/messages/events.js';
-
-// const getDatabase = require('./src/db');
-// const db = getDatabase();
-//
-// // Configure Queues
-// const getQueues = require('./src/queues');
-// const queues = getQueues();
-//
-// const getEvents = require('./src/events');
-// const {isInt} = require('ioredis/built/utils');
-
 const events = await getEvents();
 
-// Context Switcher, Set APP_CONTEXT to run individual services
-if (typeof env['APP_CONTEXT'] === 'undefined') {
-  env['APP_CONTEXT'] = 'socket';
-}
-if (typeof env['APP_WORKER'] === 'undefined') {
-  env['APP_WORKER'] = 'blocks';
-}
+const APP_CONTEXT = getEnvironment(
+    'APP_CONTEXT',
+    {throwError: false},
+) || 'socket';
+const APP_WORKER = getEnvironment(
+    'APP_WORKER',
+    {throwError: false},
+) || 'blocks';
 
-
-// Load the requested Context
-(await import(
-    `./services/${env.APP_CONTEXT}.js`
-)).default({queue: env['APP_WORKER'], events, queues, db});
-// console.log(env);
-// Run the everything in Development
-if (env.NODE_ENV === 'development') {
-  Object.keys(queues).forEach(async (queue) => {
-    if (queue !== 'connection') {
-      (await import(`./services/worker.js`))
-          .default({queue, events, queues, db});
-    }
+/**
+ * Run the Server
+ * @param {number} round
+ * @param {string} context
+ * @param {string} worker
+ * @param {boolean} skip
+ * @return {Promise<*>}
+ */
+async function run({round=1, context, worker, skip=true}={}) {
+  return (await import(
+      `./src/services/${context || APP_CONTEXT}.js`
+  )).default({
+    queue: worker || APP_WORKER,
+    events,
+    queues,
+    round,
+    db,
+    skip,
   });
+}
 
-  db.changes({
-    descending: true,
+/**
+ * Run the Broker
+ * @return {Promise<*>}
+ */
+async function runBroker() {
+  return db.query('sync/blocks', {
     limit: 1,
-  }).then(async function({results}) {
-    console.log(results);
-    let round = 1;
-    if (results && results.length > 0 &&
-      Number.isInteger(results[0].id.split(':')[1])) {
-      round = results[0].id.split(':')[1];
+    descending: true,
+  }).then(async ({rows}) => {
+    let round;
+    if (rows && rows.length > 0 && Number.isInteger(rows[0].key)) {
+      round = rows[0].key;
     }
-
-    // Start the Broker
-    (await import(
-        `./services/broker.js`
-    )).default({events, queues, round, skip: true});
-  }).catch(function(err) {
-    // handle errors
-    console.log(err);
+    return await run({round, context: 'broker', skip: true});
+  }).catch((e)=>{
+    console.log(e);
   });
+}
+
+if (APP_CONTEXT === 'broker') {
+  await runBroker();
+} else {
+  await run();
 }

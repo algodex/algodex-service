@@ -1,4 +1,4 @@
-import getLogger from '../src/logger.js';
+import getLogger from '../logger.js';
 import {Worker as BullWorker} from 'bullmq';
 // const {isWindows} = require('nodemon/lib/utils');
 // const getLogger = require('../src/logger');
@@ -17,7 +17,7 @@ export class WinWorker {
    * @param {string} queue
    * @param {function} processFn
    * @param {number} concurrency
-   * @return {Queue}
+   * @return {Promise<Queue>}
    */
   constructor(queue, processFn, {concurrency}) {
     return this.getQueue(queue, concurrency, processFn);
@@ -33,7 +33,6 @@ export class WinWorker {
   async getQueue(queue, concurrency, processFn) {
     const getQ = (await import('../services/messages/queues.js')).default;
     const queueInst = (await getQ())[queue];
-    console.log(queueInst);
     queueInst.process(queue, concurrency, processFn);
     return queueInst;
   }
@@ -46,25 +45,44 @@ export class WinWorker {
  * @return {Promise<void>}
  */
 export default async function run({queue, queues}) {
+  log.debug({
+    description: 'running worker',
+    queue,
+  });
   const Worker = isWindows ? WinWorker : BullWorker;
 
   // Lighten the load on the broker and do batch processing
   const worker = await new Worker(
       queue,
       (await import(`../services/worker/${queue}.js`)).default,
-      {connection: queues.connection, concurrency: 1},
+      {connection: queues.connection, concurrency: 10},
   );
 
   worker.on('error',
-      (err)=>log.error(err.message),
+      (err)=>log.error({
+        msg: '👷 worker failure!',
+        data: err,
+      }),
   );
   worker.on('failed',
-      (job, err)=>log.error(err.message),
+      (job, err)=>{
+        log.error({
+          msg: '👷 job failed!',
+          data: err,
+        });
+      },
   );
-  worker.on('completed',
-      (job, result)=>log.debug({event: 'completed', data: result}),
-  );
-  worker.on('waiting',
-      (jobId)=>log.debug({type: 'QueueWaiting', description: jobId}),
-  );
+  // worker.on('completed',
+  //     (job, result)=>log.debug({
+  //       name: `${name}/job/${job.id}`,
+  //       msg: '👷 job completed',
+  //       data: result,
+  //     }),
+  // );
+  // worker.on('waiting',
+  //     (jobId)=>log.debug({
+  //       name: `${name}/job/${jobId}`,
+  //       msg: '👷 job waiting...',
+  //     }),
+  // );
 };

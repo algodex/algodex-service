@@ -1,4 +1,11 @@
-module.exports = function(keys, values, rereduce) {
+/**
+ * Orders Reducer
+ * @param {array|null} keys
+ * @param {array} values
+ * @param {boolean} rereduce
+ * @return {object}
+ */
+export default function(keys, values, rereduce) {
   if (rereduce) {
     return values;
   } else {

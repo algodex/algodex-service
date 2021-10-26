@@ -1,23 +1,13 @@
-import {InvalidConfiguration, InvalidParameter} from './errors/index.js';
-// import getLogger from '@exports/logger';
+import {getLogger, InvalidConfiguration, InvalidParameter} from './index.js';
 import PouchDB from 'pouchdb';
+// const PouchDB = require('pouchdb-core');
 // import PouchHTTP from 'pouchdb-adapter-http';
 // import PouchMem from 'pouchdb-adapter-memory';
-import getLogger from './logger.js';
 // PouchDB.plugin(PouchHTTP);
 // PouchDB.plugin(PouchMem);
 const log = getLogger();
-// import PouchHTTP from 'pouchdb-adapter-http';
-// import PouchMem from 'pouchdb-adapter-memory';
-// const {InvalidConfiguration, InvalidParameter} = require('./errors');
-// const log = require('./logger');
-// const PouchDB = require('pouchdb-core');
-
-// PouchDB.plugin(require('pouchdb-adapter-http'));
-// PouchDB.plugin(require('pouchdb-adapter-memory'));
 
 let db;
-
 
 PouchDB.prototype.generateDocId = function generateDocId(type, _id) {
   let res;
@@ -35,13 +25,27 @@ PouchDB.prototype.generateDocId = function generateDocId(type, _id) {
 };
 
 PouchDB.prototype.save = function save(_id, doc) {
+  log.debug({
+    msg: '📤 saving to database',
+  });
   return this.get(_id.toString())
-      .catch((err)=>{
-        if (err.error === 'not_found') {
-          return this.post({_id: _id, ...doc});
+      .then(({ok, id, rev})=>{
+        return {
+          _id: id,
+          _rev: rev,
+          ok,
+        };
+      })
+      .catch((error)=>{
+        if (error.error === 'not_found') {
+          return this.post({_id: _id, ...doc}).catch((e)=>{
+            console.log(e);
+          });
+        } else {
+          throw error;
         }
       });
-}; ;
+};
 
 /**
  * Get the Database
@@ -64,7 +68,7 @@ export default function getDatabase() {
   }
 
   const url = env.COUCHDB_URL || env.SNOWPACK_PUBLIC_COUCHDB_URL;
-  console.log(url);
+  // log.debug(url);
 
   if (typeof db === 'undefined') {
     // db = new PouchDB(url, {skip_setup: true});

@@ -1,3 +1,5 @@
+
+
 const {PROJECT_ROOT} = require('../../constants');
 const block = require(
     `${PROJECT_ROOT}/tests/fixtures/blocks-testnet-16951642.json`,

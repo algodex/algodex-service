@@ -1,4 +1,4 @@
-// eslint-disable-next-line require-jsdoc
+// eslint-disable-next-line
 class Queue {
   /**
    * Create Queue
@@ -8,12 +8,21 @@ class Queue {
     this.name = name;
   }
 
-  process = (fn) => {
+  /**
+   * Process Queue
+   * @param {function} fn
+   */
+  process(fn) {
     console.log(`Registered function ${this.name}`);
     this.processFn = fn;
   };
 
-  add = (data) => {
+  /**
+   * Add Data
+   * @param {object} data
+   * @return {*}
+   */
+  add(data) {
     console.log(`Running ${this.name}`);
     return this.processFn({data});
   };

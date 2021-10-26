@@ -10,7 +10,7 @@ export default {
     '**/services/**/*',
   ],
   alias: {
-    pouchdb: 'pouchdb-browser',
+    'pouchdb': 'pouchdb-browser',
     '@exports': './src/',
   },
   mount: {
@@ -27,5 +27,5 @@ export default {
   },
   buildOptions: {
     /* ... */
-  }
+  },
 };

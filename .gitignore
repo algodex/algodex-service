@@ -1,3 +1,13 @@
+.idea
+
+.couchdb
+log.txt
+
+docs/**
+!docs/images
+!docs/badge.svg
+
+
 build
 pkg
 src/models/**/*

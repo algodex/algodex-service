@@ -1,6 +1,6 @@
-const {InvalidConfiguration} = require('../Errors');
-const getDatabase = require('../db');
-const PouchDB = require('pouchdb-core');
+import PouchDB from 'pouchdb-core';
+import InvalidConfiguration from '../src/errors/InvalidConfiguration.js';
+import getDatabase from '../src/db.js';
 
 if (typeof process.env.INTEGRATION_TEST === 'undefined') {
   PouchDB.plugin(require('pouchdb-adapter-memory'));

@@ -12,6 +12,3 @@ export default class DexError extends Error {
     this.name = name;
   }
 }
-
-
-// module.exports = DexError;

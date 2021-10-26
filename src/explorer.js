@@ -1,9 +1,11 @@
 import SwaggerClient from 'swagger-client';
-import {InvalidConfiguration} from './errors/index.js';
+import InvalidConfiguration from './errors/InvalidConfiguration.js';
+
+// import getLogger from './logger.js';
+
+// const log = await getLogger();
 
 // const algosdk = require('algosdk');
-// const SwaggerClient = require('swagger-client');
-// const InvalidConfiguration = require('./errors/InvalidConfiguration');
 
 let client; let indexer;
 
@@ -69,6 +71,7 @@ function _getAlgorandConfig() {
 /**
  * Get the Algorand API
  * @return {Promise<*>}
+ * @private
  */
 async function _getAPI() {
   const url = _getAlgorandDaemonURL();
@@ -90,6 +93,7 @@ async function _getAPI() {
 /**
  * Get the Algorand Indexer API
  * @return {Promise<*>}
+ * @private
  */
 async function _getIndexAPI() {
   const url = _getAlgorandURL();
@@ -104,6 +108,7 @@ async function _getIndexAPI() {
  *
  * @param {number} id Block ID
  * @return {Promise<*>}
+ * @private
  */
 async function _getGenesisBlock(id) {
   const api = await _getIndexAPI();
@@ -114,6 +119,7 @@ async function _getGenesisBlock(id) {
 /**
  *
  * @return {Promise<*>}
+ * @private
  */
 async function _getHealthCheck() {
   const api = await _getIndexAPI();
@@ -124,6 +130,7 @@ async function _getHealthCheck() {
 /**
  *
  * @return {Promise<*>}
+ * @private
  */
 async function _getCurrentBlock() {
   const health = await _getHealthCheck();
@@ -137,7 +144,6 @@ async function _getCurrentBlock() {
  * @return {Promise<*>}
  */
 export async function getBlock({round}) {
-// async function getBlock({round}) {
   const api = await _getAPI();
   const {auth} = _getAlgorandConfig();
   const {obj} = await api.block.GetBlock({round}, auth); // eslint-disable-line
@@ -151,7 +157,6 @@ export async function getBlock({round}) {
  * @return {Promise<*>}
  */
 export async function waitForBlock({round}) {
-// async function waitForBlock({round}) {
   const api = await _getAPI();
   const {auth} = _getAlgorandConfig();
   // eslint-disable-next-line
@@ -178,23 +183,8 @@ async function _getAppsBlockStart(apps) {
  * @return {Promise<{current: *, start: number}>}
  */
 export async function getAppsBlockRange(apps) {
-// async function getAppsBlockRange(apps) {
   return {
     start: await _getAppsBlockStart(apps),
     current: await _getCurrentBlock(),
   };
 }
-
-// module.exports = {
-//   getAppsBlockRange,
-//   getBlock,
-//   waitForBlock,
-// };
-
-
-// if(process.env.NODE_ENV === 'test'){
-//   module.exports.test = {
-//     _getAppsBlockStart,
-//     _
-//   }
-// }

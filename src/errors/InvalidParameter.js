@@ -1,11 +1,9 @@
 import DexError from './DexError.js';
-import getMessage from '../message.js';
-// const DexError = require('./DexError');
+import {getMessage} from '../index.js';
 /**
  * Invalid Parameter
  */
 export default class InvalidParameter extends DexError {
-// class InvalidParameter extends DexError {
   /**
    * Invalid Parameter
    * @param {string} description
@@ -20,5 +18,3 @@ export default class InvalidParameter extends DexError {
     );
   }
 }
-
-// module.exports = InvalidParameter;
