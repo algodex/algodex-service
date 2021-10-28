@@ -3,9 +3,9 @@
 .couchdb
 log.txt
 
-docs/**
-!docs/images
-!docs/badge.svg
+assets/**
+!assets/images
+!assets/badge.svg
 
 
 build
