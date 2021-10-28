@@ -10,6 +10,93 @@
   "bin": {
     "dex-service": "./server.js"
   },
+  "esdoc": {
+    "source": ".",
+    "destination": "./.wiki",
+    "includes": ["^bin", "^messages","^views","^workers"],
+    "plugins": [
+      {
+        "name": "esdoc-ecmascript-proposal-plugin",
+        "option": {
+          "all": true
+        }
+      },{
+        "name": "esdoc-coverage-plugin"
+      },
+      {
+        "name": "esdoc-publish-markdown-plugin",
+        "option": {
+          "filename": "README.md"
+        }
+      }
+    ]
+  },
+  "jest": {
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 90,
+        "lines": 90,
+        "statements": 90
+      }
+    },
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!**/.wiki/**",
+      "!**/.husky/**",
+      "!**/coverage/**",
+      "!**/node_modules/**",
+      "!**/vendor/**"
+    ]
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      [
+        "semantic-release-gitmoji",
+        {
+          "releaseRules": {
+            "major": [
+              ":boom:",
+              "💥"
+            ],
+            "minor": [
+              ":sparkles:",
+              "✨"
+            ],
+            "patch": [
+              ":bug:",
+              ":ambulance:",
+              ":lock:",
+              "🐛",
+              "🚑",
+              "🔒"
+            ]
+          },
+          "releaseNotes": {
+            "issueResolution": {
+              "template": "{baseUrl}/{owner}/{repo}/issues/{ref}",
+              "baseUrl": "https://github.com",
+              "source": "github.com"
+            }
+          }
+        }
+      ],
+      "@semantic-release/npm",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json"
+          ],
+          "message": "🔖 ${nextRelease.version} \n\n${nextRelease.notes}"
+        }
+      ],
+      "@semantic-release/github"
+    ]
+  },
   "eslintConfig": {
     "globals": {
       "emit": true
@@ -50,23 +137,18 @@
   "author": "Michael Feher",
   "license": "UNLICENSED",
   "dependencies": {
+    "@algodex/common": "0.0.0-development",
     "@sentry/node": "^6.13.3",
     "@sentry/tracing": "^6.13.3",
-    "ajv": "^8.6.3",
     "algosdk": "^1.12.0",
-    "bullmq": "^1.50.2",
+    "bull": "^4.0.0",
+    "bullmq": "^1.50.5",
     "commander": "^8.2.0",
-    "ioredis": "^4.28.0",
-    "module": "^1.2.5",
-    "pino": "^7.0.5",
     "pino-sentry": "^0.9.0",
-    "pouchdb-adapter-http": "^7.2.2",
-    "pouchdb-browser": "^7.2.2",
-    "pouchdb-core": "^7.2.2",
-    "swagger-client": "^3.17.0",
     "ws": "^8.2.3"
   },
   "devDependencies": {
+    "@algodex/cli": "^0.0.0-development",
     "@babel/eslint-parser": "^7.15.8",
     "@babel/plugin-syntax-top-level-await": "^7.14.5",
     "@pika/pack": "^0.5.0",
@@ -86,6 +168,7 @@
     "devmoji": "^2.3.0",
     "dotenv": "^10.0.0",
     "esdoc": "^1.1.0",
+    "esdoc-coverage-plugin": "^1.1.0",
     "esdoc-ecmascript-proposal-plugin": "^1.0.0",
     "esdoc-publish-markdown-plugin": "^1.1.0",
     "esdoc-standard-plugin": "^1.0.0",
@@ -104,7 +187,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/algodex/algodex-node-gradation.git"
+    "url": "https://github.com/algodex/algodex-service.git"
   },
   "publishConfig": {
     "access": "restricted"

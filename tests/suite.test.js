@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import {PROJECT_ROOT} from '../constants';
 import {pathToFileURL} from 'url';
-import { createRequire } from "module";
+import {createRequire} from 'module';
 const require = createRequire(import.meta.url);
 describe('Algodex Test Suite', ()=>{
   describe('Core Components', ()=> {
@@ -26,7 +26,7 @@ describe('Algodex Test Suite', ()=>{
   describe('Commands', ()=> {
     fs.readdirSync(pathToFileURL(path.join('./bin', '__tests__')))
         .map((file) => {
-          import(`../bin/__tests__/${file}`);
+          import(`./packages/service/runners/__tests__/${file}`);
         });
   });
   // test('Fail until ready', ()=>{

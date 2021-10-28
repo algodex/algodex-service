@@ -1,5 +1,5 @@
-import {getDatabase, getLogger} from '../../index.js';
-const log = getLogger();
+import {useDatabase, useLogger} from '@algodex/common';
+const log = useLogger();
 
 /**
  * Process a Block
@@ -7,7 +7,7 @@ const log = getLogger();
  * @return {Promise<*>}
  */
 export default async function work({data}) {
-  const db = getDatabase();
+  const db = useDatabase();
   const _id = db.generateDocId('block', data.rnd);
 
   log.info({

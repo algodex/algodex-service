@@ -7,17 +7,21 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import {
-  getDatabase,
-  getQueues,
-  getEvents,
+  useDatabase,
   getEnvironment,
-} from './src/index.js';
+} from '@algodex/common';
+import {
+  useQueues,
+} from './messages/queues.js';
+import {
+  useEvents,
+} from './messages/events.js';
 
 // Configure Database
-const db = await getDatabase();
+const db = await useDatabase();
 // Configure Redis
-const queues = await getQueues();
-const events = await getEvents();
+const queues = await useQueues();
+const events = await useEvents();
 
 const APP_CONTEXT = getEnvironment(
     'APP_CONTEXT',
@@ -29,7 +33,10 @@ const APP_WORKER = getEnvironment(
 ) || 'blocks';
 
 /**
- * Run the Server
+ * Server.js Entrypoint
+ *
+ * Run a service bin based on context.
+ *
  * @param {number} round
  * @param {string} context
  * @param {string} worker
@@ -38,7 +45,7 @@ const APP_WORKER = getEnvironment(
  */
 async function run({round=1, context, worker, skip=true}={}) {
   return (await import(
-      `./src/services/${context || APP_CONTEXT}.js`
+      `./runners/${context || APP_CONTEXT}.js`
   )).default({
     queue: worker || APP_WORKER,
     events,
@@ -50,7 +57,8 @@ async function run({round=1, context, worker, skip=true}={}) {
 }
 
 /**
- * Run the Broker
+ *
+ *
  * @return {Promise<*>}
  */
 async function runBroker() {
@@ -58,9 +66,9 @@ async function runBroker() {
     limit: 1,
     descending: true,
   }).then(async ({rows}) => {
-    let round;
+    let round = 1;
     if (rows && rows.length > 0 && Number.isInteger(rows[0].key)) {
-      round = rows[0].key;
+      round = parseInt(rows[0].key);
     }
     return await run({round, context: 'broker', skip: true});
   }).catch((e)=>{

@@ -1,8 +1,6 @@
-import getLogger from '../logger.js';
+import {useLogger} from '@algodex/common';
 import {Worker as BullWorker} from 'bullmq';
-// const {isWindows} = require('nodemon/lib/utils');
-// const getLogger = require('../src/logger');
-const log = getLogger();
+const log = useLogger();
 const isWindows = process.platform === 'win32';
 
 /**
@@ -31,7 +29,7 @@ export class WinWorker {
    * @return {Promise<*>}
    */
   async getQueue(queue, concurrency, processFn) {
-    const getQ = (await import('../services/messages/queues.js')).default;
+    const getQ = (await import('../messages/queues.js')).default;
     const queueInst = (await getQ())[queue];
     queueInst.process(queue, concurrency, processFn);
     return queueInst;
@@ -54,7 +52,7 @@ export default async function run({queue, queues}) {
   // Lighten the load on the broker and do batch processing
   const worker = await new Worker(
       queue,
-      (await import(`../services/worker/${queue}.js`)).default,
+      (await import(`../workers/${queue}.js`)).default,
       {connection: queues.connection, concurrency: 10},
   );
 

@@ -1,5 +1,5 @@
 // import Redis from 'ioredis';
-import {getRedis} from '../../index.js';
+import {useRedis} from '@algodex/common';
 let events;
 
 /**
@@ -13,10 +13,10 @@ let events;
  *
  * @return {Redis}
  */
-export default function getEvents() {
+export default function useEvents() {
   if (typeof events === 'undefined') {
     // Define connection
-    events = getRedis().duplicate();
+    events = useRedis().duplicate();
   }
   return events;
 };

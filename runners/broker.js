@@ -1,15 +1,22 @@
-import {getLogger, explorer} from '../index.js';
-const log = getLogger();
+import {useLogger, waitForBlock, getBlock} from '@algodex/common';
+const log = useLogger();
 
 log.info({
   msg: '🎉 Broker Starting',
 });
 
 /**
+ * Run the Broker
  *
- * @param {object} queues
- * @param {object} events
- * @param {number|string} round
+ * Broker is responsible for watching blocks and publishing their results.
+ * The Broker(Pub) is started with a list of MessageQueues, keyed by name.
+ * Queues are used for publishing to subscribed Workers(Sub). An Events
+ * stream Redis
+ *
+ * @param {object} queues Keyed list of Queues with connection
+ * @param {Redis} events
+ * @param {number} round
+ * @param {boolean} [skip]
  * @return {Promise<void>}
  */
 export default async function run(
@@ -30,7 +37,7 @@ export default async function run(
    * @type {{"last-round": number}}
    */
   // Wait for the next block
-  const {'last-round': current} = await explorer.waitForBlock({round});
+  const {'last-round': current} = await waitForBlock({round});
 
   // log.info({
   //   msg: 'Found Block',
@@ -47,7 +54,7 @@ export default async function run(
     msg: `🔨 processing next round ${round}`,
   });
 
-  const block = await explorer.getBlock({round});
+  const block = await getBlock({round});
   await queues.blocks.add('blocks', block, {removeOnComplete: true});
   await events.publish(`blocks`, JSON.stringify(block.rnd));
   log.info({

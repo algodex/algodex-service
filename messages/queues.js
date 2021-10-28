@@ -1,5 +1,5 @@
 // import Redis from 'ioredis';
-import {getRedis} from '../../index.js';
+import {useRedis} from '@algodex/common';
 const isWindows = process.platform === 'win32';
 
 let queues; let connection;
@@ -11,15 +11,14 @@ let queues; let connection;
  *
  * @return {{assets: Queue, blocks: Queue, connection: Redis, orders: Queue}}
  */
-export default async function getQueues() {
-// module.exports = function getQueues() {
+export default async function useQueues() {
   const Queue = isWindows ?
     (await import('bull')).default :
     (await import('bullmq')).Queue;
 
   if (typeof connection === 'undefined') {
     // Define connection
-    connection = getRedis();
+    connection = useRedis();
   }
 
   if (typeof queues === 'undefined') {
