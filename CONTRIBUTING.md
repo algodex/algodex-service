@@ -2,26 +2,35 @@
 
 Start by installing the following:
 
-  - Docker
-  - Nodejs
+- [Nodejs v16](https://nodejs.org/en/download/)
 
-## 🚀 Launching full stack:
+## 🚀 Getting Started:
+
+Install dependencies
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
+npm install
 ```
-Then open [localhost](http://localhost) once the stack is up
 
-If you want to test debug with nodejs make sure to copy the local.env file to .env
+Copy the default .env file
 ```bash
 cp local.env .env
 ```
 
-## 📝 Commit Guidelines and Github Flow [WIP]
+Run snowpack
+```bash
+npm dev
+```
 
-  - [X] semantic versioning
-  - [X] conventional commits
-  - [X] image builds
+## 📝 Commit Guidelines
 
-<p align="center">
-  <img alt="Kill all humans" src="https://github.com/semantic-release/semantic-release/raw/master/media/bender.png">
-</p>
+Create `feature-<name>` branches from the `development` branch. Create a Pull Request from
+your `feature-<name>` into the `development` branch.
+
+Husky will run `npm test` before each commit to ensure compliance. Commits must follow
+the [devmoji/gitmoji](https://gitmoji.dev/) conventional commits standard.
+
+## 💬 Code of Conduct
+
+[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](code_of_conduct.md)
+
+Make sure to review the [CODE_OF_CONDUCT](CODE_OF_CONDUCT.md).

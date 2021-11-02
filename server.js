@@ -10,12 +10,8 @@ import {
   useDatabase,
   getEnvironment,
 } from '@algodex/common';
-import {
-  useQueues,
-} from './messages/queues.js';
-import {
-  useEvents,
-} from './messages/events.js';
+import useQueues from './lib/messages/queues.js';
+import useEvents from './lib/messages/events.js';
 
 // Configure Database
 const db = await useDatabase();
@@ -45,7 +41,7 @@ const APP_WORKER = getEnvironment(
  */
 async function run({round=1, context, worker, skip=true}={}) {
   return (await import(
-      `./runners/${context || APP_CONTEXT}.js`
+      `./lib/runners/${context || APP_CONTEXT}.js`
   )).default({
     queue: worker || APP_WORKER,
     events,
