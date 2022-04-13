@@ -42,8 +42,9 @@ You can find the contribution guides for getting started in [./CONTRIBUTING.md](
 
 Run the example
 
-```bash
-docker-compose up
+```shell
+cp local.env .env
+docker-compose up -f docker-compose.yml -f docker-compose.local.yml
 ```
  
 - Website: http://localhost

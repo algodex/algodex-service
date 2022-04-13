@@ -18,9 +18,6 @@ services:
       - queues
     environment:
       - APP_CONTEXT=broker
-      - REDIS_ADDRESS=events
-      - REDIS_MQ_ADDRESS=queues
-      - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     command:
       - start
   worker:
@@ -28,10 +25,6 @@ services:
     entrypoint: npm
     environment:
       - APP_CONTEXT=worker
-      - REDIS_ADDRESS=events
-      - REDIS_MQ_ADDRESS=queues
-      - COUCHDB_URL=http://admin:dex@couchdb:5984/dex
-      - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     depends_on:
       - events
       - queues
@@ -45,30 +38,10 @@ services:
       - queues
     environment:
       - APP_CONTEXT=socket
-      - REDIS_ADDRESS=events
-      - REDIS_MQ_ADDRESS=queues
-      - ALGORAND_EXPLORER=https://testnet.algoexplorerapi.io
     command:
       - start
     ports:
       - "9001:9001"
-
-  algorand:
-    build:
-      context: .docker/algo
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'
-          memory: 2048M
-        reservations:
-          cpus: '0.25'
-          memory: 1024M
-    ports:
-      - "8080:8080"
-    volumes:
-      - algod:/root/node/data
-
   # Storage and Events
   events:
     image: redis:6.2

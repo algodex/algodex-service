@@ -14,11 +14,11 @@ const db = getDatabase();
 const compare = async function() {
   const apps = [
     {
-      id: 22045503,
+      id: 354073718,
       genesis: undefined,
     },
     {
-      id: 22045522,
+      id: 354073834,
       genesis: undefined,
     },
   ];
