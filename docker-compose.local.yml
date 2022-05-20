@@ -10,6 +10,14 @@ services:
     volumes:
       - ./:/app
       - ./docker.env:/app/.env
+  worker-price-pactfi:
+    volumes:
+      - ./:/app
+      - ./docker.env:/app/.env
+  worker-price-tinyman:
+    volumes:
+      - ./:/app
+      - ./docker.env:/app/.env
   service:
     volumes:
       - ./:/app

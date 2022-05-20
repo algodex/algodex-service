@@ -20,6 +20,26 @@ services:
       - APP_CONTEXT=broker
     command:
       - start
+  worker-price-tinyman:
+    image: ghcr.io/algodex/algodex-node-gradation:${GHCR_TARGET}
+    entrypoint: npm
+    environment:
+      - APP_CONTEXT=tinyman
+    depends_on:
+      - events
+      - queues
+    command:
+      - start
+  worker-price-pactfi:
+    image: ghcr.io/algodex/algodex-node-gradation:${GHCR_TARGET}
+    entrypoint: npm
+    environment:
+      - APP_CONTEXT=pactfi
+    depends_on:
+      - events
+      - queues
+    command:
+      - start
   worker:
     image: ghcr.io/algodex/algodex-node-gradation:${GHCR_TARGET}
     entrypoint: npm
