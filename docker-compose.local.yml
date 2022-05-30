@@ -1,7 +1,9 @@
 version: '3.8'
 
 services:
-  # Local Volume Mapping
+  html:
+    ports:
+      - '8080:80'
   broker:
     volumes:
       - ./:/app
