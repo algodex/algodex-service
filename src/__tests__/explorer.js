@@ -5,7 +5,7 @@ test('get a block from explorer', async () => {
   await explorer.getBlock({round: 1986})
       .catch((e) => expect(e).toBeInstanceOf(InvalidConfiguration));
 
-  process.env.ALGODEX_EXPLORER = 'https://testnet.algoexplorerapi.io';
+  process.env.ALGODEX_EXPLORER = 'https://api.testnet.algoexplorer.io';
   const block = await explorer.getBlock({round: 1986});
   expect(block).toEqual(require('./block-testnet-1986.json'));
 });
@@ -14,7 +14,7 @@ test('wait for block from explorer', async () => {
   await explorer.waitForBlock({round: 1986})
       .catch((e) => expect(e).toBeInstanceOf(InvalidConfiguration));
 
-  process.env.ALGODEX_EXPLORER = 'https://testnet.algoexplorerapi.io';
+  process.env.ALGODEX_EXPLORER = 'https://api.testnet.algoexplorer.io';
   const block = await explorer.waitForBlock({round: 1986});
   expect(block['last-round']).toBeGreaterThan(0);
 });
