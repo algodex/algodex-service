@@ -9,12 +9,12 @@ let client; let indexer;
  */
 function _getAlgorandURL() {
   if (
-    typeof process.env['ALGODEX_EXPLORER'] === 'undefined'
+    typeof process.env['ALGORAND_EXPLORER'] === 'undefined'
   ) {
     throw new InvalidConfiguration('Algorand API not configured!');
   }
 
-  return process.env['ALGODEX_EXPLORER'];
+  return process.env['ALGORAND_EXPLORER'];
 }
 
 /**
@@ -25,7 +25,7 @@ async function _getAPI() {
   const url = _getAlgorandURL();
   if (typeof client === 'undefined') {
     client = await new SwaggerClient(`${url}/v2/swagger.json`);
-    client.spec.host=url.replace('https://', '');
+    client.spec.host = 'node.testnet.algoexplorerapi.io';
   }
   return client.apis;
 }
@@ -38,7 +38,7 @@ async function _getIndexAPI() {
   const url = _getAlgorandURL();
   if (typeof indexer === 'undefined') {
     indexer = await new SwaggerClient(`${url}/idx2/swagger.json`);
-    indexer.spec.host=url.replace('https://', '');
+    indexer.spec.host='algoindexer.testnet.algoexplorerapi.io';
   }
   return indexer.apis;
 }
