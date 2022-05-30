@@ -16,6 +16,22 @@ The geological terms are used to help visualize the data problem
 
 You can find the contribution guides for getting started in [./CONTRIBUTING.md](./CONTRIBUTING.md)
 
+# Getting Started
+
+Run the example
+
+```shell
+cp local.env .env
+docker-compose up -f docker-compose.yml -f docker-compose.local.yml
+```
+
+- Website: http://localhost:8080
+- Redis Commander: http://localhost:8081/
+- Couch Futon: http://localhost:5984/_utils/#login
+  - Username: admin
+  - Password: dex
+- Optional API: http://localhost:9001 | Proxied http://localhost/api
+
 <p align="center"><img src="/docs/images/dream.drawio.png?raw=true"/></p>
 
 
@@ -37,22 +53,6 @@ You can find the contribution guides for getting started in [./CONTRIBUTING.md](
   - Push Broker Events to Subscribed Sockets. 
   - Future example: ```ws://localhost/asset/{id}``` would subscribe to the 
    appropriate redis channel coming from the **Broker**
-
-# Getting Started
-
-Run the example
-
-```shell
-cp local.env .env
-docker-compose up -f docker-compose.yml -f docker-compose.local.yml
-```
- 
-- Website: http://localhost
-- Redis Commander: http://localhost:8081/
-- Couch Futon: http://localhost:5984/_utils/#login
-  - Username: admin
-  - Password: dex
-- Optional API: http://localhost:9001 | Proxied http://localhost/api
 
 
 # Scaling
