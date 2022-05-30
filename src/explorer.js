@@ -39,6 +39,7 @@ async function _getIndexAPI() {
   if (typeof indexer === 'undefined') {
     indexer = await new SwaggerClient(`${url}/idx2/swagger.json`);
     indexer.spec.host='algoindexer.testnet.algoexplorerapi.io';
+    indexer.spec.basePath = '/';
   }
   return indexer.apis;
 }
@@ -80,8 +81,8 @@ async function _getCurrentBlock() {
  * @return {Promise<*>}
  */
 async function getBlock({round}) {
-  const api = await _getAPI();
-  const {obj} = await api.block.GetBlock({round}); // eslint-disable-line
+  const api = await _getIndexAPI();
+  const {obj} = await api.lookup.lookupBlock({'round-number': round}); // eslint-disable-line
   const {block} = obj;
   return block;
 }
