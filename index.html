@@ -68,9 +68,9 @@
         password: 'dex'
       }})
     // _design/chart/_view/sieve
-    db.query('chart/sieve', {
+    db.query('dex/ohlc', {
       reduce: true, group: true, group_level: 6,
-      startkey: [ 21582668 , 0, 0, 0, 0, 0, 0 ],
+      startkey: [ 21582668, 0, 0, 0, 0, 0, 0 ],
       endkey: [ 21582668, Date.now(), 0, 0, 0, 0, 0 ],
     }).then(function (res) {
       // got the query results
