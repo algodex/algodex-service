@@ -81,22 +81,45 @@ module.exports = function(doc) {
 
     return base64decode(target);
   };
-  if (typeof doc['apps-local-state'] !== 'undefined') {
-    doc['apps-local-state'].forEach((state)=>{
-      if (typeof state['key-value'] !== 'undefined') {
-        state['key-value'].forEach((kv)=>{
-          const key = atob(kv.key);
-          if (key !== 'creator' && key !== 'version') {
-            parts = key.split(/^(\d+)-(\d+)-(\d+)-(\d+)$/);
-            emit(parts[4], {
-              orderInfo: kv.key,
+
+
+  // Map Function
+  if (typeof doc.txns !== 'undefined') {
+    doc.txns.forEach((txn) => {
+      // if(txn.txn.rcv && txn.txn.snd) {
+      //   emit(txn.txn.rcv, [txn.txn.amt, txn.txn.fee])
+      // }
+      const date = new Date(doc.ts*1000);
+      const month = date.getUTCMonth() + 1; // months from 1-12
+      const day = date.getUTCDate();
+      const year = date.getUTCFullYear();
+      const hour = date.getHours();
+      const min = date.getMinutes();
+      const sec = date.getSeconds();
+
+      if (txn.txn && txn.txn.type) {
+        const isAlgodex = ( txn.txn.apid === 22045503 ||
+          txn.txn.apid === 22045522);
+        if (txn.txn.type === 'appl' && isAlgodex) {
+          if (typeof txn.txn.apaa !== 'undefined') {
+            const orderInfo = atob(txn.txn.apaa[1]);
+            const parts =orderInfo.split(/^(\d+)-(\d+)-(\d+)-(\d+)$/);
+            const res = {
+              apat: txn.txn.apat,
+              type: atob(txn.txn.apaa[0]),
+              orderInfo: txn.txn.apaa[1],
               numerator: parseInt(parts[1]),
+              assetId: parseInt(parts[4]),
               denominator: parseInt(parts[2]),
               minimum: parseInt(parts[3]),
-              assetId: parseInt(parts[4]),
-            });
+              price: parseFloat(parseInt(parts[2]))/parseInt(parts[1]),
+              block: doc._id,
+              ts: doc.ts,
+            };
+
+            emit([res.assetId, year, month, day, hour, min, sec], res);
           }
-        });
+        }
       }
     });
   }
