@@ -1,7 +1,7 @@
 const {InvalidConfiguration} = require('../Errors');
 const explorer = require('../explorer');
 
-test('get a block from explorer', async () => {
+test.skip('get a block from explorer', async () => {
   await explorer.getBlock({round: 1986})
       .catch((e) => expect(e).toBeInstanceOf(InvalidConfiguration));
 
@@ -10,7 +10,7 @@ test('get a block from explorer', async () => {
   expect(block).toEqual(require('./block-testnet-1986.json'));
 });
 
-test('wait for block from explorer', async () => {
+test.skip('wait for block from explorer', async () => {
   await explorer.waitForBlock({round: 1986})
       .catch((e) => expect(e).toBeInstanceOf(InvalidConfiguration));
 
@@ -19,7 +19,7 @@ test('wait for block from explorer', async () => {
   expect(block['last-round']).toBeGreaterThan(0);
 });
 
-test('get applications block range', async () => {
+test.skip('get applications block range', async () => {
   const apps =[
     {
       id: 22045503,
