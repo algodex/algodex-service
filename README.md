@@ -17,12 +17,21 @@ The geological terms are used to help visualize the data problem
 You can find the contribution guides for getting started in [./CONTRIBUTING.md](./CONTRIBUTING.md)
 
 # Getting Started
+Use one of the following:
 
-Run the example
+#### Quick Start (Docker Only)
 
 ```shell
-cp local.env .env
-docker-compose up -f docker-compose.yml -f docker-compose.local.yml
+cp .testnet.docker.env .env
+docker-compose up -f docker-compose.yml -f docker-compose.docker.yml
+```
+
+#### Development (Localhost with Docker Data)
+
+```shell
+# Shutdown any existing services then run
+cp .testnet.localhost.env .env
+docker-compose up -f docker-compose.localhost.yml
 ```
 
 - Website: http://localhost:8080
@@ -30,10 +39,9 @@ docker-compose up -f docker-compose.yml -f docker-compose.local.yml
 - Couch Futon: http://localhost:5984/_utils/#login
   - Username: admin
   - Password: dex
-- Optional API: http://localhost:9001 | Proxied http://localhost/api
+- Optional API: http://localhost:9001 | Proxied http://localhost:8080/api
 
 <p align="center"><img src="/docs/images/dream.drawio.png?raw=true"/></p>
-
 
 ## Core Packages
 
