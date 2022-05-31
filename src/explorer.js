@@ -29,16 +29,18 @@ async function _getAPI() {
         api_key: process.env.ALGORAND_TOKEN,
       },
     });
+    // eslint-disable-next-line max-len
+    const hostname = process.env.ALGORAND_ALGOD_SERVER.replace(/(https:\/\/|http:\/\/)/, '');
+    const portPath = typeof process.env.ALGORAND_ALGOD_PORT !== 'undefined' ?
+      `:${process.env.ALGORAND_ALGOD_PORT}` :
+      '';
+    console.log(`${hostname}${portPath}`);
     client.spec = {
       ...client.spec,
       'schemes': [
         'http',
       ],
-      // eslint-disable-next-line max-len
-      'host': `${process.env.ALGORAND_ALGOD_SERVER.replace(/(https:\/\/|http:\/\/)/, '')}` +
-      typeof process.env.ALGORAND_ALGOD_PORT !== 'undefined' ?
-        process.env.ALGORAND_ALGOD_PORT :
-        '',
+      'host': `${hostname}${portPath}`,
       'securityDefinitions': {
         'api_key': {
           'type': 'apiKey',
