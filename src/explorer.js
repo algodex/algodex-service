@@ -22,10 +22,36 @@ function _getAlgorandURL() {
  * @return {Promise<*>}
  */
 async function _getAPI() {
-  const url = _getAlgorandURL();
   if (typeof client === 'undefined') {
-    client = await new SwaggerClient(`${url}/v2/swagger.json`);
-    client.spec.host = 'node.testnet.algoexplorerapi.io';
+    client = await new SwaggerClient({
+      spec: require('./explorer.json'),
+      authorizations: {
+        api_key: process.env.ALGORAND_TOKEN,
+      },
+    });
+    client.spec = {
+      ...client.spec,
+      'schemes': [
+        'http',
+      ],
+      // eslint-disable-next-line max-len
+      'host': `${process.env.ALGORAND_ALGOD_SERVER.replace(/(https:\/\/|http:\/\/)/, '')}` +
+      typeof process.env.ALGORAND_ALGOD_PORT !== 'undefined' ?
+        process.env.ALGORAND_ALGOD_PORT :
+        '',
+      'securityDefinitions': {
+        'api_key': {
+          'type': 'apiKey',
+          'name': 'X-Algo-API-Token',
+          'in': 'header',
+        },
+      },
+      'security': [
+        {
+          'api_key': [],
+        },
+      ],
+    };
   }
   return client.apis;
 }
@@ -81,8 +107,8 @@ async function _getCurrentBlock() {
  * @return {Promise<*>}
  */
 async function getBlock({round}) {
-  const api = await _getIndexAPI();
-  const {obj} = await api.lookup.lookupBlock({'round-number': round}); // eslint-disable-line
+  const api = await _getAPI();
+  const {obj} = await api.block.GetBlock({round}); // eslint-disable-line
   const {block} = obj;
   return block;
 }
