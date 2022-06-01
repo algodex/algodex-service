@@ -7,6 +7,7 @@
     "start-broker": "cross-env APP_CONTEXT=broker npm start",
     "start-worker": "cross-env APP_CONTEXT=worker npm start",
     "start-service": "cross-env APP_CONTEXT=socket npm start",
+    "start-tiny": "cross-env APP_CONTEXT=tinyman npm start",
     "test": "npm run test-unit && npm run lint",
     "test-unit": "jest",
     "dev-test": "jest --watch",
