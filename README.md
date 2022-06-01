@@ -14,7 +14,7 @@ to "**Classify**" the raw data stream from the contracts index. You can think of
 Some concepts are universal and don't require ECMAScript, we are using it for simplicity and sanity.
 The geological terms are used to help visualize the data problem
 
-You can find the contribution guides for getting started in [./CONTRIBUTING.md](./CONTRIBUTING.md)
+You can find the contribution guides for getting started in [CONTRIBUTING.md](.github/CONTRIBUTING.md)
 
 # Getting Started
 Use one of the following:

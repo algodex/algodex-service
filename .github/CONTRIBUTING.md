@@ -7,9 +7,9 @@ Start by installing the following:
 
 ## 🚀 Launching full stack:
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
+docker compose -f docker-compose.yml -f docker-compose.docker.yml up -d
 ```
-Then open [localhost](http://localhost) once the stack is up
+Then open [localhost](http://localhost:8080) once the stack is up
 
 If you want to test debug with nodejs make sure to copy the local.env file to .env
 ```bash

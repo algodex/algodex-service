@@ -1,12 +1,13 @@
-<!--
-Fill out/complete the acceptance criteria and submit your pull request.
--->
+# ℹ Overview
 
+<!--- Provide an overview of the Pull Request -->
 
-##### 🔐 Acceptance:
+### 📝 Related Issues
+
+<!--- Pin any related issues -->
+
+### 🔐 Acceptance:
 <!-- Ensure the following are completed and mark the result with an [X] -->
-- [ ] pull request follows [./CONTRIBUTING.md](./CONTRIBUTING.md) standard
-- [ ] `npm tests` passes
-- [ ] uses conventional commits [gitmoji](https://gitmoji.dev/)
 
-### 📝 Description
+- [ ] `yarn test` passes
+- [ ] Uses Unicode conventional commits [gitmoji](https://gitmoji.dev/)
