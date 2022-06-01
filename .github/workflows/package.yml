@@ -31,6 +31,8 @@ jobs:
       # Checkout Repo
       - name: Checkout repository
         uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_TOKEN }}
       # Setup Node and Publish
       - uses: actions/setup-node@v2
         with:
