@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # Outside Service Port Mappings
+  events:
+    image: redis:6.2
+    ports:
+      - "6380:6379"
+    volumes:
+      - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - events_vol:/data
+  queues:
+    image: redis:6.2
+    ports:
+      - "6381:6379"
+    volumes:
+      - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
+      - queue_vol:/data
+  couchdb:
+    image: couchdb
+    ports:
+      - '5984:5984'
+    environment:
+      - COUCHDB_USER=admin
+      - COUCHDB_PASSWORD=dex
+    volumes:
+      - couchdb_vol:/opt/couchdb/data
+
+  # Tools
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    restart: always
+    depends_on:
+      - events
+      - queues
+    environment:
+      - REDIS_HOSTS=events:events:6379,queues:queues:6379
+    ports:
+      - "8081:8081"
+volumes:
+  couchdb_vol:
+  events_vol:
+  queue_vol:
+  algod:

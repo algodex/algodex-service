@@ -9,7 +9,7 @@ module.exports = ({queues, db}) =>{
       round: job.data.rnd,
     });
     // Save to database
-    return db.post({_id: `${job.data.rnd}`, ...job.data})
+    return db.post({_id: `${job.data.rnd}`, type: 'block', ...job.data})
         .then(function(response) {
           console.debug({
             msg: `Block stored`,

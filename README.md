@@ -14,10 +14,34 @@ to "**Classify**" the raw data stream from the contracts index. You can think of
 Some concepts are universal and don't require ECMAScript, we are using it for simplicity and sanity.
 The geological terms are used to help visualize the data problem
 
-You can find the contribution guides for getting started in [./CONTRIBUTING.md](./CONTRIBUTING.md)
+You can find the contribution guides for getting started in [CONTRIBUTING.md](.github/CONTRIBUTING.md)
+
+# Getting Started
+Use one of the following:
+
+#### Quick Start (Docker Only)
+
+```shell
+cp .testnet.docker.env .env
+docker-compose up -f docker-compose.yml -f docker-compose.docker.yml
+```
+
+#### Development (Localhost with Docker Data)
+
+```shell
+# Shutdown any existing services then run
+cp .testnet.localhost.env .env
+docker-compose up -f docker-compose.localhost.yml
+```
+
+- Website: http://localhost:8080
+- Redis Commander: http://localhost:8081/
+- Couch Futon: http://localhost:5984/_utils/#login
+  - Username: admin
+  - Password: dex
+- Optional API: http://localhost:9001 | Proxied http://localhost:8080/api
 
 <p align="center"><img src="/docs/images/dream.drawio.png?raw=true"/></p>
-
 
 ## Core Packages
 
@@ -37,21 +61,6 @@ You can find the contribution guides for getting started in [./CONTRIBUTING.md](
   - Push Broker Events to Subscribed Sockets. 
   - Future example: ```ws://localhost/asset/{id}``` would subscribe to the 
    appropriate redis channel coming from the **Broker**
-
-# Getting Started
-
-Run the example
-
-```bash
-docker-compose up
-```
- 
-- Website: http://localhost
-- Redis Commander: http://localhost:8081/
-- Couch Futon: http://localhost:5984/_utils/#login
-  - Username: admin
-  - Password: dex
-- Optional API: http://localhost:9001 | Proxied http://localhost/api
 
 
 # Scaling

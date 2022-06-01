@@ -3,13 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <script src="//cdn.jsdelivr.net/npm/pouchdb@7.3.0/dist/pouchdb.min.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@3.8.0/dist/lightweight-charts.standalone.production.js"></script>
+    <style>
+        html{
+            background: #eeeee4;
+        }
+    </style>
 </head>
 <body>
-
+<div id="root"><div id="data">⏳ Loading data...</div><div id="message">❌ Disconnected!</div></div>
 <script>
+  function mapCouchToLightweight(rows){
+    return rows.map(kv=>{
+      const date = {
+        year: kv.key[1] || 0,
+        month: kv.key[2] || 0,
+        day: kv.key[3] || 0,
+        hour: kv.key[4] || 0,
+        minute: kv.key[5] || 0,
+        second: kv.key[6] || 0,
+      }
+      let time = new Date(`${date.month}/${date.day}/${date.year} ${date.hour}:${date.minute}:${date.second}`)
+      console.log({
+        open: kv.value.o,
+        close: kv.value.c,
+        low: kv.value.l,
+        high: kv.value.h,
+        time: time.getTime()/1000
+        // time: {year: kv.key[1], month: kv.key[2], day: kv.key[3], hour: kv.key[4]}
+      })
+      return {
+        open: kv.value.o,
+        close: kv.value.c,
+        low: kv.value.l,
+        high: kv.value.h,
+        time: time.getTime()/1000
+        // time: {year: kv.key[1], month: kv.key[2], day: kv.key[3], hour: kv.key[4]}
+      }
+    })
+  }
+  const chart = LightweightCharts.createChart(document.body, { width: 400, height: 300, timeScale: {
+      timeVisible: true,
+      secondsVisible: true,
+    } });
+  const lineSeries = chart.addCandlestickSeries({
+    upColor: 'rgb(38,166,154)',
+    downColor: 'rgb(255,82,82)',
+    wickUpColor: 'rgb(38,166,154)',
+    wickDownColor: 'rgb(255,82,82)',
+    borderVisible: false,
+  });
+  function setData(data){
+    document.getElementById('data').innerHTML = '✅ Loaded Data for 21582668'
+    lineSeries.setData(mapCouchToLightweight(data.rows));
+    chart.timeScale().fitContent()
+  }
+    function setMessage(msg){
+      document.getElementById('message').innerHTML = msg
+    }
+
+    const db = new PouchDB('http://localhost:5984/dex', {auth: {
+      username: 'admin',
+        password: 'dex'
+      }})
+    // _design/chart/_view/sieve
+    db.query('dex/ohlc', {
+      reduce: true, group: true, group_level: 6,
+      startkey: [ 21582668, 0, 0, 0, 0, 0, 0 ],
+      endkey: [ 21582668, Date.now(), 0, 0, 0, 0, 0 ],
+    }).then(function (res) {
+      // got the query results
+      setData(res)
+    }).catch(function (err) {
+      // some error
+    });
+
     let retry = 0;
     (
     function run(){
+      setMessage('🚀 Connecting...')
         console.log({
             msg: '🚀 Connecting to Service...',
             retry
@@ -17,8 +90,10 @@
         const ws = new WebSocket('ws://localhost:9001/');
         window.ws = ws;
         ws.onopen = function () {
+          const msg = '⚡ Connected: Waiting for messages...'
+            setMessage(msg)
             console.log({
-                msg: '🎉 Connected to Service!',
+                msg,
                 retry
             });
             // socket.send(`asset/${15322902}`);
@@ -27,14 +102,16 @@
         // Listen for messages
         ws.addEventListener('message', function (event) {
             console.log({msg: '📝 Message Received', event: event.data});
-            document.body.innerHTML = event.data;
+            setMessage(`⬇ Message: ${event.data}`);
             let {type} = JSON.parse(event.data);
             if(type === 'SHUTDOWN')  ws.close();
         });
 
         ws.onclose = function({reason}) {
+          const msg = '💥 Socket Closed'
+          setMessage(msg)
             console.log({
-                msg: '💥 Socket Closing',
+                msg,
                 reason,
                 retry,
             });

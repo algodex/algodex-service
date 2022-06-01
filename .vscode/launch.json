@@ -1,0 +1,41 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Broker",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\server.js",
+            "env": {
+                "APP_CONTEXT": "broker"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Worker",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\server.js",
+            "env": {
+                "APP_CONTEXT": "worker"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Service",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\server.js",
+            "env": {
+                "APP_CONTEXT": "socket"
+            }
+        }
+    ]
+}

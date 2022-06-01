@@ -1,0 +1,21 @@
+{
+  "earn": 49,
+  "fees": "A7NMWS3NT3IUDMLVO26ULGXGIIOUQ3ND2TXSER6EBGRZNOBOUIQXHIBGDE",
+  "frac": 6499794760,
+  "gen": "testnet-v1.0",
+  "gh": "SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=",
+  "nextbefore": 10001,
+  "nextproto": "https://github.com/algorand/spec/tree/22726c9dcd12d9cddce4a8bd7e8ccaa707f74101",
+  "nextswitch": 20001,
+  "nextyes": 1986,
+  "prev": "blk-A47EY6CQUEU74CGLPMQHTMXPZ5RFKRTPWLCR42RBGKPOMPFSCGXA",
+  "proto": "https://github.com/algorand/spec/tree/a26ed78ed8f834e2b9ccb6eb7d3ee9f629a6e622",
+  "rate": 250000000,
+  "rnd": 1986,
+  "rwcalr": 500000,
+  "rwd": "7777777777777777777777777777777777777777777777777774MSJUVU",
+  "seed": "JvU4RNJzibrmncnS2rY0TJL/R8oq46/J/2uPldwuVl0=",
+  "ts": 1560260105,
+  "txn": "tGWqr06HVvsHC2hFmu2EhwYBSiMkvIoo5nWxAkUxsLo=",
+  "upgradeyes": true
+}
