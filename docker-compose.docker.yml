@@ -76,3 +76,6 @@ services:
       - REDIS_HOSTS=events:events:6379,queues:queues:6379
     ports:
       - "8081:8081"
+volumes:
+  events_vol:
+  queue_vol:
