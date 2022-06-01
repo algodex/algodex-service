@@ -53,7 +53,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/algodex/algodex-node-gradation.git"
+    "url": "https://github.com/algodex/algodex-service.git"
   },
   "publishConfig": {
     "access": "restricted"
