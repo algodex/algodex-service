@@ -3,76 +3,11 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-erase'));
 
+const databases = require('../src/db-config.js')();
+
 const dbEndpoint = 'http://localhost:5984';
 const dbUsername = 'admin';
 const dbPassword = 'dex';
-
-const databases = [
-  {
-    dbName: 'blocks',
-    design: {
-      _id: '_design/blocks',
-      views: {
-        orders: {
-          map: require('../views/blocks/orders-map').toString(),
-          reduce: require('../views/blocks/orders-reduce').toString(),
-        },
-        tradeHistory: {
-          map: require('../views/blocks/tradeHistory-map').toString(),
-        },
-        ohlc: {
-          map: require('../views/chart/map').toString(),
-          reduce: require('../views/chart/reduce').toString(),
-        },
-      },
-    },
-  },
-  {
-    dbName: 'formatted_escrow',
-    design: {
-      _id: '_design/formatted_escrow',
-      views: {
-        orders: {
-          map: require('../views/formatted_orders/orders-map').toString(),
-        },
-      },
-    },
-  },
-  {
-    dbName: 'escrow',
-    design: {
-      _id: '_design/escrow',
-      views: {
-        escrowAddr: {
-          map: require('../views/escrow/escrowAddr-map').toString(),
-          reduce: '_count',
-        },
-      },
-    },
-  },
-  {
-    dbName: 'assets',
-    design: {
-      _id: '_design/assets',
-      views: {
-        assets: {
-          map: require('../views/assets/assets-map').toString(),
-        },
-      },
-    },
-  },
-  {
-    dbName: 'verified_account',
-    design: {
-      _id: '_design/verified_account',
-      views: {
-        verifiedAddr: {
-          map: require('../views/verified_account/verifiedAddr-map').toString(),
-        },
-      },
-    },
-  },
-];
 
 databases.forEach( (database) => {
   const initializedDB = new PouchDB(dbEndpoint + '/' + database.dbName, {
