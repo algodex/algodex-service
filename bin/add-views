@@ -24,8 +24,9 @@ databases.forEach( (database) => {
       throw e;
     });
   }).catch((e)=>{
-    console.log('Error Fetching Index', e);
+    console.log('Error Fetching Index', e.error);
     if (e.error === 'not_found') {
+      console.log('Adding index');
       initializedDB.put({...database.design}).catch((e)=>{
         console.log('Create Error', e);
       });

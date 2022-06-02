@@ -6,17 +6,18 @@ PouchDB.plugin(require('pouchdb-erase'));
 
 const couchBaseURL = process.env['COUCHDB_BASE_URL'] || 'http://admin:dex@localhost:5984';
 
+const dbConfig = require('../src/db-config.js')();
+
 const getDatabases = async () => {
-  const databases = {
-    blocks: await getDatabase(couchBaseURL + '/blocks'),
-    escrow: await getDatabase(couchBaseURL + '/escrow'),
-    prices: await getDatabase(couchBaseURL + '/prices'),
-    assets: await getDatabase(couchBaseURL + '/assets'),
-    formatted_escrow: await getDatabase(couchBaseURL + '/formatted_escrow'),
-    formatted_history: await getDatabase(couchBaseURL + '/formatted_history'),
-  };
+  const databases = {};
+
+  for (let i = 0; i < dbConfig.length; i++) {
+    const dbName = dbConfig[i].dbName;
+    databases[dbName] = await getDatabase(couchBaseURL + '/' + dbName);
+  }
   return databases;
 };
+
 
 // eslint-disable-next-line require-jsdoc
 async function runScript() {
@@ -34,8 +35,7 @@ async function runScript() {
 
   Promise.all(deletePromises).then( async (res) => {
     console.log('starting creation');
-    const databases2 = await getDatabases();
-    // console.log({databases2});
+    await getDatabases();
   });
 }
 
