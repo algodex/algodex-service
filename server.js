@@ -5,11 +5,11 @@ require('dotenv').config();
 
 // Configure Algorand
 const getAlgod = require('./src/algod');
-const getDatabases = require('./src/get-databases');
+const getDatabases = require('./src/db/get-databases');
 const client = getAlgod();
 
 // Configure Couchdb Blocks Database
-const getDatabase = require('./src/db');
+const getDatabase = require('./src/db/db');
 
 const couchBaseURL = process.env['COUCHDB_BASE_URL'];
 

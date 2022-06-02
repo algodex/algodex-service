@@ -1,5 +1,5 @@
 const {InvalidConfiguration} = require('../Errors');
-const getDatabase = require('../db');
+const getDatabase = require('../db/db');
 const PouchDB = require('pouchdb-core');
 PouchDB.plugin(require('pouchdb-adapter-memory'));
 

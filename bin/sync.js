@@ -6,7 +6,7 @@ const process = require('process');
 const {createConsecutiveObject, cpuChunkArray} = require('../src/util');
 const {getAppsBlockRange, getBlock} = require('../src/explorer');
 const getQueues = require('../src/queues');
-const getDatabase = require('../src/db');
+const getDatabase = require('../src/db/db');
 
 const url = process.env.ALGORAND_NETWORK === 'testnet' ?
   'https://algoindexer.testnet.algoexplorerapi.io' :

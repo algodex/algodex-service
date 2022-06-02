@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-erase'));
-const getDatabases = require('../src/get-databases');
+const getDatabases = require('../src/db/get-databases');
 
 // eslint-disable-next-line require-jsdoc
 async function runScript() {

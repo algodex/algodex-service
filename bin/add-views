@@ -3,7 +3,7 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-erase'));
 
-const databases = require('../src/db-config.js')();
+const databases = require('../src/db/db-config.js')();
 
 const dbEndpoint = 'http://localhost:5984';
 const dbUsername = 'admin';

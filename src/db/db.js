@@ -1,4 +1,4 @@
-const {InvalidConfiguration} = require('./Errors');
+const {InvalidConfiguration} = require('../Errors');
 const PouchDB = require('pouchdb-node');
 
 const db = [];
