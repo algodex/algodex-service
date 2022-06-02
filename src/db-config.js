@@ -1,6 +1,7 @@
 const databases = [
   {
     dbName: 'blocks',
+    appendOnly: true,
     design: {
       _id: '_design/blocks',
       views: {
@@ -43,6 +44,7 @@ const databases = [
   },
   {
     dbName: 'assets',
+    appendOnly: true,
     design: {
       _id: '_design/assets',
       views: {
@@ -54,6 +56,7 @@ const databases = [
   },
   {
     dbName: 'verified_account',
+    appendOnly: true,
     design: {
       _id: '_design/verified_account',
       views: {
@@ -63,8 +66,17 @@ const databases = [
       },
     },
   },
+  {
+    dbName: 'indexed_escrow',
+    appendOnly: true,
+  },
+  {
+    dbName: 'formatted_history',
+  },
+  {
+    dbName: 'prices',
+  },
 ];
-
 
 module.exports = function() {
   return databases;

@@ -1,29 +1,17 @@
 #!/usr/bin/env node
-
-const getDatabase = require('../src/db');
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-erase'));
-
-const couchBaseURL = process.env['COUCHDB_BASE_URL'] || 'http://admin:dex@localhost:5984';
-
-const dbConfig = require('../src/db-config.js')();
-
-const getDatabases = async () => {
-  const databases = {};
-
-  for (let i = 0; i < dbConfig.length; i++) {
-    const dbName = dbConfig[i].dbName;
-    databases[dbName] = await getDatabase(couchBaseURL + '/' + dbName);
-  }
-  return databases;
-};
-
+const getDatabases = require('../src/get-databases');
 
 // eslint-disable-next-line require-jsdoc
 async function runScript() {
   const databases = await getDatabases();
   const deletePromises = [];
   Object.values(databases).forEach( (db) => {
+    if (db.appendOnly) {
+      // Do not delete appendOnly databases
+      return;
+    }
     deletePromises.push(
         db.destroy().then(function(res) {
           console.log('destroyed');

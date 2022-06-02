@@ -16,7 +16,9 @@ databases.forEach( (database) => {
       password: dbPassword,
     },
   });
-
+  if (!database.design) {
+    return;
+  }
   initializedDB.get(database.design._id).then((res)=>{
     console.log('Index Found');
     initializedDB.put({...database.design, _rev: res._rev}).catch((e)=>{

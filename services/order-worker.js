@@ -93,8 +93,8 @@ module.exports = ({queues, databases}) =>{
     const round = blockData.rnd;
 
     try {
-      const accountInfo = await getindexedEscrowInfo(databases.indexedEscrow,
-        account, round);
+      const accountInfo = await getindexedEscrowInfo(databases.indexed_escrow,
+          account, round);
 
       const data = {indexerInfo: accountInfo,
         escrowInfo: order.value};
