@@ -14,7 +14,6 @@ services:
     build: .
     volumes:
       - ./:/app
-      - ./docker.env:/app/.env
     depends_on:
       - events
       - queues
@@ -22,7 +21,6 @@ services:
     build: .
     volumes:
       - ./:/app
-      - ./docker.env:/app/.env
     depends_on:
       - events
       - queues
@@ -32,7 +30,6 @@ services:
       - COUCHDB_URL=http://admin:dex@couchdb:5984/prices
     volumes:
       - ./:/app
-      - ./docker.env:/app/.env
     depends_on:
       - events
       - queues
@@ -43,7 +40,6 @@ services:
       - TZ=America/Chicago
     volumes:
       - ./:/app
-      - ./docker.env:/app/.env
     depends_on:
       - events
       - queues
@@ -53,7 +49,6 @@ services:
       - TZ=America/Chicago
     volumes:
       - ./:/app
-      - ./docker.env:/app/.env
     depends_on:
       - events
       - queues
