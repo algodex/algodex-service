@@ -11,6 +11,7 @@ services:
     ports:
       - '8080:80'
   broker:
+    build: .
     volumes:
       - ./:/app
       - ./docker.env:/app/.env
@@ -18,6 +19,7 @@ services:
       - events
       - queues
   worker-blocks:
+    build: .
     volumes:
       - ./:/app
       - ./docker.env:/app/.env
@@ -25,6 +27,9 @@ services:
       - events
       - queues
   worker-price-pactfi:
+    build: .
+    environment:
+      - COUCHDB_URL=http://admin:dex@couchdb:5984/prices
     volumes:
       - ./:/app
       - ./docker.env:/app/.env
@@ -32,6 +37,10 @@ services:
       - events
       - queues
   worker-price-tinyman:
+    build: .
+    environment:
+      - COUCHDB_URL=http://admin:dex@couchdb:5984/prices
+      - TZ=America/Chicago
     volumes:
       - ./:/app
       - ./docker.env:/app/.env
@@ -39,6 +48,9 @@ services:
       - events
       - queues
   service:
+    build: .
+    environment:
+      - TZ=America/Chicago
     volumes:
       - ./:/app
       - ./docker.env:/app/.env
@@ -48,6 +60,8 @@ services:
 
   # Outside Service Port Mappings
   events:
+    environment:
+      - TZ=America/Chicago
     image: redis:6.2
     ports:
       - "6380:6379"
@@ -55,6 +69,8 @@ services:
       - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
       - events_vol:/data
   queues:
+    environment:
+      - TZ=America/Chicago
     image: redis:6.2
     ports:
       - "6381:6379"
@@ -62,6 +78,8 @@ services:
       - ./.docker/config/redis.conf:/usr/local/etc/redis/redis.conf
       - queue_vol:/data
   couchdb:
+    environment:
+      - TZ=America/Chicago
     ports:
       - "5984:5984"
 
