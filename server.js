@@ -3,7 +3,11 @@
  */
 require('dotenv').config();
 
-// Configure database
+// Configure Algorand
+const getAlgod = require('./src/algod');
+const client = getAlgod();
+
+// Configure Couchdb Blocks Database
 const getDatabase = require('./src/db');
 const db = getDatabase();
 
