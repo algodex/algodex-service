@@ -10,7 +10,7 @@ services:
     env_file:
       - ${ENV_FILE}
     environment:
-      - APP_CONTEXT=broker
+      - APP_PATH=broker
     command:
       - start
   worker-price-tinyman:
@@ -22,7 +22,7 @@ services:
     env_file:
       - ${ENV_FILE}
     environment:
-      - APP_CONTEXT=tinyman
+      - APP_PATH=workers/tinyman
     command:
       - start
   worker-price-pactfi:
@@ -34,7 +34,7 @@ services:
     depends_on:
       - couchdb
     environment:
-      - APP_CONTEXT=pactfi
+      - APP_PATH=workers/pactfi
     command:
       - start
   worker-blocks:
@@ -46,7 +46,7 @@ services:
     depends_on:
       - couchdb
     environment:
-      - APP_CONTEXT=worker
+      - APP_PATH=worker
     command:
       - start
   service:
@@ -58,7 +58,7 @@ services:
     depends_on:
       - couchdb
     environment:
-      - APP_CONTEXT=socket
+      - APP_PATH=socket
     command:
       - start
     ports:

@@ -3,7 +3,11 @@
  */
 require('dotenv').config();
 
-// Configure database
+// Configure Algorand
+const getAlgod = require('./src/algod');
+const client = getAlgod();
+
+// Configure Couchdb Blocks Database
 const getDatabase = require('./src/db');
 const db = getDatabase();
 
@@ -11,20 +15,17 @@ const db = getDatabase();
 const getQueues = require('./src/queues');
 const queues = getQueues();
 
+// Configure Events
 const getEvents = require('./src/events');
+const {existsSync} = require('fs');
 const events = getEvents();
 
-// const workers = require('./services/workers');
-
-// Context Switcher, Set APP_CONTEXT to run individual services
-// if (typeof process.env['APP_CONTEXT'] === 'undefined') {
-//   process.env['APP_CONTEXT'] = 'socket';
-// } else {
-if (['socket', 'worker', 'broker'].includes(process.env['APP_CONTEXT'])) {
-  require(`./services/${process.env['APP_CONTEXT']}`)({events, queues, db});
-} else {
-  // eslint-disable-next-line max-len
-  require(`./services/workers/${process.env['APP_CONTEXT']}`)({events, queues, db});
+const servicePath =`./services/${process.env['APP_PATH']}.js`;
+console.log(servicePath);
+if (!existsSync(servicePath)) {
+  throw new Error('Application does not exist in services!');
 }
 
-// }
+const service = require(servicePath);
+
+service({client, events, queues, db});
