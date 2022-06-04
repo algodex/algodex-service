@@ -82,45 +82,73 @@ module.exports = function(doc) {
     return base64decode(target);
   };
 
+  const getOwner = function(group, appCallType, isAlgoBuyEscrow) {
+    if (appCallType === 'open') {
+      return group[0].txn.snd;
+    } else if (appCallType === 'close') {
+      return group[group.length - 1].txn.snd;
+    } else if (appCallType === 'execute_with_closeout' && isAlgoBuyEscrow) {
+      return group[group.length - 1].txn.arcv;
+    } else if (appCallType === 'execute_with_closeout' && !isAlgoBuyEscrow) {
+      return group[group.length - 1].txn.close;
+    }
+
+    return null;
+  };
 
   // Map Function
   if (typeof doc.txns !== 'undefined') {
-    doc.txns.forEach((txn) => {
-      // if(txn.txn.rcv && txn.txn.snd) {
-      //   emit(txn.txn.rcv, [txn.txn.amt, txn.txn.fee])
-      // }
-      const date = new Date(doc.ts*1000);
-      const month = date.getUTCMonth() + 1; // months from 1-12
-      const day = date.getUTCDate();
-      const year = date.getUTCFullYear();
-      const hour = date.getHours();
-      const min = date.getMinutes();
-      const sec = date.getSeconds();
-
-      if (txn.txn && txn.txn.type) {
-        const isAlgodex = ( txn.txn.apid === 22045503 ||
-          txn.txn.apid === 22045522);
-        if (txn.txn.type === 'appl' && isAlgodex) {
-          if (typeof txn.txn.apaa !== 'undefined') {
-            const orderInfo = atob(txn.txn.apaa[1]);
-            const parts =orderInfo.split(/^(\d+)-(\d+)-(\d+)-(\d+)$/);
-            const res = {
-              apat: txn.txn.apat,
-              type: atob(txn.txn.apaa[0]),
-              orderInfo: txn.txn.apaa[1],
-              numerator: parseInt(parts[1]),
-              assetId: parseInt(parts[4]),
-              denominator: parseInt(parts[2]),
-              minimum: parseInt(parts[3]),
-              price: parseFloat(parseInt(parts[2]))/parseInt(parts[1]),
-              block: doc._id,
-              ts: doc.ts,
-            };
-
-            emit([res.assetId, year, month, day, hour, min, sec], res);
-          }
-        }
+    const allGroups = doc.txns.reduce((allGroups, txn) => {
+      const txnGroup = txn.txn.grp;
+      if (txnGroup === undefined) {
+        return allGroups;
       }
-    });
+
+      const groupTxnArr = (allGroups[txnGroup] || []);
+      groupTxnArr.push(txn);
+      allGroups[txnGroup] = groupTxnArr;
+      return allGroups;
+    }, {});
+
+    for (const groupId in allGroups) {
+      if (allGroups.hasOwnProperty(groupId)) {
+        const group = allGroups[groupId];
+
+        group.forEach( (txn) => {
+          if (txn.txn && txn.txn.type) {
+            const isAlgodex = ( txn.txn.apid === 22045503 ||
+              txn.txn.apid === 22045522);
+            if (txn.txn.type === 'appl' && isAlgodex) {
+              const isAlgoBuyEscrow = txn.txn.apid === 22045503;
+              const appCallType = atob(txn.txn.apaa[0]);
+              if (appCallType === 'execute') {
+                // Do nothing as we are only tracking when escrows open or close
+                return;
+              }
+              if (typeof txn.txn.apaa !== 'undefined') {
+                const orderInfo = atob(txn.txn.apaa[1]);
+                const parts =orderInfo.split(/^(\d+)-(\d+)-(\d+)-(\d+)$/);
+                const res = {
+                  isAlgoBuyEscrow: isAlgoBuyEscrow,
+                  apat: txn.txn.apat,
+                  type: appCallType,
+                  orderInfo: txn.txn.apaa[1],
+                  numerator: parseInt(parts[1]),
+                  assetId: parseInt(parts[4]),
+                  denominator: parseInt(parts[2]),
+                  minimum: parseInt(parts[3]),
+                  price: parseFloat(parseInt(parts[2]))/parseInt(parts[1]),
+                  ownerAddr: getOwner(group, appCallType, isAlgoBuyEscrow),
+                  block: doc._id,
+                  ts: doc.ts,
+                };
+
+                emit([txn.txn.snd], res);
+              }
+            }
+          }
+        });
+      }
+    }
   }
 };
