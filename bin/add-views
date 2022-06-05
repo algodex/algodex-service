@@ -3,6 +3,7 @@
 const chartMap = require('../views/chart/map')
 const chartReduce = require('../views/chart/reduce')
 const orderMap = require('../views/orders/map')
+const orderReduce = require('../views/orders/reduce')
 const PouchDB = require('pouchdb')
 PouchDB.plugin(require('pouchdb-erase'))
 
@@ -17,8 +18,9 @@ const remote = new PouchDB('http://localhost:5984/dex', {
 const chartIndex = {
   _id: '_design/dex',
   views: {
-    orders:{
-      map: orderMap.toString()
+    orders: {
+      map: orderMap.toString(),
+      reduce: orderReduce.toString(),
     },
     ohlc: {
       map: chartMap.toString(),
