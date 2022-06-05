@@ -10,6 +10,9 @@ const client = getAlgod();
 // Configure Couchdb Blocks Database
 const getDatabase = require('./src/db');
 const db = getDatabase();
+console.log(process.env['COUCHDB_ESCROW_URL']);
+const escrowDB = process.env['COUCHDB_ESCROW_URL'] ?
+  getDatabase(process.env['COUCHDB_ESCROW_URL']) : null;
 
 // Configure Queues
 const getQueues = require('./src/queues');
@@ -28,4 +31,4 @@ if (!existsSync(servicePath)) {
 
 const service = require(servicePath);
 
-service({client, events, queues, db});
+service({client, events, queues, db, escrowDB});
