@@ -1,6 +1,5 @@
 const {InvalidConfiguration} = require('./Errors');
-const PouchDB = require('pouchdb-core');
-PouchDB.plugin(require('pouchdb-adapter-http'));
+const PouchDB = require('pouchdb-node');
 
 const db = [];
 
