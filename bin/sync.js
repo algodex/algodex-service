@@ -1,4 +1,5 @@
 require('dotenv').config();
+const algosdk = require('algosdk');
 const cluster = require('cluster');
 const process = require('process');
 
@@ -7,6 +8,12 @@ const {getAppsBlockRange, getBlock} = require('../src/explorer');
 const getQueues = require('../src/queues');
 const getDatabase = require('../src/db');
 
+const url = process.env.ALGORAND_NETWORK === 'testnet' ?
+  'https://algoindexer.testnet.algoexplorerapi.io' :
+  'https://algoindexer.algoexplorerapi.io';
+
+const indexer = new algosdk.Indexer('', url, 443);
+
 const queues = getQueues();
 const db = getDatabase();
 
@@ -14,16 +21,16 @@ const db = getDatabase();
 const compare = async function() {
   const apps = [
     {
-      id: 22045503,
+      id: process.env.ALGORAND_NETWORK === 'testnet' ? 22045503 : 354073718,
       genesis: undefined,
     },
     {
-      id: 22045522,
+      id: process.env.ALGORAND_NETWORK === 'testnet' ? 22045522: 354073834,
       genesis: undefined,
     },
   ];
   // Get a range of blocks for a list of applications
-  const {start, current} = await getAppsBlockRange(apps);
+  const {start, current} = await getAppsBlockRange(indexer, apps);
   // Create an Object keyed by blocks in the range
   const rounds = createConsecutiveObject(start, current);
 
