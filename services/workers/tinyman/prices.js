@@ -9,14 +9,15 @@ const fetch = require('cross-fetch');
  * @typedef {import('PouchDB')} PouchDB
  */
 
-
+const isDevelopment = process.env.NODE_ENV === 'development';
 // Watch for Performance
-const obs = new PerformanceObserver((items) => {
-  console.log(items.getEntries()[0].duration);
-  performance.clearMarks();
-});
-obs.observe({type: 'measure'});
-
+if (isDevelopment) {
+  const obs = new PerformanceObserver((items) => {
+    console.log(items.getEntries()[0].duration);
+    performance.clearMarks();
+  });
+  obs.observe({type: 'measure'});
+}
 
 /**
  *
@@ -24,7 +25,9 @@ obs.observe({type: 'measure'});
  * @param {number} timestamp Timestamp for record keeping
  */
 module.exports = function(db, timestamp) {
-  performance.mark('Start');
+  if (isDevelopment) {
+    performance.mark('Start');
+  }
   // TODO: Allow for switching networks
   fetch('https://testnet.analytics.tinyman.org/api/v1/current-asset-prices/').then(async (res)=> {
     const prices = await res.json();
@@ -45,8 +48,9 @@ module.exports = function(db, timestamp) {
       };
     }));
     console.log(prices);
-
-    performance.mark('Finish');
-    performance.measure('Start to Finish', 'Start', 'Finish');
+    if (isDevelopment) {
+      performance.mark('Finish');
+      performance.measure('Start to Finish', 'Start', 'Finish');
+    }
   });
 };
