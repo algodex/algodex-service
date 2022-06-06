@@ -5,8 +5,6 @@ services:
     image: ghcr.io/algodex/algodex-service:${GHCR_TARGET}
     x-aws-pull_credentials: ${GHCR_SECRET_ARN}
     entrypoint: npm
-    depends_on:
-      - couchdb
     env_file:
       - ${ENV_FILE}
     environment:
@@ -17,8 +15,6 @@ services:
     image: ghcr.io/algodex/algodex-service:${GHCR_TARGET}
     x-aws-pull_credentials: ${GHCR_SECRET_ARN}
     entrypoint: npm
-    depends_on:
-      - couchdb
     env_file:
       - ${ENV_FILE}
     environment:
@@ -31,8 +27,6 @@ services:
     entrypoint: npm
     env_file:
       - ${ENV_FILE}
-    depends_on:
-      - couchdb
     environment:
       - APP_CONTEXT=workers/pactfi
     command:
@@ -43,8 +37,6 @@ services:
     entrypoint: npm
     env_file:
       - ${ENV_FILE}
-    depends_on:
-      - couchdb
     environment:
       - APP_CONTEXT=worker
     command:
@@ -55,8 +47,6 @@ services:
     entrypoint: npm
     env_file:
       - ${ENV_FILE}
-    depends_on:
-      - couchdb
     environment:
       - APP_CONTEXT=socket
     command:
@@ -64,17 +54,17 @@ services:
     ports:
       - "9001:9001"
   # Storage and Events
-  couchdb:
-    image: couchdb
-    ports:
-      - '5984:5984'
-    environment:
-      - COUCHDB_USER=admin
-      - COUCHDB_PASSWORD=dex
-    volumes:
-      - couchdb_vol:/opt/couchdb/data
-volumes:
-  couchdb_vol:
+#  couchdb:
+#    image: couchdb
+#    ports:
+#      - '5984:5984'
+#    environment:
+#      - COUCHDB_USER=admin
+#      - COUCHDB_PASSWORD=dex
+#    volumes:
+#      - couchdb_vol:/opt/couchdb/data
+#volumes:
+#  couchdb_vol:
 x-aws-cloudformation:
   Description: Algodex Pub/Sub Services
   Outputs:
