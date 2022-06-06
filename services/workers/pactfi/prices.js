@@ -3,12 +3,17 @@ const pactsdk = require('@pactfi/pactsdk');
 
 // Algod SDK
 const algod = new algosdk.Algodv2(
-    '11e4dcfb445a8c7e8380848747f18afcd5d84ccb395e003e5b72127ca5e9a259',
-    'http://ec2-18-216-194-132.us-east-2.compute.amazonaws.com',
-    '8080',
+    process.env.ALGORAND_TOKEN,
+    process.env.ALGORAND_ALGOD_SERVER,
+    process.env.ALGORAND_ALGOD_PORT,
 );
+
+const options = process.env.ALGORAND_NETWORK === 'testnet' ?
+  {pactApiUrl: 'https://api.testnet.pact.fi'} :
+  undefined;
+
 // PactFi SDK
-const pact = new pactsdk.PactClient(algod, {pactApiUrl: 'https://api.testnet.pact.fi'});
+const pact = new pactsdk.PactClient(algod, options);
 
 
 const {PerformanceObserver, performance} = require('node:perf_hooks');

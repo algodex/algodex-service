@@ -28,8 +28,11 @@ module.exports = function(db, timestamp) {
   if (isDevelopment) {
     performance.mark('Start');
   }
-  // TODO: Allow for switching networks
-  fetch('https://testnet.analytics.tinyman.org/api/v1/current-asset-prices/').then(async (res)=> {
+
+  const url = process.env.ALGORAND_NETWORK === 'testnet' ?
+    'https://testnet.analytics.tinyman.org/api/v1/current-asset-prices/' :
+    'https://mainnet.analytics.tinyman.org/api/v1/current-asset-prices/';
+  fetch(url).then(async (res)=> {
     const prices = await res.json();
     await db.bulkDocs(Object.keys(prices).map((key) => {
       const created =Date.now();
