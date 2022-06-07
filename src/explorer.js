@@ -1,21 +1,8 @@
+// eslint-disable-next-line no-unused-vars
+const algosdk = require('algosdk');
 const SwaggerClient = require('swagger-client');
-const {InvalidConfiguration} = require('./Errors');
 
-let client; let indexer;
-
-/**
- * Get the Algorand API URL
- * @return {string}
- */
-function _getAlgorandURL() {
-  if (
-    typeof process.env['ALGORAND_EXPLORER'] === 'undefined'
-  ) {
-    throw new InvalidConfiguration('Algorand API not configured!');
-  }
-
-  return process.env['ALGORAND_EXPLORER'];
-}
+let client;
 
 /**
  * Get the Algorand API
@@ -59,46 +46,30 @@ async function _getAPI() {
 }
 
 /**
- * Get the Algorand Indexer API
- * @return {Promise<*>}
- */
-async function _getIndexAPI() {
-  const url = _getAlgorandURL();
-  if (typeof indexer === 'undefined') {
-    indexer = await new SwaggerClient(`${url}/idx2/swagger.json`);
-    indexer.spec.host='algoindexer.testnet.algoexplorerapi.io';
-    indexer.spec.basePath = '/';
-  }
-  return indexer.apis;
-}
-
-/**
  *
+ * @param {algosdk.Indexer} indexer Algorand Indexer
  * @param {number} id Block ID
  * @return {Promise<*>}
  */
-async function _getGenesisBlock(id) {
-  const api = await _getIndexAPI();
-  const {obj} = await api.lookup.lookupApplicationsByID({'application-id': id});
-  return obj.application['created-at-round'];
+async function _getGenesisBlock(indexer, id) {
+  const res = await indexer.lookupApplications( id).do();
+  return res.application['created-at-round'];
 }
 
 /**
- *
+ * @param {algosdk.Indexer} indexer Algorand Indexer
  * @return {Promise<*>}
  */
-async function _getHealthCheck() {
-  const api = await _getIndexAPI();
-  const {obj} = await api.common.makeHealthCheck();
-  return obj;
+async function _getHealthCheck(indexer) {
+  return await indexer.makeHealthCheck().do();
 }
 
 /**
- *
+ * @param {algosdk.Indexer} indexer Algorand Indexer
  * @return {Promise<*>}
  */
-async function _getCurrentBlock() {
-  const health = await _getHealthCheck();
+async function _getCurrentBlock(indexer) {
+  const health = await _getHealthCheck(indexer);
   const {round} = health;
   return round;
 }
@@ -128,27 +99,27 @@ async function waitForBlock({round}) {
 }
 
 /**
- *
+ * @param {algosdk.Indexer} indexer Algorand Indexer
  * @param {Array<{id: number, genesis: number}>} apps
  * @return {Promise<number>}
  */
-async function _getAppsBlockStart(apps) {
+async function _getAppsBlockStart(indexer, apps) {
   for (const app of apps) {
-    app.genesis = await _getGenesisBlock(app.id);
+    app.genesis = await _getGenesisBlock(indexer, app.id);
   }
 
   return Math.min(...apps.map((app)=>app.genesis));
 }
 
 /**
- *
+ * @param {algosdk.Indexer} indexer Algorand Indexer
  * @param {Array<{id: number, genesis: number}>} apps
  * @return {Promise<{current: *, start: number}>}
  */
-async function getAppsBlockRange(apps) {
+async function getAppsBlockRange(indexer, apps) {
   return {
-    start: await _getAppsBlockStart(apps),
-    current: await _getCurrentBlock(),
+    start: await _getAppsBlockStart(indexer, apps),
+    current: await _getCurrentBlock(indexer),
   };
 }
 
