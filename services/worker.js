@@ -59,7 +59,6 @@ module.exports = ({queues, db, escrowDB}) =>{
           const dirtyAccounts = [['NCL6MAVCMFKRM7NHOZZX3ZK7HBR52CD2UEZI5M3TYNAFUQUREJCRD5CALI']];
           //const dirtyAccount = '["ZKJV3VOLBC7E4ZRXCZALGYZ5DS7VGN7EGTBKIBKJLYE3MNQ5GKSZNYRL7E"]';
           //console.log({dirtyAccounts});
-          const data = {'adasdas': 'bbbbb'};
           console.log('here55');
           db.query('dex/orders',
               {reduce: true, group: true, keys: dirtyAccounts})
@@ -72,8 +71,23 @@ module.exports = ({queues, db, escrowDB}) =>{
                   const indexerClient = initOrGetIndexer();
                   const round = job.data.rnd;
                   const accountInfoPromise = indexerClient.lookupAccountByID(account).round(round).do();
-                  accountInfoPromise.then(function(res) {
-                    console.log(res);
+                  accountInfoPromise.then(function(accountInfo) {
+                    console.log(accountInfo);
+                    console.log('here57');
+                    const data = {indexerInfo: accountInfo, escrowInfo: row.value};
+                    data.lastUpdateUnixTime = job.data.ts;
+                    data.lastUpdateRound = job.data.rnd;
+                    escrowDB.post({_id: `${account}-${job.data.rnd}`, type: 'block', data: data})
+                        .then(function(response) {
+                          console.debug({
+                            msg: `Escrow Analytics Block stored`,
+                            ...response,
+                          });
+                        }).catch(function(err) {
+                          console.error(err);
+                        });
+
+
                   }).catch(function (err) {
                     console.log({err});
                   });
@@ -86,19 +100,11 @@ module.exports = ({queues, db, escrowDB}) =>{
                 console.log('found dirty escrow! '+ res.rows[0]);
 
                 console.log ({res});
+
               }).catch(function (err) {
                 console.log({err});
               });
-          console.log('here57');
-          escrowDB.post({_id: `${job.data.rnd}`, type: 'block', data: data})
-              .then(function(response) {
-                console.debug({
-                  msg: `Block stored`,
-                  ...response,
-                });
-              }).catch(function(err) {
-                console.error(err);
-              });
+
         }).catch(function(err) {
           console.error(err);
         });
