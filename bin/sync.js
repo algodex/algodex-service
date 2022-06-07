@@ -33,9 +33,10 @@ const compare = async function() {
   const {start, current} = await getAppsBlockRange(indexer, apps);
   // Create an Object keyed by blocks in the range
   const rounds = createConsecutiveObject(start, current);
-
+  const allDocs = await db.allDocs();
+  const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds
-  const existingBlocks = (await db.allDocs()).rows.map((doc)=>parseInt(doc.id));
+  const existingBlocks = blockDocs.map((doc)=>parseInt(doc.id));
   existingBlocks.forEach((block)=>{
     delete rounds[block];
   });
