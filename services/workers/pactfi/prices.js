@@ -3,24 +3,32 @@ const pactsdk = require('@pactfi/pactsdk');
 
 // Algod SDK
 const algod = new algosdk.Algodv2(
-    '11e4dcfb445a8c7e8380848747f18afcd5d84ccb395e003e5b72127ca5e9a259',
-    'http://ec2-18-216-194-132.us-east-2.compute.amazonaws.com',
-    '8080',
+    process.env.ALGORAND_TOKEN,
+    process.env.ALGORAND_ALGOD_SERVER,
+    process.env.ALGORAND_ALGOD_PORT,
 );
+
+const options = process.env.ALGORAND_NETWORK === 'testnet' ?
+  {pactApiUrl: 'https://api.testnet.pact.fi'} :
+  undefined;
+
 // PactFi SDK
-const pact = new pactsdk.PactClient(algod, {pactApiUrl: 'https://api.testnet.pact.fi'});
+const pact = new pactsdk.PactClient(algod, options);
 
 
 const {PerformanceObserver, performance} = require('node:perf_hooks');
 
 
-// Observe Performance
-const obs = new PerformanceObserver((items) => {
-  console.log(`⚡ Duration: ${items.getEntries()[0].duration}`);
-  performance.clearMarks();
-});
+const isDevelopment = process.env.NODE_ENV === 'development';
+// Watch for Performance
+if (isDevelopment) {
+  const obs = new PerformanceObserver((items) => {
+    console.log(items.getEntries()[0].duration);
+    performance.clearMarks();
+  });
+  obs.observe({type: 'measure'});
+}
 
-obs.observe({type: 'measure'});
 
 /**
  * Adds PactFi Prices to the database
@@ -30,7 +38,9 @@ obs.observe({type: 'measure'});
  * @return {Promise<void>}
  */
 module.exports = async (db, timestamp) => {
-  performance.mark('Start');
+  if (isDevelopment) {
+    performance.mark('Start');
+  }
   const pools = await pact.listPools({limit: 1000});
   if (pools.results.length !== pools.count) {
     // Note: It doesn't seem like the next parameter is in use currently,
@@ -50,6 +60,8 @@ module.exports = async (db, timestamp) => {
     };
   }));
 
-  performance.mark('Finish');
-  performance.measure('Start to Finish', 'Start', 'Finish');
+  if (isDevelopment) {
+    performance.mark('Finish');
+    performance.measure('Start to Finish', 'Start', 'Finish');
+  }
 };

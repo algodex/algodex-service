@@ -106,7 +106,11 @@ module.exports = ({queues, db, escrowDB}) =>{
               });
 
         }).catch(function(err) {
-          console.error(err);
+          if (err.error === 'conflict') {
+            console.error(err);
+          } else {
+            throw err;
+          }
         });
     
   }, {connection: queues.connection, concurrency: 50});
