@@ -41,14 +41,56 @@ const initOrGetIndexer = () => {
 module.exports = ({queues, db, escrowDB}) =>{
   // Lighten the load on the broker and do batch processing
   console.log({escrowDB});
-  const orders = new Worker('blocks', async (job)=>{
+
+  const indexedOrders = new Worker('orders', async (job)=>{
+    console.log('in orders queue');
+    
+    const blockJob = job.data.blockJob;
+    const order = job.data.reducedOrder;
+    const account = job.data.account;
+    console.debug({
+      msg: 'Received order',
+      round: blockJob.data.rnd,
+      account: account,
+    });
+    const indexerClient = initOrGetIndexer();
+    const round = blockJob.data.rnd;
+    const accountInfoPromise =
+      indexerClient.lookupAccountByID(account).round(round).includeAll(true).do();
+    accountInfoPromise.then(function(accountInfo) {
+      console.log(accountInfo);
+      console.log('here57');
+      const data = {indexerInfo: accountInfo, escrowInfo: order.value};
+      data.lastUpdateUnixTime = blockJob.data.ts;
+      data.lastUpdateRound = blockJob.data.rnd;
+      escrowDB.post({_id: `${account}-${blockJob.data.rnd}`, type: 'block', data: data})
+          .then(function(response) {
+            console.debug({
+              msg: `Indexed Block stored`,
+              ...response,
+            });
+          }).catch(function(err) {
+            if (err.error === 'conflict') {
+              console.error(err);
+            } else {
+              throw err;
+            }
+          });
+      }).catch(function (err) {
+        console.log({err});
+        throw err;
+      });
+
+  }, {connection: queues.connection, concurrency: 50});
+
+  const orders = new Worker('blocks', (job)=>{
     console.debug({
       msg: 'Received block',
       round: job.data.rnd,
     });
     // Save to database
     db.post({_id: `${job.data.rnd}`, type: 'block', ...job.data})
-        .then(function(response) {
+        .then(async function(response) {
           console.debug({
             msg: `Block stored`,
             ...response,
@@ -67,34 +109,22 @@ module.exports = ({queues, db, escrowDB}) =>{
                   return;
                 }
                 res.rows.forEach( (row) => {
+                  //add job
+                  const key = row.key;
+                  console.log('got account', {key});
                   const account = row.key[0];
-                  const indexerClient = initOrGetIndexer();
-                  const round = job.data.rnd;
-                  const accountInfoPromise = indexerClient.lookupAccountByID(account).round(round).do();
-                  accountInfoPromise.then(function(accountInfo) {
-                    console.log(accountInfo);
-                    console.log('here57');
-                    const data = {indexerInfo: accountInfo, escrowInfo: row.value};
-                    data.lastUpdateUnixTime = job.data.ts;
-                    data.lastUpdateRound = job.data.rnd;
-                    escrowDB.post({_id: `${account}-${job.data.rnd}`, type: 'block', data: data})
-                        .then(function(response) {
-                          console.debug({
-                            msg: `Escrow Analytics Block stored`,
-                            ...response,
-                          });
-                        }).catch(function(err) {
-                          console.error(err);
-                        });
+                  console.log({account});
+                  const ordersJob = {account: account,
+                    blockJob: job, reducedOrder: row};
+                 // console.log('adding to orders');
+                  queues.orders.add('orders', ordersJob,
+                      {removeOnComplete: true}).then(function(res) {
 
-
-                  }).catch(function (err) {
+                  }).catch(function(err) {
                     console.log({err});
+                    throw err;
                   });
-                  //.then(function (res) {
-                    //console.log({accountInfo});
 
-                  //});
                 });
                 // got the query results
                 console.log('found dirty escrow! '+ res.rows[0]);
@@ -102,10 +132,13 @@ module.exports = ({queues, db, escrowDB}) =>{
                 console.log ({res});
 
               }).catch(function (err) {
+                console.log('reducer error!!!');
                 console.log({err});
+                throw err;
               });
 
         }).catch(function(err) {
+          console.log('error here', {err});
           if (err.error === 'conflict') {
             console.error(err);
           } else {
@@ -116,7 +149,10 @@ module.exports = ({queues, db, escrowDB}) =>{
   }, {connection: queues.connection, concurrency: 50});
 
   orders.on('error', (err) => {
-    console.error(err);
+    console.error( {err} );
+  });
+  indexedOrders.on('error', (err) => {
+    console.error( {err} );
   });
 };
 

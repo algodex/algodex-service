@@ -32,7 +32,8 @@ const compare = async function() {
   // Get a range of blocks for a list of applications
   const {start, current} = await getAppsBlockRange(indexer, apps);
   // Create an Object keyed by blocks in the range
-  const rounds = createConsecutiveObject(start, current);
+  //const rounds = createConsecutiveObject(start, current);
+  const rounds = createConsecutiveObject(start, start+5000);
   const allDocs = await db.allDocs();
   const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds
@@ -62,9 +63,19 @@ const queue = async function() {
   process.on('message', async function({index, chunks}) {
     for (const round of chunks[index]) {
       console.log('Queue Round', round);
-      const block = await getBlock({round});
-      await queues.blocks.add('blocks', block, {removeOnComplete: true});
-      console.log('Queue Round Sent', round);
+      let gotBlock = false;
+
+      do {
+        try {
+          const block = await getBlock({round});
+          gotBlock = true;
+          await queues.blocks.add('blocks', block, {removeOnComplete: true});
+          console.log('Queue Round Sent', round);
+        } catch (e) {
+          console.log('could not fetch block', {e});
+        }
+      } while (gotBlock === false);
+
     }
   });
   process.send('index');
