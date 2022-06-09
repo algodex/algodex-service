@@ -3,9 +3,11 @@ const Worker = bullmq.Worker;
 const algosdk = require('algosdk');
 
 let indexerClient = null;
+let escrowCounter = 0;
+let escrowCounter2 = 0;
 
 const getDirtyAccounts = (block) => {
-  console.log( {block} );
+  //console.log( {block} );
   if (block.txns === undefined) {
     return [];
   }
@@ -41,16 +43,16 @@ module.exports = ({queues, db, escrowDB}) =>{
           //const dirtyAccounts = [['NCL6MAVCMFKRM7NHOZZX3ZK7HBR52CD2UEZI5M3TYNAFUQUREJCRD5CALI']];
           //const dirtyAccount = '["ZKJV3VOLBC7E4ZRXCZALGYZ5DS7VGN7EGTBKIBKJLYE3MNQ5GKSZNYRL7E"]';
           //console.log({dirtyAccounts});
-          console.log('here55');
-          console.log('dirty accounts are: ', 
-            dirtyAccounts.reduce( (account, accounts) => accounts + "," + account), "");
+         // console.log('here55');
+          //console.log('dirty accounts are: ', 
+         //   dirtyAccounts.reduce( (account, accounts) => accounts + "," + account), "");
           return db.query('dex/orders',
               {reduce: true, group: true, keys: dirtyAccounts})
               .then(function(res) {
                 if (!res?.rows?.length) {
                   return;
                 }
-                
+                escrowCounter += res.rows.length;
                 const allPromises = res.rows.reduce( (allPromises, row) => {
                   //add job
                   const key = row.key;
@@ -60,12 +62,17 @@ module.exports = ({queues, db, escrowDB}) =>{
                   const ordersJob = {account: account,
                     blockData: job.data, reducedOrder: row};
                   const promise = queues.orders.add('orders', ordersJob,
-                    {removeOnComplete: false});
+                    {removeOnComplete: false}).then(function(){
+                      escrowCounter2++;
+                      console.log('COUNTERS: ' + escrowCounter + ' ' + escrowCounter2)
+                    }).catch(function(err) {
+                      console.error('there is an error here!');
+                    });
                   allPromises.push(promise);
                   return allPromises;
                  // console.log('adding to orders');
                 }, []);
-                console.log('promises length:' + allPromises);
+                //console.log('promises length:' + allPromises);
                 return Promise.all(allPromises);
                 // got the query results
                 //console.log('found dirty escrow! '+ res.rows[0]);
@@ -84,9 +91,9 @@ module.exports = ({queues, db, escrowDB}) =>{
                 }
               });
         }).catch(function(err) {
-          console.log('error here', {err});
+          //console.log('error here', {err});
           if (err.error === 'conflict') {
-            console.error(err);
+            //console.error(err);
           } else {
             throw err;
           }
