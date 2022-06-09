@@ -22,74 +22,14 @@ const getDirtyAccounts = (block) => {
   return Object.keys(dirtyAccounts);
 };
 
-const initOrGetIndexer = () => {
-  if (indexerClient !== null) {
-    return indexerClient;
-  }
-  const algosdk = require('algosdk');
-  const baseServer = "https://testnet-algorand.api.purestake.io/idx2";
-  const port = "";
-  
-  const token = {
-      'X-API-key': 'VELyABA1dGqGbAVktbew4oACvp0c0298gMgYtYIb',
-  }
-  
-  indexerClient = new algosdk.Indexer(token, baseServer, port);
-  return indexerClient;
-}
-
 module.exports = ({queues, db, escrowDB}) =>{
-  // Lighten the load on the broker and do batch processing
-  console.log({escrowDB});
-
-  const indexedOrders = new Worker('orders', async (job)=>{
-    console.log('in orders queue');
-    
-    const blockJob = job.data.blockJob;
-    const order = job.data.reducedOrder;
-    const account = job.data.account;
-    console.debug({
-      msg: 'Received order',
-      round: blockJob.data.rnd,
-      account: account,
-    });
-    const indexerClient = initOrGetIndexer();
-    const round = blockJob.data.rnd;
-    const accountInfoPromise =
-      indexerClient.lookupAccountByID(account).round(round).includeAll(true).do();
-    accountInfoPromise.then(function(accountInfo) {
-      console.log(accountInfo);
-      console.log('here57');
-      const data = {indexerInfo: accountInfo, escrowInfo: order.value};
-      data.lastUpdateUnixTime = blockJob.data.ts;
-      data.lastUpdateRound = blockJob.data.rnd;
-      escrowDB.post({_id: `${account}-${blockJob.data.rnd}`, type: 'block', data: data})
-          .then(function(response) {
-            console.debug({
-              msg: `Indexed Block stored`,
-              ...response,
-            });
-          }).catch(function(err) {
-            if (err.error === 'conflict') {
-              console.error(err);
-            } else {
-              throw err;
-            }
-          });
-      }).catch(function (err) {
-        console.log({err});
-        throw err;
-      });
-
-  }, {connection: queues.connection, concurrency: 50});
-
   const orders = new Worker('blocks', (job)=>{
     console.debug({
       msg: 'Received block',
       round: job.data.rnd,
     });
     // Save to database
-    db.post({_id: `${job.data.rnd}`, type: 'block', ...job.data})
+    return db.post({_id: `${job.data.rnd}`, type: 'block', ...job.data})
         .then(async function(response) {
           console.debug({
             msg: `Block stored`,
@@ -102,41 +42,47 @@ module.exports = ({queues, db, escrowDB}) =>{
           //const dirtyAccount = '["ZKJV3VOLBC7E4ZRXCZALGYZ5DS7VGN7EGTBKIBKJLYE3MNQ5GKSZNYRL7E"]';
           //console.log({dirtyAccounts});
           console.log('here55');
-          db.query('dex/orders',
+          console.log('dirty accounts are: ', 
+            dirtyAccounts.reduce( (account, accounts) => accounts + "," + account), "");
+          return db.query('dex/orders',
               {reduce: true, group: true, keys: dirtyAccounts})
               .then(function(res) {
                 if (!res?.rows?.length) {
                   return;
                 }
-                res.rows.forEach( (row) => {
+                
+                const allPromises = res.rows.reduce( (allPromises, row) => {
                   //add job
                   const key = row.key;
                   console.log('got account', {key});
                   const account = row.key[0];
                   console.log({account});
                   const ordersJob = {account: account,
-                    blockJob: job, reducedOrder: row};
+                    blockData: job.data, reducedOrder: row};
+                  const promise = queues.orders.add('orders', ordersJob,
+                    {removeOnComplete: true});
+                  allPromises.push(promise);
+                  return allPromises;
                  // console.log('adding to orders');
-                  queues.orders.add('orders', ordersJob,
-                      {removeOnComplete: true}).then(function(res) {
-
-                  }).catch(function(err) {
-                    console.log({err});
-                    throw err;
-                  });
-
-                });
+                }, []);
+                console.log('promises length:' + allPromises);
+                return Promise.all(allPromises);
                 // got the query results
-                console.log('found dirty escrow! '+ res.rows[0]);
+                //console.log('found dirty escrow! '+ res.rows[0]);
 
-                console.log ({res});
+                //console.log ({res});
 
               }).catch(function (err) {
-                console.log('reducer error!!!');
-                console.log({err});
-                throw err;
-              });
+                if (err.error === 'not_found') {
+                  //console.log('not found');
+                  throw err;
 
+                } else {
+                  console.log('reducer error!!!');
+                  console.log(err);
+                  throw err;
+                }
+              });
         }).catch(function(err) {
           console.log('error here', {err});
           if (err.error === 'conflict') {
@@ -149,9 +95,6 @@ module.exports = ({queues, db, escrowDB}) =>{
   }, {connection: queues.connection, concurrency: 50});
 
   orders.on('error', (err) => {
-    console.error( {err} );
-  });
-  indexedOrders.on('error', (err) => {
     console.error( {err} );
   });
 };

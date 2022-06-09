@@ -29,11 +29,24 @@ module.exports = function() {
 
   if (typeof queues === 'undefined') {
     // Define Queues
+    const defaultJobOptions = {
+      attempts: 300,
+      backoff: {
+        type: 'fixed',
+        delay: 5000,
+      },
+    };
     queues = {
       connection,
-      blocks: new Queue('blocks', {connection}),
-      assets: new Queue('assets', {connection}),
-      orders: new Queue('orders', {connection}),
+      blocks: new Queue('blocks', {connection,
+        defaultJobOptions: defaultJobOptions,
+      }),
+      assets: new Queue('assets', {connection,
+        defaultJobOptions: defaultJobOptions,
+      }),
+      orders: new Queue('orders', {connection,
+        defaultJobOptions: defaultJobOptions,
+      }),
     };
   }
 
