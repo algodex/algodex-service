@@ -1,0 +1,30 @@
+require('dotenv').config();
+const express = require('express');
+const QueueMQ = require('bullmq');
+const { createBullBoard } = require('@bull-board/api');
+const { BullAdapter } = require('@bull-board/api/bullAdapter');
+const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
+const { ExpressAdapter } = require('@bull-board/express');
+// Configure Queues
+const getQueues = require('../src/queues');
+const queues = getQueues();
+
+const serverAdapter = new ExpressAdapter();
+
+const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
+  queues: [new BullMQAdapter(queues.blocks), new BullMQAdapter(queues.orders), new BullMQAdapter(queues.assets)],
+  serverAdapter: serverAdapter,
+});
+
+const app = express();
+
+serverAdapter.setBasePath('/admin/queues');
+app.use('/admin/queues', serverAdapter.getRouter());
+
+// other configurations of your server
+
+app.listen(3000, () => {
+  console.log('Running on 3000...');
+  console.log('For the UI, open http://localhost:3000/admin/queues');
+  console.log('Make sure Redis is running on port 6379 by default');
+});

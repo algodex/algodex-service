@@ -60,7 +60,7 @@ module.exports = ({queues, db, escrowDB}) =>{
                   const ordersJob = {account: account,
                     blockData: job.data, reducedOrder: row};
                   const promise = queues.orders.add('orders', ordersJob,
-                    {removeOnComplete: true});
+                    {removeOnComplete: false});
                   allPromises.push(promise);
                   return allPromises;
                  // console.log('adding to orders');
