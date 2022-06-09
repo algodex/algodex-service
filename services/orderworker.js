@@ -46,10 +46,11 @@ module.exports = ({queues, db, escrowDB}) =>{
       const data = {indexerInfo: accountInfo, escrowInfo: order.value};
       data.lastUpdateUnixTime = blockData.ts;
       data.lastUpdateRound = blockData.rnd;
-      return escrowDB.post({_id: `${account}-${blockData.rnd}`, type: 'block', data: data})
+      return escrowDB.post({_id: `${account}-${blockData.rnd}`,
+        type: 'block', data: data})
           .then(function(response) {
             console.debug({
-              msg: `Indexed Block stored`,
+              msg: `Indexed Block stored with account info`,
               ...response,
             });
           }).catch(function(err) {
@@ -59,11 +60,31 @@ module.exports = ({queues, db, escrowDB}) =>{
               throw err;
             }
           });
-      }).catch(function (err) {
+    }).catch(function(err) {
+      if (err.status === 500 &&
+        err.message.includes('not currently supported')) {
+        const data = {indexerInfo: 'noAccountInfo', escrowInfo: order.value};
+        data.lastUpdateUnixTime = blockData.ts;
+        data.lastUpdateRound = blockData.rnd;
+        return escrowDB.post({_id: `${account}-${blockData.rnd}`,
+          type: 'block', data: data})
+            .then(function(response) {
+              console.debug({
+                msg: `Indexed Escrow stored without account info`,
+                ...response,
+              });
+            }).catch(function(err) {
+              if (err.error === 'conflict') {
+                console.error(err);
+              } else {
+                throw err;
+              }
+            });
+      } else {
         console.log({err});
         throw err;
-      });
-
+      }
+    });
   }, {connection: queues.connection, concurrency: 50});
 
   indexedOrders.on('error', (err) => {
