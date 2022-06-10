@@ -24,7 +24,9 @@ const getDirtyAccounts = (block) => {
   return Object.keys(dirtyAccounts);
 };
 
-module.exports = ({queues, db, escrowDB}) =>{
+module.exports = ({queues, databases}) =>{
+  const db = databases.dex;
+
   const orders = new Worker('blocks', (job)=>{
     console.debug({
       msg: 'Received block',
