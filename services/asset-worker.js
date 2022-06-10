@@ -3,16 +3,6 @@ const Worker = bullmq.Worker;
 const algosdk = require('algosdk');
 
 let indexerClient = null;
-let escrowCounter3 = 0;
-let escrowCounter4 = 0;
-let escrowCounter5 = 0;
-let escrowCounter6 = 0;
-
-const printCounters = () => {
-  console.debug('ESCROW COUNTERS: ' + escrowCounter3 + ' ' + 
-  escrowCounter4 + ' ' + escrowCounter5 + ' ' + escrowCounter6 
-  + ' total: ' + (escrowCounter4 + escrowCounter6) );
-};
 
 const initOrGetIndexer = () => {
   if (indexerClient !== null) {
