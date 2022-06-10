@@ -30,6 +30,7 @@ const initOrGetIndexer = () => {
   return indexerClient;
 }
 
+
 module.exports = ({queues, databases}) =>{
   const escrowDB = databases.escrow;
   // Lighten the load on the broker and do batch processing
@@ -59,8 +60,6 @@ module.exports = ({queues, databases}) =>{
       data.lastUpdateRound = blockData.rnd;
       escrowCounter3++;
       printCounters();
-      const assetId = order.value.assetId;
-
       return escrowDB.post({_id: `${account}-${blockData.rnd}`,
         type: 'block', data: data})
           .then(function(response) {

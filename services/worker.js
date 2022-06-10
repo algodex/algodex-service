@@ -2,7 +2,6 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 const algosdk = require('algosdk');
 
-let indexerClient = null;
 let escrowCounter = 0;
 let escrowCounter2 = 0;
 
@@ -22,6 +21,18 @@ const getDirtyAccounts = (block) => {
     return accounts;
   }, {});
   return Object.keys(dirtyAccounts);
+};
+
+const getAssetQueuePromise = (assetQueue, assetId) => {
+  const assetAddJob = {assetId: assetId};
+  const promise = assetQueue.add('assets', assetAddJob,
+      {removeOnComplete: true}).then(function() {
+    console.log('added asset: ' + assetId);
+  }).catch(function(err) {
+    console.error('error adding to assets queue:', {err} );
+    throw err;
+  });
+  return promise;
 };
 
 module.exports = ({queues, databases}) =>{
@@ -55,20 +66,32 @@ module.exports = ({queues, databases}) =>{
                   return;
                 }
                 escrowCounter += res.rows.length;
+                const assetIdSet = {};
+
                 const allPromises = res.rows.reduce( (allPromises, row) => {
                   //add job
+
                   const key = row.key;
                   console.log('got account', {key});
                   const account = row.key[0];
                   console.log({account});
                   const ordersJob = {account: account,
                     blockData: job.data, reducedOrder: row};
+                  
+                  const assetId = row.value.assetId;
+                  if (!('assetId:assetIds' in assetIdSet)) {
+                    assetIdSet[assetId] = 1;
+                    const assetAddPromise = getAssetQueuePromise(queues.assets, assetId);
+                    allPromises.push(assetAddPromise);
+                  }
+
                   const promise = queues.orders.add('orders', ordersJob,
-                    {removeOnComplete: false}).then(function(){
+                    {removeOnComplete: true}).then(function(){
                       escrowCounter2++;
                       console.log('COUNTERS: ' + escrowCounter + ' ' + escrowCounter2)
                     }).catch(function(err) {
-                      console.error('there is an error here!');
+                      console.error('error adding to orders queue:', {err} );
+                      throw err;
                     });
                   allPromises.push(promise);
                   return allPromises;

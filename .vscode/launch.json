@@ -41,6 +41,18 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "AssetWorker",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\server.js",
+            "env": {
+                "APP_CONTEXT": "asset-worker"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Service",
             "skipFiles": [
                 "<node_internals>/**"
