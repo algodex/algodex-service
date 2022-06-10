@@ -27,7 +27,7 @@ services:
   worker-price-pactfi:
     build: .
     environment:
-      - COUCHDB_URL=http://admin:dex@couchdb:5984/prices
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
     volumes:
       - ./:/app
     depends_on:
@@ -36,7 +36,7 @@ services:
   worker-price-tinyman:
     build: .
     environment:
-      - COUCHDB_URL=http://admin:dex@couchdb:5984/prices
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
       - TZ=America/Chicago
     volumes:
       - ./:/app

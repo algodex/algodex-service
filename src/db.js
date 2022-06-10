@@ -4,7 +4,7 @@ const PouchDB = require('pouchdb-node');
 const db = [];
 
 // This function should be cleaned up in a future PR
-module.exports = function(dbUrl = process.env['COUCHDB_URL']) {
+module.exports = function(dbUrl) {
   const url = dbUrl;
 
   console.log({url});

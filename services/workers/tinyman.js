@@ -18,7 +18,7 @@ const addPrices = require('./tinyman/prices');
  * @param {PouchDB} db
  */
 module.exports = ({events, databases}) =>{
-  const db = databases.dex;
+  const db = databases.prices;
   console.log('Starting');
   events.subscribe('blocks', (err, count) => {
     console.log('Subscribed to Blocks');

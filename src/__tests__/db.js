@@ -10,7 +10,7 @@ test( 'database should fail with InvalidConfiguration', ()=>{
 
 test('database can be constructed', async ()=>{
   process.env.COUCHDB_URL = 'test-runner';
-  const dbSingleton = getDatabase();
+  const dbSingleton = getDatabase(process.env.COUCHDB_URL);
   const singletonInfo = await dbSingleton.info();
   expect(dbSingleton).toBeInstanceOf(PouchDB);
   expect(singletonInfo.db_name).toEqual(process.env.COUCHDB_URL);

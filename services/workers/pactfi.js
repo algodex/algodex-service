@@ -9,7 +9,7 @@ const addPrices = require('./pactfi/prices');
  * @param {PouchDB} db PouchDB Instance
  */
 module.exports = ({events, databases}) =>{
-  const db = databases.dex;
+  const db = databases.prices;
 
   console.log(`⚙ Starting ${__filename}`);
   events.subscribe('blocks', (err, count) => {

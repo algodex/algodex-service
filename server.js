@@ -14,6 +14,7 @@ const couchBaseURL = process.env['COUCHDB_BASE_URL'];
 const databases = {
   dex: getDatabase(couchBaseURL + '/dex'),
   escrow: getDatabase(couchBaseURL + '/escrow'),
+  prices: getDatabase(couchBaseURL + '/prices'),
 };
 
 // Configure Queues
