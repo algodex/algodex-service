@@ -1,5 +1,6 @@
 const Redis = require('ioredis');
 const Queue = require('bullmq').Queue;
+const QueueScheduler = require('bullmq').QueueScheduler;
 const {InvalidConfiguration} = require('./Errors');
 
 let queues; let connection;
@@ -25,17 +26,29 @@ module.exports = function() {
   if (typeof connection === 'undefined') {
     // Define connection
     connection = new Redis(port, address);
+    //connection = `redis://${address}:${port}`;
   }
 
   if (typeof queues === 'undefined') {
     // Define Queues
+    const defaultJobOptions = {
+      attempts: 1000,
+      backoff: {
+        // Note: this is overridden for the order worker
+        // which has a custom strategy.
+        type: 'exponential',
+        delay: 300,
+      },
+    };
     queues = {
       connection,
-      blocks: new Queue('blocks', {connection}),
-      assets: new Queue('assets', {connection}),
-      orders: new Queue('orders', {connection}),
+      blocks: new Queue('blocks', {defaultJobOptions: defaultJobOptions, connection: connection}),
+      assets: new Queue('assets', {defaultJobOptions: defaultJobOptions, connection: connection}),
+      orders: new Queue('orders', {defaultJobOptions: defaultJobOptions, connection: connection}),
+      blocksScheduler: new QueueScheduler('blocks', {connection: connection}),
+      ordersScheduler: new QueueScheduler('orders', {connection: connection}),
+      assetsScheduler: new QueueScheduler('assets', {connection: connection}),
     };
   }
-
   return queues;
 };

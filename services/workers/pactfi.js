@@ -8,7 +8,9 @@ const addPrices = require('./pactfi/prices');
  * @param {Redis} events Redis Instance
  * @param {PouchDB} db PouchDB Instance
  */
-module.exports = ({events, db}) =>{
+module.exports = ({events, databases}) =>{
+  const db = databases.prices;
+
   console.log(`⚙ Starting ${__filename}`);
   events.subscribe('blocks', (err, count) => {
     console.log('🔊 Subscribed to Blocks');

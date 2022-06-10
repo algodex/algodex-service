@@ -1,20 +1,21 @@
 const {InvalidConfiguration} = require('./Errors');
-const PouchDB = require('pouchdb-core');
-PouchDB.plugin(require('pouchdb-adapter-http'));
+const PouchDB = require('pouchdb-node');
 
-let db;
+const db = [];
 
-module.exports = function() {
+// This function should be cleaned up in a future PR
+module.exports = function(dbUrl) {
+  const url = dbUrl;
+
+  console.log({url});
   if (
-    typeof process.env['COUCHDB_URL'] === 'undefined'
+    typeof url === 'undefined'
   ) {
     throw new InvalidConfiguration('Couchdb not configured!');
   }
 
-  const url = process.env['COUCHDB_URL'];
-
-  if (typeof db === 'undefined') {
-    db = new PouchDB(url);
+  if (!db.hasOwnProperty(url)) {
+    db[url] = new PouchDB(url);
   }
-  return db;
+  return db[url];
 };
