@@ -2,33 +2,61 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 const algosdk = require('algosdk');
 
-let indexerClient = null;
-
-const initOrGetIndexer = () => {
-  if (indexerClient !== null) {
-    return indexerClient;
-  }
-  const algosdk = require('algosdk');
-  const baseServer = "https://testnet-algorand.api.purestake.io/idx2";
-  const port = "";
+const setAssetHistory = (data) => {
   
-  const token = {
-      'X-API-key': 'VELyABA1dGqGbAVktbew4oACvp0c0298gMgYtYIb',
-  }
-  
-  indexerClient = new algosdk.Indexer(token, baseServer, port);
-  return indexerClient;
-}
+};
 
 module.exports = ({queues, databases}) =>{
   const formattedEscrowDB = databases.formattedEscrow;
+  const assetDB = databases.assets;
   // Lighten the load on the broker and do batch processing
   console.log({formattedEscrowDB});
   console.log('in formatted-order-worker.js');
-  const indexer = initOrGetIndexer();
 
   const formattedOrderWorker = new Worker('formattedEscrows', async (job)=>{
     console.log('got formatted escrows job ', {job});
+    const assetId = job.data.escrowInfo.assetId;
+    const addr = job.data.indexerInfo.account.address;
+    const data = job.data;
+
+    const assetGetPromise = assetDB.get(assetId)
+        .then(function(res) {
+          console.log({res});
+          data.assetInfo = res.asset;
+          if (!data.x) {
+            data.x = 1;
+          } else {
+            data.x++;
+          }
+          const formattedOrderGet = formattedEscrowDB.get(addr).then(function(res) {
+            data.x++;
+            return formattedEscrowDB.put({
+              _id: res._id,
+              _rev: res._rev,
+              data: data,
+            }).then(function(res) {
+              console.log('added doc revision: ' + data);
+            });
+          }).catch(function(err) {
+            if (err.error === 'not_found') {
+              return formattedEscrowDB.post({_id: `${addr}`,
+                type: 'formatted_escrow', data: data})
+                  .then(function(response) {
+                    console.log('posted formatted escrow');
+                  });
+            } else {
+              throw err;
+            }
+          });
+          return formattedOrderGet;
+          
+        }).catch(function(err) {
+          throw err;
+        });
+      
+        return assetGetPromise;
+
+
     //const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
     /*return assetDB.post({_id: `${job.data.assetId}`,
       type: 'asset', ...assetData})
