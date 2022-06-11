@@ -40,7 +40,7 @@ const chartIndex = {
 const formattedEscrowsIndex = {
   _id: '_design/formatted_escrow',
   views: {
-    formattedEscrow: {
+    orders_by_asset_id: {
       map: formattedOrdersByAssetIdMap.toString(),
     },
   },
