@@ -21,16 +21,16 @@ const initOrGetIndexer = () => {
 }
 
 module.exports = ({queues, databases}) =>{
-  const assetDB = databases.assets;
+  const formattedEscrowDB = databases.formattedEscrow;
   // Lighten the load on the broker and do batch processing
-  console.log({assetDB});
-  console.log('in assets-worker.js');
+  console.log({formattedEscrowDB});
+  console.log('in formatted-order-worker.js');
   const indexer = initOrGetIndexer();
 
-  const assetsWorker = new Worker('assets', async (job)=>{
-    console.log('got assets job ', {job});
-    const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
-    return assetDB.post({_id: `${job.data.assetId}`,
+  const formattedOrderWorker = new Worker('formattedEscrows', async (job)=>{
+    console.log('got formatted escrows job ', {job});
+    //const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
+    /*return assetDB.post({_id: `${job.data.assetId}`,
       type: 'asset', ...assetData})
         .then(async function(response) {
           console.debug({
@@ -44,9 +44,10 @@ module.exports = ({queues, databases}) =>{
             throw err;
           }
         });
+      */
   }, {connection: queues.connection, concurrency: 50});
 
-  assetsWorker.on('error', (err) => {
+  formattedOrderWorker.on('error', (err) => {
     console.error( {err} );
   });
 };

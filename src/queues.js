@@ -45,9 +45,11 @@ module.exports = function() {
       blocks: new Queue('blocks', {defaultJobOptions: defaultJobOptions, connection: connection}),
       assets: new Queue('assets', {defaultJobOptions: defaultJobOptions, connection: connection}),
       orders: new Queue('orders', {defaultJobOptions: defaultJobOptions, connection: connection}),
+      formattedEscrows: new Queue('formattedEscrows', {defaultJobOptions: defaultJobOptions, connection: connection}),
       blocksScheduler: new QueueScheduler('blocks', {connection: connection}),
       ordersScheduler: new QueueScheduler('orders', {connection: connection}),
       assetsScheduler: new QueueScheduler('assets', {connection: connection}),
+      formattedEscrowsScheduler: new QueueScheduler('formattedEscrows', {connection: connection}),
     };
   }
   return queues;

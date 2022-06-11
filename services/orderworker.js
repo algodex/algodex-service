@@ -30,6 +30,15 @@ const initOrGetIndexer = () => {
   return indexerClient;
 }
 
+const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
+  const promise = formattedEscrowsQueue.add('formattedEscrows', order,
+      {removeOnComplete: true}).then(function() {
+  }).catch(function(err) {
+    console.error('error adding to formattedEscrows queue:', {err} );
+    throw err;
+  });
+  return promise;
+};
 
 module.exports = ({queues, databases}) =>{
   const escrowDB = databases.escrow;
@@ -69,6 +78,10 @@ module.exports = ({queues, databases}) =>{
             //  msg: `Indexed Block stored with account info`,
             //  ...response,
             //});
+            const formattedOrderPromise =
+              getFormattedOrderQueuePromise(queues.formattedEscrows,
+                data);
+            return formattedOrderPromise;
           }).catch(function(err) {
             if (err.error === 'conflict') {
               console.error(err);
