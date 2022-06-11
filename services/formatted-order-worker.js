@@ -2,8 +2,25 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 const algosdk = require('algosdk');
 
+const pushHistory = (data, historyEntry) => {
+  const history = data.history || [];
+  history.push(historyEntry);
+  data.history = history;
+};
 const setAssetHistory = (data) => {
-  
+  if (!data.escrowInfo.isAlgoBuyEscrow) {
+    const historyEntry = {
+      block: data.indexerInfo.account.round,
+      asaAmount: data.indexerInfo.account.assets[0]['amount'],
+    };
+    pushHistory(data, historyEntry);
+  } else {
+    const historyEntry = {
+      block: data.indexerInfo.account.round,
+      algoAmount: data.indexerInfo.account.amount,
+    };
+    pushHistory(data, historyEntry);
+  }
 };
 
 module.exports = ({queues, databases}) =>{
@@ -23,22 +40,20 @@ module.exports = ({queues, databases}) =>{
         .then(function(res) {
           console.log({res});
           data.assetInfo = res.asset;
-          if (!data.x) {
-            data.x = 1;
-          } else {
-            data.x++;
-          }
+
           const formattedOrderGet = formattedEscrowDB.get(addr).then(function(res) {
-            data.x++;
+            data.history = res.data.history;
+            setAssetHistory(data);
             return formattedEscrowDB.put({
               _id: res._id,
               _rev: res._rev,
-              data: data,
+              data: res.data,
             }).then(function(res) {
               console.log('added doc revision: ' + data);
             });
           }).catch(function(err) {
             if (err.error === 'not_found') {
+              setAssetHistory(data);
               return formattedEscrowDB.post({_id: `${addr}`,
                 type: 'formatted_escrow', data: data})
                   .then(function(response) {

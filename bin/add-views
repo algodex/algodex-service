@@ -3,17 +3,25 @@
 const chartMap = require('../views/chart/map')
 const chartReduce = require('../views/chart/reduce')
 const orderMap = require('../views/orders/map')
+const formattedOrdersByAssetIdMap =
+  require('../views/formatted-orders/orders-by-asset-id');
 const orderReduce = require('../views/orders/reduce')
 const PouchDB = require('pouchdb')
 PouchDB.plugin(require('pouchdb-erase'))
 
 // create the remote database with authentication
-const remote = new PouchDB('http://localhost:5984/dex', {
+const dexDB = new PouchDB('http://localhost:5984/dex', {
   auth: {
     username: 'admin',
     password: 'dex',
   },
-})
+});
+const formattedEscrowDB = new PouchDB('http://localhost:5984/formatted_escrow', {
+  auth: {
+    username: 'admin',
+    password: 'dex',
+  },
+});
 
 const chartIndex = {
   _id: '_design/dex',
@@ -29,19 +37,45 @@ const chartIndex = {
   },
 }
 
-remote.get('_design/dex').then((res)=>{
+const formattedEscrowsIndex = {
+  _id: '_design/formatted_escrow',
+  views: {
+    formattedEscrow: {
+      map: formattedOrdersByAssetIdMap.toString(),
+    },
+  },
+};
+
+dexDB.get('_design/dex').then((res)=>{
   console.log('Index Found')
-  remote.put({...chartIndex, _rev: res._rev}).catch((e)=>{
+  dexDB.put({...chartIndex, _rev: res._rev}).catch((e)=>{
     console.log('Update error', e)
     throw e;
   })
 }).catch((e)=>{
   console.log('Error Fetching Index')
   if(e.error === 'not_found'){
-    remote.put(chartIndex).catch((e)=>{
+    dexDB.put(chartIndex).catch((e)=>{
       console.log('Create Error', e)
     })
   } else {
     throw e;
   }
 })
+
+formattedEscrowDB.get('_design/formatted_escrow').then((res)=>{
+  console.log('Index Found');
+  formattedEscrowDB.put({...formattedEscrowsIndex, _rev: res._rev}).catch((e)=>{
+    console.log('Update error', e);
+    throw e;
+  });
+}).catch((e)=>{
+  console.log('Error Fetching Index');
+  if (e.error === 'not_found') {
+    formattedEscrowDB.put(formattedEscrowsIndex).catch((e)=>{
+      console.log('Create Error', e);
+    });
+  } else {
+    throw e;
+  }
+});

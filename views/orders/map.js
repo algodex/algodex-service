@@ -127,7 +127,9 @@ module.exports = function(doc) {
               }
               if (typeof txn.txn.apaa !== 'undefined') {
                 const orderInfo = atob(txn.txn.apaa[1]);
-                const parts =orderInfo.split(/^(\d+)-(\d+)-(\d+)-(\d+)$/);
+                const parts = orderInfo.split(/^(\d+)-(\d+)-(\d+)-(\d+)$/);
+                // eslint-disable-next-line max-len
+                const version = appCallType === 'open' ? atob(txn.txn.apaa[2]) : null;
                 const res = {
                   isAlgoBuyEscrow: isAlgoBuyEscrow,
                   apat: txn.txn.apat,
@@ -141,6 +143,7 @@ module.exports = function(doc) {
                   ownerAddr: getOwner(group, appCallType, isAlgoBuyEscrow),
                   block: doc._id,
                   ts: doc.ts,
+                  version: version,
                 };
 
                 emit([txn.txn.snd], res);
