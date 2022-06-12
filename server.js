@@ -12,7 +12,7 @@ const getDatabase = require('./src/db');
 
 const couchBaseURL = process.env['COUCHDB_BASE_URL'];
 const databases = {
-  dex: getDatabase(couchBaseURL + '/dex'),
+  blocks: getDatabase(couchBaseURL + '/blocks'),
   escrow: getDatabase(couchBaseURL + '/escrow'),
   prices: getDatabase(couchBaseURL + '/prices'),
   assets: getDatabase(couchBaseURL + '/assets'),

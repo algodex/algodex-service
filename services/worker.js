@@ -36,7 +36,7 @@ const getAssetQueuePromise = (assetQueue, assetId) => {
 };
 
 module.exports = ({queues, databases}) =>{
-  const db = databases.dex;
+  const db = databases.blocks;
 
   const orders = new Worker('blocks', (job)=>{
     console.debug({
@@ -59,7 +59,7 @@ module.exports = ({queues, databases}) =>{
          // console.log('here55');
           //console.log('dirty accounts are: ', 
          //   dirtyAccounts.reduce( (account, accounts) => accounts + "," + account), "");
-          return db.query('dex/orders',
+          return db.query('blocks/orders',
               {reduce: true, group: true, keys: dirtyAccounts})
               .then(function(res) {
                 if (!res?.rows?.length) {
