@@ -30,6 +30,25 @@ const initOrGetIndexer = () => {
   return indexerClient;
 }
 
+const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
+  const promise = formattedEscrowsQueue.add('formattedEscrows', order,
+      {removeOnComplete: true}).then(function() {
+  }).catch(function(err) {
+    console.error('error adding to formattedEscrows queue:', {err} );
+    throw err;
+  });
+  return promise;
+};
+const reduceIndexerInfo = (indexerInfo) => {
+  const asaAmount = indexerInfo.account.assets ?
+    indexerInfo.account.assets[0].amount : 0;
+  return {
+    address: indexerInfo.account.address,
+    algoAmount: indexerInfo.account.amount,
+    round: indexerInfo['current-round'],
+    asaAmount: asaAmount,
+  };
+};
 
 module.exports = ({queues, databases}) =>{
   const escrowDB = databases.escrow;
@@ -55,7 +74,8 @@ module.exports = ({queues, databases}) =>{
     return accountInfoPromise.then(function(accountInfo) {
      // console.log(accountInfo);
      // console.log('here57');
-      const data = {indexerInfo: accountInfo, escrowInfo: order.value};
+      const data = {indexerInfo: reduceIndexerInfo(accountInfo),
+        escrowInfo: order.value};
       data.lastUpdateUnixTime = blockData.ts;
       data.lastUpdateRound = blockData.rnd;
       escrowCounter3++;
@@ -69,6 +89,10 @@ module.exports = ({queues, databases}) =>{
             //  msg: `Indexed Block stored with account info`,
             //  ...response,
             //});
+            const formattedOrderPromise =
+              getFormattedOrderQueuePromise(queues.formattedEscrows,
+                data);
+            return formattedOrderPromise;
           }).catch(function(err) {
             if (err.error === 'conflict') {
               console.error(err);

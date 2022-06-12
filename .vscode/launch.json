@@ -41,6 +41,18 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "FormattedOrderWorker",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\server.js",
+            "env": {
+                "APP_CONTEXT": "formatted-order-worker"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "AssetWorker",
             "skipFiles": [
                 "<node_internals>/**"

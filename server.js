@@ -16,6 +16,7 @@ const databases = {
   escrow: getDatabase(couchBaseURL + '/escrow'),
   prices: getDatabase(couchBaseURL + '/prices'),
   assets: getDatabase(couchBaseURL + '/assets'),
+  formattedEscrow: getDatabase(couchBaseURL + '/formatted_escrow'),
 };
 
 // Configure Queues
