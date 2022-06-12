@@ -63,12 +63,12 @@
       document.getElementById('message').innerHTML = msg
     }
 
-    const db = new PouchDB('http://localhost:5984/dex', {auth: {
+    const db = new PouchDB('http://localhost:5984/blocks', {auth: {
       username: 'admin',
         password: 'dex'
       }})
     // _design/chart/_view/sieve
-    db.query('dex/ohlc', {
+    db.query('blocks/ohlc', {
       reduce: true, group: true, group_level: 6,
       startkey: [ 21582668, 0, 0, 0, 0, 0, 0 ],
       endkey: [ 21582668, Date.now(), 0, 0, 0, 0, 0 ],

@@ -15,7 +15,7 @@ const url = process.env.ALGORAND_NETWORK === 'testnet' ?
 const indexer = new algosdk.Indexer('', url, 443);
 
 const queues = getQueues();
-const db = getDatabase('http://admin:dex@localhost:5984/dex');
+const db = getDatabase('http://admin:dex@localhost:5984/blocks');
 
 const compare = async function() {
   const apps = [
