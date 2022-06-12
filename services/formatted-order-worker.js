@@ -10,14 +10,14 @@ const pushHistory = (data, historyEntry) => {
 const setAssetHistory = (data) => {
   if (!data.escrowInfo.isAlgoBuyEscrow) {
     const historyEntry = {
-      block: data.indexerInfo.account.round,
-      asaAmount: data.indexerInfo.account.assets[0]['amount'],
+      block: data.indexerInfo.round,
+      asaAmount: data.indexerInfo.asaAmount,
     };
     pushHistory(data, historyEntry);
   } else {
     const historyEntry = {
-      block: data.indexerInfo.account.round,
-      algoAmount: data.indexerInfo.account.amount,
+      block: data.indexerInfo.round,
+      algoAmount: data.indexerInfo.algoAmount,
     };
     pushHistory(data, historyEntry);
   }
@@ -33,13 +33,13 @@ module.exports = ({queues, databases}) =>{
   const formattedOrderWorker = new Worker('formattedEscrows', async (job)=>{
     console.log('got formatted escrows job ', {job});
     const assetId = job.data.escrowInfo.assetId;
-    const addr = job.data.indexerInfo.account.address;
+    const addr = job.data.indexerInfo.address;
     const data = job.data;
 
     const assetGetPromise = assetDB.get(assetId)
         .then(function(res) {
           console.log({res});
-          data.assetInfo = res.asset;
+          data.assetDecimals = res.asset.params.decimals;
 
           const formattedOrderGet = formattedEscrowDB.get(addr).then(function(res) {
             data.history = res.data.history;

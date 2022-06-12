@@ -118,7 +118,7 @@ module.exports = ({queues, databases}) =>{
         }).catch(function(err) {
           //console.log('error here', {err});
           if (err.error === 'conflict') {
-            //console.error(err);
+            console.error('already added!');
           } else {
             throw err;
           }

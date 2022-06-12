@@ -39,6 +39,16 @@ const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   });
   return promise;
 };
+const reduceIndexerInfo = (indexerInfo) => {
+  const asaAmount = indexerInfo.account.assets ?
+    indexerInfo.account.assets[0].amount : 0;
+  return {
+    address: indexerInfo.account.address,
+    algoAmount: indexerInfo.account.amount,
+    round: indexerInfo['current-round'],
+    asaAmount: asaAmount,
+  };
+};
 
 module.exports = ({queues, databases}) =>{
   const escrowDB = databases.escrow;
@@ -64,7 +74,8 @@ module.exports = ({queues, databases}) =>{
     return accountInfoPromise.then(function(accountInfo) {
      // console.log(accountInfo);
      // console.log('here57');
-      const data = {indexerInfo: accountInfo, escrowInfo: order.value};
+      const data = {indexerInfo: reduceIndexerInfo(accountInfo),
+        escrowInfo: order.value};
       data.lastUpdateUnixTime = blockData.ts;
       data.lastUpdateRound = blockData.rnd;
       escrowCounter3++;

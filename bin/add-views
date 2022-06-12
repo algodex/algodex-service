@@ -3,8 +3,7 @@
 const chartMap = require('../views/chart/map')
 const chartReduce = require('../views/chart/reduce')
 const orderMap = require('../views/orders/map')
-const formattedOrdersByAssetIdMap =
-  require('../views/formatted-orders/orders-by-asset-id');
+const formattedOrdersMap = require('../views/formatted-orders/orders');
 const orderReduce = require('../views/orders/reduce')
 const PouchDB = require('pouchdb')
 PouchDB.plugin(require('pouchdb-erase'))
@@ -40,8 +39,8 @@ const chartIndex = {
 const formattedEscrowsIndex = {
   _id: '_design/formatted_escrow',
   views: {
-    orders_by_asset_id: {
-      map: formattedOrdersByAssetIdMap.toString(),
+    orders: {
+      map: formattedOrdersMap.toString(),
     },
   },
 };

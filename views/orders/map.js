@@ -126,27 +126,30 @@ module.exports = function(doc) {
                 return;
               }
               if (typeof txn.txn.apaa !== 'undefined') {
-                const orderInfo = atob(txn.txn.apaa[1]);
-                const parts = orderInfo.split(/^(\d+)-(\d+)-(\d+)-(\d+)$/);
-                // eslint-disable-next-line max-len
-                const version = appCallType === 'open' ? atob(txn.txn.apaa[2]) : null;
-                const res = {
-                  isAlgoBuyEscrow: isAlgoBuyEscrow,
-                  apat: txn.txn.apat,
-                  type: appCallType,
-                  orderInfo: txn.txn.apaa[1],
-                  numerator: parseInt(parts[1]),
-                  assetId: parseInt(parts[4]),
-                  denominator: parseInt(parts[2]),
-                  minimum: parseInt(parts[3]),
-                  price: parseFloat(parseInt(parts[2]))/parseInt(parts[1]),
-                  ownerAddr: getOwner(group, appCallType, isAlgoBuyEscrow),
-                  block: doc._id,
-                  ts: doc.ts,
-                  version: version,
-                };
+                try {
+                  const orderInfo = atob(txn.txn.apaa[1]);
+                  const parts = orderInfo.split(/^(\d+)-(\d+)-(\d+)-(\d+)$/);
+                  // eslint-disable-next-line max-len
+                  const version = appCallType === 'open' ? atob(txn.txn.apaa[2]) : null;
+                  const res = {
+                    isAlgoBuyEscrow: isAlgoBuyEscrow,
+                    apat: txn.txn.apat,
+                    type: appCallType,
+                    orderInfo: atob(txn.txn.apaa[1]),
+                    numerator: parseInt(parts[1]),
+                    assetId: parseInt(parts[4]),
+                    denominator: parseInt(parts[2]),
+                    minimum: parseInt(parts[3]),
+                    price: parseFloat(parseInt(parts[2]))/parseInt(parts[1]),
+                    ownerAddr: getOwner(group, appCallType, isAlgoBuyEscrow),
+                    block: doc._id,
+                    ts: doc.ts,
+                    version: version,
+                  };
+                  emit([txn.txn.snd], res);
+                } catch (e) {
 
-                emit([txn.txn.snd], res);
+                }
               }
             }
           }

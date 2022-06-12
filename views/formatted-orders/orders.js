@@ -31,17 +31,16 @@ module.exports = function(doc) {
   const history = doc.data.history;
   const lastHistory = history[history.length - 1];
   if (lastHistory.algoAmount > 0 || lastHistory.asaAmount > 0) {
-    const asaAmount = doc.data.indexerInfo.account.assets ? 
-      doc.data.indexerInfo.account.assets[0]['amount'] : 0;
+    const asaAmount = doc.data.indexerInfo.asaAmount;
     const n = doc.data.escrowInfo.numerator;
     const d = doc.data.escrowInfo.denominator;
     const asaPrice = n > 0 ? (d/n) : null;
-    const decimals = doc.data.assetInfo.params.decimals;
+    const decimals = doc.data.assetDecimals;
 
     const escrowInfo = {
       ownerAddress: doc.data.escrowInfo.ownerAddr,
       escrowAddress: doc._id,
-      algoAmount: doc.data.indexerInfo.account.amount,
+      algoAmount: doc.data.indexerInfo.algoAmount,
       asaAmount: asaAmount,
       assetLimitPriceD: doc.data.escrowInfo.denominator,
       assetLimitPriceN: doc.data.escrowInfo.numerator,
@@ -52,7 +51,9 @@ module.exports = function(doc) {
       unix_time: doc.data.lastUpdateUnixTime,
       decimals: decimals,
       version: doc.data.escrowInfo.version,
+      isAlgoBuyEscrow: doc.data.escrowInfo.isAlgoBuyEscrow,
     };
-    emit(doc.data.escrowInfo.assetId, escrowInfo);
+    emit(['assetId', doc.data.escrowInfo.assetId], escrowInfo);
+    emit(['ownerAddr', escrowInfo.ownerAddress], escrowInfo);
   }
 };
