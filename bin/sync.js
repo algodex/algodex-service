@@ -18,6 +18,9 @@ const queues = getQueues();
 const db = getDatabase('http://admin:dex@localhost:5984/blocks');
 
 const compare = async function() {
+  if (!process.env.ALGORAND_NETWORK) {
+    throw new Error('process.env.ALGORAND_NETWORK is undefined!');
+  }
   const apps = [
     {
       id: process.env.ALGORAND_NETWORK === 'testnet' ? 22045503 : 354073718,
