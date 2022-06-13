@@ -18,6 +18,10 @@ const queues = getQueues();
 const db = getDatabase('http://admin:dex@localhost:5984/blocks');
 
 const compare = async function() {
+  if (!process.env.ALGORAND_NETWORK) {
+    throw new Error('process.env.ALGORAND_NETWORK is undefined!');
+  }
+  
   const apps = [
     {
       id: process.env.ALGORAND_NETWORK === 'testnet' ? 22045503 : 354073718,
@@ -29,8 +33,11 @@ const compare = async function() {
     },
   ];
   // Get a range of blocks for a list of applications
-  const {start/* current */} = await getAppsBlockRange(indexer, apps);
-  const rounds = createConsecutiveObject(start, start+5000);
+  //const {start, current} = await getAppsBlockRange(indexer, apps);
+  const start = 16583454;
+  const current = start + 5000;
+  console.log('start is: ' +start);
+  const rounds = createConsecutiveObject(start, current);
   const allDocs = await db.allDocs();
   const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds

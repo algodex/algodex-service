@@ -106,8 +106,8 @@ async function waitForBlock({round}) {
 async function _getAppsBlockStart(indexer, apps) {
   for (const app of apps) {
     app.genesis = await _getGenesisBlock(indexer, app.id);
+    console.log(`printing genesis ${app.genesis} ${app.id}`);
   }
-
   return Math.min(...apps.map((app)=>app.genesis));
 }
 

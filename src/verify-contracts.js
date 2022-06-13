@@ -31,6 +31,8 @@ const checkAndGetInput = (
   // const minimumExecutionSizeInAlgo = orderSplit[2];
   const assetId = parseInt(orderSplit[3]);
 
+  version = version.charCodeAt(0);
+
   if (typeof escrowAddress !== 'string') {
     throw new TypeError('escrowAddress is not string!`');
   }
@@ -112,13 +114,14 @@ module.exports = async (rows) => {
     const row = rows[i];
     const account = row.key[0];
     const isRealContract = await verifyContract(account, row.value.orderInfo,
-        row.value.version.charCodeAt(), row.value.ownerAddr,
-
-        // FIXME - use env variables
+      row.value.version, row.value.ownerAddr,
+      // FIXME - use env variables
       row.value.isAlgoBuyEscrow ? 22045503 : 22045522,
       row.value.isAlgoBuyEscrow);
     if (isRealContract) {
       realContracts.push(row);
+    } else {
+      console.log('fake contract found? ' + account);
     }
   }
   return realContracts;
