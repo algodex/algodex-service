@@ -1,7 +1,7 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 const algosdk = require('algosdk');
-
+const verifyContract = require('../src/verify-contract');
 let escrowCounter = 0;
 let escrowCounter2 = 0;
 
@@ -35,14 +35,30 @@ const getAssetQueuePromise = (assetQueue, assetId) => {
   return promise;
 };
 
+const getValidContracts = async (rows) => {
+  const realContracts = [];
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const account = row.key[0];
+    const isRealContract = await verifyContract(account, row.value.orderInfo,
+      row.value.version.charCodeAt(), row.value.ownerAddr,
+      row.value.isAlgoBuyEscrow ? 22045503 : 22045522,
+      row.value.isAlgoBuyEscrow);
+    if (isRealContract) {
+      realContracts.push(row);
+    }
+  }
+  return realContracts;
+}
+
 module.exports = ({queues, databases}) =>{
   const db = databases.blocks;
-
-  const orders = new Worker('blocks', (job)=>{
+  const orders = new Worker('blocks', async (job)=>{
     console.debug({
       msg: 'Received block',
       round: job.data.rnd,
     });
+
     // Save to database
     return db.post({_id: `${job.data.rnd}`, type: 'block', ...job.data})
         .then(async function(response) {
@@ -61,19 +77,21 @@ module.exports = ({queues, databases}) =>{
          //   dirtyAccounts.reduce( (account, accounts) => accounts + "," + account), "");
           return db.query('blocks/orders',
               {reduce: true, group: true, keys: dirtyAccounts})
-              .then(function(res) {
+              .then(async function(res) {
                 if (!res?.rows?.length) {
                   return;
                 }
                 escrowCounter += res.rows.length;
                 const assetIdSet = {};
+                const validRows = await getValidContracts(res.rows);
 
-                const allPromises = res.rows.reduce( (allPromises, row) => {
+                const allPromises = validRows.reduce( (allPromises, row) => {
                   //add job
 
                   const key = row.key;
                   console.log('got account', {key});
                   const account = row.key[0];
+                    
                   console.log({account});
                   const ordersJob = {account: account,
                     blockData: job.data, reducedOrder: row};
