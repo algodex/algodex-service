@@ -9,7 +9,7 @@ module.exports = function(doc) {
       return null;
     }
     const price = unformattedPrice * Math.pow(10, (decimals - 6));
-    //return number_format((float)$price, 6, '.', '');
+    // return number_format((float)$price, 6, '.', '');
     return price;
   }
 
@@ -18,14 +18,14 @@ module.exports = function(doc) {
    * @param {int} decimals
    * @return {string}
    */
-  function getFormattedASA_Amount(asaAmount, decimals) {
+  function getFormattedASAAmount(asaAmount, decimals) {
     if (isNaN(asaAmount)) {
       return null;
     }
 
-    const val = asaAmount / Math.pow(10,decimals);
+    const val = asaAmount / Math.pow(10, decimals);
     return val;
-    //return number_format((float)$val, $decimals, '.', '');
+    // return number_format((float)$val, $decimals, '.', '');
   }
 
   const history = doc.data.history;
@@ -46,7 +46,7 @@ module.exports = function(doc) {
       assetLimitPriceN: doc.data.escrowInfo.numerator,
       asaPrice: asaPrice,
       formattedPrice: getFormattedPrice(asaPrice, decimals),
-      formattedASAAmount: getFormattedASA_Amount(asaAmount, decimals),
+      formattedASAAmount: getFormattedASAAmount(asaAmount, decimals),
       round: doc.data.lastUpdateRound,
       unix_time: doc.data.lastUpdateUnixTime,
       decimals: decimals,

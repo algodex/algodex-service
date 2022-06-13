@@ -5,7 +5,7 @@ let escrowCounter = 0;
 let escrowCounter2 = 0;
 
 const getDirtyAccounts = (block) => {
-  //console.log( {block} );
+  // console.log( {block} );
   if (block.txns === undefined) {
     return [];
   }
@@ -53,12 +53,17 @@ module.exports = ({queues, databases}) =>{
 
           // eslint-disable-next-line max-len
           const dirtyAccounts = getDirtyAccounts(job.data).map( (account) => [account] );
-          //const dirtyAccounts = [['NCL6MAVCMFKRM7NHOZZX3ZK7HBR52CD2UEZI5M3TYNAFUQUREJCRD5CALI']];
-          //const dirtyAccount = '["ZKJV3VOLBC7E4ZRXCZALGYZ5DS7VGN7EGTBKIBKJLYE3MNQ5GKSZNYRL7E"]';
-          //console.log({dirtyAccounts});
-         // console.log('here55');
-          //console.log('dirty accounts are: ', 
-         //   dirtyAccounts.reduce( (account, accounts) => accounts + "," + account), "");
+          // const dirtyAccounts = [
+          // ['NCL6MAVCMFKRM7NHOZZX3ZK7HBR52CD2UEZI5M3TYNAFUQUREJCRD5CALI']
+          // ];
+          // const dirtyAccount = '
+          // ["ZKJV3VOLBC7E4ZRXCZALGYZ5DS7VGN7EGTBKIBKJLYE3MNQ5GKSZNYRL7E"]';
+          // console.log({dirtyAccounts});
+          // console.log('here55');
+          // console.log('dirty accounts are: ',
+          //   dirtyAccounts.reduce(
+          // (account, accounts) => accounts + "," + account),
+          // "");
           return db.query('blocks/orders',
               {reduce: true, group: true, keys: dirtyAccounts})
               .then(async function(res) {
@@ -70,47 +75,50 @@ module.exports = ({queues, databases}) =>{
                 const validRows = await verifyContracts(res.rows);
 
                 const allPromises = validRows.reduce( (allPromises, row) => {
-                  //add job
+                  // add job
 
                   const key = row.key;
                   console.log('got account', {key});
                   const account = row.key[0];
-                    
+
                   console.log({account});
                   const ordersJob = {account: account,
                     blockData: job.data, reducedOrder: row};
-                  
+
                   const assetId = row.value.assetId;
                   if (!('assetId:assetIds' in assetIdSet)) {
                     assetIdSet[assetId] = 1;
-                    const assetAddPromise = getAssetQueuePromise(queues.assets, assetId);
+                    const assetAddPromise = getAssetQueuePromise(
+                        queues.assets,
+                        assetId,
+                    );
                     allPromises.push(assetAddPromise);
                   }
 
                   const promise = queues.orders.add('orders', ordersJob,
-                    {removeOnComplete: true}).then(function(){
-                      escrowCounter2++;
-                      console.log('COUNTERS: ' + escrowCounter + ' ' + escrowCounter2)
-                    }).catch(function(err) {
-                      console.error('error adding to orders queue:', {err} );
-                      throw err;
-                    });
+                      {removeOnComplete: true}).then(function() {
+                    escrowCounter2++;
+                    console.log(
+                        'COUNTERS: ' + escrowCounter + ' ' + escrowCounter2,
+                    );
+                  }).catch(function(err) {
+                    console.error('error adding to orders queue:', {err} );
+                    throw err;
+                  });
                   allPromises.push(promise);
                   return allPromises;
-                 // console.log('adding to orders');
+                  // console.log('adding to orders');
                 }, []);
-                //console.log('promises length:' + allPromises);
+                // console.log('promises length:' + allPromises);
                 return Promise.all(allPromises);
                 // got the query results
-                //console.log('found dirty escrow! '+ res.rows[0]);
+                // console.log('found dirty escrow! '+ res.rows[0]);
 
-                //console.log ({res});
-
-              }).catch(function (err) {
+                // console.log ({res});
+              }).catch(function(err) {
                 if (err.error === 'not_found') {
-                  //console.log('not found');
+                  // console.log('not found');
                   throw err;
-
                 } else {
                   console.log('reducer error!!!');
                   console.log(err);
@@ -118,14 +126,13 @@ module.exports = ({queues, databases}) =>{
                 }
               });
         }).catch(function(err) {
-          //console.log('error here', {err});
+          // console.log('error here', {err});
           if (err.error === 'conflict') {
             console.error('already added!');
           } else {
             throw err;
           }
         });
-    
   }, {connection: queues.connection, concurrency: 50});
 
   orders.on('error', (err) => {

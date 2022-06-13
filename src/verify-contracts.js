@@ -1,23 +1,34 @@
-const compile = require('@algodex/algodex-sdk/lib/order/compile');
-const { withOrderbookEntry, withLogicSigAccount } = require('@algodex/algodex-sdk/lib/order/compile');
+// const compile = require('@algodex/algodex-sdk/lib/order/compile');
+const {
+  withOrderbookEntry,
+  withLogicSigAccount,
+} = require('@algodex/algodex-sdk/lib/order/compile');
 const algosdk = require('algosdk');
 
 // https://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
+/**
+*  check if value is interger
+*  @param {number} value pass as parameter
+*  @return boolean value true if value is integer
+*  @return {boolean} true if value is integer other
+*/
 function isInt(value) {
-  var x;
   if (isNaN(value)) {
     return false;
   }
-  x = parseFloat(value);
+
+  const x = parseFloat(value);
   return (x | 0) === x;
 }
 
-const checkAndGetInput = (escrowAddress, orderEntry, version, ownerAddress, appId, isAlgoBuyEscrow) => {
-  const orderSplit = orderEntry.split("-");
+const checkAndGetInput = (
+    escrowAddress,
+    orderEntry, version, ownerAddress, appId, isAlgoBuyEscrow) => {
+  const orderSplit = orderEntry.split('-');
   // rec contains the original order creators address
   const assetLimitPriceN = parseInt(orderSplit[0]);
   const assetLimitPriceD = parseInt(orderSplit[1]);
-  //const minimumExecutionSizeInAlgo = orderSplit[2];
+  // const minimumExecutionSizeInAlgo = orderSplit[2];
   const assetId = parseInt(orderSplit[3]);
 
   if (typeof escrowAddress !== 'string') {
@@ -35,7 +46,9 @@ const checkAndGetInput = (escrowAddress, orderEntry, version, ownerAddress, appI
   if (!isInt(appId) || appId < 0) {
     throw new TypeError('invalid appId!');
   }
-  if (!isInt(version) || version <= 2 || version >= 8) { //FIXME - figure out max version from SDK
+  if (
+    !isInt(version) || version <= 2 || version >= 8
+  ) { // FIXME - figure out max version from SDK
     throw new TypeError('invalid appId!');
   }
   if (!isInt(assetLimitPriceN) || assetLimitPriceN <= 0) {
@@ -47,7 +60,7 @@ const checkAndGetInput = (escrowAddress, orderEntry, version, ownerAddress, appI
 
   const input = {
     'asset': {
-      'id': assetId
+      'id': assetId,
     },
     'type': isAlgoBuyEscrow ? 'buy' : 'sell',
     'address': ownerAddress,
@@ -66,11 +79,14 @@ const checkAndGetInput = (escrowAddress, orderEntry, version, ownerAddress, appI
   return input;
 };
 
-const verifyContract = async (escrowAddress, orderEntry, version, ownerAddress, appId, isAlgoBuyEscrow) => {
-
+const verifyContract = async (
+    escrowAddress,
+    orderEntry, version, ownerAddress, appId, isAlgoBuyEscrow) => {
   let input = null;
   try {
-    input = checkAndGetInput(escrowAddress, orderEntry, version, ownerAddress, appId, isAlgoBuyEscrow);
+    input = checkAndGetInput(
+        escrowAddress,
+        orderEntry, version, ownerAddress, appId, isAlgoBuyEscrow);
   } catch (e) {
     console.log('Invalid input!');
     return false;
@@ -96,12 +112,14 @@ module.exports = async (rows) => {
     const row = rows[i];
     const account = row.key[0];
     const isRealContract = await verifyContract(account, row.value.orderInfo,
-      row.value.version.charCodeAt(), row.value.ownerAddr,
-      row.value.isAlgoBuyEscrow ? 22045503 : 22045522, // FIXME - use env variables
+        row.value.version.charCodeAt(), row.value.ownerAddr,
+
+        // FIXME - use env variables
+      row.value.isAlgoBuyEscrow ? 22045503 : 22045522,
       row.value.isAlgoBuyEscrow);
     if (isRealContract) {
       realContracts.push(row);
     }
   }
   return realContracts;
-}
+};

@@ -1,20 +1,26 @@
 require('dotenv').config();
 const express = require('express');
-const QueueMQ = require('bullmq');
-const { createBullBoard } = require('@bull-board/api');
-const { BullAdapter } = require('@bull-board/api/bullAdapter');
-const { BullMQAdapter } = require('@bull-board/api/bullMQAdapter');
-const { ExpressAdapter } = require('@bull-board/express');
+// const QueueMQ = require('bullmq');
+const {createBullBoard} = require('@bull-board/api');
+// const {BullAdapter} = require('@bull-board/api/bullAdapter');
+const {BullMQAdapter} = require('@bull-board/api/bullMQAdapter');
+const {ExpressAdapter} = require('@bull-board/express');
 // Configure Queues
 const getQueues = require('../src/queues');
 const queues = getQueues();
 
 const serverAdapter = new ExpressAdapter();
-
-const { addQueue, removeQueue, setQueues, replaceQueues } = createBullBoard({
-  queues: [new BullMQAdapter(queues.blocks), new BullMQAdapter(queues.orders), new BullMQAdapter(queues.assets)],
-  serverAdapter: serverAdapter,
-});
+// commented due to linting error , because these are not used
+createBullBoard(
+    {
+      queues: [
+        new BullMQAdapter(queues.blocks),
+        new BullMQAdapter(queues.orders),
+        new BullMQAdapter(queues.assets),
+      ],
+      serverAdapter: serverAdapter,
+    },
+);
 
 const app = express();
 
