@@ -13,11 +13,11 @@ const algosdk = require('algosdk');
 *  @return {boolean} true if value is integer other
 */
 function isInt(value) {
-  const x = 0;
   if (isNaN(value)) {
     return false;
   }
-  x = parseFloat(value);
+
+  const x = parseFloat(value);
   return (x | 0) === x;
 }
 
