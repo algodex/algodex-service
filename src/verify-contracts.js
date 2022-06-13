@@ -80,7 +80,7 @@ const verifyContract = async (escrowAddress, orderEntry, version, ownerAddress, 
   }
   input.client = new algosdk.Algodv2(
       '11e4dcfb445a8c7e8380848747f18afcd5d84ccb395e003e5b72127ca5e9a259',
-      'http://ec2-3-18-80-65.us-east-2.compute.amazonaws.com', 8080 );
+      'http://ec2-3-18-80-65.us-east-2.compute.amazonaws.com', 8080 ); // FIXME - use env variables or pass in client
 
   const compiledOrder = await withLogicSigAccount(withOrderbookEntry(input));
   if (escrowAddress === compiledOrder?.contract?.escrow) {
@@ -97,7 +97,7 @@ module.exports = async (rows) => {
     const account = row.key[0];
     const isRealContract = await verifyContract(account, row.value.orderInfo,
       row.value.version.charCodeAt(), row.value.ownerAddr,
-      row.value.isAlgoBuyEscrow ? 22045503 : 22045522,
+      row.value.isAlgoBuyEscrow ? 22045503 : 22045522, // FIXME - use env variables
       row.value.isAlgoBuyEscrow);
     if (isRealContract) {
       realContracts.push(row);
