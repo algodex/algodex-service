@@ -1,7 +1,6 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
-const algosdk = require('algosdk');
-const verifyContract = require('../src/verify-contract');
+const verifyContracts = require('../src/verify-contracts');
 let escrowCounter = 0;
 let escrowCounter2 = 0;
 
@@ -35,21 +34,6 @@ const getAssetQueuePromise = (assetQueue, assetId) => {
   return promise;
 };
 
-const getValidContracts = async (rows) => {
-  const realContracts = [];
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i];
-    const account = row.key[0];
-    const isRealContract = await verifyContract(account, row.value.orderInfo,
-      row.value.version.charCodeAt(), row.value.ownerAddr,
-      row.value.isAlgoBuyEscrow ? 22045503 : 22045522,
-      row.value.isAlgoBuyEscrow);
-    if (isRealContract) {
-      realContracts.push(row);
-    }
-  }
-  return realContracts;
-}
 
 module.exports = ({queues, databases}) =>{
   const db = databases.blocks;
@@ -83,7 +67,7 @@ module.exports = ({queues, databases}) =>{
                 }
                 escrowCounter += res.rows.length;
                 const assetIdSet = {};
-                const validRows = await getValidContracts(res.rows);
+                const validRows = await verifyContracts(res.rows);
 
                 const allPromises = validRows.reduce( (allPromises, row) => {
                   //add job

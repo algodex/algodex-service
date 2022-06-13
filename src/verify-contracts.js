@@ -2,28 +2,7 @@ const compile = require('@algodex/algodex-sdk/lib/order/compile');
 const { withOrderbookEntry, withLogicSigAccount } = require('@algodex/algodex-sdk/lib/order/compile');
 const algosdk = require('algosdk');
 
-//TODO: import this function instead
-/*
-function getOrderbookEntry(order) {
-  const {
-    address,
-    contract: {N, D},
-    min = 0,
-    asset: {id: assetId},
-    execution,
-  } = order;
-
-  let rtn = N + '-' + D + '-' + min + '-' + assetId;
-  if (execution === 'maker') {
-    rtn = address + '-' + rtn;
-  }
-  logger.debug('getOrderbookEntry final str is: ' + rtn);
-  return rtn;
-}
-*/
-
-module.exports = async (escrowAddress, orderEntry, version, ownerAddress, appId, isAlgoBuyEscrow) => {
-
+const verifyContract = async (escrowAddress, orderEntry, version, ownerAddress, appId, isAlgoBuyEscrow) => {
   const orderSplit = orderEntry.split("-");
   // rec contains the original order creators address
   const assetLimitPriceN = parseInt(orderSplit[0]);
@@ -61,3 +40,19 @@ module.exports = async (escrowAddress, orderEntry, version, ownerAddress, appId,
   }
   return false;
 };
+
+module.exports = async (rows) => {
+  const realContracts = [];
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    const account = row.key[0];
+    const isRealContract = await verifyContract(account, row.value.orderInfo,
+      row.value.version.charCodeAt(), row.value.ownerAddr,
+      row.value.isAlgoBuyEscrow ? 22045503 : 22045522,
+      row.value.isAlgoBuyEscrow);
+    if (isRealContract) {
+      realContracts.push(row);
+    }
+  }
+  return realContracts;
+}
