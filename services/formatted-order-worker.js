@@ -1,6 +1,6 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
-const algosdk = require('algosdk');
+// const algosdk = require('algosdk');
 
 const pushHistory = (data, historyEntry) => {
   const history = data.history || [];
@@ -41,17 +41,18 @@ module.exports = ({queues, databases}) =>{
           console.log({res});
           data.assetDecimals = res.asset.params.decimals;
 
-          const formattedOrderGet = formattedEscrowDB.get(addr).then(function(res) {
-            data.history = res.data.history;
-            setAssetHistory(data);
-            return formattedEscrowDB.put({
-              _id: res._id,
-              _rev: res._rev,
-              data: res.data,
-            }).then(function(res) {
-              console.log('added doc revision: ' + data);
-            });
-          }).catch(function(err) {
+          const formattedOrderGet = formattedEscrowDB.get(addr).then(
+              function(res) {
+                data.history = res.data.history;
+                setAssetHistory(data);
+                return formattedEscrowDB.put({
+                  _id: res._id,
+                  _rev: res._rev,
+                  data: res.data,
+                }).then(function(res) {
+                  console.log('added doc revision: ' + data);
+                });
+              }).catch(function(err) {
             if (err.error === 'not_found') {
               setAssetHistory(data);
               return formattedEscrowDB.post({_id: `${addr}`,
@@ -64,16 +65,15 @@ module.exports = ({queues, databases}) =>{
             }
           });
           return formattedOrderGet;
-          
         }).catch(function(err) {
           throw err;
         });
-      
-        return assetGetPromise;
+
+    return assetGetPromise;
 
 
-    //const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
-    /*return assetDB.post({_id: `${job.data.assetId}`,
+    // const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
+    /* return assetDB.post({_id: `${job.data.assetId}`,
       type: 'asset', ...assetData})
         .then(async function(response) {
           console.debug({

@@ -6,7 +6,7 @@ const {createConsecutiveObject} = require('../src/util');
 const {getAppsBlockRange, getBlock} = require('../src/explorer');
 const getQueues = require('../src/queues');
 const getDatabase = require('../src/db');
-const { exit } = require('process');
+// const {exit} = require('process');
 
 const url = process.env.ALGORAND_NETWORK === 'testnet' ?
   'https://algoindexer.testnet.algoexplorerapi.io' :

@@ -26,7 +26,7 @@ module.exports = function() {
   if (typeof connection === 'undefined') {
     // Define connection
     connection = new Redis(port, address);
-    //connection = `redis://${address}:${port}`;
+    // connection = `redis://${address}:${port}`;
   }
 
   if (typeof queues === 'undefined') {
@@ -42,14 +42,24 @@ module.exports = function() {
     };
     queues = {
       connection,
-      blocks: new Queue('blocks', {defaultJobOptions: defaultJobOptions, connection: connection}),
-      assets: new Queue('assets', {defaultJobOptions: defaultJobOptions, connection: connection}),
-      orders: new Queue('orders', {defaultJobOptions: defaultJobOptions, connection: connection}),
-      formattedEscrows: new Queue('formattedEscrows', {defaultJobOptions: defaultJobOptions, connection: connection}),
+      blocks: new Queue('blocks', {
+        defaultJobOptions: defaultJobOptions, connection: connection},
+      ),
+      assets: new Queue('assets',
+          {defaultJobOptions: defaultJobOptions, connection: connection},
+      ),
+      orders: new Queue('orders',
+          {defaultJobOptions: defaultJobOptions, connection: connection},
+      ),
+      formattedEscrows: new Queue('formattedEscrows',
+          {defaultJobOptions: defaultJobOptions, connection: connection},
+      ),
       blocksScheduler: new QueueScheduler('blocks', {connection: connection}),
       ordersScheduler: new QueueScheduler('orders', {connection: connection}),
       assetsScheduler: new QueueScheduler('assets', {connection: connection}),
-      formattedEscrowsScheduler: new QueueScheduler('formattedEscrows', {connection: connection}),
+      formattedEscrowsScheduler: new QueueScheduler('formattedEscrows',
+          {connection: connection},
+      ),
     };
   }
   return queues;

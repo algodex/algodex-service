@@ -1,6 +1,6 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
-const algosdk = require('algosdk');
+// const algosdk = require('algosdk');
 
 let indexerClient = null;
 let escrowCounter3 = 0;
@@ -9,9 +9,9 @@ let escrowCounter5 = 0;
 let escrowCounter6 = 0;
 
 const printCounters = () => {
-  console.debug('ESCROW COUNTERS: ' + escrowCounter3 + ' ' + 
-  escrowCounter4 + ' ' + escrowCounter5 + ' ' + escrowCounter6 
-  + ' total: ' + (escrowCounter4 + escrowCounter6) );
+  console.debug('ESCROW COUNTERS: ' + escrowCounter3 + ' ' +
+  escrowCounter4 + ' ' + escrowCounter5 + ' ' + escrowCounter6 +
+  ' total: ' + (escrowCounter4 + escrowCounter6) );
 };
 
 const initOrGetIndexer = () => {
@@ -19,16 +19,16 @@ const initOrGetIndexer = () => {
     return indexerClient;
   }
   const algosdk = require('algosdk');
-  const baseServer = "https://testnet-algorand.api.purestake.io/idx2";
-  const port = "";
-  
+  const baseServer = 'https://testnet-algorand.api.purestake.io/idx2';
+  const port = '';
+
   const token = {
-      'X-API-key': 'VELyABA1dGqGbAVktbew4oACvp0c0298gMgYtYIb',
-  }
-  
+    'X-API-key': 'VELyABA1dGqGbAVktbew4oACvp0c0298gMgYtYIb',
+  };
+
   indexerClient = new algosdk.Indexer(token, baseServer, port);
   return indexerClient;
-}
+};
 
 const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   const promise = formattedEscrowsQueue.add('formattedEscrows', order,
@@ -56,24 +56,25 @@ module.exports = ({queues, databases}) =>{
   console.log({escrowDB});
   console.log('in orderworker.js');
   const indexedOrders = new Worker('orders', async (job)=>{
-    //console.log('in orders queue');
-    
+    // console.log('in orders queue');
+
     const blockData = job.data.blockData;
     const order = job.data.reducedOrder;
     const account = job.data.account;
-    //console.debug({
+    // console.debug({
     //  msg: 'Received order',
     //  round: blockData.rnd,
     //  account: account,
-    //});
+    // });
     const indexerClient = initOrGetIndexer();
     const round = blockData.rnd;
     const accountInfoPromise =
-      indexerClient.lookupAccountByID(account).round(round).includeAll(true).do();
+      indexerClient.lookupAccountByID(account)
+          .round(round).includeAll(true).do();
 
     return accountInfoPromise.then(function(accountInfo) {
-     // console.log(accountInfo);
-     // console.log('here57');
+      // console.log(accountInfo);
+      // console.log('here57');
       const data = {indexerInfo: reduceIndexerInfo(accountInfo),
         escrowInfo: order.value};
       data.lastUpdateUnixTime = blockData.ts;
@@ -85,13 +86,13 @@ module.exports = ({queues, databases}) =>{
           .then(function(response) {
             escrowCounter4++;
             printCounters();
-            //console.debug({
+            // console.debug({
             //  msg: `Indexed Block stored with account info`,
             //  ...response,
-            //});
+            // });
             const formattedOrderPromise =
               getFormattedOrderQueuePromise(queues.formattedEscrows,
-                data);
+                  data);
             return formattedOrderPromise;
           }).catch(function(err) {
             if (err.error === 'conflict') {
@@ -114,10 +115,10 @@ module.exports = ({queues, databases}) =>{
             .then(function(response) {
               escrowCounter6++;
               printCounters();
-              //console.debug({
+              // console.debug({
               //  msg: `Indexed Escrow stored without account info`,
               //  ...response,
-              //});
+              // });
             }).catch(function(err) {
               if (err.error === 'conflict') {
                 console.error(err);
@@ -126,7 +127,7 @@ module.exports = ({queues, databases}) =>{
               }
             });
       } else {
-       // console.log({err});
+        // console.log({err});
         throw err;
       }
     });

@@ -14,5 +14,6 @@ module.exports = {
     'ecmaVersion': 13,
   },
   'rules': {
+    'linebreak-style': 0,
   },
 };
