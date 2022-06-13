@@ -1,7 +1,6 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
-const algosdk = require('algosdk');
-
+const verifyContracts = require('../src/verify-contracts');
 let escrowCounter = 0;
 let escrowCounter2 = 0;
 
@@ -35,14 +34,15 @@ const getAssetQueuePromise = (assetQueue, assetId) => {
   return promise;
 };
 
+
 module.exports = ({queues, databases}) =>{
   const db = databases.blocks;
-
-  const orders = new Worker('blocks', (job)=>{
+  const orders = new Worker('blocks', async (job)=>{
     console.debug({
       msg: 'Received block',
       round: job.data.rnd,
     });
+
     // Save to database
     return db.post({_id: `${job.data.rnd}`, type: 'block', ...job.data})
         .then(async function(response) {
@@ -61,19 +61,21 @@ module.exports = ({queues, databases}) =>{
          //   dirtyAccounts.reduce( (account, accounts) => accounts + "," + account), "");
           return db.query('blocks/orders',
               {reduce: true, group: true, keys: dirtyAccounts})
-              .then(function(res) {
+              .then(async function(res) {
                 if (!res?.rows?.length) {
                   return;
                 }
                 escrowCounter += res.rows.length;
                 const assetIdSet = {};
+                const validRows = await verifyContracts(res.rows);
 
-                const allPromises = res.rows.reduce( (allPromises, row) => {
+                const allPromises = validRows.reduce( (allPromises, row) => {
                   //add job
 
                   const key = row.key;
                   console.log('got account', {key});
                   const account = row.key[0];
+                    
                   console.log({account});
                   const ordersJob = {account: account,
                     blockData: job.data, reducedOrder: row};
