@@ -1,6 +1,6 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
-const algosdk = require('algosdk');
+// const algosdk = require('algosdk');
 
 let indexerClient = null;
 
@@ -9,16 +9,16 @@ const initOrGetIndexer = () => {
     return indexerClient;
   }
   const algosdk = require('algosdk');
-  const baseServer = "https://testnet-algorand.api.purestake.io/idx2";
-  const port = "";
-  
+  const baseServer = 'https://testnet-algorand.api.purestake.io/idx2';
+  const port = '';
+
   const token = {
-      'X-API-key': 'VELyABA1dGqGbAVktbew4oACvp0c0298gMgYtYIb',
-  }
-  
+    'X-API-key': 'VELyABA1dGqGbAVktbew4oACvp0c0298gMgYtYIb',
+  };
+
   indexerClient = new algosdk.Indexer(token, baseServer, port);
   return indexerClient;
-}
+};
 
 module.exports = ({queues, databases}) =>{
   const assetDB = databases.assets;

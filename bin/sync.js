@@ -34,7 +34,7 @@ const compare = async function() {
   // Get a range of blocks for a list of applications
   const {start, current} = await getAppsBlockRange(indexer, apps);
   // Create an Object keyed by blocks in the range
-  //const rounds = createConsecutiveObject(start, current);
+  // const rounds = createConsecutiveObject(start, current);
   const rounds = createConsecutiveObject(start, start+5000);
   const allDocs = await db.allDocs();
   const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
@@ -77,7 +77,6 @@ const queue = async function() {
           console.log('could not fetch block', {e});
         }
       } while (gotBlock === false);
-
     }
   });
   process.send('index');
