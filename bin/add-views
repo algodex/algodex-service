@@ -2,10 +2,10 @@
 
 const chartMap = require('../views/chart/map')
 const chartReduce = require('../views/chart/reduce')
-const orderMap = require('../views/orders/map')
-const formattedOrdersMap = require('../views/formatted-orders/orders');
-const escrowMap = require('../views/escrow/escrowAddr');
-const orderReduce = require('../views/orders/reduce')
+const orderMap = require('../views/blocks/orders-map')
+const formattedOrdersMap = require('../views/formatted_orders/orders-map');
+const escrowMap = require('../views/escrow/escrowAddr-map');
+const orderReduce = require('../views/blocks/orders-reduce')
 const PouchDB = require('pouchdb')
 PouchDB.plugin(require('pouchdb-erase'))
 

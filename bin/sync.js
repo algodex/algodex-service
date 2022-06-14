@@ -17,6 +17,8 @@ const indexer = new algosdk.Indexer('', url, 443);
 const queues = getQueues();
 const db = getDatabase('http://admin:dex@localhost:5984/blocks');
 
+throw 'This is not currently supported, please use sync-sequential';
+
 const compare = async function() {
   if (!process.env.ALGORAND_NETWORK) {
     throw new Error('process.env.ALGORAND_NETWORK is undefined!');

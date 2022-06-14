@@ -1,0 +1,26 @@
+#!/usr/bin/env node
+
+const getDatabase = require('../src/db');
+const PouchDB = require('pouchdb');
+PouchDB.plugin(require('pouchdb-erase'));
+
+const couchBaseURL = process.env['COUCHDB_BASE_URL'] || 'http://admin:dex@localhost:5984';
+
+const databases = {
+  blocks: getDatabase(couchBaseURL + '/blocks'),
+  escrow: getDatabase(couchBaseURL + '/escrow'),
+  prices: getDatabase(couchBaseURL + '/prices'),
+  assets: getDatabase(couchBaseURL + '/assets'),
+  formatted_escrow: getDatabase(couchBaseURL + '/formatted_escrow'),
+};
+
+// .then(function() {
+//   console.log('added asset: ' + assetId);
+// }).catch(function(err) {
+
+
+Object.values(databases).forEach( (db) => {
+  db.destroy().catch(function(e) {
+    console.log(e);
+  });
+});

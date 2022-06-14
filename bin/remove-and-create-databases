@@ -6,36 +6,37 @@ PouchDB.plugin(require('pouchdb-erase'));
 
 const couchBaseURL = process.env['COUCHDB_BASE_URL'] || 'http://admin:dex@localhost:5984';
 
-const databases = {
-  blocks: getDatabase(couchBaseURL + '/blocks'),
-  escrow: getDatabase(couchBaseURL + '/escrow'),
-  prices: getDatabase(couchBaseURL + '/prices'),
-  assets: getDatabase(couchBaseURL + '/assets'),
-  formattedEscrow: getDatabase(couchBaseURL + '/formatted_escrow'),
+const getDatabases = async () => {
+  const databases = {
+    blocks: await getDatabase(couchBaseURL + '/blocks'),
+    escrow: await getDatabase(couchBaseURL + '/escrow'),
+    prices: await getDatabase(couchBaseURL + '/prices'),
+    assets: await getDatabase(couchBaseURL + '/assets'),
+    formatted_escrow: await getDatabase(couchBaseURL + '/formatted_escrow'),
+  };
+  return databases;
 };
 
-// .then(function() {
-//   console.log('added asset: ' + assetId);
-// }).catch(function(err) {
-const deletePromises = [];
-Object.values(databases).forEach( (db) => {
-  deletePromises.push(
-    db.destroy().then(function(res) {
-      console.log('destroyed');
-    }).catch(function(e) {
-      console.log('could not delete');
-    })
-  );
-});
+// eslint-disable-next-line require-jsdoc
+async function runScript() {
+  const databases = await getDatabases();
+  const deletePromises = [];
+  Object.values(databases).forEach( (db) => {
+    deletePromises.push(
+        db.destroy().then(function(res) {
+          console.log('destroyed');
+        }).catch(function(e) {
+          console.log('could not delete');
+        }),
+    );
+  });
 
-Promise.all(deletePromises).then((res) => {
-  console.log('starting creation');
-  const databases2 = {
-    blocks: getDatabase(couchBaseURL + '/blocks'),
-    escrow: getDatabase(couchBaseURL + '/escrow'),
-    prices: getDatabase(couchBaseURL + '/prices'),
-    assets: getDatabase(couchBaseURL + '/assets'),
-    formattedEscrow: getDatabase(couchBaseURL + '/formatted_escrow'),
-  };
-  //console.log({databases2});
-});
+  Promise.all(deletePromises).then( async (res) => {
+    console.log('starting creation');
+    const databases2 = await getDatabases();
+    // console.log({databases2});
+  });
+}
+
+runScript();
+
