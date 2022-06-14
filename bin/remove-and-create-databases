@@ -13,6 +13,7 @@ const getDatabases = async () => {
     prices: await getDatabase(couchBaseURL + '/prices'),
     assets: await getDatabase(couchBaseURL + '/assets'),
     formatted_escrow: await getDatabase(couchBaseURL + '/formatted_escrow'),
+    formatted_history: await getDatabase(couchBaseURL + '/formatted_history'),
   };
   return databases;
 };

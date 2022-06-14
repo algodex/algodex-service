@@ -17,13 +17,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Worker",
+            "name": "BlockWorker",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\server.js",
             "env": {
-                "APP_CONTEXT": "worker"
+                "APP_CONTEXT": "block-worker"
             }
         },
         {
@@ -35,7 +35,19 @@
             ],
             "program": "${workspaceFolder}\\server.js",
             "env": {
-                "APP_CONTEXT": "orderworker"
+                "APP_CONTEXT": "order-worker"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "TradeHistoryWorker",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\server.js",
+            "env": {
+                "APP_CONTEXT": "trade-history-worker"
             }
         },
         {

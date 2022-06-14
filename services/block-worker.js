@@ -54,18 +54,8 @@ module.exports = ({queues, databases}) =>{
 
           // eslint-disable-next-line max-len
           const dirtyAccounts = getDirtyAccounts(job.data).map( (account) => [account] );
-          // const dirtyAccounts = [
-          // ['NCL6MAVCMFKRM7NHOZZX3ZK7HBR52CD2UEZI5M3TYNAFUQUREJCRD5CALI']
-          // ];
-          // const dirtyAccount = '
-          // ["ZKJV3VOLBC7E4ZRXCZALGYZ5DS7VGN7EGTBKIBKJLYE3MNQ5GKSZNYRL7E"]';
-          // console.log({dirtyAccounts});
-          // console.log('here55');
-          // console.log('dirty accounts are: ',
-          //   dirtyAccounts.reduce(
-          // (account, accounts) => accounts + "," + account),
-          // "");
-          return db.query('blocks/orders',
+
+          return Promise.all( [db.query('blocks/orders',
               {reduce: true, group: true, keys: dirtyAccounts})
               .then(async function(res) {
                 if (!res?.rows?.length) {
@@ -125,7 +115,14 @@ module.exports = ({queues, databases}) =>{
                   console.log(err);
                   throw err;
                 }
-              });
+              }),
+          queues.tradeHistory.add('tradeHistory', {block: `${job.data.rnd}`},
+              {removeOnComplete: true}).then(function() {
+          }).catch(function(err) {
+            console.error('error adding to orders queue:', {err} );
+            throw err;
+          }),
+          ]);
         }).catch(function(err) {
           // console.log('error here', {err});
           if (err.error === 'conflict') {
