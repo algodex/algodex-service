@@ -38,7 +38,7 @@ services:
     env_file:
       - ${ENV_FILE}
     environment:
-      - APP_CONTEXT=worker
+      - APP_CONTEXT=block-worker
     command:
       - start
   service:
