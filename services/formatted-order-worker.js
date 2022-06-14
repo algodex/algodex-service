@@ -24,7 +24,7 @@ const setAssetHistory = (data) => {
 };
 
 module.exports = ({queues, databases}) =>{
-  const formattedEscrowDB = databases.formattedEscrow;
+  const formattedEscrowDB = databases.formatted_escrow;
   const assetDB = databases.assets;
   // Lighten the load on the broker and do batch processing
   console.log({formattedEscrowDB});
