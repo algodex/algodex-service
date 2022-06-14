@@ -38,7 +38,7 @@ services:
     env_file:
       - ${ENV_FILE}
     environment:
-      - APP_CONTEXT=block-worker
+      - APP_CONTEXT=block-order-worker
     command:
       - start
   service:
