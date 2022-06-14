@@ -103,10 +103,9 @@ module.exports = function(doc) {
           const isAlgodex = ( txn.txn.apid === 22045503 ||
             txn.txn.apid === 22045522);
           if (txn.txn.type === 'appl' && isAlgodex) {
-            const isAlgoBuyEscrow = txn.txn.apid === 22045503;
             const appCallType = atob(txn.txn.apaa[0]);
             if (appCallType === 'open' || appCallType === 'close') {
-            // Do nothing as we are only tracking when escrows open or close
+            // Do nothing as we are only tracking executes
               return false;
             }
             return true;
@@ -134,62 +133,55 @@ module.exports = function(doc) {
     const executeGroups = getAlgodexExecuteGroups(Object.values(allGroups));
 
     executeGroups.forEach( (group) => {
-      let algoAmount = -1;
-      let asaAmount = -1;
+      // let algoAmount = -1;
+      // let asaAmount = -1;
 
-      let assetSellerAddr = 'UNKNOWN';
-      let assetBuyerAddr = 'UNKNOWN';
-      let asaId = -1;
-      let executeType = 'UNKNOWN';
-      let escrowAddr = 'UNKNOWN';
-      let groupId = 'UNKNOWN';
-      let isAlgoBuyEscrow = 'UNKNOWN';
+      // let assetSellerAddr = 'UNKNOWN';
+      // let assetBuyerAddr = 'UNKNOWN';
+      // let asaId = -1;
+      // let executeType = 'UNKNOWN';
+      // let escrowAddr = 'UNKNOWN';
+      // let groupId = 'UNKNOWN';
+      // let isAlgoBuyEscrow = 'UNKNOWN';
 
-      group.forEach( (txn) => {
+      const tradeHistoryEntry = group.reduce( (result, txn) => {
         if (txn.txn && txn.txn.type) {
           if (txn.txn.type === 'appl') {
-            isAlgoBuyEscrow = txn.txn.apid === 22045503;
-            executeType = atob(txn.txn.apaa[0]);
-            escrowAddr = txn.txn.snd;
+            const isAlgoBuyEscrow = txn.txn.apid === 22045503;
+            // reverse direction because selling into buy orders, etc.
+            result.tradeType = isAlgoBuyEscrow ? 'sell' : 'buy';
+            result.executeType = atob(txn.txn.apaa[0]);
+            result.escrowAddr = txn.txn.snd;
           }
           if (!txn['txn']['grp']) {
             return;
           }
-          if (groupId === 'UNKNOWN') {
-            groupId = txn.txn.grp;
+          if (!result.groupId) {
+            result.groupId = txn.txn.grp;
           }
           if (txn['txn']['type'] == 'appl') {
             // log->debug("application txn");
-          } else if (txn['txn']['type'] == 'pay' && algoAmount == -1
-            && (txn['txn']['amt']) && txn['txn']['amt'] > 0) {
+          } else if (txn['txn']['type'] == 'pay' &&
+            result.algoAmount === undefined &&
+            (txn['txn']['amt']) && txn['txn']['amt'] > 0) {
             // log->debug("pay");
-            algoAmount = txn['txn']['amt'] || 0;
-            assetSellerAddr = txn['txn']['rcv'] || "NA";
-          } else if (txn['txn']['type'] == 'axfer' && asaAmount == -1
-            && (txn['txn']['aamt']) && txn['txn']['aamt'] > 0) {
-            asaAmount = txn['txn']['aamt'] || 0;
-            asaId = txn['txn']['xaid'];
-            assetBuyerAddr = txn['txn']['arcv'];
-
+            result.algoAmount = txn['txn']['amt'] || 0;
+            result.assetSellerAddr = txn['txn']['rcv'];
+          } else if (txn['txn']['type'] == 'axfer' &&
+            result.asaAmount === undefined &&
+            (txn['txn']['aamt']) && txn['txn']['aamt'] > 0) {
+            result.asaAmount = txn['txn']['aamt'] || 0;
+            result.asaId = txn['txn']['xaid'];
+            result.assetBuyerAddr = txn['txn']['arcv'];
             // log->debug("axfer asaAmount asaId");
           }
         }
-      });
+        return result;
+      }, {});
 
-      emit(doc._id, {
-        algoAmount,
-        asaAmount,
-        assetSellerAddr,
-        assetBuyerAddr,
-        asaId,
-        executeType,
-        escrowAddr,
-        block: doc.rnd,
-        unixTime: doc.ts,
-        groupId,
-        // eslint-disable-next-line max-len
-        tradeType: isAlgoBuyEscrow ? 'sell' : 'buy', // reverse direction because selling into buy orders, etc.
-      });
+      tradeHistoryEntry.block = doc.rnd;
+      tradeHistoryEntry.unixTime = doc.ts;
+      emit(doc._id, tradeHistoryEntry);
     });
   }
 };
