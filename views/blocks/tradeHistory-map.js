@@ -187,7 +187,8 @@ module.exports = function(doc) {
         block: doc.rnd,
         unixTime: doc.ts,
         groupId,
-        tradeType: !isAlgoBuyEscrow,
+        // eslint-disable-next-line max-len
+        tradeType: isAlgoBuyEscrow ? 'sell' : 'buy', // reverse direction because selling into buy orders, etc.
       });
     });
   }
