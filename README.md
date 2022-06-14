@@ -37,7 +37,8 @@ docker-compose up -f docker-compose.localhost.yml
 #### Quick Test Run (Localhost with Docker Data)
 
 ```shell
-bin/remove-and-create-databases && bin/add-views && bin/sync-sequential.js
+export ALGORAND_NETWORK=testnet
+bin/remove-and-create-databases && bin/add-views && bin/sync-sequential
 ```
 
 
