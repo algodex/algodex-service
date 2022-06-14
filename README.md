@@ -19,12 +19,6 @@ You can find the contribution guides for getting started in [CONTRIBUTING.md](.g
 # Getting Started
 Use one of the following:
 
-#### Quick Test Run (Local Only)
-
-```shell
-bin/remove-and-create-databases && bin/add-views && bin/sync-sequential.js
-```
-
 #### Quick Start (Docker Only)
 
 ```shell
@@ -39,6 +33,13 @@ docker-compose up -f docker-compose.yml -f docker-compose.docker.yml
 cp .testnet.localhost.env .env
 docker-compose up -f docker-compose.localhost.yml
 ```
+
+#### Quick Test Run (Localhost with Docker Data)
+
+```shell
+bin/remove-and-create-databases && bin/add-views && bin/sync-sequential.js
+```
+
 
 - Website: http://localhost:8080
 - Redis Commander: http://localhost:8081/
