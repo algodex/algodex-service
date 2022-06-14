@@ -23,7 +23,7 @@
             ],
             "program": "${workspaceFolder}\\server.js",
             "env": {
-                "APP_CONTEXT": "block-order-worker"
+                "APP_CONTEXT": "block-worker"
             }
         },
         {

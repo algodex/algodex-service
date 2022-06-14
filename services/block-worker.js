@@ -54,17 +54,7 @@ module.exports = ({queues, databases}) =>{
 
           // eslint-disable-next-line max-len
           const dirtyAccounts = getDirtyAccounts(job.data).map( (account) => [account] );
-          // const dirtyAccounts = [
-          // ['NCL6MAVCMFKRM7NHOZZX3ZK7HBR52CD2UEZI5M3TYNAFUQUREJCRD5CALI']
-          // ];
-          // const dirtyAccount = '
-          // ["ZKJV3VOLBC7E4ZRXCZALGYZ5DS7VGN7EGTBKIBKJLYE3MNQ5GKSZNYRL7E"]';
-          // console.log({dirtyAccounts});
-          // console.log('here55');
-          // console.log('dirty accounts are: ',
-          //   dirtyAccounts.reduce(
-          // (account, accounts) => accounts + "," + account),
-          // "");
+
           return db.query('blocks/orders',
               {reduce: true, group: true, keys: dirtyAccounts})
               .then(async function(res) {
