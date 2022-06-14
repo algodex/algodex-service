@@ -108,16 +108,28 @@ const verifyContract = async (
   return false;
 };
 
-module.exports = async (rows) => {
+module.exports = async (rows, escrowDB) => {
   const realContracts = [];
+
+  const accounts = rows.map((row) => row.key[0]);
+
+  const result = await escrowDB.query('escrow/escrowAddr',
+      {reduce: true, group: true, keys: accounts});
+
+  const foundSet =
+    result.rows.reduce( (set, row) => set.add(row.key), new Set());
+
+  console.log({result});
+
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     const account = row.key[0];
-    const isRealContract = await verifyContract(account, row.value.orderInfo,
-      row.value.version, row.value.ownerAddr,
-      // FIXME - use env variables
-      row.value.isAlgoBuyEscrow ? 22045503 : 22045522,
-      row.value.isAlgoBuyEscrow);
+    const isRealContract = foundSet.has(account) ||
+      await verifyContract(account, row.value.orderInfo,
+          row.value.version, row.value.ownerAddr,
+          // FIXME - use env variables
+          row.value.isAlgoBuyEscrow ? 22045503 : 22045522,
+          row.value.isAlgoBuyEscrow);
     if (isRealContract) {
       realContracts.push(row);
     } else {

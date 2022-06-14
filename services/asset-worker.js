@@ -20,6 +20,21 @@ const initOrGetIndexer = () => {
   return indexerClient;
 };
 
+const getAssetInCouch = async (assetDB, assetId) => {
+  try {
+    const res = await assetDB.get(assetId);
+    if (res) {
+      return true;
+    }
+  } catch (e) {
+    if (e.error !== 'not_found') {
+      throw e;
+    }
+    return false;
+  }
+  return false;
+};
+
 module.exports = ({queues, databases}) =>{
   const assetDB = databases.assets;
   // Lighten the load on the broker and do batch processing
@@ -29,6 +44,10 @@ module.exports = ({queues, databases}) =>{
 
   const assetsWorker = new Worker('assets', async (job)=>{
     console.log('got assets job ', {job});
+    const assetInCouch = await getAssetInCouch(assetDB, job.data.assetId);
+    if (assetInCouch) {
+      return;
+    }
     const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
     return assetDB.post({_id: `${job.data.assetId}`,
       type: 'asset', ...assetData})

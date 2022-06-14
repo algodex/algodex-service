@@ -37,6 +37,7 @@ const getAssetQueuePromise = (assetQueue, assetId) => {
 
 module.exports = ({queues, databases}) =>{
   const db = databases.blocks;
+
   const orders = new Worker('blocks', async (job)=>{
     console.debug({
       msg: 'Received block',
@@ -72,7 +73,7 @@ module.exports = ({queues, databases}) =>{
                 }
                 escrowCounter += res.rows.length;
                 const assetIdSet = {};
-                const validRows = await verifyContracts(res.rows);
+                const validRows = await verifyContracts(res.rows, databases.escrow);
 
                 const allPromises = validRows.reduce( (allPromises, row) => {
                   // add job

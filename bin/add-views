@@ -4,6 +4,7 @@ const chartMap = require('../views/chart/map')
 const chartReduce = require('../views/chart/reduce')
 const orderMap = require('../views/orders/map')
 const formattedOrdersMap = require('../views/formatted-orders/orders');
+const escrowMap = require('../views/escrow/escrowAddr');
 const orderReduce = require('../views/orders/reduce')
 const PouchDB = require('pouchdb')
 PouchDB.plugin(require('pouchdb-erase'))
@@ -21,6 +22,13 @@ const formattedEscrowDB = new PouchDB('http://localhost:5984/formatted_escrow', 
     password: 'dex',
   },
 });
+const escrowDB = new PouchDB('http://localhost:5984/escrow', {
+  auth: {
+    username: 'admin',
+    password: 'dex',
+  },
+});
+
 
 const chartIndex = {
   _id: '_design/blocks',
@@ -34,7 +42,17 @@ const chartIndex = {
       reduce: chartReduce.toString(),
     },
   },
-}
+};
+
+const escrowIndex = {
+  _id: '_design/escrow',
+  views: {
+    escrowAddr: {
+      map: escrowMap.toString(),
+      reduce: '_count',
+    },
+  },
+};
 
 const formattedEscrowsIndex = {
   _id: '_design/formatted_escrow',
@@ -61,6 +79,23 @@ blocksDB.get('_design/blocks').then((res)=>{
     throw e;
   }
 })
+
+escrowDB.get('_design/escrow').then((res)=>{
+  console.log('Index Found');
+  escrowDB.put({...escrowIndex, _rev: res._rev}).catch((e)=>{
+    console.log('Update error', e);
+    throw e;
+  })
+}).catch((e)=>{
+  console.log('Error Fetching Index');
+  if (e.error === 'not_found') {
+    escrowDB.put(escrowIndex).catch((e)=>{
+      console.log('Create Error', e);
+    });
+  } else {
+    throw e;
+  }
+});
 
 formattedEscrowDB.get('_design/formatted_escrow').then((res)=>{
   console.log('Index Found');
