@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 
-const chartMap = require('../views/chart/map')
-const chartReduce = require('../views/chart/reduce')
-const orderMap = require('../views/blocks/orders-map')
+const chartMap = require('../views/chart/map');
+const chartReduce = require('../views/chart/reduce');
+const orderMap = require('../views/blocks/orders-map');
+const tradeHistoryMap = require('../views/blocks/tradeHistory-map');
 const formattedOrdersMap = require('../views/formatted_orders/orders-map');
 const escrowMap = require('../views/escrow/escrowAddr-map');
-const orderReduce = require('../views/blocks/orders-reduce')
-const PouchDB = require('pouchdb')
-PouchDB.plugin(require('pouchdb-erase'))
+const orderReduce = require('../views/blocks/orders-reduce');
+const PouchDB = require('pouchdb');
+PouchDB.plugin(require('pouchdb-erase'));
 
 // create the remote database with authentication
 const blocksDB = new PouchDB('http://localhost:5984/blocks', {
@@ -30,12 +31,15 @@ const escrowDB = new PouchDB('http://localhost:5984/escrow', {
 });
 
 
-const chartIndex = {
+const blocksIndex = {
   _id: '_design/blocks',
   views: {
     orders: {
       map: orderMap.toString(),
       reduce: orderReduce.toString(),
+    },
+    tradeHistory: {
+      map: tradeHistoryMap.toString(),
     },
     ohlc: {
       map: chartMap.toString(),
@@ -65,14 +69,14 @@ const formattedEscrowsIndex = {
 
 blocksDB.get('_design/blocks').then((res)=>{
   console.log('Index Found')
-  blocksDB.put({...chartIndex, _rev: res._rev}).catch((e)=>{
+  blocksDB.put({...blocksIndex, _rev: res._rev}).catch((e)=>{
     console.log('Update error', e)
     throw e;
   })
 }).catch((e)=>{
   console.log('Error Fetching Index')
   if(e.error === 'not_found'){
-    blocksDB.put(chartIndex).catch((e)=>{
+    blocksDB.put(blocksIndex).catch((e)=>{
       console.log('Create Error', e)
     })
   } else {
