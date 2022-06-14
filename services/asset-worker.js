@@ -30,7 +30,6 @@ const getAssetInCouch = async (assetDB, assetId) => {
     if (e.error !== 'not_found') {
       throw e;
     }
-    return false;
   }
   return false;
 };
