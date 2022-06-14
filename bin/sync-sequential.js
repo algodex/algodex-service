@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 require('dotenv').config();
 const algosdk = require('algosdk');
 const process = require('process');
