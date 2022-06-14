@@ -54,7 +54,7 @@ module.exports = ({queues, databases}) =>{
   const escrowDB = databases.escrow;
   // Lighten the load on the broker and do batch processing
   console.log({escrowDB});
-  console.log('in orderworker.js');
+  console.log('in order-worker.js');
   const indexedOrders = new Worker('orders', async (job)=>{
     // console.log('in orders queue');
 

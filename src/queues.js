@@ -26,7 +26,7 @@ module.exports = function() {
   if (typeof connection === 'undefined') {
     // Define connection
     connection = new Redis(port, address);
-    // connection = `redis://${address}:${port}`;
+    connection.setMaxListeners(16);
   }
 
   if (typeof queues === 'undefined') {
@@ -34,8 +34,6 @@ module.exports = function() {
     const defaultJobOptions = {
       attempts: 1000,
       backoff: {
-        // Note: this is overridden for the order worker
-        // which has a custom strategy.
         type: 'exponential',
         delay: 300,
       },
@@ -51,12 +49,17 @@ module.exports = function() {
       orders: new Queue('orders',
           {defaultJobOptions: defaultJobOptions, connection: connection},
       ),
+      tradeHistory: new Queue('tradeHistory',
+          {defaultJobOptions: defaultJobOptions, connection: connection},
+      ),
       formattedEscrows: new Queue('formattedEscrows',
           {defaultJobOptions: defaultJobOptions, connection: connection},
       ),
       blocksScheduler: new QueueScheduler('blocks', {connection: connection}),
       ordersScheduler: new QueueScheduler('orders', {connection: connection}),
       assetsScheduler: new QueueScheduler('assets', {connection: connection}),
+      tradeHistoryScheduler: new QueueScheduler('tradeHistory',
+          {connection: connection}),
       formattedEscrowsScheduler: new QueueScheduler('formattedEscrows',
           {connection: connection},
       ),
