@@ -119,8 +119,6 @@ module.exports = async (rows, escrowDB) => {
   const foundSet =
     result.rows.reduce( (set, row) => set.add(row.key), new Set());
 
-  console.log({result});
-
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     const account = row.key[0];
