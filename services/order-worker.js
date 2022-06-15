@@ -39,8 +39,10 @@ const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   });
   return promise;
 };
+
+
 const reduceIndexerInfo = (indexerInfo) => {
-  const asaAmount = indexerInfo.account.assets ?
+  const asaAmount = indexerInfo.account.assets !== undefined ?
     indexerInfo.account.assets[0].amount : 0;
   return {
     address: indexerInfo.account.address,
@@ -48,6 +50,29 @@ const reduceIndexerInfo = (indexerInfo) => {
     round: indexerInfo['current-round'],
     asaAmount: asaAmount,
   };
+};
+
+const getindexedEscrowInfo = async (indexedEscrowDB, account, round) => {
+  const indexerClient = initOrGetIndexer();
+
+  try {
+    const accountInfo = await indexedEscrowDB.get(account+"-"+round)
+    return reduceIndexerInfo(accountInfo);
+  } catch (err) {
+      if (err.error !== 'not_found') {
+        throw err;
+      } else {
+
+      const accountInfo = await indexerClient.lookupAccountByID(account)
+          .round(round).includeAll(true).do();
+      const reducedAccountInfo = reduceIndexerInfo(accountInfo);
+      await indexedEscrowDB.put({
+        _id: account+'-'+round,
+        ...reducedAccountInfo,
+      });
+      return reducedAccountInfo;
+    };
+  }
 };
 
 module.exports = ({queues, databases}) =>{
@@ -66,16 +91,13 @@ module.exports = ({queues, databases}) =>{
     //  round: blockData.rnd,
     //  account: account,
     // });
-    const indexerClient = initOrGetIndexer();
     const round = blockData.rnd;
-    const accountInfoPromise =
-      indexerClient.lookupAccountByID(account)
-          .round(round).includeAll(true).do();
 
-    return accountInfoPromise.then(function(accountInfo) {
-      // console.log(accountInfo);
-      // console.log('here57');
-      const data = {indexerInfo: reduceIndexerInfo(accountInfo),
+    try {
+      const accountInfo = await getindexedEscrowInfo(databases.indexedEscrow,
+        account, round);
+
+      const data = {indexerInfo: accountInfo,
         escrowInfo: order.value};
       data.lastUpdateUnixTime = blockData.ts;
       data.lastUpdateRound = blockData.rnd;
@@ -101,7 +123,7 @@ module.exports = ({queues, databases}) =>{
               throw err;
             }
           });
-    }).catch(function(err) {
+    } catch (err) {
       if (err.status === 500 &&
         err.message.includes('not currently supported')) {
         const data = {indexerInfo: 'noAccountInfo', escrowInfo: order.value};
@@ -130,11 +152,10 @@ module.exports = ({queues, databases}) =>{
         // console.log({err});
         throw err;
       }
-    });
+    }
   }, {connection: queues.connection, concurrency: 50});
 
   indexedOrders.on('error', (err) => {
     console.error( {err} );
   });
 };
-

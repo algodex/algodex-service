@@ -18,6 +18,7 @@ const databases = {
   assets: getDatabase(couchBaseURL + '/assets'),
   formatted_escrow: getDatabase(couchBaseURL + '/formatted_escrow'),
   formatted_history: getDatabase(couchBaseURL + '/formatted_history'),
+  indexedEscrow: getDatabase(couchBaseURL + '/indexed_escrow'),
 };
 
 // Configure Queues
