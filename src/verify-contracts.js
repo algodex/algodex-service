@@ -152,6 +152,8 @@ module.exports = async (rows, verifiedAccountDB) => {
   try {
     await verifiedAccountDB.bulkDocs(rowsToAddtoDB);
   } catch (e) {
+    console.error('could not bulk add accounts to verified DB');
+    console.error(e);
     throw e;
   }
   return realContracts;
