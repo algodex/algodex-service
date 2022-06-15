@@ -63,7 +63,7 @@ module.exports = ({queues, databases}) =>{
                 }
                 escrowCounter += res.rows.length;
                 const assetIdSet = {};
-                const validRows = await verifyContracts(res.rows, databases.escrow);
+                const validRows = await verifyContracts(res.rows, databases.verifiedAccount);
 
                 const allPromises = validRows.reduce( (allPromises, row) => {
                   // add job

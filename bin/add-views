@@ -6,6 +6,7 @@ const orderMap = require('../views/blocks/orders-map');
 const tradeHistoryMap = require('../views/blocks/tradeHistory-map');
 const formattedOrdersMap = require('../views/formatted_orders/orders-map');
 const escrowMap = require('../views/escrow/escrowAddr-map');
+const verifiedMap = require('../views/verifed/verifiedAddr-map');
 const assetsMap = require('../views/assets/assets-map');
 const orderReduce = require('../views/blocks/orders-reduce');
 const PouchDB = require('pouchdb');
@@ -31,6 +32,12 @@ const escrowDB = new PouchDB('http://localhost:5984/escrow', {
   },
 });
 const assetsDB = new PouchDB('http://localhost:5984/assets', {
+  auth: {
+    username: 'admin',
+    password: 'dex',
+  },
+});
+const verifiedAccountDB = new PouchDB('http://localhost:5984/verified_account', {
   auth: {
     username: 'admin',
     password: 'dex',
@@ -82,6 +89,15 @@ const assetsIndex = {
   },
 };
 
+const verifiedAccountIndex = {
+  _id: '_design/verified_account',
+  views: {
+    verifiedAddr: {
+      map: verifiedMap.toString(),
+    },
+  },
+};
+
 blocksDB.get('_design/blocks').then((res)=>{
   console.log('Index Found')
   blocksDB.put({...blocksIndex, _rev: res._rev}).catch((e)=>{
@@ -98,6 +114,24 @@ blocksDB.get('_design/blocks').then((res)=>{
     throw e;
   }
 })
+
+verifiedAccountDB.get('_design/verified_account').then((res)=>{
+  console.log('Index Found')
+  verifiedAccountDB.put({...verifiedAccountIndex, _rev: res._rev}).catch((e)=>{
+    console.log('Update error', e)
+    throw e;
+  })
+}).catch((e)=>{
+  console.log('Error Fetching Index')
+  if(e.error === 'not_found'){
+    verifiedAccountDB.put(verifiedAccountIndex).catch((e)=>{
+      console.log('Create Error', e)
+    })
+  } else {
+    throw e;
+  }
+})
+
 
 escrowDB.get('_design/escrow').then((res)=>{
   console.log('Index Found');
