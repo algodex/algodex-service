@@ -108,21 +108,28 @@ const verifyContract = async (
   return false;
 };
 
-module.exports = async (rows, escrowDB) => {
+module.exports = async (rows, verifiedAccountDB) => {
   const realContracts = [];
 
   const accounts = rows.map((row) => row.key[0]);
 
-  const result = await escrowDB.query('escrow/escrowAddr',
-      {reduce: true, group: true, keys: accounts});
+  const result = await verifiedAccountDB.query('verified_account/verifiedAddr',
+      {reduce: false, keys: accounts});
 
-  const foundSet =
-    result.rows.reduce( (set, row) => set.add(row.key), new Set());
+  const isVerifiedSet =
+    result.rows
+      .filter( row => row.value === 'verified')
+      .reduce( (set, row) => set.add(row.id), new Set());
+
+  const verifDBHasAddrSet = result.rows
+    .reduce( (set, row) => set.add(row.id), new Set());
+
+  const rowsToAddtoDB = [];
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     const account = row.key[0];
-    const isRealContract = foundSet.has(account) ||
+    const isRealContract = isVerifiedSet.has(account) ||
       await verifyContract(account, row.value.orderInfo,
           row.value.version, row.value.ownerAddr,
           // FIXME - use env variables
@@ -133,6 +140,19 @@ module.exports = async (rows, escrowDB) => {
     } else {
       console.log('fake contract found? ' + account);
     }
+
+    if (!verifDBHasAddrSet.has(account)) {
+      rowsToAddtoDB.push({
+        _id: account,
+        status: isRealContract ? 'verified' : 'fake'
+      });
+    }
+  }
+
+  try {
+    await verifiedAccountDB.bulkDocs(rowsToAddtoDB);
+  } catch (e) {
+    throw e;
   }
   return realContracts;
 };

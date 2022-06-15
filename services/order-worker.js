@@ -56,13 +56,12 @@ const getindexedEscrowInfo = async (indexedEscrowDB, account, round) => {
   const indexerClient = initOrGetIndexer();
 
   try {
-    const accountInfo = await indexedEscrowDB.get(account+"-"+round)
+    const accountInfo = await indexedEscrowDB.get(account+ '-'+ round);
     return reduceIndexerInfo(accountInfo);
   } catch (err) {
-      if (err.error !== 'not_found') {
-        throw err;
-      } else {
-
+    if (err.error !== 'not_found') {
+      throw err;
+    } else {
       const accountInfo = await indexerClient.lookupAccountByID(account)
           .round(round).includeAll(true).do();
       const reducedAccountInfo = reduceIndexerInfo(accountInfo);
