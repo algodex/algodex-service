@@ -1,187 +1,41 @@
 #!/usr/bin/env node
 
-const chartMap = require('../views/chart/map');
-const chartReduce = require('../views/chart/reduce');
-const orderMap = require('../views/blocks/orders-map');
-const tradeHistoryMap = require('../views/blocks/tradeHistory-map');
-const formattedOrdersMap = require('../views/formatted_orders/orders-map');
-const escrowMap = require('../views/escrow/escrowAddr-map');
-const verifiedMap = require('../views/verified_account/verifiedAddr-map');
-const assetsMap = require('../views/assets/assets-map');
-const orderReduce = require('../views/blocks/orders-reduce');
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-erase'));
 
-// create the remote database with authentication
-const blocksDB = new PouchDB('http://localhost:5984/blocks', {
-  auth: {
-    username: 'admin',
-    password: 'dex',
-  },
-});
-const formattedEscrowDB = new PouchDB('http://localhost:5984/formatted_escrow', {
-  auth: {
-    username: 'admin',
-    password: 'dex',
-  },
-});
-const escrowDB = new PouchDB('http://localhost:5984/escrow', {
-  auth: {
-    username: 'admin',
-    password: 'dex',
-  },
-});
-const assetsDB = new PouchDB('http://localhost:5984/assets', {
-  auth: {
-    username: 'admin',
-    password: 'dex',
-  },
-});
-const verifiedAccountDB = new PouchDB('http://localhost:5984/verified_account', {
-  auth: {
-    username: 'admin',
-    password: 'dex',
-  },
-});
+const databases = require('../src/db/db-config.js')();
 
-const blocksIndex = {
-  _id: '_design/blocks',
-  views: {
-    orders: {
-      map: orderMap.toString(),
-      reduce: orderReduce.toString(),
+const dbEndpoint = 'http://localhost:5984';
+const dbUsername = 'admin';
+const dbPassword = 'dex';
+
+databases.forEach( (database) => {
+  const initializedDB = new PouchDB(dbEndpoint + '/' + database.dbName, {
+    auth: {
+      username: dbUsername,
+      password: dbPassword,
     },
-    tradeHistory: {
-      map: tradeHistoryMap.toString(),
-    },
-    ohlc: {
-      map: chartMap.toString(),
-      reduce: chartReduce.toString(),
-    },
-  },
-};
-
-const escrowIndex = {
-  _id: '_design/escrow',
-  views: {
-    escrowAddr: {
-      map: escrowMap.toString(),
-      reduce: '_count',
-    },
-  },
-};
-
-const formattedEscrowsIndex = {
-  _id: '_design/formatted_escrow',
-  views: {
-    orders: {
-      map: formattedOrdersMap.toString(),
-    },
-  },
-};
-
-const assetsIndex = {
-  _id: '_design/assets',
-  views: {
-    assets: {
-      map: assetsMap.toString(),
-    },
-  },
-};
-
-const verifiedAccountIndex = {
-  _id: '_design/verified_account',
-  views: {
-    verifiedAddr: {
-      map: verifiedMap.toString(),
-    },
-  },
-};
-
-blocksDB.get('_design/blocks').then((res)=>{
-  console.log('Index Found')
-  blocksDB.put({...blocksIndex, _rev: res._rev}).catch((e)=>{
-    console.log('Update error', e)
-    throw e;
-  })
-}).catch((e)=>{
-  console.log('Error Fetching Index')
-  if(e.error === 'not_found'){
-    blocksDB.put(blocksIndex).catch((e)=>{
-      console.log('Create Error', e)
-    })
-  } else {
-    throw e;
-  }
-})
-
-verifiedAccountDB.get('_design/verified_account').then((res)=>{
-  console.log('Index Found')
-  verifiedAccountDB.put({...verifiedAccountIndex, _rev: res._rev}).catch((e)=>{
-    console.log('Update error', e)
-    throw e;
-  })
-}).catch((e)=>{
-  console.log('Error Fetching Index')
-  if(e.error === 'not_found'){
-    verifiedAccountDB.put(verifiedAccountIndex).catch((e)=>{
-      console.log('Create Error', e)
-    })
-  } else {
-    throw e;
-  }
-})
-
-
-escrowDB.get('_design/escrow').then((res)=>{
-  console.log('Index Found');
-  escrowDB.put({...escrowIndex, _rev: res._rev}).catch((e)=>{
-    console.log('Update error', e);
-    throw e;
-  })
-}).catch((e)=>{
-  console.log('Error Fetching Index');
-  if (e.error === 'not_found') {
-    escrowDB.put(escrowIndex).catch((e)=>{
-      console.log('Create Error', e);
-    });
-  } else {
-    throw e;
-  }
-});
-
-formattedEscrowDB.get('_design/formatted_escrow').then((res)=>{
-  console.log('Index Found');
-  formattedEscrowDB.put({...formattedEscrowsIndex, _rev: res._rev}).catch((e)=>{
-    console.log('Update error', e);
-    throw e;
   });
-}).catch((e)=>{
-  console.log('Error Fetching Index');
-  if (e.error === 'not_found') {
-    formattedEscrowDB.put(formattedEscrowsIndex).catch((e)=>{
-      console.log('Create Error', e);
-    });
-  } else {
-    throw e;
+  if (!database.design) {
+    return;
   }
-});
-
-
-assetsDB.get('_design/assets').then((res)=>{
-  console.log('Index Found');
-  assetsDB.put({...assetsIndex, _rev: res._rev}).catch((e)=>{
-    console.log('Update error', e);
-    throw e;
+  initializedDB.get(database.design._id).then((res)=>{
+    console.log('Index Found');
+    initializedDB.put({...database.design, _rev: res._rev}).catch((e)=>{
+      console.log('Update error', e);
+      throw e;
+    });
+  }).catch((e)=>{
+    console.log('Error Fetching Index', e.error);
+    if (e.error === 'not_found') {
+      console.log('Adding index');
+      initializedDB.put({...database.design}).catch((e)=>{
+        console.log('Create Error', e);
+      });
+    } else {
+      throw e;
+    }
   });
-}).catch((e)=>{
-  console.log('Error Fetching Index');
-  if (e.error === 'not_found') {
-    assetsDB.put(assetsIndex).catch((e)=>{
-      console.log('Create Error', e);
-    });
-  } else {
-    throw e;
-  }
 });
+
 

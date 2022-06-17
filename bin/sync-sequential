@@ -7,7 +7,7 @@ const process = require('process');
 const {createConsecutiveObject} = require('../src/util');
 const {getAppsBlockRange, getBlock} = require('../src/explorer');
 const getQueues = require('../src/queues');
-const getDatabase = require('../src/db');
+const getDatabase = require('../src/db/db');
 // const {exit} = require('process');
 
 const url = process.env.ALGORAND_NETWORK === 'testnet' ?

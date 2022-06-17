@@ -5,22 +5,15 @@ require('dotenv').config();
 
 // Configure Algorand
 const getAlgod = require('./src/algod');
+const getDatabases = require('./src/db/get-databases');
 const client = getAlgod();
 
 // Configure Couchdb Blocks Database
-const getDatabase = require('./src/db');
+const getDatabase = require('./src/db/db');
 
 const couchBaseURL = process.env['COUCHDB_BASE_URL'];
-const databases = {
-  blocks: getDatabase(couchBaseURL + '/blocks'),
-  escrow: getDatabase(couchBaseURL + '/escrow'),
-  prices: getDatabase(couchBaseURL + '/prices'),
-  assets: getDatabase(couchBaseURL + '/assets'),
-  formatted_escrow: getDatabase(couchBaseURL + '/formatted_escrow'),
-  formatted_history: getDatabase(couchBaseURL + '/formatted_history'),
-  indexedEscrow: getDatabase(couchBaseURL + '/indexed_escrow'),
-  verifiedAccount: getDatabase(couchBaseURL + '/verified_account'),
-};
+
+const databases = getDatabases();
 
 // Configure Queues
 const getQueues = require('./src/queues');
