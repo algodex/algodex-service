@@ -14,6 +14,44 @@ services:
     build: .
     volumes:
       - ./:/app
+    environment:
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
+    depends_on:
+      - events
+      - queues
+  worker-asset:
+    build: .
+    volumes:
+      - ./:/app
+    environment:
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
+    depends_on:
+      - events
+      - queues
+  worker-formatted-order:
+    build: .
+    volumes:
+      - ./:/app
+    environment:
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
+    depends_on:
+      - events
+      - queues
+  worker-order:
+    build: .
+    volumes:
+      - ./:/app
+    environment:
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
+    depends_on:
+      - events
+      - queues
+  worker-trade-history:
+    build: .
+    volumes:
+      - ./:/app
+    environment:
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
     depends_on:
       - events
       - queues
@@ -21,6 +59,8 @@ services:
     build: .
     volumes:
       - ./:/app
+    environment:
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
     depends_on:
       - events
       - queues
@@ -47,6 +87,7 @@ services:
     build: .
     environment:
       - TZ=America/Chicago
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
     volumes:
       - ./:/app
     depends_on:

@@ -41,6 +41,46 @@ services:
       - APP_CONTEXT=block-worker
     command:
       - start
+  worker-asset:
+    image: ghcr.io/algodex/algodex-service:${GHCR_TARGET}
+    x-aws-pull_credentials: ${GHCR_SECRET_ARN}
+    entrypoint: npm
+    env_file:
+      - ${ENV_FILE}
+    environment:
+      - APP_CONTEXT=asset-worker
+    command:
+      - start
+  worker-formatted-order:
+    image: ghcr.io/algodex/algodex-service:${GHCR_TARGET}
+    x-aws-pull_credentials: ${GHCR_SECRET_ARN}
+    entrypoint: npm
+    env_file:
+      - ${ENV_FILE}
+    environment:
+      - APP_CONTEXT=formatted-order-worker
+    command:
+      - start
+  worker-order:
+    image: ghcr.io/algodex/algodex-service:${GHCR_TARGET}
+    x-aws-pull_credentials: ${GHCR_SECRET_ARN}
+    entrypoint: npm
+    env_file:
+      - ${ENV_FILE}
+    environment:
+      - APP_CONTEXT=order-worker
+    command:
+      - start
+  worker-trade-history:
+    image: ghcr.io/algodex/algodex-service:${GHCR_TARGET}
+    x-aws-pull_credentials: ${GHCR_SECRET_ARN}
+    entrypoint: npm
+    env_file:
+      - ${ENV_FILE}
+    environment:
+      - APP_CONTEXT=trade-history-worker
+    command:
+      - start
   service:
     image: ghcr.io/algodex/algodex-service:${GHCR_TARGET}
     x-aws-pull_credentials: ${GHCR_SECRET_ARN}

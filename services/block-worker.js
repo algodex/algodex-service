@@ -38,7 +38,7 @@ const getAssetQueuePromise = (assetQueue, assetId) => {
 module.exports = ({queues, databases}) =>{
   const db = databases.blocks;
 
-  const orders = new Worker('blocks', async (job)=>{
+  const blocks = new Worker('blocks', async (job)=>{
     console.debug({
       msg: 'Received block',
       round: job.data.rnd,
@@ -134,7 +134,7 @@ module.exports = ({queues, databases}) =>{
         });
   }, {connection: queues.connection, concurrency: 50});
 
-  orders.on('error', (err) => {
+  blocks.on('error', (err) => {
     console.error( {err} );
   });
 };
