@@ -5,8 +5,7 @@ const process = require('process');
 
 const {createConsecutiveObject, cpuChunkArray} = require('../src/util');
 const {getAppsBlockRange, getBlock} = require('../src/explorer');
-const getQueues = require('../src/queues');
-const getDatabase = require('../src/db/db');
+// const getQueues = require('../src/queues');
 
 const url = process.env.ALGORAND_NETWORK === 'testnet' ?
   'https://algoindexer.testnet.algoexplorerapi.io' :
@@ -14,10 +13,10 @@ const url = process.env.ALGORAND_NETWORK === 'testnet' ?
 
 const indexer = new algosdk.Indexer('', url, 443);
 
-const queues = getQueues();
-const db = getDatabase('http://admin:dex@localhost:5984/blocks');
-
-throw 'This is not currently supported, please use sync-sequential';
+// const queues = getQueues();
+const getDatabases = require('../src/db/get-databases');
+const databases = getDatabases();
+const db = databases.blocks;
 
 const compare = async function() {
   if (!process.env.ALGORAND_NETWORK) {
@@ -35,9 +34,13 @@ const compare = async function() {
   ];
   // Get a range of blocks for a list of applications
   const {start, current} = await getAppsBlockRange(indexer, apps);
+  let realStart = start;
+  if (process.env.ALGORAND_NETWORK === 'mainnet') {
+    realStart = 19155000;
+  }
   // Create an Object keyed by blocks in the range
-  // const rounds = createConsecutiveObject(start, current);
-  const rounds = createConsecutiveObject(start, start+5000);
+  const rounds = createConsecutiveObject(realStart, current);
+  //const rounds = createConsecutiveObject(start, start+5000);
   const allDocs = await db.allDocs();
   const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds
@@ -62,19 +65,29 @@ const compare = async function() {
 };
 
 // Fetch the block and add it to the storage queue
+
+
 const queue = async function() {
   console.log('Worker working');
   process.on('message', async function({index, chunks}) {
     for (const round of chunks[index]) {
-      console.log('Queue Round', round);
+      console.log('Adding Round', round);
       let gotBlock = false;
 
       do {
         try {
           const block = await getBlock({round});
           gotBlock = true;
-          await queues.blocks.add('blocks', block, {removeOnComplete: true});
-          console.log('Queue Round Sent', round);
+          try {
+            await db.post({_id: `${block.rnd}`, type: 'block', ...block});
+          } catch (e) {
+            if (e.error === 'conflict') {
+              console.log('the block ['+block.rnd+']was already added!');
+              continue;
+            }
+            console.error('could not save block: ' +
+              block.rnd + ' to db: ' + e.error + ' ' + e);
+          }
         } catch (e) {
           console.log('could not fetch block', {e});
         }
