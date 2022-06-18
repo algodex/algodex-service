@@ -117,6 +117,10 @@ module.exports = ({queues, databases}) =>{
                   throw err;
                 }
               }),
+
+          // The trade history is always from orders that previously existed
+          // in other blocks, so we can queue it in parallel
+          // to adding them to orders
           queues.tradeHistory.add('tradeHistory', {block: `${job.data.rnd}`},
               {removeOnComplete: true}).then(function() {
           }).catch(function(err) {
