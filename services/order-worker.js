@@ -57,7 +57,7 @@ const getindexedEscrowInfo = async (indexedEscrowDB, account, round) => {
 
   try {
     const accountInfo = await indexedEscrowDB.get(account+ '-'+ round);
-    return reduceIndexerInfo(accountInfo);
+    return accountInfo;
   } catch (err) {
     if (err.error !== 'not_found') {
       throw err;
