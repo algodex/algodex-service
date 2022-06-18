@@ -1,6 +1,7 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
+const initOrGetIndexer = require('../src/get-indexer');
 
 let indexerClient = null;
 let escrowCounter3 = 0;
@@ -12,22 +13,6 @@ const printCounters = () => {
   console.debug('ESCROW COUNTERS: ' + escrowCounter3 + ' ' +
   escrowCounter4 + ' ' + escrowCounter5 + ' ' + escrowCounter6 +
   ' total: ' + (escrowCounter4 + escrowCounter6) );
-};
-
-const initOrGetIndexer = () => {
-  if (indexerClient !== null) {
-    return indexerClient;
-  }
-  const algosdk = require('algosdk');
-  const baseServer = 'https://testnet-algorand.api.purestake.io/idx2';
-  const port = '';
-
-  const token = {
-    'X-API-key': 'VELyABA1dGqGbAVktbew4oACvp0c0298gMgYtYIb',
-  };
-
-  indexerClient = new algosdk.Indexer(token, baseServer, port);
-  return indexerClient;
 };
 
 const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {

@@ -2,23 +2,7 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 
-let indexerClient = null;
-
-const initOrGetIndexer = () => {
-  if (indexerClient !== null) {
-    return indexerClient;
-  }
-  const algosdk = require('algosdk');
-  const baseServer = 'https://testnet-algorand.api.purestake.io/idx2';
-  const port = '';
-
-  const token = {
-    'X-API-key': 'VELyABA1dGqGbAVktbew4oACvp0c0298gMgYtYIb',
-  };
-
-  indexerClient = new algosdk.Indexer(token, baseServer, port);
-  return indexerClient;
-};
+const initOrGetIndexer = require('../src/get-indexer');
 
 const getAssetInCouch = async (assetDB, assetId) => {
   try {

@@ -14,7 +14,7 @@ module.exports = ({queues, databases}) =>{
   const tradeHistoryWorker = new Worker('tradeHistory', async (job)=>{
     const blockId = job.data.block;
     console.log('received block: ' + blockId);
-    
+
     // 1. Get valid escrows from trade history
     // 2. Get asset information from DB
     //    (job will fail and retry if asset info not in DB)
