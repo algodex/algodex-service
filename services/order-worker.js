@@ -42,13 +42,31 @@ const getindexedEscrowInfo = async (indexedEscrowDB, account, round) => {
 
   try {
     const accountInfo = await indexedEscrowDB.get(account+ '-'+ round);
+    if (accountInfo.noAccountInfo) {
+      const err = {status: 500,
+        message: 'not currently supported'};
+      throw err;
+    }
     return accountInfo;
   } catch (err) {
     if (err.error !== 'not_found') {
       throw err;
     } else {
-      const accountInfo = await indexerClient.lookupAccountByID(account)
-          .round(round).includeAll(true).do();
+      let accountInfo;
+      try {
+        accountInfo = await indexerClient.lookupAccountByID(account)
+            .round(round).includeAll(true).do();
+      } catch (e) {
+        if (e.status === 500 &&
+          e.message.includes('not currently supported')) {
+          const doc = {
+            _id: account+'-'+round,
+            noAccountInfo: true,
+          };
+          await indexedEscrowDB.put(doc);
+        }
+        throw e;
+      }
       const reducedAccountInfo = reduceIndexerInfo(accountInfo);
       await indexedEscrowDB.put({
         _id: account+'-'+round,

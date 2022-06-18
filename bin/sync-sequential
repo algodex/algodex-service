@@ -11,15 +11,37 @@ const getQueues = require('../src/queues');
 // const {exit} = require('process');
 const getDatabases = require('../src/db/get-databases');
 const databases = getDatabases();
-const db = databases.blocks;
+const blocksDB = databases.blocks;
+const syncedDB = databases.synced_blocks;
 
 const queues = getQueues();
+
+const getBlockFromDBOrNode = async (round) => {
+  try {
+    const block = await blocksDB.get(round);
+    console.log('Got ' + round + ' block from DB');
+    return block;
+  } catch (e) {
+    if (e.error === 'not_found') {
+      console.error('block not found in DB! Fetching from Algorand node');
+    } else {
+      throw e;
+    }
+  }
+  // Not in couchdb, so get from Algorand node
+  try {
+    const block = await getBlock({round});
+    console.log('Got ' + round + ' block from Algorand node');
+    return block;
+  } catch (e) {
+    console.error('Could not get block from node!');
+  }
+};
 
 const compare = async function() {
   if (!process.env.ALGORAND_NETWORK) {
     throw new Error('process.env.ALGORAND_NETWORK is undefined!');
   }
-  
   const apps = [
     {
       id: process.env.ALGORAND_NETWORK === 'testnet' ? 22045503 : 354073718,
@@ -36,7 +58,7 @@ const compare = async function() {
   const current = start + 5000;
   console.log('start is: ' +start);
   const rounds = createConsecutiveObject(start, current);
-  const allDocs = await db.allDocs();
+  const allDocs = await syncedDB.allDocs();
   const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds
   const blocksSet = new Set(blockDocs.map((doc)=>parseInt(doc.id)));
@@ -51,7 +73,7 @@ const compare = async function() {
 
     do {
       try {
-        const block = await getBlock({round});
+        const block = await getBlockFromDBOrNode(round);
         gotBlock = true;
         await queues.blocks.add('blocks', block, {removeOnComplete: true});
         console.log('Queue Round Sent', round);

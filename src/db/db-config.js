@@ -74,6 +74,9 @@ const databases = [
     dbName: 'formatted_history',
   },
   {
+    dbName: 'synced_blocks',
+  },
+  {
     dbName: 'prices',
   },
 ];
