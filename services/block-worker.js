@@ -36,7 +36,8 @@ const getAssetQueuePromise = (assetQueue, assetId) => {
 
 
 module.exports = ({queues, databases}) =>{
-  const db = databases.blocks;
+  const syncedBlocksDB = databases.synced_blocks;
+  const blocksDB = databases.blocks;
 
   const blocks = new Worker('blocks', async (job)=>{
     console.debug({
@@ -44,98 +45,126 @@ module.exports = ({queues, databases}) =>{
       round: job.data.rnd,
     });
 
-    // Save to database
-    return db.post({_id: `${job.data.rnd}`, type: 'block', ...job.data})
-        .then(async function(response) {
+    const roundStr = `${job.data.rnd}`;
+    try {
+      const syncedBlock = await syncedBlocksDB.get(roundStr);
+      if (syncedBlock) {
+        return; // Already synced, nothing left to do
+      }
+    } catch (e) {
+      if (e.error !== 'not_found') {
+        throw e;
+      }
+    }
+
+
+    try {
+      blocksDB.get(`${job.data.rnd}`);
+    } catch (e) {
+      if (e.error === 'not_found') {
+        try {
+          await blocksDB.post({_id: `${job.data.rnd}`,
+            type: 'block', ...job.data});
           console.debug({
             msg: `Block stored`,
             ...response,
           });
-
-          // eslint-disable-next-line max-len
-          const dirtyAccounts = getDirtyAccounts(job.data).map( (account) => [account] );
-
-          return Promise.all( [db.query('blocks/orders',
-              {reduce: true, group: true, keys: dirtyAccounts})
-              .then(async function(res) {
-                if (!res?.rows?.length) {
-                  return;
-                }
-                escrowCounter += res.rows.length;
-                const assetIdSet = {};
-                const validRows = await verifyContracts(res.rows,
-                    databases.verified_account);
-
-                const allPromises = validRows.reduce( (allPromises, row) => {
-                  // add job
-
-                  const key = row.key;
-                  console.log('got account', {key});
-                  const account = row.key[0];
-
-                  console.log({account});
-                  const ordersJob = {account: account,
-                    blockData: job.data, reducedOrder: row};
-
-                  const assetId = row.value.assetId;
-                  if (!('assetId:assetIds' in assetIdSet)) {
-                    assetIdSet[assetId] = 1;
-                    const assetAddPromise = getAssetQueuePromise(
-                        queues.assets,
-                        assetId,
-                    );
-                    allPromises.push(assetAddPromise);
-                  }
-
-                  const promise = queues.orders.add('orders', ordersJob,
-                      {removeOnComplete: true}).then(function() {
-                    escrowCounter2++;
-                    console.log(
-                        'COUNTERS: ' + escrowCounter + ' ' + escrowCounter2,
-                    );
-                  }).catch(function(err) {
-                    console.error('error adding to orders queue:', {err} );
-                    throw err;
-                  });
-                  allPromises.push(promise);
-                  return allPromises;
-                  // console.log('adding to orders');
-                }, []);
-                // console.log('promises length:' + allPromises);
-                return Promise.all(allPromises);
-                // got the query results
-                // console.log('found dirty escrow! '+ res.rows[0]);
-
-                // console.log ({res});
-              }).catch(function(err) {
-                if (err.error === 'not_found') {
-                  // console.log('not found');
-                  throw err;
-                } else {
-                  console.log('reducer error!!!');
-                  console.log(err);
-                  throw err;
-                }
-              }),
-
-          // The trade history is always from orders that previously existed
-          // in other blocks, so we can queue it in parallel
-          // to adding them to orders
-          queues.tradeHistory.add('tradeHistory', {block: `${job.data.rnd}`},
-              {removeOnComplete: true}).then(function() {
-          }).catch(function(err) {
-            console.error('error adding to orders queue:', {err} );
-            throw err;
-          }),
-          ]);
-        }).catch(function(err) {
-          // console.log('error here', {err});
+        } catch (err) {
           if (err.error === 'conflict') {
-            console.error('already added!');
+            console.error('already added! Still not supposed to happen');
           } else {
             throw err;
           }
-        });
+        }
+      }
+    }
+
+    // eslint-disable-next-line max-len
+    const dirtyAccounts = getDirtyAccounts(job.data).map( (account) => [account] );
+
+    return Promise.all( [blocksDB.query('blocks/orders',
+        {reduce: true, group: true, keys: dirtyAccounts})
+        .then(async function(res) {
+          if (!res?.rows?.length) {
+            return;
+          }
+          escrowCounter += res.rows.length;
+          const assetIdSet = {};
+          const validRows = await verifyContracts(res.rows,
+              databases.verified_account);
+
+          const allPromises = validRows.reduce( (allPromises, row) => {
+            // add job
+
+            const key = row.key;
+            console.log('got account', {key});
+            const account = row.key[0];
+
+            console.log({account});
+            const ordersJob = {account: account,
+              blockData: job.data, reducedOrder: row};
+
+            const assetId = row.value.assetId;
+            if (!('assetId:assetIds' in assetIdSet)) {
+              assetIdSet[assetId] = 1;
+              const assetAddPromise = getAssetQueuePromise(
+                  queues.assets,
+                  assetId,
+              );
+              allPromises.push(assetAddPromise);
+            }
+
+            const promise = queues.orders.add('orders', ordersJob,
+                {removeOnComplete: true}).then(function() {
+              escrowCounter2++;
+              console.log(
+                  'COUNTERS: ' + escrowCounter + ' ' + escrowCounter2,
+              );
+            }).catch(function(err) {
+              console.error('error adding to orders queue:', {err} );
+              throw err;
+            });
+            allPromises.push(promise);
+            return allPromises;
+            // console.log('adding to orders');
+          }, []);
+          // console.log('promises length:' + allPromises);
+          return Promise.all(allPromises);
+          // got the query results
+          // console.log('found dirty escrow! '+ res.rows[0]);
+
+          // console.log ({res});
+        }).catch(function(err) {
+          if (err.error === 'not_found') {
+            // console.log('not found');
+            throw err;
+          } else {
+            console.log('reducer error!!!');
+            console.log(err);
+            throw err;
+          }
+        }),
+
+    // The trade history is always from orders that previously existed
+    // in other blocks, so we can queue it in parallel
+    // to adding them to orders
+    queues.tradeHistory.add('tradeHistory', {block: `${job.data.rnd}`},
+        {removeOnComplete: true}).then(function() {
+    }).catch(function(err) {
+      console.error('error adding to orders queue:', {err} );
+      throw err;
+    }),
+
+    syncedBlocksDB.post({_id: `${job.data.rnd}`}).then(function() {
+    }).catch(function(err) {
+      if (err.error === 'conflict') {
+        console.error('Block was already synced! Not supposed to happen');
+      } else {
+        throw err;
+      }
+    }),
+
+    ]);
   }, {connection: queues.connection, concurrency: 50});
 
   blocks.on('error', (err) => {
