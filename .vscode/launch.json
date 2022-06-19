@@ -41,6 +41,18 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "OwnerBalanceWorker",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}\\server.js",
+            "env": {
+                "APP_CONTEXT": "owner-balance-worker"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "TradeHistoryWorker",
             "skipFiles": [
                 "<node_internals>/**"
