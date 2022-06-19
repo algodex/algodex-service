@@ -13,7 +13,7 @@ const getDatabases = require('../src/db/get-databases');
 const databases = getDatabases();
 const blocksDB = databases.blocks;
 const syncedDB = databases.synced_blocks;
-
+const indexer = require('../src/get-indexer')();
 const queues = getQueues();
 
 const getBlockFromDBOrNode = async (round) => {
@@ -53,11 +53,23 @@ const compare = async function() {
     },
   ];
   // Get a range of blocks for a list of applications
-  //const {start, current} = await getAppsBlockRange(indexer, apps);
-  const start = 16583454;
-  const current = start + 5000;
-  console.log('start is: ' +start);
-  const rounds = createConsecutiveObject(start, current);
+  const {start, current} = await getAppsBlockRange(indexer, apps);
+  let adjStart = start;
+  let adjCurrent = current;
+  if (process.env.ALGORAND_NETWORK === 'mainnet') {
+    adjStart = 19155000; // Start in February 2022
+  }
+
+  if (process.env.TESTMODE && process.env.ALGORAND_NETWORK !== 'testnet') {
+    throw new Error('TESTMODE is only allowed for testnet');
+  }
+  if (process.env.TESTMODE) { // Load only 5000 blocks
+    adjStart = 16583454;
+    adjCurrent = adjStart + 5000;
+  }
+  console.log('start is: ' + adjStart);
+  console.log('current is: ' + adjCurrent);
+  const rounds = createConsecutiveObject(adjStart, adjCurrent);
   const allDocs = await syncedDB.allDocs();
   const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds
