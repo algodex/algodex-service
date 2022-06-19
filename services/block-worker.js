@@ -4,23 +4,7 @@ const verifyContracts = require('../src/verify-contracts');
 let escrowCounter = 0;
 let escrowCounter2 = 0;
 
-const getDirtyAccounts = (block) => {
-  // console.log( {block} );
-  if (block.txns === undefined) {
-    return [];
-  }
-  const txnTypes = ['snd', 'rcv', 'close', 'asnd', 'arcv', 'aclose', 'fadd'];
-  const dirtyAccounts = block.txns.reduce( (accounts, txn) => {
-    txnTypes.forEach( (type) => {
-      if (txn.txn !== undefined && txn.txn[type] !== undefined) {
-        const account = txn.txn[type];
-        accounts[account] = 1;
-      }
-    });
-    return accounts;
-  }, {});
-  return Object.keys(dirtyAccounts);
-};
+const getDirtyAccounts = require('../src/get-dirty-accounts');
 
 const getAssetQueuePromise = (assetQueue, assetId) => {
   const assetAddJob = {assetId: assetId};
@@ -34,10 +18,18 @@ const getAssetQueuePromise = (assetQueue, assetId) => {
   return promise;
 };
 
+const getDirtyOwners = async (escrowDB, block) => {
+  const dirtyAccounts = getDirtyAccounts(block);
+
+  const dirtyOwners = await escrowDB.query('escrow/ownerAddr',
+      {reduce: true, group: true, keys: dirtyAccounts});
+  return dirtyOwners.rows.map( (row) => row.key );
+};
 
 module.exports = ({queues, databases}) =>{
   const syncedBlocksDB = databases.synced_blocks;
   const blocksDB = databases.blocks;
+  const escrowDB = databases.escrow;
 
   const blocks = new Worker('blocks', async (job)=>{
     console.debug({
@@ -93,47 +85,57 @@ module.exports = ({queues, databases}) =>{
           const validRows = await verifyContracts(res.rows,
               databases.verified_account);
 
-          const allPromises = validRows.reduce( (allPromises, row) => {
+          const assetsAndOrdersPromises =
+            validRows.reduce( (allPromises, row) => {
             // add job
 
-            const key = row.key;
-            console.log('got account', {key});
-            const account = row.key[0];
+              const key = row.key;
+              console.log('got account', {key});
+              const account = row.key[0];
 
-            console.log({account});
-            const ordersJob = {account: account,
-              blockData: job.data, reducedOrder: row};
+              console.log({account});
+              const ordersJob = {account: account,
+                blockData: job.data, reducedOrder: row};
 
-            const assetId = row.value.assetId;
-            if (!('assetId:assetIds' in assetIdSet)) {
-              assetIdSet[assetId] = 1;
-              const assetAddPromise = getAssetQueuePromise(
-                  queues.assets,
-                  assetId,
-              );
-              allPromises.push(assetAddPromise);
-            }
+              const assetId = row.value.assetId;
+              if (!('assetId:assetIds' in assetIdSet)) {
+                assetIdSet[assetId] = 1;
+                const assetAddPromise = getAssetQueuePromise(
+                    queues.assets,
+                    assetId,
+                );
+                allPromises.push(assetAddPromise);
+              }
 
-            const promise = queues.orders.add('orders', ordersJob,
+              const promise = queues.orders.add('orders', ordersJob,
+                  {removeOnComplete: true}).then(function() {
+                escrowCounter2++;
+                console.log(
+                    'COUNTERS: ' + escrowCounter + ' ' + escrowCounter2,
+                );
+              }).catch(function(err) {
+                console.error('error adding to orders queue:', {err} );
+                throw err;
+              });
+              allPromises.push(promise);
+              return allPromises;
+              // console.log('adding to orders');
+            }, []);
+
+          const dirtyOwners = await getDirtyOwners(escrowDB, job.data);
+          const dirtyOwnerPromises = dirtyOwners.map( (owner) => {
+            const jobData = {'ownerAddr': owner, 'roundStr': roundStr};
+            const promise = queues.ownerBalance.add('ownerBalance', jobData,
                 {removeOnComplete: true}).then(function() {
-              escrowCounter2++;
-              console.log(
-                  'COUNTERS: ' + escrowCounter + ' ' + escrowCounter2,
-              );
             }).catch(function(err) {
-              console.error('error adding to orders queue:', {err} );
+              console.error('error adding to ownerBalance queue:', {err} );
               throw err;
             });
-            allPromises.push(promise);
-            return allPromises;
-            // console.log('adding to orders');
-          }, []);
-          // console.log('promises length:' + allPromises);
-          return Promise.all(allPromises);
-          // got the query results
-          // console.log('found dirty escrow! '+ res.rows[0]);
-
-          // console.log ({res});
+            return promise;
+          });
+          return Promise.all(assetsAndOrdersPromises).then(function(data) {
+            return Promise.all(dirtyOwnerPromises);
+          });
         }).catch(function(err) {
           if (err.error === 'not_found') {
             // console.log('not found');

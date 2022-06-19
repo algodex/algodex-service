@@ -39,6 +39,10 @@ const databases = [
           map: require('../../views/escrow/escrowAddr-map').toString(),
           reduce: '_count',
         },
+        ownerAddr: {
+          map: require('../../views/escrow/ownerAddr-map').toString(),
+          reduce: '_count',
+        },
       },
     },
   },
@@ -78,6 +82,18 @@ const databases = [
   },
   {
     dbName: 'prices',
+  },
+  {
+    dbName: 'owner_balance',
+    appendOnly: true,
+    design: {
+      _id: '_design/owner_balance',
+      views: {
+        ownerAddr: {
+          map: require('../../views/owner_balance/ownerAddr-map').toString(),
+        },
+      },
+    },
   },
 ];
 

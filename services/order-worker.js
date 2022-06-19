@@ -37,6 +37,18 @@ const reduceIndexerInfo = (indexerInfo) => {
   };
 };
 
+const addDocToIndexedEscrowDB = async (indexedEscrowDB, doc) => {
+  try {
+    await indexedEscrowDB.put(doc);
+  } catch (err) {
+    if (err.error === 'conflict') {
+      console.log('conflict');
+    } else {
+      throw err;
+    }
+  }
+};
+
 const getindexedEscrowInfo = async (indexedEscrowDB, account, round) => {
   const indexerClient = initOrGetIndexer();
 
@@ -63,15 +75,16 @@ const getindexedEscrowInfo = async (indexedEscrowDB, account, round) => {
             _id: account+'-'+round,
             noAccountInfo: true,
           };
-          await indexedEscrowDB.put(doc);
+          await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
         }
         throw e;
       }
       const reducedAccountInfo = reduceIndexerInfo(accountInfo);
-      await indexedEscrowDB.put({
+      const doc = {
         _id: account+'-'+round,
         ...reducedAccountInfo,
-      });
+      };
+      await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
       return reducedAccountInfo;
     };
   }

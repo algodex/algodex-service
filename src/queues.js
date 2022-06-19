@@ -55,14 +55,18 @@ module.exports = function() {
       formattedEscrows: new Queue('formattedEscrows',
           {defaultJobOptions: defaultJobOptions, connection: connection},
       ),
+      ownerBalance: new Queue('ownerBalance',
+          {defaultJobOptions: defaultJobOptions, connection: connection},
+      ),
       blocksScheduler: new QueueScheduler('blocks', {connection: connection}),
       ordersScheduler: new QueueScheduler('orders', {connection: connection}),
       assetsScheduler: new QueueScheduler('assets', {connection: connection}),
       tradeHistoryScheduler: new QueueScheduler('tradeHistory',
           {connection: connection}),
       formattedEscrowsScheduler: new QueueScheduler('formattedEscrows',
-          {connection: connection},
-      ),
+          {connection: connection}),
+      ownerBalanceScheduler: new QueueScheduler('ownerBalance',
+          {connection: connection}),
     };
   }
   return queues;
