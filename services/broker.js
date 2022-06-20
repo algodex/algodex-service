@@ -22,18 +22,18 @@ module.exports = ({queues, events}) => {
      */
   async function run() {
     // Wait for the next block
-    const obj = await waitForBlock({
+    const latestBlock = await waitForBlock({
       round: round['last-round'],
     });
 
     // Just in case the wait fails, skip if we are on the same block
-    if (round['last-round'] === obj['last-round']) {
+    if (round['last-round'] === latestBlock['last-round']) {
       console.log('Waiting....');
     } else { // Submit the next round to the Queue and Publish event
       console.debug({
         msg: 'Processing Next Round',
         round: round['last-round'],
-        next: obj['last-round'],
+        next: latestBlock['last-round'],
       });
 
       let roundNumber = round['last-round'];
@@ -42,7 +42,7 @@ module.exports = ({queues, events}) => {
         roundNumber++;
       } else {
         // Use the WaitForBlock round number if we don't have one stored
-        roundNumber = obj['last-round'];
+        roundNumber = latestBlock['last-round'];
       }
       const block = await getBlock({round: roundNumber});
       await queues.blocks.add('blocks', block, {removeOnComplete: true});
@@ -53,7 +53,7 @@ module.exports = ({queues, events}) => {
       });
 
       // Update last round cache
-      round = obj;
+      round = latestBlock;
 
       // Rerun forever
       run();

@@ -88,6 +88,15 @@ const databases = [
   },
   {
     dbName: 'synced_blocks',
+    design: {
+      _id: '_design/synced_blocks',
+      views: {
+        max_block: {
+          map: require('../../views/synced_blocks/max_block-map').toString(),
+          reduce: require('../../views/synced_blocks/max_block-reduce').toString(),
+        },
+      },
+    },
   },
   {
     dbName: 'prices',
