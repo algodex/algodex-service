@@ -3,8 +3,6 @@ const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const initOrGetIndexer = require('../src/get-indexer');
 
-const indexerClient = null;
-
 const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   const promise = formattedEscrowsQueue.add('formattedEscrows', order,
       {removeOnComplete: true}).then(function() {

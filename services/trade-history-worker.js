@@ -67,11 +67,6 @@ module.exports = ({queues, databases}) =>{
                   console.log(assetToDecimals);
                   return formattedHistoryDB.bulkDocs(validHistoryRows);
                 });
-
-            // res.rows.forEach( (row) => {
-            //   const promise =
-            // });
-            console.log({res});
           }).catch(function(e) {
             if (e.error === 'not_found') {
               // This should only happen when testing if you

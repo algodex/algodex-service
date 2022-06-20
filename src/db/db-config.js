@@ -76,6 +76,15 @@ const databases = [
   },
   {
     dbName: 'formatted_history',
+    design: {
+      _id: '_design/formatted_history',
+      views: {
+        allAssets: {
+          map: require('../../views/formatted_history/allAssets-map').toString(),
+          reduce: require('../../views/formatted_history/allAssets-reduce').toString(),
+        },
+      },
+    },
   },
   {
     dbName: 'synced_blocks',
