@@ -40,7 +40,7 @@ const compare = async function() {
   }
   // Create an Object keyed by blocks in the range
   const rounds = createConsecutiveObject(realStart, current);
-  //const rounds = createConsecutiveObject(start, start+5000);
+  // const rounds = createConsecutiveObject(start, start+5000);
   const allDocs = await db.allDocs();
   const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds

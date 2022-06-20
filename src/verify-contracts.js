@@ -118,11 +118,11 @@ module.exports = async (rows, verifiedAccountDB) => {
 
   const isVerifiedSet =
     result.rows
-      .filter( row => row.value === 'verified')
-      .reduce( (set, row) => set.add(row.id), new Set());
+        .filter( (row) => row.value === 'verified')
+        .reduce( (set, row) => set.add(row.id), new Set());
 
   const verifDBHasAddrSet = result.rows
-    .reduce( (set, row) => set.add(row.id), new Set());
+      .reduce( (set, row) => set.add(row.id), new Set());
 
   const rowsToAddtoDB = [];
 
@@ -144,7 +144,7 @@ module.exports = async (rows, verifiedAccountDB) => {
     if (!verifDBHasAddrSet.has(account)) {
       rowsToAddtoDB.push({
         _id: account,
-        status: isRealContract ? 'verified' : 'fake'
+        status: isRealContract ? 'verified' : 'fake',
       });
     }
   }

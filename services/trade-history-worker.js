@@ -30,8 +30,8 @@ module.exports = ({queues, databases}) =>{
           }
           const accounts = tradeHistoryRows.map((row) => row.value.escrowAddr);
           return escrowDB.query('escrow/escrowAddr',
-          {reduce: true,
-            group: true, keys: accounts}).then(async function(res) {
+              {reduce: true,
+                group: true, keys: accounts}).then(async function(res) {
             const innerRows = res.rows;
             if (innerRows.length === 0) {
               return;
@@ -40,51 +40,46 @@ module.exports = ({queues, databases}) =>{
                 .reduce( (set, account) => set.add(account), new Set());
 
             const assetIds = tradeHistoryRows
-              .map( (row) => row.value)
-              .filter( (row) => validAccountsSet.has(row.escrowAddr) )
-              .map( (row) => `${row.asaId}` );
+                .map( (row) => row.value)
+                .filter( (row) => validAccountsSet.has(row.escrowAddr) )
+                .map( (row) => `${row.asaId}` );
 
             return assetDB.query('assets/assets',
-              {reduce: false, keys: assetIds})
-              .then(async function(res) {
-                const assetToDecimals = res.rows.reduce( 
-                  (obj, row) => {
-                    obj[`assetId:${row.key}`] = row.value.asset.params.decimals
-                    return obj;
-                  }, {});
-                
-                const validHistoryRows = tradeHistoryRows
-                      .filter(row => validAccountsSet.has(row.value.escrowAddr))
-                      .map(row => row.value);
-                
-                let count = 0;
-                validHistoryRows.forEach( (row) => {
+                {reduce: false, keys: assetIds})
+                .then(async function(res) {
+                  const assetToDecimals = res.rows.reduce(
+                      (obj, row) => {
+                        obj[`assetId:${row.key}`] = row.value.asset.params.decimals;
+                        return obj;
+                      }, {});
+
+                  const validHistoryRows = tradeHistoryRows
+                      .filter((row) => validAccountsSet.has(row.value.escrowAddr))
+                      .map((row) => row.value);
+
+                  let count = 0;
+                  validHistoryRows.forEach( (row) => {
                     const assetId = row.asaId;
                     row.assetDecimals = assetToDecimals[`assetId:${assetId}`];
                     row._id = `${row.block}:${count++}`;
-                  }
-                );
-                console.log(assetToDecimals);
-                return formattedHistoryDB.bulkDocs(validHistoryRows);
-              });
-
-          // res.rows.forEach( (row) => {
-          //   const promise = 
-          // });
-          console.log({res});
+                  },
+                  );
+                  console.log(assetToDecimals);
+                  return formattedHistoryDB.bulkDocs(validHistoryRows);
+                });
+          }).catch(function(e) {
+            if (e.error === 'not_found') {
+              // This should only happen when testing if you
+              // don't start at contract genesis block
+              console.error(e);
+            } else {
+              throw e;
+            }
+          });
         }).catch(function(e) {
-          if (e.error === 'not_found') {
-             // This should only happen when testing if you
-             // don't start at contract genesis block
-            console.error(e);
-          } else {
-            throw e;
-          }
+          console.log(e);
+          throw e;
         });
-      }).catch(function(e) {
-        console.log(e);
-        throw e;
-      });
   }, {connection: queues.connection, concurrency: 50});
 
   tradeHistoryWorker.on('error', (err) => {
