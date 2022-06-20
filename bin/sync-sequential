@@ -16,27 +16,7 @@ const syncedDB = databases.synced_blocks;
 const indexer = require('../src/get-indexer')();
 const queues = getQueues();
 
-const getBlockFromDBOrNode = async (round) => {
-  try {
-    const block = await blocksDB.get(round);
-    console.log('Got ' + round + ' block from DB');
-    return block;
-  } catch (e) {
-    if (e.error === 'not_found') {
-      console.error('block not found in DB! Fetching from Algorand node');
-    } else {
-      throw e;
-    }
-  }
-  // Not in couchdb, so get from Algorand node
-  try {
-    const block = await getBlock({round});
-    console.log('Got ' + round + ' block from Algorand node');
-    return block;
-  } catch (e) {
-    console.error('Could not get block from node!');
-  }
-};
+const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
 
 const compare = async function() {
   if (!process.env.ALGORAND_NETWORK) {
@@ -85,7 +65,7 @@ const compare = async function() {
 
     do {
       try {
-        const block = await getBlockFromDBOrNode(round);
+        const block = await getBlockFromDBOrNode(blocksDB, round);
         gotBlock = true;
         await queues.blocks.add('blocks', block, {removeOnComplete: true});
         console.log('Queue Round Sent', round);
