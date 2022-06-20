@@ -74,7 +74,11 @@ module.exports = ({queues, events, databases}) => {
     const result = await syncedBlocksDB.query('synced_blocks/max_block',
         {reduce: true, group: true, keys: [1]});
 
-    lastSyncedRound = parseInt(result.rows[0].value);
+    if (result.rows && result.rows.length > 0) {
+      lastSyncedRound = parseInt(result.rows[0].value);
+    } else {
+      throw new Error('Please run sync_sequential script first!');
+    }
 
     do {
       lastSyncedRound++;
