@@ -17,6 +17,22 @@ const getAlgxBalance = (accountInfo) => {
   return algxAsset.amount;
 };
 
+const checkInDB = async (ownerBalanceDB, ownerAddr, round) => {
+  try {
+    const isInDB = await ownerBalanceDB.get(ownerAddr+'-'+round);
+    if (isInDB) {
+      return true;
+    }
+  } catch (e) {
+    if (e.error === 'not_found') {
+      return false;
+    } else {
+      throw e;
+    }
+  }
+  return false;
+};
+
 const addBalanceToDB = async (ownerBalanceDB, doc) => {
   try {
     await ownerBalanceDB.put(doc);
@@ -39,6 +55,13 @@ module.exports = ({queues, databases}) =>{
   const ownerBalanceWorker = new Worker('ownerBalance', async (job)=>{
     const ownerAddr = job.data.ownerAddr;
     const round = job.data.roundStr;
+
+    const isInDB = await checkInDB(ownerBalanceDB, ownerAddr, round);
+    if (isInDB) {
+      // Nothing to do
+      return;
+    }
+
     let accountInfo;
     try {
       accountInfo = await indexerClient.lookupAccountByID(ownerAddr)

@@ -91,11 +91,6 @@ module.exports = ({queues, databases}) =>{
 
               const key = row.key;
               console.log('got account', {key});
-              const account = row.key[0];
-
-              console.log({account});
-              const ordersJob = {account: account,
-                blockData: job.data, reducedOrder: row};
 
               const assetId = row.value.assetId;
               if (!('assetId:assetIds' in assetIdSet)) {
@@ -106,6 +101,11 @@ module.exports = ({queues, databases}) =>{
                 );
                 allPromises.push(assetAddPromise);
               }
+
+              const account = row.key[0];
+
+              const ordersJob = {account: account,
+                blockData: job.data, reducedOrder: row};
 
               const promise = queues.orders.add('orders', ordersJob,
                   {removeOnComplete: true}).then(function() {
@@ -121,21 +121,7 @@ module.exports = ({queues, databases}) =>{
               return allPromises;
               // console.log('adding to orders');
             }, []);
-
-          const dirtyOwners = await getDirtyOwners(escrowDB, job.data);
-          const dirtyOwnerPromises = dirtyOwners.map( (owner) => {
-            const jobData = {'ownerAddr': owner, 'roundStr': roundStr};
-            const promise = queues.ownerBalance.add('ownerBalance', jobData,
-                {removeOnComplete: true}).then(function() {
-            }).catch(function(err) {
-              console.error('error adding to ownerBalance queue:', {err} );
-              throw err;
-            });
-            return promise;
-          });
-          return Promise.all(assetsAndOrdersPromises).then(function(data) {
-            return Promise.all(dirtyOwnerPromises);
-          });
+          return Promise.all(assetsAndOrdersPromises);
         }).catch(function(err) {
           if (err.error === 'not_found') {
             // console.log('not found');
@@ -146,7 +132,6 @@ module.exports = ({queues, databases}) =>{
             throw err;
           }
         }),
-
     // The trade history is always from orders that previously existed
     // in other blocks, so we can queue it in parallel
     // to adding them to orders
