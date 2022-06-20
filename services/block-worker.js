@@ -1,8 +1,6 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 const verifyContracts = require('../src/verify-contracts');
-let escrowCounter = 0;
-let escrowCounter2 = 0;
 
 const getDirtyAccounts = require('../src/get-dirty-accounts');
 
@@ -79,7 +77,6 @@ module.exports = ({queues, databases}) =>{
           if (!res?.rows?.length) {
             return;
           }
-          escrowCounter += res.rows.length;
           const assetIdSet = {};
           const validRows = await verifyContracts(res.rows,
               databases.verified_account);
@@ -105,13 +102,9 @@ module.exports = ({queues, databases}) =>{
 
               const ordersJob = {account: account,
                 blockData: job.data, reducedOrder: row};
-
+              console.log('queuing order: ' + ordersJob.account + ' ' + ordersJob.blockData.rnd);
               const promise = queues.orders.add('orders', ordersJob,
                   {removeOnComplete: true}).then(function() {
-                escrowCounter2++;
-                console.log(
-                    'COUNTERS: ' + escrowCounter + ' ' + escrowCounter2,
-                );
               }).catch(function(err) {
                 console.error('error adding to orders queue:', {err} );
                 throw err;
