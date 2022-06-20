@@ -3,7 +3,7 @@ const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const initOrGetIndexer = require('../src/get-indexer');
 
-let indexerClient = null;
+const indexerClient = null;
 
 const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   const promise = formattedEscrowsQueue.add('formattedEscrows', order,
@@ -89,7 +89,7 @@ const getOwnerBalancePromise = (queue, ownerAddr, roundStr) => {
     throw err;
   });
   return promise;
-}
+};
 module.exports = ({queues, databases}) =>{
   const escrowDB = databases.escrow;
   // Lighten the load on the broker and do batch processing

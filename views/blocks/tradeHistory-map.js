@@ -114,8 +114,8 @@ module.exports = function(doc) {
         }
       }).length > 0;
     });
-    return executeGroups
-  }
+    return executeGroups;
+  };
   // Map Function
   if (typeof doc.txns !== 'undefined') {
     const allGroups = doc.txns.reduce((allGroups, txn) => {
