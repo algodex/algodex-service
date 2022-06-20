@@ -4,16 +4,6 @@ const Worker = bullmq.Worker;
 const initOrGetIndexer = require('../src/get-indexer');
 
 let indexerClient = null;
-let escrowCounter3 = 0;
-let escrowCounter4 = 0;
-let escrowCounter5 = 0;
-let escrowCounter6 = 0;
-
-const printCounters = () => {
-  console.debug('ESCROW COUNTERS: ' + escrowCounter3 + ' ' +
-  escrowCounter4 + ' ' + escrowCounter5 + ' ' + escrowCounter6 +
-  ' total: ' + (escrowCounter4 + escrowCounter6) );
-};
 
 const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   const promise = formattedEscrowsQueue.add('formattedEscrows', order,
@@ -111,13 +101,22 @@ module.exports = ({queues, databases}) =>{
     const blockData = job.data.blockData;
     const order = job.data.reducedOrder;
     const account = job.data.account;
-    // console.debug({
-    //  msg: 'Received order',
-    //  round: blockData.rnd,
-    //  account: account,
-    // });
+    console.debug({
+      msg: 'Received order',
+      round: blockData.rnd,
+      account: account,
+    });
     const round = blockData.rnd;
 
+    try {
+      await escrowDB.get(`${account}-${blockData.rnd}`);
+      console.log(`${account}-${blockData.rnd} already in DB!`);
+      return; // return if already in escrowDB
+    } catch (e) {
+      if (e.error !== 'not_found') {
+        throw e;
+      }
+    }
     try {
       const accountInfo = await getindexedEscrowInfo(databases.indexed_escrow,
           account, round);
@@ -126,14 +125,10 @@ module.exports = ({queues, databases}) =>{
         escrowInfo: order.value};
       data.lastUpdateUnixTime = blockData.ts;
       data.lastUpdateRound = blockData.rnd;
-      escrowCounter3++;
-      printCounters();
       console.log('escrowDB posting ' +`${account}-${blockData.rnd}`);
       return escrowDB.post({_id: `${account}-${blockData.rnd}`,
         type: 'block', data: data})
           .then(function(response) {
-            escrowCounter4++;
-            printCounters();
             // console.debug({
             //  msg: `Indexed Block stored with account info`,
             //  ...response,
@@ -144,7 +139,7 @@ module.exports = ({queues, databases}) =>{
             const ownerBalancePromise =
               getOwnerBalancePromise(queues.ownerBalance,
                   order.value.ownerAddr, `${blockData.rnd}`);
-            return Promise.all(formattedOrderPromise, ownerBalancePromise);
+            return Promise.all([formattedOrderPromise, ownerBalancePromise]);
           }).catch(function(err) {
             if (err.error === 'conflict') {
               console.error('conflict 11b', err);
@@ -158,14 +153,10 @@ module.exports = ({queues, databases}) =>{
         const data = {indexerInfo: 'noAccountInfo', escrowInfo: order.value};
         data.lastUpdateUnixTime = blockData.ts;
         data.lastUpdateRound = blockData.rnd;
-        escrowCounter5++;
-        printCounters();
 
         return escrowDB.post({_id: `${account}-${blockData.rnd}`,
           type: 'block', data: data})
             .then(function(response) {
-              escrowCounter6++;
-              printCounters();
               const ownerBalancePromise =
                 getOwnerBalancePromise(queues.ownerBalance,
                     order.value.ownerAddr, `${blockData.rnd}`);
