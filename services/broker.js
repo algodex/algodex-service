@@ -1,27 +1,6 @@
 const {getBlock, waitForBlock} = require('../src/explorer');
 
-const getBlockFromDBOrNode = async (blocksDB, round) => {
-  try {
-    const block = await blocksDB.get(round);
-    console.log('Got ' + round + ' block from DB');
-    return block;
-  } catch (e) {
-    if (e.error === 'not_found') {
-      console.error('block not found in DB! Fetching from Algorand node');
-    } else {
-      throw e;
-    }
-  }
-  // Not in couchdb, so get from Algorand node
-  try {
-    const block = await getBlock({round});
-    console.log('Got ' + round + ' block from Algorand node');
-    return block;
-  } catch (e) {
-    console.error('Could not get block from node!');
-  }
-};
-
+const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
 
 module.exports = ({queues, events, databases}) => {
   console.log({
@@ -44,8 +23,6 @@ module.exports = ({queues, events, databases}) => {
    * @return {Promise<void>}
    */
   async function runWaitBlockSync() {
-    const blocksDB = databases.blocks;
-
     // Just in case the wait fails, skip if we are on the same block
     const latestBlock = await waitForBlock({
       round: round['last-round'],
@@ -63,7 +40,7 @@ module.exports = ({queues, events, databases}) => {
       let roundNumber = round['last-round'];
       roundNumber++;
 
-      const block = await getBlockFromDBOrNode(blocksDB, roundNumber);
+      const block = await getBlock({round: roundNumber});
       await queues.blocks.add('blocks', block, {removeOnComplete: true});
       await events.publish(`blocks`, JSON.stringify(block.rnd));
       console.log({
@@ -78,7 +55,6 @@ module.exports = ({queues, events, databases}) => {
       runWaitBlockSync();
     }
   }
-  // let x = 0;
 
   /**
      * Run the Broker
@@ -110,10 +86,6 @@ module.exports = ({queues, events, databases}) => {
         msg: 'Published and Queued',
         round: lastSyncedRound,
       });
-      // if (x > 20) {
-      //   break;
-      // }
-      // x++;
     } while (lastSyncedRound < latestBlock['last-round']);
     round['last-round'] = lastSyncedRound;
     runWaitBlockSync();
