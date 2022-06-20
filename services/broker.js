@@ -1,6 +1,29 @@
 const {getBlock, waitForBlock} = require('../src/explorer');
 
-module.exports = ({queues, events}) => {
+const getBlockFromDBOrNode = async (blocksDB, round) => {
+  try {
+    const block = await blocksDB.get(round);
+    console.log('Got ' + round + ' block from DB');
+    return block;
+  } catch (e) {
+    if (e.error === 'not_found') {
+      console.error('block not found in DB! Fetching from Algorand node');
+    } else {
+      throw e;
+    }
+  }
+  // Not in couchdb, so get from Algorand node
+  try {
+    const block = await getBlock({round});
+    console.log('Got ' + round + ' block from Algorand node');
+    return block;
+  } catch (e) {
+    console.error('Could not get block from node!');
+  }
+};
+
+
+module.exports = ({queues, events, databases}) => {
   console.log({
     msg: 'Broker Starting',
     queues: Object.keys(queues).length,
@@ -17,16 +40,17 @@ module.exports = ({queues, events}) => {
   };
 
   /**
-     * Run the Broker
-     * @return {Promise<void>}
-     */
-  async function run() {
-    // Wait for the next block
+   * Run the Broker
+   * @return {Promise<void>}
+   */
+  async function runWaitBlockSync() {
+    const blocksDB = databases.blocks;
+
+    // Just in case the wait fails, skip if we are on the same block
     const latestBlock = await waitForBlock({
       round: round['last-round'],
     });
 
-    // Just in case the wait fails, skip if we are on the same block
     if (round['last-round'] === latestBlock['last-round']) {
       console.log('Waiting....');
     } else { // Submit the next round to the Queue and Publish event
@@ -37,14 +61,9 @@ module.exports = ({queues, events}) => {
       });
 
       let roundNumber = round['last-round'];
-      if (round['last-round'] !== 1) {
-        // Bump the last round, after WaitForBlock is complete
-        roundNumber++;
-      } else {
-        // Use the WaitForBlock round number if we don't have one stored
-        roundNumber = latestBlock['last-round'];
-      }
-      const block = await getBlock({round: roundNumber});
+      roundNumber++;
+
+      const block = await getBlockFromDBOrNode(blocksDB, roundNumber);
       await queues.blocks.add('blocks', block, {removeOnComplete: true});
       await events.publish(`blocks`, JSON.stringify(block.rnd));
       console.log({
@@ -56,10 +75,50 @@ module.exports = ({queues, events}) => {
       round = latestBlock;
 
       // Rerun forever
-      run();
+      runWaitBlockSync();
     }
+  }
+  // let x = 0;
+
+  /**
+     * Run the Broker
+     * @return {Promise<void>}
+     */
+  async function runCatchUp() {
+    const syncedBlocksDB = databases.synced_blocks;
+    const blocksDB = databases.blocks;
+
+    let lastSyncedRound;
+
+    const latestBlock = await waitForBlock({
+      round: round['last-round'],
+    });
+
+
+    const result = await syncedBlocksDB.query('synced_blocks/max_block',
+        {reduce: true, group: true, keys: [1]});
+
+    lastSyncedRound = parseInt(result.rows[0].value);
+
+    do {
+      lastSyncedRound++;
+      console.log('In catchup mode, getting block: ' + lastSyncedRound);
+      const block = await getBlockFromDBOrNode(blocksDB, lastSyncedRound);
+      await queues.blocks.add('blocks', block, {removeOnComplete: true});
+      await events.publish(`blocks`, JSON.stringify(block.rnd));
+      console.log({
+        msg: 'Published and Queued',
+        round: lastSyncedRound,
+      });
+      // if (x > 20) {
+      //   break;
+      // }
+      // x++;
+    } while (lastSyncedRound < latestBlock['last-round']);
+    round['last-round'] = lastSyncedRound;
+    runWaitBlockSync();
   }
 
   // Kick off the wrapper
-  run();
+  runCatchUp();
 };
