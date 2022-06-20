@@ -90,6 +90,16 @@ const getindexedEscrowInfo = async (indexedEscrowDB, account, round) => {
   }
 };
 
+const getOwnerBalancePromise = (queue, ownerAddr, roundStr) => {
+  const jobData = {'ownerAddr': ownerAddr, 'roundStr': roundStr};
+  const promise = queue.add('ownerBalance', jobData,
+      {removeOnComplete: true}).then(function() {
+  }).catch(function(err) {
+    console.error('error adding to ownerBalance queue:', {err} );
+    throw err;
+  });
+  return promise;
+}
 module.exports = ({queues, databases}) =>{
   const escrowDB = databases.escrow;
   // Lighten the load on the broker and do batch processing
@@ -118,6 +128,7 @@ module.exports = ({queues, databases}) =>{
       data.lastUpdateRound = blockData.rnd;
       escrowCounter3++;
       printCounters();
+      console.log('escrowDB posting ' +`${account}-${blockData.rnd}`);
       return escrowDB.post({_id: `${account}-${blockData.rnd}`,
         type: 'block', data: data})
           .then(function(response) {
@@ -130,10 +141,13 @@ module.exports = ({queues, databases}) =>{
             const formattedOrderPromise =
               getFormattedOrderQueuePromise(queues.formattedEscrows,
                   data);
-            return formattedOrderPromise;
+            const ownerBalancePromise =
+              getOwnerBalancePromise(queues.ownerBalance,
+                  order.value.ownerAddr, `${blockData.rnd}`);
+            return Promise.all(formattedOrderPromise, ownerBalancePromise);
           }).catch(function(err) {
             if (err.error === 'conflict') {
-              console.error(err);
+              console.error('conflict 11b', err);
             } else {
               throw err;
             }
@@ -152,13 +166,13 @@ module.exports = ({queues, databases}) =>{
             .then(function(response) {
               escrowCounter6++;
               printCounters();
-              // console.debug({
-              //  msg: `Indexed Escrow stored without account info`,
-              //  ...response,
-              // });
+              const ownerBalancePromise =
+                getOwnerBalancePromise(queues.ownerBalance,
+                    order.value.ownerAddr, `${blockData.rnd}`);
+              return ownerBalancePromise;
             }).catch(function(err) {
               if (err.error === 'conflict') {
-                console.error(err);
+                console.error('conflict 11a', err);
               } else {
                 throw err;
               }
