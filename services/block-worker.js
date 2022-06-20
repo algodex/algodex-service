@@ -49,9 +49,8 @@ module.exports = ({queues, databases}) =>{
       }
     }
 
-
     try {
-      blocksDB.get(`${job.data.rnd}`);
+      await blocksDB.get(`${job.data.rnd}`);
     } catch (e) {
       if (e.error === 'not_found') {
         try {
