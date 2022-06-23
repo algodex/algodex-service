@@ -32,6 +32,7 @@ const databases = [
   },
   {
     dbName: 'escrow',
+    appendOnly: true,
     design: {
       _id: '_design/escrow',
       views: {
@@ -76,6 +77,7 @@ const databases = [
   },
   {
     dbName: 'formatted_history',
+    appendOnly: true,
     design: {
       _id: '_design/formatted_history',
       views: {
