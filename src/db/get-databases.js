@@ -10,6 +10,7 @@ module.exports = function() {
     const dbName = dbConfig[i].dbName;
     databases[dbName] = getDatabase(couchBaseURL + '/' + dbName);
     databases[dbName].appendOnly = dbConfig[i].appendOnly;
+    databases[dbName].dbName = dbName;
   }
   return databases;
 };
