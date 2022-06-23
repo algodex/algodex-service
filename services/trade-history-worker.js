@@ -57,11 +57,10 @@ module.exports = ({queues, databases}) =>{
                       .filter((row) => validAccountsSet.has(row.value.escrowAddr))
                       .map((row) => row.value);
 
-                  let count = 0;
                   validHistoryRows.forEach( (row) => {
                     const assetId = row.asaId;
                     row.assetDecimals = assetToDecimals[`assetId:${assetId}`];
-                    row._id = `${row.block}:${count++}`;
+                    row._id = `${row.block}:${row.groupId}`;
                   },
                   );
                   console.log(assetToDecimals);
