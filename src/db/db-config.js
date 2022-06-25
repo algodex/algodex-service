@@ -12,6 +12,9 @@ const databases = [
         tradeHistory: {
           map: require('../../views/blocks/tradeHistory-map').toString(),
         },
+        approxBalance: {
+          map: require('../../views/blocks/approxBalance-map').toString(),
+        },
         ohlc: {
           map: require('../../views/chart/map').toString(),
           reduce: require('../../views/chart/reduce').toString(),
