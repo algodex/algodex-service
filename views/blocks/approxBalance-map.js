@@ -2,8 +2,7 @@ module.exports = function(doc) {
   const getDidCloseSet = (txns, txnType) => {
     const didCloseSet = txns.reduce( (didCloseSet, txn) => {
       if (txn.txn !== undefined && txn.txn[txnType] !== undefined) {
-        // log ('found: ' +txn.txn[txnType] );
-        didCloseSet[txn.txn[txnType]] = 1;
+        didCloseSet[txn.txn.snd] = 1;
       }
       return didCloseSet;
     }, {});
@@ -29,8 +28,8 @@ module.exports = function(doc) {
       return accountToTxns;
     }, {});
     for (const [account, txns] of Object.entries(accountToTxns)) {
-      const posTypes = ['rcv', 'arcv'];
-      const negTypes = ['snd', 'asnd'];
+    //   const posTypes = ['rcv', 'arcv'];
+    //   const negTypes = ['snd', 'asnd'];
       const diff = txns.reduce( (diff, txn) => {
         let algoDiff = diff.algoDiff || 0;
         let asaDiff = diff.asaDiff || 0;
