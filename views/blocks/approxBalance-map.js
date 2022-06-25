@@ -37,15 +37,16 @@ module.exports = function(doc) {
           algoDiff += (txn.txn.amt || 0);
         }
         if (txn.txn.snd === account) {
+          // Most types of transfers
           algoDiff -= (txn.txn.amt || 0);
           algoDiff -= (txn.txn.fee || 0);
+          asaDiff -= (txn.txn.aamt || 0);
+        } else if (txn.txn.asnd === account) {
+          // Clawback transaction
           asaDiff -= (txn.txn.aamt || 0);
         }
         if (txn.txn.arcv === account) {
           asaDiff += (txn.txn.aamt || 0);
-        }
-        if (txn.txn.asnd === account) {
-          // Do nothing here?
         }
         const didCloseAsset = diff.didCloseAsset ||
             (account in accountDidCloseAssetSet);
