@@ -53,8 +53,8 @@ module.exports = function(doc) {
             (account in accountDidCloseAlgoSet);
         return {algoDiff, asaDiff, didCloseAsset, didCloseAccount};
       }, {});
-      diff.block = doc._id;
-      emit(account, diff);
+      diff.block = parseInt(doc._id);
+      emit([account, parseInt(doc._id)], diff);
     }
   }
 };
