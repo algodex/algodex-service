@@ -30,7 +30,7 @@ const addDocToIndexedEscrowDB = async (indexedEscrowDB, doc) => {
     await indexedEscrowDB.put(doc);
   } catch (err) {
     if (err.error === 'conflict') {
-      console.log('conflict');
+      console.log('conflict88a', {doc});
     } else {
       throw err;
     }
@@ -46,7 +46,7 @@ const getApproximateBalance = async (blockDB, account, round) => {
 
   const balanceDiffRows = balanceDiffRes.rows.map( (row) => row.value);
   if (!balanceDiffRows || balanceDiffRows.length === 0) {
-    throw new Error('Balance diff rows are missing!');
+    throw new Error(`Balance diff rows are missing! ${account} ${round}`);
   }
 
   const approxAlgo = balanceDiffRows.reduce( (balance, row) => {
@@ -86,26 +86,10 @@ const getIndexedEscrowInfo = async (blockDB, indexedEscrowDB,
   } catch (err) {
     if (err.error !== 'not_found') {
       throw err;
-    } else {
-      let accountInfo;
-      try {
-        accountInfo = await indexerClient.lookupAccountByID(account)
-            .round(round).includeAll(true).do();
-      } catch (e) {
-        if (e.status === 500 &&
-          e.message.includes('not currently supported')) {
-          const reducedAccountInfo =
-            await getApproximateBalance(blockDB, account, round);
-          const doc = {
-            _id: account+'-'+round,
-            ...reducedAccountInfo,
-          };
-          await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
-          return doc;
-        } else {
-          throw e;
-        }
-      }
+    }
+    try {
+      const accountInfo = await indexerClient.lookupAccountByID(account)
+          .round(round).includeAll(true).do();
       const reducedAccountInfo = reduceIndexerInfo(accountInfo);
       const doc = {
         _id: account+'-'+round,
@@ -113,7 +97,21 @@ const getIndexedEscrowInfo = async (blockDB, indexedEscrowDB,
       };
       await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
       return reducedAccountInfo;
-    };
+    } catch (e) {
+      if (e.status === 500 &&
+        e.message.includes('not currently supported')) {
+        const reducedAccountInfo =
+          await getApproximateBalance(blockDB, account, round);
+        const doc = {
+          _id: account+'-'+round,
+          ...reducedAccountInfo,
+        };
+        await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
+        return reducedAccountInfo;
+      } else {
+        throw e;
+      }
+    }
   }
 };
 
@@ -135,8 +133,6 @@ module.exports = ({queues, databases}) =>{
   console.log({escrowDB});
   console.log('in order-worker.js');
   const indexedOrders = new Worker('orders', async (job)=>{
-    // console.log('in orders queue');
-
     const blockData = job.data.blockData;
     const order = job.data.reducedOrder;
     const account = job.data.account;
@@ -147,15 +143,6 @@ module.exports = ({queues, databases}) =>{
     });
     const round = blockData.rnd;
 
-    try {
-      await escrowDB.get(`${account}-${blockData.rnd}`);
-      console.log(`${account}-${blockData.rnd} already in DB!`);
-      return; // return if already in escrowDB
-    } catch (e) {
-      if (e.error !== 'not_found') {
-        throw e;
-      }
-    }
     try {
       const accountInfo = await getIndexedEscrowInfo(blockDB,
           databases.indexed_escrow, account, round);
@@ -168,10 +155,6 @@ module.exports = ({queues, databases}) =>{
       return escrowDB.post({_id: `${account}-${blockData.rnd}`,
         type: 'block', data: data})
           .then(function(response) {
-            // console.debug({
-            //  msg: `Indexed Block stored with account info`,
-            //  ...response,
-            // });
             const formattedOrderPromise =
               getFormattedOrderQueuePromise(queues.formattedEscrows,
                   data);
