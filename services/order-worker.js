@@ -30,43 +30,66 @@ const addDocToIndexedEscrowDB = async (indexedEscrowDB, doc) => {
     await indexedEscrowDB.put(doc);
   } catch (err) {
     if (err.error === 'conflict') {
-      console.log('conflict');
+      console.log('conflict88a', {doc});
     } else {
       throw err;
     }
   }
 };
 
-const getindexedEscrowInfo = async (indexedEscrowDB, account, round) => {
+const getApproximateBalance = async (blockDB, account, round) => {
+  const startKey = [account, 1];
+  const endKey = [account, parseInt(round)];
+
+  const balanceDiffRes = await blockDB.query('blocks/approxBalance',
+      {reduce: false, startkey: startKey, endkey: endKey} );
+
+  const balanceDiffRows = balanceDiffRes.rows.map( (row) => row.value);
+  if (!balanceDiffRows || balanceDiffRows.length === 0) {
+    throw new Error(`Balance diff rows are missing! ${account} ${round}`);
+  }
+
+  const approxAlgo = balanceDiffRows.reduce( (balance, row) => {
+    balance = balance + row.algoDiff;
+    if (row.didCloseAccount) {
+      balance = 0;
+    }
+    return balance;
+  }, 0);
+
+  const approxAsa = balanceDiffRows.reduce( (balance, row) => {
+    balance = balance + row.asaDiff;
+    if (row.didCloseAccount || row.didCloseAsset) {
+      balance = 0;
+    }
+    return balance;
+  }, 0);
+
+  const entry = {
+    address: account,
+    algoAmount: approxAlgo >= 0 ? approxAlgo : 0,
+    round: round,
+    asaAmount: approxAsa >= 0 ? approxAsa : 0,
+    isApproximate: true,
+  };
+
+  return entry;
+};
+
+const getIndexedEscrowInfo = async (blockDB, indexedEscrowDB,
+    account, round) => {
   const indexerClient = initOrGetIndexer();
 
   try {
-    const accountInfo = await indexedEscrowDB.get(account+ '-'+ round);
-    if (accountInfo.noAccountInfo) {
-      const err = {status: 500,
-        message: 'not currently supported'};
-      throw err;
-    }
+    const accountInfo = await indexedEscrowDB.get(account + '-' + round);
     return accountInfo;
   } catch (err) {
     if (err.error !== 'not_found') {
       throw err;
-    } else {
-      let accountInfo;
-      try {
-        accountInfo = await indexerClient.lookupAccountByID(account)
-            .round(round).includeAll(true).do();
-      } catch (e) {
-        if (e.status === 500 &&
-          e.message.includes('not currently supported')) {
-          const doc = {
-            _id: account+'-'+round,
-            noAccountInfo: true,
-          };
-          await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
-        }
-        throw e;
-      }
+    }
+    try {
+      const accountInfo = await indexerClient.lookupAccountByID(account)
+          .round(round).includeAll(true).do();
       const reducedAccountInfo = reduceIndexerInfo(accountInfo);
       const doc = {
         _id: account+'-'+round,
@@ -74,7 +97,21 @@ const getindexedEscrowInfo = async (indexedEscrowDB, account, round) => {
       };
       await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
       return reducedAccountInfo;
-    };
+    } catch (e) {
+      if (e.status === 500 &&
+        e.message.includes('not currently supported')) {
+        const reducedAccountInfo =
+          await getApproximateBalance(blockDB, account, round);
+        const doc = {
+          _id: account+'-'+round,
+          ...reducedAccountInfo,
+        };
+        await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
+        return reducedAccountInfo;
+      } else {
+        throw e;
+      }
+    }
   }
 };
 
@@ -88,14 +125,14 @@ const getOwnerBalancePromise = (queue, ownerAddr, roundStr) => {
   });
   return promise;
 };
+
 module.exports = ({queues, databases}) =>{
   const escrowDB = databases.escrow;
+  const blockDB = databases.blocks;
   // Lighten the load on the broker and do batch processing
   console.log({escrowDB});
   console.log('in order-worker.js');
   const indexedOrders = new Worker('orders', async (job)=>{
-    // console.log('in orders queue');
-
     const blockData = job.data.blockData;
     const order = job.data.reducedOrder;
     const account = job.data.account;
@@ -107,17 +144,8 @@ module.exports = ({queues, databases}) =>{
     const round = blockData.rnd;
 
     try {
-      await escrowDB.get(`${account}-${blockData.rnd}`);
-      console.log(`${account}-${blockData.rnd} already in DB!`);
-      return; // return if already in escrowDB
-    } catch (e) {
-      if (e.error !== 'not_found') {
-        throw e;
-      }
-    }
-    try {
-      const accountInfo = await getindexedEscrowInfo(databases.indexed_escrow,
-          account, round);
+      const accountInfo = await getIndexedEscrowInfo(blockDB,
+          databases.indexed_escrow, account, round);
 
       const data = {indexerInfo: accountInfo,
         escrowInfo: order.value};
@@ -127,10 +155,6 @@ module.exports = ({queues, databases}) =>{
       return escrowDB.post({_id: `${account}-${blockData.rnd}`,
         type: 'block', data: data})
           .then(function(response) {
-            // console.debug({
-            //  msg: `Indexed Block stored with account info`,
-            //  ...response,
-            // });
             const formattedOrderPromise =
               getFormattedOrderQueuePromise(queues.formattedEscrows,
                   data);
@@ -146,30 +170,7 @@ module.exports = ({queues, databases}) =>{
             }
           });
     } catch (err) {
-      if (err.status === 500 &&
-        err.message.includes('not currently supported')) {
-        const data = {indexerInfo: 'noAccountInfo', escrowInfo: order.value};
-        data.lastUpdateUnixTime = blockData.ts;
-        data.lastUpdateRound = blockData.rnd;
-
-        return escrowDB.post({_id: `${account}-${blockData.rnd}`,
-          type: 'block', data: data})
-            .then(function(response) {
-              const ownerBalancePromise =
-                getOwnerBalancePromise(queues.ownerBalance,
-                    order.value.ownerAddr, `${blockData.rnd}`);
-              return ownerBalancePromise;
-            }).catch(function(err) {
-              if (err.error === 'conflict') {
-                console.error('conflict 11a', err);
-              } else {
-                throw err;
-              }
-            });
-      } else {
-        // console.log({err});
-        throw err;
-      }
+      throw err;
     }
   }, {connection: queues.connection, concurrency: 50});
 
