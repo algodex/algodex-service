@@ -30,6 +30,9 @@ const databases = [
         orders: {
           map: require('../../views/formatted_orders/orders-map').toString(),
         },
+        epochs: {
+          map: require('../../views/formatted_orders/epochs-map').toString(),
+        },
       },
     },
   },

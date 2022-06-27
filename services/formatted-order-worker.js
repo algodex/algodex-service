@@ -10,14 +10,16 @@ const pushHistory = (data, historyEntry) => {
 const setAssetHistory = (data) => {
   if (!data.escrowInfo.isAlgoBuyEscrow) {
     const historyEntry = {
-      block: data.indexerInfo.round,
       asaAmount: data.indexerInfo.asaAmount,
+      round: data.lastUpdateRound,
+      time: data.lastUpdateUnixTime,
     };
     pushHistory(data, historyEntry);
   } else {
     const historyEntry = {
-      block: data.indexerInfo.round,
       algoAmount: data.indexerInfo.algoAmount,
+      round: data.lastUpdateRound,
+      time: data.lastUpdateUnixTime,
     };
     pushHistory(data, historyEntry);
   }
