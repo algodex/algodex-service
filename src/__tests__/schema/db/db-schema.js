@@ -12,5 +12,6 @@ const testSchema = (dbName) => {
 };
 
 testSchema('indexed_escrow');
+testSchema('assets');
 
 
