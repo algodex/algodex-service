@@ -16,14 +16,14 @@ module.exports = function(doc) {
         if (startTime === null && hasBalance) {
             startTime = history[i].time;
         } else if (startTime !== null && !hasBalance) {
-        endTime = history[i].time;
-        const startEpoch = unixToEpoch(startTime);
-        const endEpoch = unixToEpoch(endTime);
-        const epochCount = endEpoch - startEpoch + 1;
-        const epochs = Array(epochCount).fill().map((element, index) => index + startEpoch);
-        epochs.forEach(epoch => epochSet[`epoch:${epoch}`] = 1);
-        startTime = null;
-        endTime = null;
+            endTime = history[i].time;
+            const startEpoch = unixToEpoch(startTime);
+            const endEpoch = unixToEpoch(endTime);
+            const epochCount = endEpoch - startEpoch + 1;
+            const epochs = Array(epochCount).fill().map((element, index) => index + startEpoch);
+            epochs.forEach(epoch => epochSet[`epoch:${epoch}`] = 1);
+            startTime = null;
+            endTime = null;
         }
     }
     const lastIndex = history.length - 1;
