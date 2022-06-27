@@ -15,5 +15,6 @@ testSchema('indexed_escrow');
 testSchema('formatted_escrow');
 testSchema('escrow');
 testSchema('assets');
+testSchema('formatted_history');
 
 

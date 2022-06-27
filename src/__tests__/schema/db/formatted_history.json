@@ -1,0 +1,16 @@
+{
+  "_id": "16583580:BGYxSMB8U2ZWMR0Hgz/3WUPREswREeoABRpFa39citI=",
+  "_rev": "1-cb8318e07bf921fa4aa7e2fa50cd235d",
+  "tradeType": "sell",
+  "executeType": "execute_with_closeout",
+  "escrowAddr": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4",
+  "groupId": "BGYxSMB8U2ZWMR0Hgz/3WUPREswREeoABRpFa39citI=",
+  "algoAmount": 2042950,
+  "assetSellerAddr": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+  "asaAmount": 4550,
+  "asaId": 15322902,
+  "assetBuyerAddr": "3FRO5IP2R6UAEGXFMJJXHUUMH24MB4RMQKWJ2WPHEOOIM24F2M3IEXGLTU",
+  "block": 16583580,
+  "unixTime": 1631353145,
+  "assetDecimals": 6
+}
