@@ -33,8 +33,9 @@ module.exports = function(doc) {
       epochSet[`epoch:${lastEpoch}`] = 1;
       stillOpen = true;
     }
+    const epochs = Object.keys(epochSet).map( (key) => key.split(':')[1]);
     return {
-      epochs: Object.values(epochSet),
+      epochs,
       stillOpen,
     };
   };
