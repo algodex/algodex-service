@@ -28,7 +28,7 @@ const schema = {
     ownerAddr: {type: 'string', pattern: '[A-Z2-7]{58}'},
     block: {type: 'string', pattern: '[0-9]+'},
     ts: {type: 'integer'},
-    version: {type: 'string'},
+    version: {type: ['string', 'null'] }, // FIXME: https://github.com/algodex/algodex-service/issues/27
     status: {type: 'string'},
   },
   required: ['isAlgoBuyEscrow', 'type', 'orderInfo', 'numerator',
