@@ -22,5 +22,5 @@ const schema = {
 };
 
 module.exports = () => {
-  return schema;
+  return {...schema};
 };
