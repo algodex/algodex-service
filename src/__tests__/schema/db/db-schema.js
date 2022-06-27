@@ -16,5 +16,6 @@ testSchema('formatted_escrow');
 testSchema('escrow');
 testSchema('assets');
 testSchema('formatted_history');
+testSchema('owner_balance');
 
 
