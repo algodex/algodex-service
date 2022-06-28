@@ -18,5 +18,6 @@ testSchema('assets');
 testSchema('formatted_history');
 testSchema('owner_balance');
 testSchema('synced_blocks');
+testSchema('blocks');
 
 
