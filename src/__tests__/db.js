@@ -3,12 +3,6 @@ const PouchDB = require('pouchdb-core');
 PouchDB.plugin(require('pouchdb-adapter-memory'));
 require('dotenv').config();
 
-// global.console = {
-//   ...console,
-//   log: jest.fn(),
-//   debug: jest.fn(),
-// };
-
 test('database can be constructed', async ()=>{
   const dbName = 'testdb';
   const dbURL = process.env.COUCHDB_BASE_URL + '/' + dbName;
