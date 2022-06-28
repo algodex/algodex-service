@@ -82,20 +82,6 @@ module.exports = function(doc) {
     return base64decode(target);
   };
 
-  const getOwner = function(group, appCallType, isAlgoBuyEscrow) {
-    if (appCallType === 'open') {
-      return group[0].txn.snd;
-    } else if (appCallType === 'close') {
-      return group[group.length - 1].txn.snd;
-    } else if (appCallType === 'execute_with_closeout' && isAlgoBuyEscrow) {
-      return group[group.length - 1].txn.arcv;
-    } else if (appCallType === 'execute_with_closeout' && !isAlgoBuyEscrow) {
-      return group[group.length - 1].txn.close;
-    }
-
-    return null;
-  };
-
   const getAlgodexExecuteGroups = (groups) => {
     const executeGroups = groups.filter( (group) => {
       return group.filter( (txn) => {

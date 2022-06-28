@@ -93,5 +93,3 @@ test('Unsorted history is sorted correctly', (done) => {
 });
 
 
-
-

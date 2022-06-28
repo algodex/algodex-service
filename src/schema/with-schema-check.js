@@ -1,4 +1,4 @@
-const Ajv = require("ajv");
+const Ajv = require('ajv');
 const ajv = new Ajv();
 
 // eslint-disable-next-line require-jsdoc
