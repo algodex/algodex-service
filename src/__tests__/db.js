@@ -1,7 +1,13 @@
 const getDatabase = require('../db/db');
 const PouchDB = require('pouchdb-core');
-PouchDB.plugin(require('pouchdb-adapter-memory'));
+// PouchDB.plugin(require('pouchdb-adapter-memory'));
 require('dotenv').config();
+
+jest.mock('pouchdb-core', () => {
+  return jest.fn().mockImplementation(() => {
+    return {};
+  });
+});
 
 test('database can be constructed', async ()=>{
   const dbName = 'testdb';
