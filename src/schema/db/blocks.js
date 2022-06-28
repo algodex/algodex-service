@@ -26,7 +26,7 @@ const schema = {
             },
           },
         },
-        required: ['hgi', 'sig', 'txn'],
+        required: ['txn'],
       },
     },
   },
