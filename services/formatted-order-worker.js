@@ -1,18 +1,10 @@
 const bullmq = require('bullmq');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
+const pushHistory = require('../src/push-history');
 
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 
-const pushHistory = (data, historyEntry) => {
-  const history = data.history || [];
-  history.sort((a, b) => (a.round > b.round) ? 1 : -1);
-  if (history.length == 0 ||
-      historyEntry.round > history[history.length-1].round) {
-    history.push(historyEntry);
-  }
-  data.history = history;
-};
 const setAssetHistory = (data) => {
   if (!data.escrowInfo.isAlgoBuyEscrow) {
     const historyEntry = {
