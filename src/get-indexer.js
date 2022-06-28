@@ -11,7 +11,7 @@ module.exports = () => {
   if (!baseServer) {
     throw new Error('ALGORAND_INDEXER_SERVER is not set!');
   }
-  const port = process.env.ALGORAND_INDEXER_TOKEN || '';
+  const port = process.env.ALGORAND_INDEXER_PORT || '';
 
   const token = {
     'X-API-key': process.env.ALGORAND_INDEXER_TOKEN || '',

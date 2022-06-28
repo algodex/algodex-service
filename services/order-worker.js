@@ -97,7 +97,7 @@ const getIndexedEscrowInfo = async (blockDB, indexedEscrowDB,
         ...reducedAccountInfo,
       };
       await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
-      return reducedAccountInfo;
+      return doc;
     } catch (e) {
       if (e.status === 500 &&
         e.message.includes('not currently supported')) {
@@ -108,7 +108,7 @@ const getIndexedEscrowInfo = async (blockDB, indexedEscrowDB,
           ...reducedAccountInfo,
         };
         await addDocToIndexedEscrowDB(indexedEscrowDB, doc);
-        return reducedAccountInfo;
+        return doc;
       } else {
         throw e;
       }
