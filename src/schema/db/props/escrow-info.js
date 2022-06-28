@@ -18,6 +18,7 @@ const schema = {
   type: 'object',
   properties: {
     isAlgoBuyEscrow: {type: 'boolean'},
+    apat: {type: 'array'},
     type: {type: 'string'},
     orderInfo: {type: 'string'},
     numerator: {type: 'integer'},
