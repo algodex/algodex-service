@@ -136,8 +136,8 @@ module.exports = ({queues, databases}) =>{
     }),
 
     // eslint-disable-next-line max-len
-    syncedBlocksDB.post(withSchemaCheck('synced_blocks', {_id: `${job.data.rnd}`})
-        .then(function() { })).catch(function(err) {
+    syncedBlocksDB.post(withSchemaCheck('synced_blocks', {_id: `${job.data.rnd}`}))
+        .then(function() { }).catch(function(err) {
       if (err.error === 'conflict') {
         console.error('Block was already synced! Not supposed to happen');
       } else {
