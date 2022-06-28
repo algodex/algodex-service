@@ -6,7 +6,11 @@ const Worker = bullmq.Worker;
 
 const pushHistory = (data, historyEntry) => {
   const history = data.history || [];
-  history.push(historyEntry);
+  history.sort((a, b) => (a.round > b.round) ? 1 : -1);
+  if (history.length == 0 ||
+      historyEntry.round > history[history.length-1].round) {
+    history.push(historyEntry);
+  }
   data.history = history;
 };
 const setAssetHistory = (data) => {
