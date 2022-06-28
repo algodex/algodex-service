@@ -17,18 +17,9 @@ const getAssetQueuePromise = (assetQueue, assetId) => {
   return promise;
 };
 
-const getDirtyOwners = async (escrowDB, block) => {
-  const dirtyAccounts = getDirtyAccounts(block);
-
-  const dirtyOwners = await escrowDB.query('escrow/ownerAddr',
-      {reduce: true, group: true, keys: dirtyAccounts});
-  return dirtyOwners.rows.map( (row) => row.key );
-};
-
 module.exports = ({queues, databases}) =>{
   const syncedBlocksDB = databases.synced_blocks;
   const blocksDB = databases.blocks;
-  const escrowDB = databases.escrow;
 
   const blocks = new Worker('blocks', async (job)=>{
     console.debug({
@@ -103,7 +94,8 @@ module.exports = ({queues, databases}) =>{
 
               const ordersJob = {account: account,
                 blockData: job.data, reducedOrder: row};
-              console.log('queuing order: ' + ordersJob.account + ' ' + ordersJob.blockData.rnd);
+              console.log('queuing order: ' + ordersJob.account +
+                ' ' + ordersJob.blockData.rnd);
               const promise = queues.orders.add('orders', ordersJob,
                   {removeOnComplete: true}).then(function() {
               }).catch(function(err) {
@@ -138,12 +130,12 @@ module.exports = ({queues, databases}) =>{
     // eslint-disable-next-line max-len
     syncedBlocksDB.post(withSchemaCheck('synced_blocks', {_id: `${job.data.rnd}`}))
         .then(function() { }).catch(function(err) {
-      if (err.error === 'conflict') {
-        console.error('Block was already synced! Not supposed to happen');
-      } else {
-        throw err;
-      }
-    }),
+          if (err.error === 'conflict') {
+            console.error('Block was already synced! Not supposed to happen');
+          } else {
+            throw err;
+          }
+        }),
 
     ]);
   }, {connection: queues.connection, concurrency: 50});

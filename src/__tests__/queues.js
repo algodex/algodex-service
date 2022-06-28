@@ -1,8 +1,8 @@
 const {InvalidConfiguration} = require('../Errors');
-const RedisMock = require('ioredis-mock');
+// const RedisMock = require('ioredis-mock');
 require('../__mocks__/Redis');
 
-const Queue = require('bullmq').Queue;
+// const Queue = require('bullmq').Queue;
 
 test('queues are created', (done) => {
   const getQueues = require('../queues');

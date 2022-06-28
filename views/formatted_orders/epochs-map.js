@@ -20,7 +20,8 @@ module.exports = function(doc) {
         const startEpoch = unixToEpoch(startTime);
         const endEpoch = unixToEpoch(endTime);
         const epochCount = endEpoch - startEpoch + 1;
-        const epochs = Array(epochCount).fill().map((element, index) => index + startEpoch);
+        const epochs = Array(epochCount)
+            .fill().map((element, index) => index + startEpoch);
         epochs.forEach((epoch) => epochSet[`epoch:${epoch}`] = 1);
         startTime = null;
         endTime = null;
