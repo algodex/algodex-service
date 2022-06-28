@@ -69,5 +69,6 @@ module.exports = function() {
           {connection: connection}),
     };
   }
+  console.log('here');
   return queues;
 };

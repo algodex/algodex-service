@@ -1,22 +1,26 @@
-const {InvalidConfiguration} = require('../Errors');
 const getDatabase = require('../db/db');
 const PouchDB = require('pouchdb-core');
 PouchDB.plugin(require('pouchdb-adapter-memory'));
+require('dotenv').config();
 
-test( 'database should fail with InvalidConfiguration', ()=>{
-  delete process.env.COUCHDB_URL;
-  expect(getDatabase).toThrow(InvalidConfiguration);
-});
+// global.console = {
+//   ...console,
+//   log: jest.fn(),
+//   debug: jest.fn(),
+// };
 
 test('database can be constructed', async ()=>{
-  process.env.COUCHDB_URL = 'test-runner';
-  const dbSingleton = getDatabase(process.env.COUCHDB_URL);
-  const singletonInfo = await dbSingleton.info();
-  expect(dbSingleton).toBeInstanceOf(PouchDB);
-  expect(singletonInfo.db_name).toEqual(process.env.COUCHDB_URL);
+  const dbName = 'testdb';
+  const dbURL = process.env.COUCHDB_BASE_URL + '/' + dbName;
 
-  const db = getDatabase();
+  const dbSingleton = getDatabase(dbURL);
+  const singletonInfo = await dbSingleton.info();
+  // expect(dbSingleton).toBeInstanceOf(PouchDB);
+  expect(singletonInfo.db_name).toEqual(dbName);
+
+  const db = getDatabase(dbURL);
   expect(db).toBe(dbSingleton);
   const info = await dbSingleton.info();
   expect(info).toEqual(singletonInfo);
 });
+
