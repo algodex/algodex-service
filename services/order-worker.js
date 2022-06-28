@@ -2,6 +2,7 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const initOrGetIndexer = require('../src/get-indexer');
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   const promise = formattedEscrowsQueue.add('formattedEscrows', order,
@@ -27,7 +28,7 @@ const reduceIndexerInfo = (indexerInfo) => {
 
 const addDocToIndexedEscrowDB = async (indexedEscrowDB, doc) => {
   try {
-    await indexedEscrowDB.put(doc);
+    await indexedEscrowDB.put(withSchemaCheck('indexed_escrow', doc));
   } catch (err) {
     if (err.error === 'conflict') {
       console.log('conflict88a', {doc});
@@ -152,8 +153,9 @@ module.exports = ({queues, databases}) =>{
       data.lastUpdateUnixTime = blockData.ts;
       data.lastUpdateRound = blockData.rnd;
       console.log('escrowDB posting ' +`${account}-${blockData.rnd}`);
-      return escrowDB.post({_id: `${account}-${blockData.rnd}`,
-        type: 'block', data: data})
+      return escrowDB.post(withSchemaCheck('escrow',
+          {_id: `${account}-${blockData.rnd}`,
+            type: 'block', data: data}))
           .then(function(response) {
             const formattedOrderPromise =
               getFormattedOrderQueuePromise(queues.formattedEscrows,

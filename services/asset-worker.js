@@ -1,6 +1,7 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 const initOrGetIndexer = require('../src/get-indexer');
 
@@ -32,8 +33,8 @@ module.exports = ({queues, databases}) =>{
       return;
     }
     const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
-    return assetDB.post({_id: `${job.data.assetId}`,
-      type: 'asset', ...assetData})
+    return assetDB.post(withSchemaCheck('assets', {_id: `${job.data.assetId}`,
+      type: 'asset', ...assetData}))
         .then(async function(response) {
           console.debug({
             msg: `Asset ${job.data.assetId} stored`,

@@ -1,0 +1,25 @@
+{
+  "_id": "12294411",
+  "_rev": "1-e458e7e3de42b186d3e4aa8605dafd62",
+  "type": "asset",
+  "asset": {
+    "created-at-round": 9527064,
+    "deleted": false,
+    "index": 12294411,
+    "params": {
+      "clawback": "ARR6DJR4HAAORU6CFMY3MNRFIZQRXSDIFH2K2WVDFF7IFOB2OP7HKJWI2A",
+      "creator": "ARR6DJR4HAAORU6CFMY3MNRFIZQRXSDIFH2K2WVDFF7IFOB2OP7HKJWI2A",
+      "decimals": 0,
+      "default-frozen": false,
+      "freeze": "ARR6DJR4HAAORU6CFMY3MNRFIZQRXSDIFH2K2WVDFF7IFOB2OP7HKJWI2A",
+      "manager": "ARR6DJR4HAAORU6CFMY3MNRFIZQRXSDIFH2K2WVDFF7IFOB2OP7HKJWI2A",
+      "name": "Ducato Milanese",
+      "name-b64": "RHVjYXRvIE1pbGFuZXNl",
+      "reserve": "ARR6DJR4HAAORU6CFMY3MNRFIZQRXSDIFH2K2WVDFF7IFOB2OP7HKJWI2A",
+      "total": 10000000,
+      "unit-name": "DUCM",
+      "unit-name-b64": "RFVDTQ=="
+    }
+  },
+  "current-round": 22255904
+}

@@ -1,0 +1,33 @@
+{
+  "_id": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ-16583543",
+  "_rev": "1-377ad5422141bc0c57f22c711262e5f8",
+  "type": "block",
+  "data": {
+    "indexerInfo": {
+      "_id": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ-16583543",
+      "_rev": "1-5c590a05f898ddb43cb6dd5f139ea0ab",
+      "address": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
+      "algoAmount": 497000,
+      "round": 16583543,
+      "asaAmount": 10542,
+      "isApproximate": true
+    },
+    "escrowInfo": {
+      "isAlgoBuyEscrow": false,
+      "type": "close",
+      "orderInfo": "1-449-0-15322902",
+      "numerator": 1,
+      "assetId": 15322902,
+      "denominator": 449,
+      "minimum": 0,
+      "price": 449,
+      "ownerAddr": "IOQISE7UXHHBFBFT3C4YZB6VH3W4WXJIWEYCH6WYWUZESOZUBLSSW7254Y",
+      "block": "16583654",
+      "ts": 1631353461,
+      "version": null,
+      "status": "closed"
+    },
+    "lastUpdateUnixTime": 1631352988,
+    "lastUpdateRound": 16583543
+  }
+}

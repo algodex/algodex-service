@@ -1,4 +1,6 @@
 const bullmq = require('bullmq');
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
+
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 
@@ -47,18 +49,20 @@ module.exports = ({queues, databases}) =>{
               function(res) {
                 data.history = res.data.history;
                 setAssetHistory(data);
-                return formattedEscrowDB.put({
+                // eslint-disable-next-line max-len
+                return formattedEscrowDB.put(withSchemaCheck('formatted_escrow', {
                   _id: res._id,
                   _rev: res._rev,
                   data: res.data,
-                }).then(function(res) {
+                })).then(function(res) {
                   console.log('added doc revision: ' + data);
                 });
               }).catch(function(err) {
             if (err.error === 'not_found') {
               setAssetHistory(data);
-              return formattedEscrowDB.post({_id: `${addr}`,
-                type: 'formatted_escrow', data: data})
+              return formattedEscrowDB.post(
+                  withSchemaCheck('formatted_escrow', {_id: `${addr}`,
+                    type: 'formatted_escrow', data: data}))
                   .then(function(response) {
                     console.log('posted formatted escrow');
                   });
