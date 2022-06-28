@@ -2,6 +2,7 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const initOrGetIndexer = require('../src/get-indexer');
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 const getAlgxBalance = (accountInfo) => {
   if (!accountInfo.account || !accountInfo.account.assets) {
@@ -35,7 +36,7 @@ const checkInDB = async (ownerBalanceDB, ownerAddr, round) => {
 
 const addBalanceToDB = async (ownerBalanceDB, doc) => {
   try {
-    await ownerBalanceDB.put(doc);
+    await ownerBalanceDB.put(withSchemaCheck('owner_balance', doc));
   } catch (err) {
     if (err.error === 'conflict') {
       console.error(err);

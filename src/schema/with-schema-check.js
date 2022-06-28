@@ -11,7 +11,7 @@ class ValidationError extends Error {
 };
 
 module.exports = (schema, obj) => {
-  console.log({schema});
+  // console.log({schema});
   const valid = ajv.validate(schema, obj);
   if (!valid) {
     const msg = JSON.stringify(obj) +

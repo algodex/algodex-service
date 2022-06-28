@@ -10,5 +10,6 @@ module.exports = (schemaName, obj) => {
     schema = require(`./db/${schemaName}`)();
     nameToSchema[schemaName] = schema;
   }
-  return schemaCheck(schema, obj);
+  schemaCheck(schema, obj);
+  return obj;
 };

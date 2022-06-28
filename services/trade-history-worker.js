@@ -1,6 +1,7 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 module.exports = ({queues, databases}) =>{
   const blockDB = databases.blocks;
@@ -49,11 +50,13 @@ module.exports = ({queues, databases}) =>{
                 .then(async function(res) {
                   const assetToDecimals = res.rows.reduce(
                       (obj, row) => {
+                        // eslint-disable-next-line max-len
                         obj[`assetId:${row.key}`] = row.value.asset.params.decimals;
                         return obj;
                       }, {});
 
                   const validHistoryRows = tradeHistoryRows
+                      // eslint-disable-next-line max-len
                       .filter((row) => validAccountsSet.has(row.value.escrowAddr))
                       .map((row) => row.value);
 
@@ -63,8 +66,9 @@ module.exports = ({queues, databases}) =>{
                     row._id = `${row.block}:${row.groupId}`;
                   },
                   );
-                  console.log(assetToDecimals);
-                  return formattedHistoryDB.bulkDocs(validHistoryRows);
+                  return formattedHistoryDB.bulkDocs(
+                      validHistoryRows.map( (row) =>
+                        withSchemaCheck('formatted_history', row)));
                 });
           }).catch(function(e) {
             if (e.error === 'not_found') {

@@ -3,6 +3,7 @@ const Worker = bullmq.Worker;
 const verifyContracts = require('../src/verify-contracts');
 
 const getDirtyAccounts = require('../src/get-dirty-accounts');
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 const getAssetQueuePromise = (assetQueue, assetId) => {
   const assetAddJob = {assetId: assetId};
@@ -52,8 +53,8 @@ module.exports = ({queues, databases}) =>{
     } catch (e) {
       if (e.error === 'not_found') {
         try {
-          await blocksDB.post({_id: `${job.data.rnd}`,
-            type: 'block', ...job.data});
+          await blocksDB.post(withSchemaCheck('blocks', {_id: `${job.data.rnd}`,
+            type: 'block', ...job.data}));
           console.debug({
             msg: `Block stored`,
             ...response,
@@ -134,8 +135,9 @@ module.exports = ({queues, databases}) =>{
       throw err;
     }),
 
-    syncedBlocksDB.post({_id: `${job.data.rnd}`}).then(function() {
-    }).catch(function(err) {
+    // eslint-disable-next-line max-len
+    syncedBlocksDB.post(withSchemaCheck('synced_blocks', {_id: `${job.data.rnd}`})
+        .then(function() { })).catch(function(err) {
       if (err.error === 'conflict') {
         console.error('Block was already synced! Not supposed to happen');
       } else {
