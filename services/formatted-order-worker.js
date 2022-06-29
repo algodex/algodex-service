@@ -26,6 +26,7 @@ const setAssetHistory = (data) => {
 module.exports = ({queues, databases}) =>{
   const formattedEscrowDB = databases.formatted_escrow;
   const assetDB = databases.assets;
+  const verifiedDB = databases.verified_account;
   // Lighten the load on the broker and do batch processing
   console.log({formattedEscrowDB});
   console.log('in formatted-order-worker.js');
@@ -42,8 +43,13 @@ module.exports = ({queues, databases}) =>{
           data.assetDecimals = res.asset.params.decimals;
 
           const formattedOrderGet = formattedEscrowDB.get(addr).then(
-              function(res) {
+              async function(res) {
                 data.history = res.data.history;
+                if (!data.escrowInfo.version) {
+                  const verifiedAccount = await verifiedDB.get(addr);
+                  const version = verifiedAccount.version;
+                  data.escrowInfo.version = version;
+                }
                 setAssetHistory(data);
                 // eslint-disable-next-line max-len
                 return formattedEscrowDB.put(withSchemaCheck('formatted_escrow', {

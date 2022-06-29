@@ -36,5 +36,9 @@ const schema = {
 };
 
 module.exports = () => {
-  return {...schema};
+  const retSchema = {...schema};
+  // Don't allow null values
+  retSchema.properties.data
+      .properties.escrowInfo.properties.version.type = 'string';
+  return retSchema;
 };

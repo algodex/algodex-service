@@ -145,6 +145,7 @@ module.exports = async (rows, verifiedAccountDB) => {
       rowsToAddtoDB.push({
         _id: account,
         status: isRealContract ? 'verified' : 'fake',
+        version: row.value.version,
       });
     }
   }
