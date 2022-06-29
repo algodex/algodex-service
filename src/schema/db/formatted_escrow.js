@@ -1,3 +1,5 @@
+var _ = require('lodash');
+
 const schema = {
   type: 'object',
   properties: {
@@ -36,7 +38,7 @@ const schema = {
 };
 
 module.exports = () => {
-  const retSchema = {...schema};
+  const retSchema = _.cloneDeep(schema);
   // Don't allow null values
   retSchema.properties.data
       .properties.escrowInfo.properties.version.type = 'string';

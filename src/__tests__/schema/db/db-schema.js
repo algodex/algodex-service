@@ -19,5 +19,6 @@ testSchema('formatted_history');
 testSchema('owner_balance');
 testSchema('synced_blocks');
 testSchema('blocks');
+testSchema('verified_account');
 
 

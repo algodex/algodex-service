@@ -4,6 +4,7 @@ const {
   withLogicSigAccount,
 } = require('@algodex/algodex-sdk/lib/order/compile');
 const algosdk = require('algosdk');
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 // https://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
 /**
@@ -142,11 +143,11 @@ module.exports = async (rows, verifiedAccountDB) => {
     }
 
     if (!verifDBHasAddrSet.has(account)) {
-      rowsToAddtoDB.push({
+      rowsToAddtoDB.push(withSchemaCheck('verified_account', {
         _id: account,
         status: isRealContract ? 'verified' : 'fake',
         version: row.value.version,
-      });
+      }));
     }
   }
 
