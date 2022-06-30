@@ -12,4 +12,4 @@ module.exports = function(keys, values, rereduce) {
   }, values[0]);
   finalOrder.status = finalOrder.type === 'open' ? 'open' : 'closed';
   return finalOrder;
-}
+};
