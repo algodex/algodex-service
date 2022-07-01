@@ -15,10 +15,12 @@ const getSequenceInfo = require('../src/rewards/get-sequence-info');
 const getBlocksToTime = require('../src/rewards/get-blocks-to-time');
 const getEpochEnd = require('../src/rewards/get-epoch-end');
 const getEpochStart = require('../src/rewards/get-epoch-start');
-const getSecondsInEpoch = require('../src/rewards/get-seconds-in-epoch');
 const getInitialBalances = require('../src/rewards/get-initial-balances');
+// eslint-disable-next-line max-len
 const getOwnerBalanceAtTime = require('../src/rewards/get-owner-balance-at-time');
+// eslint-disable-next-line max-len
 const getOwnerBalanceDataToHist = require('../src/rewards/get-owner-balance-data-to-hist');
+// eslint-disable-next-line max-len
 const getOwnerWalletChangeTimes = require('../src/rewards/get-owner-wallet-change-times');
 const updateBalances = require('../src/rewards/update-balances');
 const updateOwnerWallets = require('../src/rewards/update-owner-wallets');
@@ -56,7 +58,7 @@ async function run() {
   const accountData = await formattedEscrowDB.query('formatted_escrow/epochs', {
     keys: [`${epoch}`]});
   const escrowAddrs = accountData.rows.map(row => row.value);
-  
+
   const formattedEscrowData =
       await formattedEscrowDB.query('formatted_escrow/orderLookup', {
         keys: escrowAddrs});
@@ -117,23 +119,26 @@ async function run() {
   do {
     timestep += Math.round(random()*60);
     let escrowDidChange = false;
-    let ownerWalletDidChange = false;
+    const ownerWalletsBalanceChangeSet = new Set();
 
     while (escrowstep < changedEscrowSeq.length &&
           changedEscrowSeq[escrowstep] <= timestep) {
       const changeTime = changedEscrowSeq[escrowstep];
       while (ownerstep <= ownerWalletChangeTimes.length &&
-        changeTime >= ownerWalletChangeTimes[ownerstep]) {
+        changeTime >= ownerWalletChangeTimes[ownerstep].time) {
         ownerstep++; // Catch up to escrow time step
-        ownerWalletDidChange = true;
+        // eslint-disable-next-line max-len
+        ownerWalletChangeTimes[ownerstep].ownerAddrs.forEach( (addr) => {
+          ownerWalletsBalanceChangeSet.add(addr);
+        }
       }
       const changedEscrows = unixTimeToChangedEscrows[`ts:${changeTime}`];
       escrowDidChange = true;
       updateBalances({changedEscrows, ...stateMachine, ...initialState});
       escrowstep++;
     }
-    if (ownerWalletDidChange) {
-      updateOwnerWallets({...stateMachine, ...initialState});
+    if (ownerWalletsBalanceChangeSet.size > 0) {
+      updateOwnerWallets({ownerWalletsBalanceChangeSet, ...stateMachine, ...initialState});
     }
     if (escrowDidChange) {
       updateSpreads({...stateMachine, ...initialState});
