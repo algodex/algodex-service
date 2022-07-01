@@ -14,6 +14,7 @@ const getDatabases = require('../src/db/get-databases');
 const databases = getDatabases();
 const formattedEscrowDB = databases.formatted_escrow;
 const ownerBalanceDB = databases.owner_balance;
+const blockDB = databases.blocks;
 
 const args = require('minimist')(process.argv.slice(2));
 if (args.epoch === undefined) {
@@ -77,11 +78,47 @@ const getEpochStart = (epoch) => {
 const getEpochEnd = (epoch) => {
   return getEpochStart(epoch) + getSecondsInEpoch();
 };
+const getBlocksToTime = async (blocks) => {
+  throw 'PLEASE IMPLEMENT';
+
+  const blockTimeData = await blockDB.query('blocks/blockToTime',
+      blocks);
+};
+
+const getOwnerBalanceAtTime = (ownerBalanceToHist, ownerAddr, time) => {
+  throw 'PLEASE IMPLEMENT';
+
+};
+
+const updateOwnerWallets = ({ownerBalanceHist, escrowStep}) => {
+  throw 'PLEASE IMPLEMENT';
+};
+
 const getOwnerBalanceDataToHist = (ownerBalanceData) => {
+  throw 'PLEASE IMPLEMENT';
+
   return ownerBalanceData.rows.reduce( (ownerToHist, row) => {
     const owner = row;
     return ownerToHist;
   }, {});
+};
+
+const getInitialBalances = (unixTime, escrows) => {
+  throw 'PLEASE IMPLEMENT';
+};
+
+const updateBalances = ({changedEscrows, walletToBalance,
+  escrowTimeToBalance}) => {
+    throw 'PLEASE IMPLEMENT';
+};
+
+const getSpreads = ({escrowToBalance, escrowAddrToData}) => {
+  throw 'PLEASE IMPLEMENT';
+};
+
+const updateRewards = ({ownerWalletToRewards, spreads,
+  escrowToBalance, escrowAddrToData}) => {
+
 };
 
 async function run() {
@@ -93,9 +130,13 @@ async function run() {
       await formattedEscrowDB.query('formatted_escrow/orderLookup', {
         keys: escrowAddrs});
   const escrows = formattedEscrowData.rows.map(row => row.value);
-  const ownerWallets = escrows.map( (escrow) => escrow.data.escrowInfo.ownerAddr);
-  const ownerBalanceData = await ownerBalanceDB.query('owner_balance/ownerAddr', {
-    keys: ownerWallets});
+  const escrowAddrToData =
+    formattedEscrowData.rows.reduce((map, row) => map[row._id] = row.value, {});
+  const ownerWallets =
+    escrows.map( (escrow) => escrow.data.escrowInfo.ownerAddr);
+  const ownerBalanceData =
+    await ownerBalanceDB.query('owner_balance/ownerAddr', {
+      keys: ownerWallets});
 
   
   const {unixTimeToChangedEscrows, changedEscrowSeq} = getSequenceInfo(escrows);
@@ -110,18 +151,29 @@ async function run() {
   console.log(timestep);
   console.log(epochEnd);
   // console.log(unixTimeToChangedEscrows);
+  const escrowToBalance = getInitialBalances(timestep, escrows);
+  const ownerWalletToALGXBalance = getInitialOwnerWalletToBalances(timestep,
+      ownerBalanceData);
+  const ownerWalletToRewards = initWalletToRewards(escrows);
+  const ownerBalanceHist = getOwnerBalanceDataToHist(ownerBalanceData);
+  let spreads = getSpreads({escrowToBalance, escrowAddrToData});
+
   do {
     timestep += Math.round(random()*60);
-    const changedEscrowSet = new Set();
     while (escrowstep < changedEscrowSeq.length &&
           changedEscrowSeq[escrowstep] <= timestep) {
       const changeTime = changedEscrowSeq[escrowstep];
       const changedEscrows = unixTimeToChangedEscrows[`ts:${changeTime}`];
-      changedEscrows.forEach((escrow) => changedEscrowSet.add(escrow));
+      const escrowDidChange = updateBalances({changedEscrows,
+        escrowToBalance, escrowTimeToBalance});
+      updateOwnerWallets({ownerWalletToALGXBalance, ownerBalanceHist,
+        escrowStep});
+      if (escrowDidChange) {
+        spreads = getSpreads({escrowToBalance, escrowAddrToData});
+      }
+      updateRewards({ownerWalletToRewards, spreads,
+        escrowToBalance, escrowAddrToData});
       escrowstep++;
-    }
-    if (changedEscrowSet.length === 0) {
-      continue;
     }
     console.log(timestep);
     // console.log(changedEscrowSet);
