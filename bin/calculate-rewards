@@ -27,7 +27,7 @@ const getOwnerWalletChangeTimes = require('../src/rewards/get-owner-wallet-chang
 const updateBalances = require('../src/rewards/update-balances');
 const updateOwnerWallets = require('../src/rewards/update-owner-wallets');
 const updateRewards = require('../src/rewards/update-rewards');
-const updateSpreads = require('../src/rewards/update-spreads');
+const getSpreads = require('../src/rewards/get-spreads');
 const getEscrowAndTimeToBalance =
     require('../src/rewards/get-escrow-and-time-to-balance.js');
 const initWalletToRewards = require('../src/rewards/init-wallet-to-rewards');
@@ -60,7 +60,7 @@ async function run() {
   const escrows = formattedEscrowData.rows.map(row => row.value);
   const escrowAddrToData =
     formattedEscrowData.rows.reduce((map, row) => {
-      map[row._id] = row.value;
+      map[row.id] = row.value;
       return map;
     }, {});
   const ownerWallets =

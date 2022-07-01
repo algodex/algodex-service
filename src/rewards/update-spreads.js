@@ -1,6 +1,6 @@
 
 const updateSpreads = ({escrowToBalance, escrowAddrToData}) => {
-    throw 'PLEASE IMPLEMENT';
-  };
+  throw 'PLEASE IMPLEMENT';
+};
 
 module.exports = updateSpreads;
