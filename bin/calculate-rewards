@@ -18,6 +18,8 @@ const getEpochStart = require('../src/rewards/get-epoch-start');
 const getInitialBalances = require('../src/rewards/get-initial-balances');
 // eslint-disable-next-line max-len
 const getOwnerBalanceAtTime = require('../src/rewards/get-owner-balance-at-time');
+const getInitialOwnerWalletToBalances =
+  require('../src/rewards/get-initial-owner-wallet-to-balances');
 // eslint-disable-next-line max-len
 const getOwnerBalanceDataToHist = require('../src/rewards/get-owner-balance-data-to-hist');
 // eslint-disable-next-line max-len
