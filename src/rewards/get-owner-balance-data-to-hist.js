@@ -14,7 +14,7 @@ const getOwnerBalanceDataToHist = async (ownerBalanceData) => {
     return map;
   }, {});
 
-  return ownerBalanceData.rows.reduce( (ownerToHist, row) => {
+  const ownerToHist = ownerBalanceData.rows.reduce( (ownerToHist, row) => {
     const owner = row.key;
     const algxBalance = row.value.balance;
     const block = parseInt(row.value.block);
@@ -30,6 +30,11 @@ const getOwnerBalanceDataToHist = async (ownerBalanceData) => {
     ownerToHist[owner].push(entry);
     return ownerToHist;
   }, {});
+
+  Object.values(ownerToHist).forEach( (history) => {
+    history.sort( (a, b) => a.time > b.time ? 1 : -1);
+  });
+  return ownerToHist;
 };
 
 module.exports = getOwnerBalanceDataToHist;
