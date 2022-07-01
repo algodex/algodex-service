@@ -11,6 +11,21 @@
 
 require('dotenv').config();
 const getDatabases = require('../src/db/get-databases');
+const getSequenceInfo = require('../src/rewards/get-sequence-info');
+const getBlocksToTime = require('../src/rewards/get-blocks-to-time');
+const getEpochEnd = require('../src/rewards/get-epoch-end');
+const getEpochStart = require('../src/rewards/get-epoch-start');
+const getSecondsInEpoch = require('../src/rewards/get-seconds-in-epoch');
+const getInitialBalances = require('../src/rewards/get-initial-balances');
+const getOwnerBalanceAtTime = require('../src/rewards/get-owner-balance-at-time');
+const getOwnerBalanceDataToHist = require('../src/rewards/get-owner-balance-data-to-hist');
+const getOwnerWalletChangeTimes = require('../src/rewards/get-owner-wallet-change-times');
+const updateBalances = require('../src/rewards/update-balances');
+const updateOwnerWallets = require('../src/rewards/update-owner-wallets');
+const updateRewards = require('../src/rewards/update-rewards');
+const updateSpreads = require('../src/rewards/update-spreads');
+const getEscrowAndTimeToBalance =
+    require('../src/rewards/get-escrow-and-time-to-balance');
 const databases = getDatabases();
 const formattedEscrowDB = databases.formatted_escrow;
 const ownerBalanceDB = databases.owner_balance;
@@ -29,108 +44,12 @@ function random() {
   return x - Math.floor(x);
 }
 
-// const blocksDB = databases.blocks;
-// const syncedDB = databases.synced_blocks;
-
 
 const deepFreeze = (obj) => {
   Object.keys(obj).forEach(prop => {
     if (typeof obj[prop] === 'object') deepFreeze(obj[prop]);
   });
   return Object.freeze(obj);
-};
-
-const getSequenceInfo = (escrows) => {
-  const unixTimeToChangedEscrows = escrows.reduce( (timeline, escrow) => {
-    const times = escrow.data.history.map((historyItem) => historyItem.time);
-    times.forEach( (time) => {
-      const key = 'ts:'+time;
-      if (!(key in timeline)) {
-        timeline[key] = [];
-      }
-      const addrArr = timeline[key];
-      addrArr.push(escrow._id); // push escrow address
-    });
-    return timeline;
-  }, {});
-
-  const changedEscrowSeq = Object.keys(unixTimeToChangedEscrows)
-      .map((key) => parseInt(key.split(':')[1]));
-  changedEscrowSeq.sort();
-
-  return {unixTimeToChangedEscrows, changedEscrowSeq};
-};
-const getEscrowAndTimeToBalance = (escrows) => {
-  const escrowTimeMap = escrows.reduce( (escrowTimeMap, escrow) => {
-    escrow.data.history.forEach((historyItem) => {
-      const time = historyItem.time;
-      const balance = escrow.data.escrowInfo.isAlgoBuyEscrow ?
-        historyItem.algoAmount : historyItem.asaAmount;
-      const key = escrow._id+':'+time;
-      escrowTimeMap[key] = balance;
-    });
-    return escrowTimeMap;
-  }, {});
-  return escrowTimeMap;
-};
-
-const getSecondsInEpoch = () => {
-  return 604800;
-};
-const getEpochStart = (epoch) => {
-  const start = parseInt(process.env.EPOCH_LAUNCH_UNIX_TIME);
-  const secondsInEpoch = getSecondsInEpoch();
-  return start + (secondsInEpoch * (epoch - 1));
-};
-const getEpochEnd = (epoch) => {
-  return getEpochStart(epoch) + getSecondsInEpoch();
-};
-const getBlocksToTime = async (blocks) => {
-  throw 'PLEASE IMPLEMENT';
-
-  const blockTimeData = await blockDB.query('blocks/blockToTime',
-      blocks);
-};
-
-const getOwnerBalanceAtTime = (ownerBalanceToHist, ownerAddr, time) => {
-  throw 'PLEASE IMPLEMENT';
-
-};
-const getOwnerWalletChangeTimes = (ownerBalanceData) => {
-
-};
-
-const getOwnerBalanceDataToHist = (ownerBalanceData) => {
-  throw 'PLEASE IMPLEMENT';
-
-  return ownerBalanceData.rows.reduce( (ownerToHist, row) => {
-    const owner = row;
-    return ownerToHist;
-  }, {});
-};
-
-const getInitialBalances = (unixTime, escrows) => {
-  throw 'PLEASE IMPLEMENT';
-};
-
-// STATE MACHINE FUNCTIONS
-const updateOwnerWallets = ({ownerBalanceHist, escrowStep}) => {
-  throw 'PLEASE IMPLEMENT';
-};
-
-
-const updateBalances = ({changedEscrows, walletToBalance,
-  escrowTimeToBalance}) => {
-    throw 'PLEASE IMPLEMENT';
-};
-
-const updateSpreads = ({escrowToBalance, escrowAddrToData}) => {
-  throw 'PLEASE IMPLEMENT';
-};
-
-const updateRewards = ({ownerWalletToRewards, spreads,
-  escrowToBalance, escrowAddrToData}) => {
-
 };
 
 async function run() {
