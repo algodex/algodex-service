@@ -12,6 +12,15 @@
 require('dotenv').config();
 const getDatabases = require('../src/db/get-databases');
 const databases = getDatabases();
+const formattedEscrowDB = databases.formatted_escrow;
+const ownerBalanceDB = databases.owner_balance;
+
+const args = require('minimist')(process.argv.slice(2));
+if (args.epoch === undefined) {
+  throw new Error('Epoch is missing!');
+}
+const epoch = parseInt(args.epoch);
+
 
 let seed = 1;
 function random() {
@@ -21,13 +30,7 @@ function random() {
 
 // const blocksDB = databases.blocks;
 // const syncedDB = databases.synced_blocks;
-const formattedEscrowDB = databases.formatted_escrow;
 
-const args = require('minimist')(process.argv.slice(2));
-if (args.epoch === undefined) {
-  throw new Error('Epoch is missing!');
-}
-const epoch = parseInt(args.epoch);
 
 const getSequenceInfo = (escrows) => {
   const unixTimeToChangedEscrows = escrows.reduce( (timeline, escrow) => {
@@ -46,12 +49,26 @@ const getSequenceInfo = (escrows) => {
   const changedEscrowSeq = Object.keys(unixTimeToChangedEscrows)
       .map((key) => parseInt(key.split(':')[1]));
   changedEscrowSeq.sort();
+
   return {unixTimeToChangedEscrows, changedEscrowSeq};
+};
+const getEscrowAndTimeToBalance = (escrows) => {
+  const escrowTimeMap = escrows.reduce( (escrowTimeMap, escrow) => {
+    escrow.data.history.forEach((historyItem) => {
+      const time = historyItem.time;
+      const balance = escrow.data.escrowInfo.isAlgoBuyEscrow ?
+        historyItem.algoAmount : historyItem.asaAmount;
+      const key = escrow._id+':'+time;
+      escrowTimeMap[key] = balance;
+    });
+    return escrowTimeMap;
+  }, {});
+  return escrowTimeMap;
 };
 
 const getSecondsInEpoch = () => {
   return 604800;
-}
+};
 const getEpochStart = (epoch) => {
   const start = parseInt(process.env.EPOCH_LAUNCH_UNIX_TIME);
   const secondsInEpoch = getSecondsInEpoch();
@@ -59,31 +76,56 @@ const getEpochStart = (epoch) => {
 };
 const getEpochEnd = (epoch) => {
   return getEpochStart(epoch) + getSecondsInEpoch();
-}
+};
+const getOwnerBalanceDataToHist = (ownerBalanceData) => {
+  return ownerBalanceData.rows.reduce( (ownerToHist, row) => {
+    const owner = row;
+    return ownerToHist;
+  }, {});
+};
 
 async function run() {
   const accountData = await formattedEscrowDB.query('formatted_escrow/epochs', {
     keys: [`${epoch}`]});
   const escrowAddrs = accountData.rows.map(row => row.value);
+  
   const formattedEscrowData =
       await formattedEscrowDB.query('formatted_escrow/orderLookup', {
         keys: escrowAddrs});
   const escrows = formattedEscrowData.rows.map(row => row.value);
+  const ownerWallets = escrows.map( (escrow) => escrow.data.escrowInfo.ownerAddr);
+  const ownerBalanceData = await ownerBalanceDB.query('owner_balance/ownerAddr', {
+    keys: ownerWallets});
 
+  
   const {unixTimeToChangedEscrows, changedEscrowSeq} = getSequenceInfo(escrows);
-  const epochStart = getEpochStart();
-  console.log({changedEscrowSeq});
+  const escrowTimeToBalance = getEscrowAndTimeToBalance(escrows);
+  const epochStart = getEpochStart(epoch);
+  const epochEnd = getEpochEnd(epoch);
+  // console.log({changedEscrowSeq});
 
-  console.log(process.env.COUCHDB_BASE_URL);
+  // console.log(process.env.COUCHDB_BASE_URL);
   let timestep = epochStart;
+  let escrowstep = 0;
+  console.log(timestep);
+  console.log(epochEnd);
+  // console.log(unixTimeToChangedEscrows);
   do {
-
-
-  } while (timestep < epochEnd;
+    timestep += Math.round(random()*60);
+    const changedEscrowSet = new Set();
+    while (escrowstep < changedEscrowSeq.length &&
+          changedEscrowSeq[escrowstep] <= timestep) {
+      const changeTime = changedEscrowSeq[escrowstep];
+      const changedEscrows = unixTimeToChangedEscrows[`ts:${changeTime}`];
+      changedEscrows.forEach((escrow) => changedEscrowSet.add(escrow));
+      escrowstep++;
+    }
+    if (changedEscrowSet.length === 0) {
+      continue;
+    }
+    console.log(timestep);
+    // console.log(changedEscrowSet);
+  } while (timestep < epochEnd);
 }
 
-function run2() {
-  const r_sec = random() * 60;
-  console.log(r_sec);
-}
 run();
