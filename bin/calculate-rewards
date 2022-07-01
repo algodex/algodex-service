@@ -27,6 +27,7 @@ const getOwnerWalletChangeTimes = require('../src/rewards/get-owner-wallet-chang
 const updateBalances = require('../src/rewards/update-balances');
 const updateOwnerWallets = require('../src/rewards/update-owner-wallets');
 const updateRewards = require('../src/rewards/update-rewards');
+const updateSpreads = require('../src/rewards/update-spreads');
 const getSpreads = require('../src/rewards/get-spreads');
 const getEscrowAndTimeToBalance =
     require('../src/rewards/get-escrow-and-time-to-balance.js');
@@ -112,7 +113,6 @@ async function run() {
     ownerWalletToRewards,
     spreads,
   };
-  Object.freeze(stateMachine);
 
   do {
     timestep += Math.round(random()*60);
@@ -141,7 +141,7 @@ async function run() {
         ...stateMachine, ...initialState});
     }
     if (escrowDidChange) {
-      updateSpreads({...stateMachine, ...initialState});
+      updateSpreads(stateMachine, {...initialState});
     }
     updateRewards({...stateMachine, ...initialState});
     console.log(timestep);
