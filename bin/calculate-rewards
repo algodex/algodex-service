@@ -33,6 +33,13 @@ function random() {
 // const syncedDB = databases.synced_blocks;
 
 
+const deepFreeze = (obj) => {
+  Object.keys(obj).forEach(prop => {
+    if (typeof obj[prop] === 'object') deepFreeze(obj[prop]);
+  });
+  return Object.freeze(obj);
+};
+
 const getSequenceInfo = (escrows) => {
   const unixTimeToChangedEscrows = escrows.reduce( (timeline, escrow) => {
     const times = escrow.data.history.map((historyItem) => historyItem.time);
@@ -89,9 +96,8 @@ const getOwnerBalanceAtTime = (ownerBalanceToHist, ownerAddr, time) => {
   throw 'PLEASE IMPLEMENT';
 
 };
+const getOwnerWalletChangeTimes = (ownerBalanceData) => {
 
-const updateOwnerWallets = ({ownerBalanceHist, escrowStep}) => {
-  throw 'PLEASE IMPLEMENT';
 };
 
 const getOwnerBalanceDataToHist = (ownerBalanceData) => {
@@ -107,12 +113,18 @@ const getInitialBalances = (unixTime, escrows) => {
   throw 'PLEASE IMPLEMENT';
 };
 
+// STATE MACHINE FUNCTIONS
+const updateOwnerWallets = ({ownerBalanceHist, escrowStep}) => {
+  throw 'PLEASE IMPLEMENT';
+};
+
+
 const updateBalances = ({changedEscrows, walletToBalance,
   escrowTimeToBalance}) => {
     throw 'PLEASE IMPLEMENT';
 };
 
-const getSpreads = ({escrowToBalance, escrowAddrToData}) => {
+const updateSpreads = ({escrowToBalance, escrowAddrToData}) => {
   throw 'PLEASE IMPLEMENT';
 };
 
@@ -138,43 +150,76 @@ async function run() {
     await ownerBalanceDB.query('owner_balance/ownerAddr', {
       keys: ownerWallets});
 
-  
   const {unixTimeToChangedEscrows, changedEscrowSeq} = getSequenceInfo(escrows);
   const escrowTimeToBalance = getEscrowAndTimeToBalance(escrows);
   const epochStart = getEpochStart(epoch);
   const epochEnd = getEpochEnd(epoch);
-  // console.log({changedEscrowSeq});
+  const ownerBalanceHist = getOwnerBalanceDataToHist(ownerBalanceData);
+  const ownerWalletChangeTimes = getOwnerWalletChangeTimes(ownerBalanceData);
+  const initialState = {
+    accountData,
+    changedEscrowSeq,
+    escrows,
+    escrowAddrs,
+    escrowAddrToData,
+    escrowTimeToBalance,
+    epochEnd,
+    epochStart,
+    formattedEscrowData,
+    ownerBalanceData,
+    ownerBalanceHist,
+    ownerWalletChangeTimes,
+    ownerWallets,
+    unixTimeToChangedEscrows,
+  };
+  deepFreeze(initialState);
 
-  // console.log(process.env.COUCHDB_BASE_URL);
   let timestep = epochStart;
   let escrowstep = 0;
+  let ownerstep = 0;
   console.log(timestep);
   console.log(epochEnd);
-  // console.log(unixTimeToChangedEscrows);
+
+  // State machine data
   const escrowToBalance = getInitialBalances(timestep, escrows);
   const ownerWalletToALGXBalance = getInitialOwnerWalletToBalances(timestep,
       ownerBalanceData);
   const ownerWalletToRewards = initWalletToRewards(escrows);
-  const ownerBalanceHist = getOwnerBalanceDataToHist(ownerBalanceData);
-  let spreads = getSpreads({escrowToBalance, escrowAddrToData});
+  const spreads = getSpreads({escrowToBalance, escrowAddrToData});
+
+  const stateMachine = {
+    escrowToBalance,
+    ownerWalletToALGXBalance,
+    ownerWalletToRewards,
+    spreads,
+  };
+  Object.freeze(stateMachine);
 
   do {
     timestep += Math.round(random()*60);
+    let escrowDidChange = false;
+    let ownerWalletDidChange = false;
+
     while (escrowstep < changedEscrowSeq.length &&
           changedEscrowSeq[escrowstep] <= timestep) {
       const changeTime = changedEscrowSeq[escrowstep];
-      const changedEscrows = unixTimeToChangedEscrows[`ts:${changeTime}`];
-      const escrowDidChange = updateBalances({changedEscrows,
-        escrowToBalance, escrowTimeToBalance});
-      updateOwnerWallets({ownerWalletToALGXBalance, ownerBalanceHist,
-        escrowStep});
-      if (escrowDidChange) {
-        spreads = getSpreads({escrowToBalance, escrowAddrToData});
+      while (ownerstep <= ownerWalletChangeTimes.length &&
+        changeTime >= ownerWalletChangeTimes[ownerstep]) {
+        ownerstep++; // Catch up to escrow time step
+        ownerWalletDidChange = true;
       }
-      updateRewards({ownerWalletToRewards, spreads,
-        escrowToBalance, escrowAddrToData});
+      const changedEscrows = unixTimeToChangedEscrows[`ts:${changeTime}`];
+      escrowDidChange = true;
+      updateBalances({changedEscrows, ...stateMachine, ...initialState});
       escrowstep++;
     }
+    if (ownerWalletDidChange) {
+      updateOwnerWallets({...stateMachine, ...initialState});
+    }
+    if (escrowDidChange) {
+      updateSpreads({...stateMachine, ...initialState});
+    }
+    updateRewards({...stateMachine, ...initialState});
     console.log(timestep);
     // console.log(changedEscrowSet);
   } while (timestep < epochEnd);
