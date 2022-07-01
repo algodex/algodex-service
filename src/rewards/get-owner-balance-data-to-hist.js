@@ -23,7 +23,7 @@ const getOwnerBalanceDataToHist = async (ownerBalanceData) => {
       ownerToHist[owner] = [];
     }
     const entry = {
-      block,
+      round: block,
       time,
       algxBalance,
     };

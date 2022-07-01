@@ -46,14 +46,6 @@ function random() {
   return x - Math.floor(x);
 }
 
-
-const deepFreeze = (obj) => {
-  Object.keys(obj).forEach(prop => {
-    if (typeof obj[prop] === 'object') deepFreeze(obj[prop]);
-  });
-  return Object.freeze(obj);
-};
-
 async function run() {
   const accountData = await formattedEscrowDB.query('formatted_escrow/epochs', {
     keys: [`${epoch}`]});
@@ -75,8 +67,8 @@ async function run() {
   const escrowTimeToBalance = getEscrowAndTimeToBalance(escrows);
   const epochStart = getEpochStart(epoch);
   const epochEnd = getEpochEnd(epoch);
-  const ownerBalanceHist = await getOwnerBalanceDataToHist(ownerBalanceData);
-  const ownerWalletChangeTimes = getOwnerWalletChangeTimes(ownerBalanceData);
+  const ownerBalanceToHist = await getOwnerBalanceDataToHist(ownerBalanceData);
+  const ownerWalletChangeTimes = getOwnerWalletChangeTimes(ownerBalanceToHist);
   const initialState = {
     accountData,
     changedEscrowSeq,
@@ -88,12 +80,12 @@ async function run() {
     epochStart,
     formattedEscrowData,
     ownerBalanceData,
-    ownerBalanceHist,
+    ownerBalanceToHist,
     ownerWalletChangeTimes,
     ownerWallets,
     unixTimeToChangedEscrows,
   };
-  deepFreeze(initialState);
+  Object.freeze(initialState);
 
   let timestep = epochStart;
   let escrowstep = 0;
