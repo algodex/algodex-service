@@ -1,3 +1,4 @@
+require('dotenv').config();
 const getSecondsInEpoch = require('./get-seconds-in-epoch');
 
 const getEpochStart = (epoch) => {
