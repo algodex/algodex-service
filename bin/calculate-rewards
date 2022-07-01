@@ -1,0 +1,89 @@
+#!/usr/bin/env node
+/* eslint-disable require-jsdoc */
+
+/* USAGE:
+ *
+ * This script will calculate all rewards for the epoch and upload them to the 
+ * database.
+ *
+ * bin/calculate-rewards --epoch={epoch}
+ */
+
+require('dotenv').config();
+const getDatabases = require('../src/db/get-databases');
+const databases = getDatabases();
+
+let seed = 1;
+function random() {
+  const x = Math.sin(seed++) * 10000;
+  return x - Math.floor(x);
+}
+
+// const blocksDB = databases.blocks;
+// const syncedDB = databases.synced_blocks;
+const formattedEscrowDB = databases.formatted_escrow;
+
+const args = require('minimist')(process.argv.slice(2));
+if (args.epoch === undefined) {
+  throw new Error('Epoch is missing!');
+}
+const epoch = parseInt(args.epoch);
+
+const getSequenceInfo = (escrows) => {
+  const unixTimeToChangedEscrows = escrows.reduce( (timeline, escrow) => {
+    const times = escrow.data.history.map((historyItem) => historyItem.time);
+    times.forEach( (time) => {
+      const key = 'ts:'+time;
+      if (!(key in timeline)) {
+        timeline[key] = [];
+      }
+      const addrArr = timeline[key];
+      addrArr.push(escrow._id); // push escrow address
+    });
+    return timeline;
+  }, {});
+
+  const changedEscrowSeq = Object.keys(unixTimeToChangedEscrows)
+      .map((key) => parseInt(key.split(':')[1]));
+  changedEscrowSeq.sort();
+  return {unixTimeToChangedEscrows, changedEscrowSeq};
+};
+
+const getSecondsInEpoch = () => {
+  return 604800;
+}
+const getEpochStart = (epoch) => {
+  const start = parseInt(process.env.EPOCH_LAUNCH_UNIX_TIME);
+  const secondsInEpoch = getSecondsInEpoch();
+  return start + (secondsInEpoch * (epoch - 1));
+};
+const getEpochEnd = (epoch) => {
+  return getEpochStart(epoch) + getSecondsInEpoch();
+}
+
+async function run() {
+  const accountData = await formattedEscrowDB.query('formatted_escrow/epochs', {
+    keys: [`${epoch}`]});
+  const escrowAddrs = accountData.rows.map(row => row.value);
+  const formattedEscrowData =
+      await formattedEscrowDB.query('formatted_escrow/orderLookup', {
+        keys: escrowAddrs});
+  const escrows = formattedEscrowData.rows.map(row => row.value);
+
+  const {unixTimeToChangedEscrows, changedEscrowSeq} = getSequenceInfo(escrows);
+  const epochStart = getEpochStart();
+  console.log({changedEscrowSeq});
+
+  console.log(process.env.COUCHDB_BASE_URL);
+  let timestep = epochStart;
+  do {
+
+
+  } while (timestep < epochEnd;
+}
+
+function run2() {
+  const r_sec = random() * 60;
+  console.log(r_sec);
+}
+run();

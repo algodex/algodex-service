@@ -34,6 +34,9 @@ const databases = [
         epochs: {
           map: require('../../views/formatted_orders/epochs-map').toString(),
         },
+        orderLookup: {
+          map: require('../../views/formatted_orders/orderLookup-map').toString(),
+        },
       },
     },
   },
