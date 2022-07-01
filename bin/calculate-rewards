@@ -132,7 +132,8 @@ async function run() {
       }
       const changedEscrows = unixTimeToChangedEscrows[`ts:${changeTime}`];
       escrowDidChange = true;
-      updateBalances({changedEscrows, ...stateMachine, ...initialState});
+      updateBalances({changedEscrows, changeTime,
+        ...stateMachine, ...initialState});
       escrowstep++;
     }
     if (ownerWalletsBalanceChangeSet.size > 0) {
