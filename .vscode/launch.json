@@ -97,6 +97,16 @@
             "env": {
                 "APP_CONTEXT": "socket"
             }
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "CalculateRewards",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/bin/calculate-rewards",
+            "args": ["--epoch=1"]
+        },
     ]
 }

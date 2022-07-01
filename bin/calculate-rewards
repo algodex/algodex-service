@@ -27,7 +27,7 @@ const updateOwnerWallets = require('../src/rewards/update-owner-wallets');
 const updateRewards = require('../src/rewards/update-rewards');
 const updateSpreads = require('../src/rewards/update-spreads');
 const getEscrowAndTimeToBalance =
-    require('../src/rewards/get-escrow-and-time-to-balance');
+    require('../src/rewards/get-escrow-and-time-to-balance.js');
 const databases = getDatabases();
 const formattedEscrowDB = databases.formatted_escrow;
 const ownerBalanceDB = databases.owner_balance;
@@ -75,7 +75,7 @@ async function run() {
   const escrowTimeToBalance = getEscrowAndTimeToBalance(escrows);
   const epochStart = getEpochStart(epoch);
   const epochEnd = getEpochEnd(epoch);
-  const ownerBalanceHist = getOwnerBalanceDataToHist(ownerBalanceData);
+  const ownerBalanceHist = await getOwnerBalanceDataToHist(ownerBalanceData);
   const ownerWalletChangeTimes = getOwnerWalletChangeTimes(ownerBalanceData);
   const initialState = {
     accountData,
