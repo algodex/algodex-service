@@ -1,6 +1,6 @@
 const getSpreads = ({escrowToBalance, escrowAddrToData}) => {
   const spreads = Object.keys(escrowToBalance)
-      .filter((escrow) => escrowToBalance[escrow] > 0)
+      .filter(escrow => escrowToBalance[escrow] > 0)
       .reduce( (spreads, escrow) => {
         const escrowData = escrowAddrToData[escrow].data;
         const assetId = escrowData.escrowInfo.assetId;

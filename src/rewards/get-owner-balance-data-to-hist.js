@@ -2,7 +2,7 @@
 const getDatabases = require('../../src/db/get-databases');
 const databases = getDatabases();
 
-const getOwnerBalanceDataToHist = async (ownerBalanceData) => {
+const getOwnerBalanceDataToHist = async ownerBalanceData => {
   const blockSet = ownerBalanceData.rows.reduce(
       (set, row) => set.add(row.value.block), new Set());
 
@@ -31,7 +31,7 @@ const getOwnerBalanceDataToHist = async (ownerBalanceData) => {
     return ownerToHist;
   }, {});
 
-  Object.values(ownerToHist).forEach( (history) => {
+  Object.values(ownerToHist).forEach( history => {
     history.sort( (a, b) => a.time > b.time ? 1 : -1);
   });
   return ownerToHist;

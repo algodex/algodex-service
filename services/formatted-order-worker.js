@@ -5,7 +5,7 @@ const pushHistory = require('../src/push-history');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 
-const setAssetHistory = (data) => {
+const setAssetHistory = data => {
   if (!data.escrowInfo.isAlgoBuyEscrow) {
     const historyEntry = {
       asaAmount: data.indexerInfo.asaAmount,
@@ -31,7 +31,7 @@ module.exports = ({queues, databases}) =>{
   console.log({formattedEscrowDB});
   console.log('in formatted-order-worker.js');
 
-  const formattedOrderWorker = new Worker('formattedEscrows', async (job)=>{
+  const formattedOrderWorker = new Worker('formattedEscrows', async job=>{
     console.log('got formatted escrows job ', {job});
     const assetId = job.data.escrowInfo.assetId;
     const addr = job.data.indexerInfo.address;
@@ -98,7 +98,7 @@ module.exports = ({queues, databases}) =>{
       */
   }, {connection: queues.connection, concurrency: 50});
 
-  formattedOrderWorker.on('error', (err) => {
+  formattedOrderWorker.on('error', err => {
     console.error( {err} );
   });
 };

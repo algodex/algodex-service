@@ -114,7 +114,7 @@ module.exports = function(doc) {
       if (allGroups.hasOwnProperty(groupId)) {
         const group = allGroups[groupId];
 
-        group.forEach( (txn) => {
+        group.forEach( txn => {
           if (txn.txn && txn.txn.type) {
             const isAlgodex = ( txn.txn.apid === 22045503 ||
               txn.txn.apid === 22045522);

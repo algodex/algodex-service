@@ -42,15 +42,15 @@ const compare = async function() {
   const rounds = createConsecutiveObject(realStart, current);
   // const rounds = createConsecutiveObject(start, start+5000);
   const allDocs = await db.allDocs();
-  const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
+  const blockDocs = allDocs.rows.filter(doc=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds
-  const existingBlocks = blockDocs.map((doc)=>parseInt(doc.id));
-  existingBlocks.forEach((block)=>{
+  const existingBlocks = blockDocs.map(doc=>parseInt(doc.id));
+  existingBlocks.forEach(block=>{
     delete rounds[block];
   });
 
   // Chunk the keys for Multi-Threaded workers
-  const chunks = cpuChunkArray(Object.keys(rounds).map((r)=>parseInt(r)));
+  const chunks = cpuChunkArray(Object.keys(rounds).map(r=>parseInt(r)));
   console.log(start, current);
   // Chunk Process into Forks
   for (let i = 0; i < chunks.length; i++) {

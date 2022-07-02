@@ -15,7 +15,7 @@ const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
 };
 
 
-const reduceIndexerInfo = (indexerInfo) => {
+const reduceIndexerInfo = indexerInfo => {
   const asaAmount = indexerInfo.account.assets !== undefined ?
     indexerInfo.account.assets[0].amount : 0;
   return {
@@ -45,7 +45,7 @@ const getApproximateBalance = async (blockDB, account, round) => {
   const balanceDiffRes = await blockDB.query('blocks/approxBalance',
       {reduce: false, startkey: startKey, endkey: endKey} );
 
-  const balanceDiffRows = balanceDiffRes.rows.map( (row) => row.value);
+  const balanceDiffRows = balanceDiffRes.rows.map( row => row.value);
   if (!balanceDiffRows || balanceDiffRows.length === 0) {
     throw new Error(`Balance diff rows are missing! ${account} ${round}`);
   }
@@ -133,7 +133,7 @@ module.exports = ({queues, databases}) =>{
   // Lighten the load on the broker and do batch processing
   console.log({escrowDB});
   console.log('in order-worker.js');
-  const indexedOrders = new Worker('orders', async (job)=>{
+  const indexedOrders = new Worker('orders', async job=>{
     const blockData = job.data.blockData;
     const order = job.data.reducedOrder;
     const account = job.data.account;
@@ -176,7 +176,7 @@ module.exports = ({queues, databases}) =>{
     }
   }, {connection: queues.connection, concurrency: 50});
 
-  indexedOrders.on('error', (err) => {
+  indexedOrders.on('error', err => {
     console.error( {err} );
   });
 };

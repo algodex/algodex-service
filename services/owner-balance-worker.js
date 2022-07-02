@@ -4,12 +4,12 @@ const Worker = bullmq.Worker;
 const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
-const getAlgxBalance = (accountInfo) => {
+const getAlgxBalance = accountInfo => {
   if (!accountInfo.account || !accountInfo.account.assets) {
     return 0;
   }
   const algxAsset = accountInfo.account.assets
-      .find( (asset) => asset['asset-id'] ===
+      .find( asset => asset['asset-id'] ===
         parseInt(process.env.ALGX_ASSET_ID));
   if (!algxAsset) {
     return 0;
@@ -53,7 +53,7 @@ module.exports = ({queues, databases}) =>{
   const ownerBalanceDB = databases.owner_balance;
   const indexerClient = initOrGetIndexer();
 
-  const ownerBalanceWorker = new Worker('ownerBalance', async (job)=>{
+  const ownerBalanceWorker = new Worker('ownerBalance', async job=>{
     const ownerAddr = job.data.ownerAddr;
     const round = job.data.roundStr;
 
@@ -88,7 +88,7 @@ module.exports = ({queues, databases}) =>{
     await addBalanceToDB(ownerBalanceDB, doc);
   }, {connection: queues.connection, concurrency: 50});
 
-  ownerBalanceWorker.on('error', (err) => {
+  ownerBalanceWorker.on('error', err => {
     console.error( {err} );
     throw err;
   });

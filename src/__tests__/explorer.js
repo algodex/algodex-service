@@ -3,7 +3,7 @@ const explorer = require('../explorer');
 
 test.skip('get a block from explorer', async () => {
   await explorer.getBlock({round: 1986})
-      .catch((e) => expect(e).toBeInstanceOf(InvalidConfiguration));
+      .catch(e => expect(e).toBeInstanceOf(InvalidConfiguration));
 
   process.env.ALGORAND_EXPLORER = 'https://api.testnet.algoexplorer.io';
   const block = await explorer.getBlock({round: 1986});
@@ -12,7 +12,7 @@ test.skip('get a block from explorer', async () => {
 
 test.skip('wait for block from explorer', async () => {
   await explorer.waitForBlock({round: 1986})
-      .catch((e) => expect(e).toBeInstanceOf(InvalidConfiguration));
+      .catch(e => expect(e).toBeInstanceOf(InvalidConfiguration));
 
   process.env.ALGORAND_EXPLORER = 'https://api.testnet.algoexplorer.io';
   const block = await explorer.waitForBlock({round: 1986});
@@ -32,7 +32,7 @@ test.skip('get applications block range', async () => {
   ];
 
   await explorer.getAppsBlockRange(apps)
-      .catch((e) => expect(e).toBeInstanceOf(InvalidConfiguration));
+      .catch(e => expect(e).toBeInstanceOf(InvalidConfiguration));
 
   process.env.ALGORAND_EXPLORER = 'https://testnet.algoexplorerapi.io';
   const range = await explorer.getAppsBlockRange(apps);

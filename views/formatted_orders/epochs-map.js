@@ -1,12 +1,12 @@
 module.exports = function(doc) {
-  const unixToEpoch = (unixTime) => {
+  const unixToEpoch = unixTime => {
     const rounded = Math.floor(unixTime);
     const start = 1629950400; // start time. change mainnet or testnet
     const secondsInEpoch = 604800;
     return Math.floor((rounded - start) / secondsInEpoch) + 1;
   };
 
-  const getEpochFromEscrow = (escrow) => {
+  const getEpochFromEscrow = escrow => {
     const history = escrow.history;
     let startTime = null;
     let endTime = null;
@@ -22,7 +22,7 @@ module.exports = function(doc) {
         const epochCount = endEpoch - startEpoch + 1;
         const epochs = Array(epochCount)
             .fill().map((element, index) => index + startEpoch);
-        epochs.forEach((epoch) => epochSet[`epoch:${epoch}`] = 1);
+        epochs.forEach(epoch => epochSet[`epoch:${epoch}`] = 1);
         startTime = null;
         endTime = null;
       }
@@ -34,7 +34,7 @@ module.exports = function(doc) {
       epochSet[`epoch:${lastEpoch}`] = 1;
       stillOpen = true;
     }
-    const epochs = Object.keys(epochSet).map( (key) => key.split(':')[1]);
+    const epochs = Object.keys(epochSet).map( key => key.split(':')[1]);
     return {
       epochs,
       stillOpen,
@@ -57,7 +57,7 @@ module.exports = function(doc) {
   };
 
   const epochData = getEpochFromEscrow(historyData);
-  epochData.epochs.forEach((epoch) => {
+  epochData.epochs.forEach(epoch => {
     emit(epoch, doc._id);
   });
   if (epochData.stillOpen) {

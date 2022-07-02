@@ -26,7 +26,7 @@ module.exports = ({queues, databases}) =>{
   console.log('in assets-worker.js');
   const indexer = initOrGetIndexer();
 
-  const assetsWorker = new Worker('assets', async (job)=>{
+  const assetsWorker = new Worker('assets', async job=>{
     console.log('got assets job ', {job});
     const assetInCouch = await getAssetInCouch(assetDB, job.data.assetId);
     if (assetInCouch) {
@@ -49,7 +49,7 @@ module.exports = ({queues, databases}) =>{
         });
   }, {connection: queues.connection, concurrency: 50});
 
-  assetsWorker.on('error', (err) => {
+  assetsWorker.on('error', err => {
     console.error( {err} );
   });
 };

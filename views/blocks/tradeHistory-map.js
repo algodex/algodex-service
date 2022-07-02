@@ -82,9 +82,9 @@ module.exports = function(doc) {
     return base64decode(target);
   };
 
-  const getAlgodexExecuteGroups = (groups) => {
-    const executeGroups = groups.filter( (group) => {
-      return group.filter( (txn) => {
+  const getAlgodexExecuteGroups = groups => {
+    const executeGroups = groups.filter( group => {
+      return group.filter( txn => {
         if (txn.txn && txn.txn.type) {
           const isAlgodex = ( txn.txn.apid === 22045503 ||
             txn.txn.apid === 22045522);
@@ -118,7 +118,7 @@ module.exports = function(doc) {
 
     const executeGroups = getAlgodexExecuteGroups(Object.values(allGroups));
 
-    executeGroups.forEach( (group) => {
+    executeGroups.forEach( group => {
       // let algoAmount = -1;
       // let asaAmount = -1;
 

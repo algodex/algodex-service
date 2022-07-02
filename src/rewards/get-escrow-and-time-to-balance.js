@@ -1,7 +1,7 @@
 
-const getEscrowAndTimeToBalance = (escrows) => {
+const getEscrowAndTimeToBalance = escrows => {
   const escrowTimeMap = escrows.reduce( (escrowTimeMap, escrow) => {
-    escrow.data.history.forEach((historyItem) => {
+    escrow.data.history.forEach(historyItem => {
       const time = historyItem.time;
       const balance = escrow.data.escrowInfo.isAlgoBuyEscrow ?
         historyItem.algoAmount : historyItem.asaAmount;

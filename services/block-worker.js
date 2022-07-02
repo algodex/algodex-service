@@ -21,7 +21,7 @@ module.exports = ({queues, databases}) =>{
   const syncedBlocksDB = databases.synced_blocks;
   const blocksDB = databases.blocks;
 
-  const blocks = new Worker('blocks', async (job)=>{
+  const blocks = new Worker('blocks', async job=>{
     console.debug({
       msg: 'Received block',
       round: job.data.rnd,
@@ -61,7 +61,7 @@ module.exports = ({queues, databases}) =>{
     }
 
     // eslint-disable-next-line max-len
-    const dirtyAccounts = getDirtyAccounts(job.data).map( (account) => [account] );
+    const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );
 
     return Promise.all( [blocksDB.query('blocks/orders',
         {reduce: true, group: true, keys: dirtyAccounts})
@@ -140,7 +140,7 @@ module.exports = ({queues, databases}) =>{
     ]);
   }, {connection: queues.connection, concurrency: 50});
 
-  blocks.on('error', (err) => {
+  blocks.on('error', err => {
     console.error( {err} );
   });
 };
