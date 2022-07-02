@@ -49,11 +49,15 @@ const updateRewards = ({ownerWalletToRewards, ownerWalletToALGXBalance, spreads,
     const algxBalance = ownerWalletToALGXBalance[owner] || 0;
     const quality = ownerWalletToQuality[owner] || 0;
     if (ownerWalletToRewards[owner] === undefined) {
-      ownerWalletToRewards[owner] = {algxBalanceSum: 0, qualitySum: 0};
+      ownerWalletToRewards[owner] = {algxBalanceSum: 0,
+        qualitySum: 0, uptime: 0};
     }
     const entry = ownerWalletToRewards[owner];
     entry.algxBalanceSum += algxBalance;
     entry.qualitySum += quality;
+    if (ownerWalletToQuality[owner] !== undefined) {
+      entry.uptime++;
+    }
   });
 };
 
