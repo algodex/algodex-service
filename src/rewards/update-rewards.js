@@ -24,13 +24,25 @@ const updateRewards = ({ownerWalletToRewards, ownerWalletToALGXBalance, spreads,
           const midMarket = (spread.ask + spread.bid) / 2;
           const distanceFromSpread = Math.abs(price - midMarket);
           const percentDistant = distanceFromSpread / midMarket;
+
           const depth = exchangeRate * balance * price / (10**decimals);
-          const quality = depth / (percentDistant + 0.0001);
           const orderType = escrowAddrToData[escrow].data.isAlgoBuyEscrow ?
-              'bid' : 'ask';
+          'bid' : 'ask';
+
+          let isEligible = true;
+          if (percentDistant > 0.1) {
+            isEligible = false;
+          }
+          if (depth < 15 && orderType === 'bid') {
+            isEligible = false;
+          } else if (depth < 30 && orderType === 'ask') {
+            isEligible = false;
+          }
+          const quality = isEligible ? depth / (percentDistant + 0.0001) : 0;
+
           return {spread, price, balance, midMarket, distanceFromSpread,
             percentDistant, depth, quality, decimals, assetId, exchangeRate,
-            orderType, addr: escrow};
+            orderType, isEligible, addr: escrow};
         });
   const ownerWalletToQuality =
   qualityAnalytics.reduce((ownerWalletToQuality, entry) => {
@@ -55,7 +67,8 @@ const updateRewards = ({ownerWalletToRewards, ownerWalletToALGXBalance, spreads,
     const entry = ownerWalletToRewards[owner];
     entry.algxBalanceSum += algxBalance;
     entry.qualitySum += quality;
-    if (ownerWalletToQuality[owner] !== undefined) {
+    if (ownerWalletToQuality[owner] !== undefined &&
+      ownerWalletToQuality[owner] > 0.0000001) {
       entry.uptime++;
     }
   });
