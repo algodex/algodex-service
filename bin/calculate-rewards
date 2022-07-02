@@ -10,6 +10,7 @@
  */
 
 require('dotenv').config();
+const cliProgress = require('cli-progress');
 const getDatabases = require('../src/db/get-databases');
 const getSequenceInfo = require('../src/rewards/get-sequence-info');
 const getBlocksToTime = require('../src/rewards/get-blocks-to-time');
@@ -32,6 +33,11 @@ const updateSpreads = require('../src/rewards/update-spreads');
 const getSpreads = require('../src/rewards/get-spreads');
 const getEscrowAndTimeToBalance =
     require('../src/rewards/get-escrow-and-time-to-balance.js');
+
+
+// create a new progress bar instance and use shades_classic theme
+const progressBar = new cliProgress.SingleBar({},
+    cliProgress.Presets.shades_classic);
 const databases = getDatabases();
 const formattedEscrowDB = databases.formatted_escrow;
 const ownerBalanceDB = databases.owner_balance;
@@ -72,11 +78,19 @@ async function run() {
   const {unixTimeToChangedEscrows, changedEscrowSeq} = getSequenceInfo(escrows);
   const escrowTimeToBalance = getEscrowAndTimeToBalance(escrows);
   const epochStart = getEpochStart(epoch);
-  const epochEnd = getEpochEnd(epoch);
+  const epochEnd = process.env.FASTMODE ?
+    epochStart + (60*60*24) : getEpochEnd(epoch);
   const ownerBalanceToHist = await getOwnerBalanceDataToHist(ownerBalanceData);
   const {ownerChangeTimes, timeToChangedOwners} =
       getOwnerWalletChangeTimes(ownerBalanceToHist);
+  const allAssetsSet = Object.keys(escrowAddrToData).reduce((set, escrow) => {
+    const asset = escrowAddrToData[escrow].data.escrowInfo.assetId;
+    set.add(asset);
+    return set;
+  }, new Set());
+  const allAssets = Array.from(allAssetsSet);
   const initialState = {
+    allAssets,
     accountData,
     changedEscrowSeq,
     escrows,
@@ -92,6 +106,8 @@ async function run() {
     ownerWallets,
     unixTimeToChangedEscrows,
   };
+  progressBar.start(epochEnd-epochStart, 0);
+
   Object.freeze(initialState);
 
   let timestep = epochStart;
@@ -104,13 +120,13 @@ async function run() {
   const escrowToBalance = getInitialBalances(timestep, escrows);
   const ownerWalletToALGXBalance = getInitialOwnerWalletToBalances(timestep,
       ownerBalanceToHist);
-  const ownerWalletToRewards = {};
+  const ownerWalletAssetToRewards = {};
   const spreads = getSpreads({escrowToBalance, escrowAddrToData});
 
   const stateMachine = {
     escrowToBalance,
     ownerWalletToALGXBalance,
-    ownerWalletToRewards,
+    ownerWalletAssetToRewards,
     spreads,
   };
 
@@ -145,18 +161,39 @@ async function run() {
     if (escrowDidChange) {
       updateSpreads(stateMachine, {...initialState});
     }
-    updateRewards({...stateMachine, ...initialState});
-    console.log(timestep);
+    const assetsWithBalances =
+      Object.keys(escrowToBalance).reduce( (set, escrow) => {
+        const assetId = escrowAddrToData[escrow].data.escrowInfo.assetId;
+        set.add(assetId);
+        return set;
+      }, new Set());
+    Array.from(assetsWithBalances).forEach(assetId => {
+      updateRewards({assetId, ...stateMachine, ...initialState});
+    });
+    console.log((timestep - epochStart) / (epochEnd - epochStart) * 100);
+    // progressBar.update((timestep - epochStart) / (epochEnd - epochStart) * 100);
+    progressBar.update(timestep-epochStart);
     // console.log(changedEscrowSet);
   } while (timestep < epochEnd);
 
-  const rewardFinals = Object.keys(ownerWalletToRewards).map(ownerWallet => {
-    const entry = ownerWalletToRewards[ownerWallet];
-    const qualitySum = entry.qualitySum;
-    const algxAvg = entry.algxBalanceSum / getSecondsInEpoch();
-    const uptime = entry.uptime;
-    const qualityFinal = (qualitySum ** 0.5) * /*(algxAvg ** 0.2) * */ (uptime ** 5);
-    return {ownerWallet, uptime, qualitySum, algxAvg, qualityFinal};
+  const rewardFinals =
+  Object.keys(ownerWalletAssetToRewards).map(ownerWallet => {
+    return Object.values(ownerWalletAssetToRewards[ownerWallet])
+        .reduce((qualityEntry, assetQualityEntry) => {
+          const qualitySum = assetQualityEntry.qualitySum;
+          const algxAvg = assetQualityEntry.algxBalanceSum /
+            getSecondsInEpoch();
+          const uptime = assetQualityEntry.uptime;
+          const qualityFinal = (qualitySum ** 0.5) *
+            (uptime ** 5); /*(algxAvg ** 0.2) * */ 
+          qualityEntry.uptime += uptime;
+          qualityEntry.qualitySum += qualitySum;
+          qualityEntry.algxAvg += algxAvg /
+            Object.keys(ownerWalletAssetToRewards[ownerWallet]).length;
+          qualityEntry.qualityFinal += qualityFinal;
+          return qualityEntry;
+        }, {ownerWallet, uptime: 0,
+          qualitySum: 0, algxAvg: 0, qualityFinal: 0});
   });
   rewardFinals.sort((a, b) => a.qualityFinal < b.qualityFinal ? 1 : -1);
   console.log(rewardFinals);

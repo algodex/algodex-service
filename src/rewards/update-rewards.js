@@ -1,12 +1,16 @@
 
-const updateRewards = ({ownerWalletToRewards, ownerWalletToALGXBalance, spreads,
-  escrowToBalance, escrowAddrToData}) => {
+const updateRewards = ({ownerWalletAssetToRewards, ownerWalletToALGXBalance,
+  spreads, escrowToBalance, escrowAddrToData, assetId}) => {
+  const inputtedAssetId = assetId;
   const qualityAnalytics =
     Object.keys(escrowToBalance).filter(escrow => escrowToBalance[escrow] > 0)
         .filter(escrow => {
           const assetId = escrowAddrToData[escrow].data.escrowInfo.assetId;
           const spread = spreads[`asset:${assetId}`];
           if (!spread || !spread.ask || !spread.bid) {
+            return false;
+          }
+          if (assetId !== inputtedAssetId) {
             return false;
           }
           return true;
@@ -39,32 +43,37 @@ const updateRewards = ({ownerWalletToRewards, ownerWalletToALGXBalance, spreads,
             isEligible = false;
           }
           const quality = isEligible ? depth / (percentDistant + 0.0001) : 0;
-
-          return {spread, price, balance, midMarket, distanceFromSpread,
-            percentDistant, depth, quality, decimals, assetId, exchangeRate,
-            orderType, isEligible, addr: escrow};
+          return {addr: escrow, quality};
+          // return {spread, price, balance, midMarket, distanceFromSpread,
+          //   percentDistant, depth, quality, decimals, assetId, exchangeRate,
+          //   orderType, isEligible, addr: escrow};
         });
   const ownerWalletToQuality =
-  qualityAnalytics.reduce((ownerWalletToQuality, entry) => {
-    const ownerAddr = escrowAddrToData[entry.addr].data.escrowInfo.ownerAddr;
-    if (ownerWalletToQuality[ownerAddr] === undefined) {
-      ownerWalletToQuality[ownerAddr] = 0;
-    }
-    ownerWalletToQuality[ownerAddr] += entry.quality;
-    return ownerWalletToQuality;
-  }, {});
+  qualityAnalytics.filter(entry => entry.quality && entry.quality > 0)
+      .reduce((ownerWalletToQuality, entry) => {
+        const ownerAddr =
+          escrowAddrToData[entry.addr].data.escrowInfo.ownerAddr;
+        if (ownerWalletToQuality[ownerAddr] === undefined) {
+          ownerWalletToQuality[ownerAddr] = 0;
+        }
+        ownerWalletToQuality[ownerAddr] += entry.quality;
+        return ownerWalletToQuality;
+      }, {});
 
-  const allOwners = new Set([...Object.keys(ownerWalletToQuality),
-    ...Object.keys(ownerWalletToALGXBalance)]);
+  // const allOwners = new Set([...Object.keys(ownerWalletToQuality),
+  //   ...Object.keys(ownerWalletToALGXBalance)]);
 
-  allOwners.forEach(owner => {
-    const algxBalance = ownerWalletToALGXBalance[owner] || 0;
+  Object.keys(ownerWalletToQuality).forEach(owner => {
+    const algxBalance = (ownerWalletToALGXBalance[owner] / (10**6)) || 0;
     const quality = ownerWalletToQuality[owner] || 0;
-    if (ownerWalletToRewards[owner] === undefined) {
-      ownerWalletToRewards[owner] = {algxBalanceSum: 0,
+    if (ownerWalletAssetToRewards[owner] === undefined) {
+      ownerWalletAssetToRewards[owner] = {};
+    }
+    if (ownerWalletAssetToRewards[owner][inputtedAssetId] === undefined) {
+      ownerWalletAssetToRewards[owner][inputtedAssetId] = {algxBalanceSum: 0,
         qualitySum: 0, uptime: 0};
     }
-    const entry = ownerWalletToRewards[owner];
+    const entry = ownerWalletAssetToRewards[owner][inputtedAssetId];
     entry.algxBalanceSum += algxBalance;
     entry.qualitySum += quality;
     if (ownerWalletToQuality[owner] !== undefined &&

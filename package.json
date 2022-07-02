@@ -23,6 +23,7 @@
     "@pactfi/pactsdk": "^0.2.2",
     "algosdk": "^1.16.0",
     "bullmq": "^1.50.2",
+    "cli-progress": "^3.11.2",
     "commander": "^8.2.0",
     "cross-fetch": "^3.1.5",
     "devmoji": "^2.3.0",
