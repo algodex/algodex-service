@@ -150,12 +150,12 @@ async function run() {
     // console.log(changedEscrowSet);
   } while (timestep < epochEnd);
 
-  const rewardFinals = Object.keys(ownerWalletToRewards).map((ownerWallet) => {
+  const rewardFinals = Object.keys(ownerWalletToRewards).map(ownerWallet => {
     const entry = ownerWalletToRewards[ownerWallet];
     const qualitySum = entry.qualitySum;
     const algxAvg = entry.algxBalanceSum / getSecondsInEpoch();
     const uptime = entry.uptime;
-    const qualityFinal = (qualitySum ** 0.5) * (algxAvg ** 0.2) * (uptime ** 5);
+    const qualityFinal = (qualitySum ** 0.5) * /*(algxAvg ** 0.2) * */ (uptime ** 5);
     return {ownerWallet, uptime, qualitySum, algxAvg, qualityFinal};
   });
   rewardFinals.sort((a, b) => a.qualityFinal < b.qualityFinal ? 1 : -1);
