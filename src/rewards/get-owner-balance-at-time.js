@@ -4,7 +4,7 @@ const getOwnerBalanceAtTime = (ownerBalanceToHist, ownerAddr, unixTime) => {
   let balance = 0;
   for (let i = 0; i < history.length; i++) {
     if (history[i].time <= unixTime) {
-      balance = escrow.algxBalance;
+      balance = history[i].algxBalance;
     } else {
       break;
     }

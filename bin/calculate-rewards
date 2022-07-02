@@ -15,6 +15,7 @@ const getSequenceInfo = require('../src/rewards/get-sequence-info');
 const getBlocksToTime = require('../src/rewards/get-blocks-to-time');
 const getEpochEnd = require('../src/rewards/get-epoch-end');
 const getEpochStart = require('../src/rewards/get-epoch-start');
+const getSecondsInEpoch = require('../src/rewards/get-seconds-in-epoch');
 const getInitialBalances = require('../src/rewards/get-initial-balances');
 // eslint-disable-next-line max-len
 const getOwnerBalanceAtTime = require('../src/rewards/get-owner-balance-at-time');
@@ -31,11 +32,9 @@ const updateSpreads = require('../src/rewards/update-spreads');
 const getSpreads = require('../src/rewards/get-spreads');
 const getEscrowAndTimeToBalance =
     require('../src/rewards/get-escrow-and-time-to-balance.js');
-const initWalletToRewards = require('../src/rewards/init-wallet-to-rewards');
 const databases = getDatabases();
 const formattedEscrowDB = databases.formatted_escrow;
 const ownerBalanceDB = databases.owner_balance;
-const blockDB = databases.blocks;
 
 const args = require('minimist')(process.argv.slice(2));
 if (args.epoch === undefined) {
@@ -75,7 +74,8 @@ async function run() {
   const epochStart = getEpochStart(epoch);
   const epochEnd = getEpochEnd(epoch);
   const ownerBalanceToHist = await getOwnerBalanceDataToHist(ownerBalanceData);
-  const ownerWalletChangeTimes = getOwnerWalletChangeTimes(ownerBalanceToHist);
+  const {ownerChangeTimes, timeToChangedOwners} =
+      getOwnerWalletChangeTimes(ownerBalanceToHist);
   const initialState = {
     accountData,
     changedEscrowSeq,
@@ -88,7 +88,7 @@ async function run() {
     formattedEscrowData,
     ownerBalanceData,
     ownerBalanceToHist,
-    ownerWalletChangeTimes,
+    ownerChangeTimes, timeToChangedOwners,
     ownerWallets,
     unixTimeToChangedEscrows,
   };
@@ -104,7 +104,7 @@ async function run() {
   const escrowToBalance = getInitialBalances(timestep, escrows);
   const ownerWalletToALGXBalance = getInitialOwnerWalletToBalances(timestep,
       ownerBalanceToHist);
-  const ownerWalletToRewards = initWalletToRewards(escrowAddrs);
+  const ownerWalletToRewards = {};
   const spreads = getSpreads({escrowToBalance, escrowAddrToData});
 
   const stateMachine = {
@@ -115,20 +115,22 @@ async function run() {
   };
 
   do {
-    timestep += Math.round(random()*60);
+    const curMinute = Math.floor(timestep / 60);
+    timestep = ((curMinute + 1) * 60) + Math.round(random()*60);
     let escrowDidChange = false;
     const ownerWalletsBalanceChangeSet = new Set();
 
     while (escrowstep < changedEscrowSeq.length &&
           changedEscrowSeq[escrowstep] <= timestep) {
       const changeTime = changedEscrowSeq[escrowstep];
-      while (ownerstep <= ownerWalletChangeTimes.length &&
-        changeTime >= ownerWalletChangeTimes[ownerstep].time) {
-        ownerstep++; // Catch up to escrow time step
+      while (ownerstep <= ownerChangeTimes.length &&
+        changeTime >= ownerChangeTimes[ownerstep]) {
         // eslint-disable-next-line max-len
-        ownerWalletChangeTimes[ownerstep].ownerAddrs.forEach( (addr) => {
+        const timeKey = 'time:'+ownerChangeTimes[ownerstep];
+        timeToChangedOwners[timeKey].forEach( (addr) => {
           ownerWalletsBalanceChangeSet.add(addr);
         });
+        ownerstep++; // Catch up to escrow time step
       }
       const changedEscrows = unixTimeToChangedEscrows[`ts:${changeTime}`];
       escrowDidChange = true;
@@ -138,7 +140,7 @@ async function run() {
     }
     if (ownerWalletsBalanceChangeSet.size > 0) {
       updateOwnerWallets({ownerWalletsBalanceChangeSet,
-        ...stateMachine, ...initialState});
+        ...stateMachine, ...initialState, timestep});
     }
     if (escrowDidChange) {
       updateSpreads(stateMachine, {...initialState});
@@ -147,6 +149,16 @@ async function run() {
     console.log(timestep);
     // console.log(changedEscrowSet);
   } while (timestep < epochEnd);
+
+  const rewardFinals = Object.keys(ownerWalletToRewards).map((ownerWallet) => {
+    const entry = ownerWalletToRewards[ownerWallet];
+    const qualitySum = entry.algxBalanceSum;
+    const algxAvg = entry.algxBalanceSum / getSecondsInEpoch();
+    const qualityFinal = (qualitySum ** 0.5) * (algxAvg ** 0.2);
+    return {ownerWallet, qualitySum, algxAvg, qualityFinal};
+  });
+  rewardFinals.sort((a, b) => a.qualityFinal < b.qualityFinal ? 1 : -1);
+  console.log(rewardFinals);
 }
 
 run();
