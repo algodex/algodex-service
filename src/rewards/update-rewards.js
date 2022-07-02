@@ -33,7 +33,7 @@ const updateRewards = ({ownerWalletToRewards, spreads,
             percentDistant, depth, quality, decimals, assetId, exchangeRate,
             orderType};
         });
-  console.log(escrowAnalytics);
+  // console.log(escrowAnalytics);
 };
 
 module.exports = updateRewards;
