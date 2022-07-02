@@ -13,7 +13,7 @@ const getAlgoUsdPrices = async () => {
           rows.push(row);
         }).on('end', function() {
           const results = rows.map(row => {
-            return {date: row[0], midPrice:
+            return {date: row[0], midPrice: // divide high and low by 2
               (parseFloat(row[2]) + parseFloat(row[3])) / 2};
           });
           resolve(results);
