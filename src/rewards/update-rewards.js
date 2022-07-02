@@ -43,7 +43,9 @@ const updateRewards = ({ownerWalletAssetToRewards, ownerWalletToALGXBalance,
             isEligible = false;
           }
           const quality = isEligible ? depth / (percentDistant + 0.0001) : 0;
-          return {addr: escrow, quality};
+          const bidDepth = orderType === 'bid' ? depth : 0;
+          const askDepth = orderType === 'ask' ? depth : 0;
+          return {addr: escrow, quality, bidDepth, askDepth};
           // return {spread, price, balance, midMarket, distanceFromSpread,
           //   percentDistant, depth, quality, decimals, assetId, exchangeRate,
           //   orderType, isEligible, addr: escrow};
@@ -54,28 +56,46 @@ const updateRewards = ({ownerWalletAssetToRewards, ownerWalletToALGXBalance,
         const ownerAddr =
           escrowAddrToData[entry.addr].data.escrowInfo.ownerAddr;
         if (ownerWalletToQuality[ownerAddr] === undefined) {
-          ownerWalletToQuality[ownerAddr] = 0;
+          ownerWalletToQuality[ownerAddr] = {bidDepth: 0, askDepth: 0,
+            quality: 0};
         }
-        ownerWalletToQuality[ownerAddr] += entry.quality;
+        ownerWalletToQuality[ownerAddr].quality += entry.quality;
+        ownerWalletToQuality[ownerAddr].bidDepth += entry.bidDepth;
+        ownerWalletToQuality[ownerAddr].askDepth += entry.askDepth;
         return ownerWalletToQuality;
       }, {});
 
+  const totalBidDepth = qualityAnalytics.reduce((sum, entry) => {
+    return sum + entry.bidDepth;
+  }, 0);
+  const totalAskDepth = qualityAnalytics.reduce((sum, entry) => {
+    return sum + entry.askDepth;
+  }, 0);
   // const allOwners = new Set([...Object.keys(ownerWalletToQuality),
   //   ...Object.keys(ownerWalletToALGXBalance)]);
 
   Object.keys(ownerWalletToQuality).forEach(owner => {
     const algxBalance = (ownerWalletToALGXBalance[owner] / (10**6)) || 0;
-    const quality = ownerWalletToQuality[owner] || 0;
+    const quality = ownerWalletToQuality[owner].quality || 0;
+    const askDepth = ownerWalletToQuality[owner].askDepth || 0;
+    const bidDepth = ownerWalletToQuality[owner].bidDepth || 0;
+
     if (ownerWalletAssetToRewards[owner] === undefined) {
       ownerWalletAssetToRewards[owner] = {};
     }
     if (ownerWalletAssetToRewards[owner][inputtedAssetId] === undefined) {
       ownerWalletAssetToRewards[owner][inputtedAssetId] = {algxBalanceSum: 0,
-        qualitySum: 0, uptime: 0};
+        qualitySum: 0, uptime: 0, depth: 0};
     }
     const entry = ownerWalletAssetToRewards[owner][inputtedAssetId];
     entry.algxBalanceSum += algxBalance;
     entry.qualitySum += quality;
+    if (totalBidDepth > 0) {
+      entry.depth += bidDepth / totalBidDepth;
+    }
+    if (totalAskDepth > 0) {
+      entry.depth += askDepth / totalAskDepth;
+    }
     if (ownerWalletToQuality[owner] !== undefined &&
       ownerWalletToQuality[owner] > 0.0000001) {
       entry.uptime++;

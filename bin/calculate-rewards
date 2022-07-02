@@ -180,12 +180,11 @@ async function run() {
   Object.keys(ownerWalletAssetToRewards).map(ownerWallet => {
     return Object.values(ownerWalletAssetToRewards[ownerWallet])
         .reduce((qualityEntry, assetQualityEntry) => {
-          const qualitySum = assetQualityEntry.qualitySum;
+          const {qualitySum, depth, uptime} = assetQualityEntry;
           const algxAvg = assetQualityEntry.algxBalanceSum /
             getSecondsInEpoch();
-          const uptime = assetQualityEntry.uptime;
           const qualityFinal = (qualitySum ** 0.5) *
-            (uptime ** 5); /*(algxAvg ** 0.2) * */ 
+            (uptime ** 5) * (depth ** 0.3); // (algxAvg ** 0.2) * FIXME FOR MAINNET
           qualityEntry.uptime += uptime;
           qualityEntry.qualitySum += qualitySum;
           qualityEntry.algxAvg += algxAvg /
