@@ -1,0 +1,38 @@
+#!/usr/bin/env node
+/* eslint-disable require-jsdoc */
+require('dotenv').config();
+
+const getDatabases = require('../src/db/get-databases');
+const databases = getDatabases();
+
+const formattedEscrowDB = databases.formatted_escrow;
+
+const getWalletToDates = (rows, dateType) => {
+  const walletToDates = rows.filter(row =>
+    row.key !== undefined && row.value !== undefined)
+      .filter(row => {
+        const type = row.key.split(':')[1];
+        return type === dateType;
+      }).reduce((map, row) => {
+        const wallet = row.key.split(':')[0];
+        if (map[wallet] === undefined) {
+          map[wallet] = new Set();
+        }
+        map[wallet].add(row.value);
+        return map;
+      }, {});
+  return walletToDates;
+};
+
+async function run() {
+  const accountData =
+    await formattedEscrowDB.query('formatted_escrow/distinctDates',
+      { reduce: false} );
+
+    const walletToMonths = getWalletToDates(accountData.rows, 'month');
+    const walletToDates = getWalletToDates(accountData.rows, 'date');
+      console.log(walletToDates);
+
+}
+
+run();

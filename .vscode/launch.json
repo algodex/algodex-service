@@ -108,5 +108,15 @@
             "program": "${workspaceFolder}/bin/calculate-rewards",
             "args": ["--epoch=1"]
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "GetActiveTestnetWallets",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/bin/get-active-testnet-wallets",
+            "args": ["--epoch=1"]
+        },
     ]
 }

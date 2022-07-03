@@ -15,7 +15,7 @@ const updateRewards = ({ownerWalletAssetToRewards, ownerWalletToALGXBalance,
           }
           return true;
         }).map(escrow => {
-          const exchangeRate = 1; // 1 algo to USD. FIXME
+          const exchangeRate = 1.7; // 1 algo to USD. FIXME
           const assetId = escrowAddrToData[escrow].data.escrowInfo.assetId;
           const price = escrowAddrToData[escrow].data.escrowInfo.price;
           const decimals = escrowAddrToData[escrow].data.assetDecimals;
