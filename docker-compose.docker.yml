@@ -55,6 +55,15 @@ services:
     depends_on:
       - events
       - queues
+  worker-owner-balance:
+    build: .
+    volumes:
+      - ./:/app
+    environment:
+      - COUCHDB_BASE_URL=http://admin:dex@couchdb:5984
+    depends_on:
+      - events
+      - queues
   worker-blocks:
     build: .
     volumes:

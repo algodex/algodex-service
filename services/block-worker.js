@@ -4,12 +4,13 @@ const verifyContracts = require('../src/verify-contracts');
 
 const getDirtyAccounts = require('../src/get-dirty-accounts');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
+const sleepWhileWaitingForQueues = require('../src/sleep-while-waiting-for-queues');
 
 const getAssetQueuePromise = (assetQueue, assetId) => {
   const assetAddJob = {assetId: assetId};
   const promise = assetQueue.add('assets', assetAddJob,
       {removeOnComplete: true}).then(function() {
-    console.log('added asset: ' + assetId);
+    //console.log('added asset: ' + assetId);
   }).catch(function(err) {
     console.error('error adding to assets queue:', {err} );
     throw err;
@@ -26,6 +27,8 @@ module.exports = ({queues, databases}) =>{
       msg: 'Received block',
       round: job.data.rnd,
     });
+
+    await sleepWhileWaitingForQueues(['tradeHistory', 'assets', 'orders']);
 
     const roundStr = `${job.data.rnd}`;
     try {
@@ -78,7 +81,7 @@ module.exports = ({queues, databases}) =>{
             // add job
 
               const key = row.key;
-              console.log('got account', {key});
+              //console.log('got account', {key});
 
               const assetId = row.value.assetId;
               if (!('assetId:assetIds' in assetIdSet)) {
@@ -94,8 +97,7 @@ module.exports = ({queues, databases}) =>{
 
               const ordersJob = {account: account,
                 blockData: job.data, reducedOrder: row};
-              console.log('queuing order: ' + ordersJob.account +
-                ' ' + ordersJob.blockData.rnd);
+              //console.log('queuing order: ' + ordersJob.account +' ' + ordersJob.blockData.rnd);
               const promise = queues.orders.add('orders', ordersJob,
                   {removeOnComplete: true}).then(function() {
               }).catch(function(err) {
@@ -104,16 +106,16 @@ module.exports = ({queues, databases}) =>{
               });
               allPromises.push(promise);
               return allPromises;
-              // console.log('adding to orders');
+              // //console.log('adding to orders');
             }, []);
           return Promise.all(assetsAndOrdersPromises);
         }).catch(function(err) {
           if (err.error === 'not_found') {
-            // console.log('not found');
+            // //console.log('not found');
             throw err;
           } else {
-            console.log('reducer error!!!');
-            console.log(err);
+            //console.log('reducer error!!!');
+            //console.log(err);
             throw err;
           }
         }),

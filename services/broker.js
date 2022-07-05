@@ -1,6 +1,8 @@
 const {getBlock, waitForBlock} = require('../src/explorer');
 
 const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
+const sleepWhileWaitingForQueues =
+  require('../src/sleep-while-waiting-for-queues');
 
 module.exports = ({queues, events, databases}) => {
   console.log({
@@ -69,8 +71,6 @@ module.exports = ({queues, events, databases}) => {
     const latestBlock = await waitForBlock({
       round: round['last-round'],
     });
-
-
     const result = await syncedBlocksDB.query('synced_blocks/max_block',
         {reduce: true, group: true, keys: [1]});
 
@@ -81,6 +81,8 @@ module.exports = ({queues, events, databases}) => {
     }
 
     do {
+      await sleepWhileWaitingForQueues(['blocks']);
+
       lastSyncedRound++;
       console.log('In catchup mode, getting block: ' + lastSyncedRound);
       const block = await getBlockFromDBOrNode(blocksDB, lastSyncedRound);

@@ -1,3 +1,4 @@
+const { _ } = require('@algodex/algodex-sdk/lib/schema');
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
@@ -56,7 +57,7 @@ module.exports = ({queues, databases}) =>{
   const ownerBalanceWorker = new Worker('ownerBalance', async job=>{
     const ownerAddr = job.data.ownerAddr;
     const round = job.data.roundStr;
-
+    console.log(`Got job! Round: ${round} OwnerAddr: ${ownerAddr}`);
     const isInDB = await checkInDB(ownerBalanceDB, ownerAddr, round);
     if (isInDB) {
       // Nothing to do
@@ -71,7 +72,7 @@ module.exports = ({queues, databases}) =>{
       if (e.status === 500 &&
         e.message.includes('not currently supported')) {
         const doc = {
-          _id: account+'-'+round,
+          _id: ownerAddr+'-'+round,
           noAccountInfo: true,
         };
         await addBalanceToDB(ownerBalanceDB, doc);
@@ -85,6 +86,8 @@ module.exports = ({queues, databases}) =>{
       assetId: process.env.ALGX_ASSET_ID,
       balance: algxBalance,
     };
+    // eslint-disable-next-line max-len
+    console.log(`Adding owner balance to DB! Round: ${round} OwnerAddr: ${ownerAddr}`);
     await addBalanceToDB(ownerBalanceDB, doc);
   }, {connection: queues.connection, concurrency: 50});
 

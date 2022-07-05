@@ -17,7 +17,8 @@ const indexer = require('../src/get-indexer')();
 const queues = getQueues();
 
 const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
-const { exit } = require('process');
+const sleepWhileWaitingForQueues =
+  require('../src/sleep-while-waiting-for-queues');
 
 const compare = async function() {
   if (!process.env.ALGORAND_NETWORK) {
@@ -60,6 +61,7 @@ const compare = async function() {
   const blocksSet = new Set(blockDocs.map((doc)=>parseInt(doc.id)));
 
   for (const round of Object.keys(rounds)) {
+    await sleepWhileWaitingForQueues(['blocks']);
     if (blocksSet.has(parseInt(round))) {
       console.log('Skipping ' + round);
       continue;

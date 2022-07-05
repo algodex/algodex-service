@@ -134,6 +134,8 @@ module.exports = ({queues, databases}) =>{
   console.log({escrowDB});
   console.log('in order-worker.js');
   const indexedOrders = new Worker('orders', async job=>{
+    await sleepWhileWaitingForQueues(['formattedEscrows', 'ownerBalance']);
+
     const blockData = job.data.blockData;
     const order = job.data.reducedOrder;
     const account = job.data.account;
