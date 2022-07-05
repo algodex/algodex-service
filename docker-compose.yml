@@ -81,6 +81,16 @@ services:
       - APP_CONTEXT=trade-history-worker
     command:
       - start
+  worker-owner-balance:
+    image: ghcr.io/algodex/algodex-service:${GHCR_TARGET}
+    x-aws-pull_credentials: ${GHCR_SECRET_ARN}
+    entrypoint: npm
+    env_file:
+      - ${ENV_FILE}
+    environment:
+      - APP_CONTEXT=owner-balance-worker
+    command:
+      - start
   service:
     image: ghcr.io/algodex/algodex-service:${GHCR_TARGET}
     x-aws-pull_credentials: ${GHCR_SECRET_ARN}

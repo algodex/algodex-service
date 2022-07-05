@@ -22,7 +22,7 @@ const {PerformanceObserver, performance} = require('node:perf_hooks');
 const isDevelopment = process.env.NODE_ENV === 'development';
 // Watch for Performance
 if (isDevelopment) {
-  const obs = new PerformanceObserver((items) => {
+  const obs = new PerformanceObserver(items => {
     console.log(items.getEntries()[0].duration);
     performance.clearMarks();
   });
@@ -49,7 +49,7 @@ module.exports = async (db, timestamp) => {
   }
 
   // console.log(pools.results.map((pool)=>pool.pool_asset.price));
-  await db.bulkDocs(pools.results.map((pool)=>{
+  await db.bulkDocs(pools.results.map(pool=>{
     return {
       ...pool,
       'price': pool.pool_asset.price,

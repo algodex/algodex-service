@@ -17,6 +17,8 @@ const indexer = require('../src/get-indexer')();
 const queues = getQueues();
 
 const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
+const sleepWhileWaitingForQueues =
+  require('../src/sleep-while-waiting-for-queues');
 
 const compare = async function() {
   if (!process.env.ALGORAND_NETWORK) {
@@ -37,16 +39,19 @@ const compare = async function() {
   let adjStart = start;
   let adjCurrent = current;
   if (process.env.ALGORAND_NETWORK === 'mainnet') {
-    adjStart = 19155000; // Start in February 2022
+    adjStart = 19162310; // Start in February 2022
   }
 
   if (process.env.TESTMODE && process.env.ALGORAND_NETWORK !== 'testnet') {
     throw new Error('TESTMODE is only allowed for testnet');
   }
   if (process.env.TESTMODE) { // Load only 5000 blocks
-    adjStart = 16583454;
-    adjCurrent = adjStart + 200;
+    //adjStart = 16583454;
+    adjStart = 16252573;
+    //adjCurrent = adjStart + 200;
+    adjCurrent = 16980000;
   }
+  adjCurrent = 16980000;
   console.log('start is: ' + adjStart);
   console.log('current is: ' + adjCurrent);
   const rounds = createConsecutiveObject(adjStart, adjCurrent);
@@ -56,6 +61,7 @@ const compare = async function() {
   const blocksSet = new Set(blockDocs.map((doc)=>parseInt(doc.id)));
 
   for (const round of Object.keys(rounds)) {
+    await sleepWhileWaitingForQueues(['blocks']);
     if (blocksSet.has(parseInt(round))) {
       console.log('Skipping ' + round);
       continue;

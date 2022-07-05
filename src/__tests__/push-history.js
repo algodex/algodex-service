@@ -18,7 +18,7 @@ const sampleHistory = [
   },
 ];
 
-test('Can push history', (done) => {
+test('Can push history', done => {
   const history = [...sampleHistory];
   const data = {history};
   const entry = {
@@ -32,7 +32,7 @@ test('Can push history', (done) => {
   done();
 });
 
-test('Duplicate entry is not added', (done) => {
+test('Duplicate entry is not added', done => {
   const history = [...sampleHistory];
   const data = {history};
   const initialLength = data.history.length;
@@ -47,7 +47,7 @@ test('Duplicate entry is not added', (done) => {
   done();
 });
 
-test('History is sorted correctly when adding earlier record', (done) => {
+test('History is sorted correctly when adding earlier record', done => {
   const history = [...sampleHistory];
   const data = {history};
 
@@ -65,7 +65,7 @@ test('History is sorted correctly when adding earlier record', (done) => {
   done();
 });
 
-test('Unsorted history is sorted correctly', (done) => {
+test('Unsorted history is sorted correctly', done => {
   const history = [
     {
       'algoAmount': 1349000,

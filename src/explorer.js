@@ -108,7 +108,7 @@ async function _getAppsBlockStart(indexer, apps) {
     app.genesis = await _getGenesisBlock(indexer, app.id);
     console.log(`printing genesis ${app.genesis} ${app.id}`);
   }
-  return Math.min(...apps.map((app)=>app.genesis));
+  return Math.min(...apps.map(app=>app.genesis));
 }
 
 /**

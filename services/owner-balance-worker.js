@@ -1,15 +1,16 @@
+const { _ } = require('@algodex/algodex-sdk/lib/schema');
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
-const getAlgxBalance = (accountInfo) => {
+const getAlgxBalance = accountInfo => {
   if (!accountInfo.account || !accountInfo.account.assets) {
     return 0;
   }
   const algxAsset = accountInfo.account.assets
-      .find( (asset) => asset['asset-id'] ===
+      .find( asset => asset['asset-id'] ===
         parseInt(process.env.ALGX_ASSET_ID));
   if (!algxAsset) {
     return 0;
@@ -53,10 +54,10 @@ module.exports = ({queues, databases}) =>{
   const ownerBalanceDB = databases.owner_balance;
   const indexerClient = initOrGetIndexer();
 
-  const ownerBalanceWorker = new Worker('ownerBalance', async (job)=>{
+  const ownerBalanceWorker = new Worker('ownerBalance', async job=>{
     const ownerAddr = job.data.ownerAddr;
     const round = job.data.roundStr;
-
+    console.log(`Got job! Round: ${round} OwnerAddr: ${ownerAddr}`);
     const isInDB = await checkInDB(ownerBalanceDB, ownerAddr, round);
     if (isInDB) {
       // Nothing to do
@@ -71,7 +72,7 @@ module.exports = ({queues, databases}) =>{
       if (e.status === 500 &&
         e.message.includes('not currently supported')) {
         const doc = {
-          _id: account+'-'+round,
+          _id: ownerAddr+'-'+round,
           noAccountInfo: true,
         };
         await addBalanceToDB(ownerBalanceDB, doc);
@@ -85,10 +86,12 @@ module.exports = ({queues, databases}) =>{
       assetId: process.env.ALGX_ASSET_ID,
       balance: algxBalance,
     };
+    // eslint-disable-next-line max-len
+    console.log(`Adding owner balance to DB! Round: ${round} OwnerAddr: ${ownerAddr}`);
     await addBalanceToDB(ownerBalanceDB, doc);
   }, {connection: queues.connection, concurrency: 50});
 
-  ownerBalanceWorker.on('error', (err) => {
+  ownerBalanceWorker.on('error', err => {
     console.error( {err} );
     throw err;
   });

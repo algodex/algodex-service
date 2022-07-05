@@ -12,7 +12,7 @@ const fetch = require('cross-fetch');
 const isDevelopment = process.env.NODE_ENV === 'development';
 // Watch for Performance
 if (isDevelopment) {
-  const obs = new PerformanceObserver((items) => {
+  const obs = new PerformanceObserver(items => {
     console.log(items.getEntries()[0].duration);
     performance.clearMarks();
   });
@@ -32,9 +32,9 @@ module.exports = function(db, timestamp) {
   const url = process.env.ALGORAND_NETWORK === 'testnet' ?
     'https://testnet.analytics.tinyman.org/api/v1/current-asset-prices/' :
     'https://mainnet.analytics.tinyman.org/api/v1/current-asset-prices/';
-  fetch(url).then(async (res)=> {
+  fetch(url).then(async res=> {
     const prices = await res.json();
-    await db.bulkDocs(Object.keys(prices).map((key) => {
+    await db.bulkDocs(Object.keys(prices).map(key => {
       const created =Date.now();
       // TODO: Better timestamps
       return {

@@ -112,14 +112,14 @@ const verifyContract = async (
 module.exports = async (rows, verifiedAccountDB) => {
   const realContracts = [];
 
-  const accounts = rows.map((row) => row.key[0]);
+  const accounts = rows.map(row => row.key[0]);
 
   const result = await verifiedAccountDB.query('verified_account/verifiedAddr',
       {reduce: false, keys: accounts});
 
   const isVerifiedSet =
     result.rows
-        .filter( (row) => row.value === 'verified')
+        .filter( row => row.value === 'verified')
         .reduce( (set, row) => set.add(row.id), new Set());
 
   const verifDBHasAddrSet = result.rows

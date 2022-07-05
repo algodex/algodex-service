@@ -16,10 +16,14 @@ const databases = [
         approxBalance: {
           map: require('../../views/blocks/approxBalance-map').toString(),
         },
+        blockToTime: {
+          map: require('../../views/blocks/blockToTime-map').toString(),
+        },
         ohlc: {
           map: require('../../views/chart/map').toString(),
           reduce: require('../../views/chart/reduce').toString(),
         },
+
       },
     },
   },
@@ -33,6 +37,9 @@ const databases = [
         },
         epochs: {
           map: require('../../views/formatted_orders/epochs-map').toString(),
+        },
+        orderLookup: {
+          map: require('../../views/formatted_orders/orderLookup-map').toString(),
         },
       },
     },

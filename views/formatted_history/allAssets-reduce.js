@@ -1,6 +1,6 @@
 
 module.exports = function(keys, values, rereduce) {
-  const calculateLastValue = (values) => {
+  const calculateLastValue = values => {
     const lastValue = values.reduce( (finalValue, value) => {
       if (value.unixTime > finalValue.unixTime) {
         return value;
@@ -11,7 +11,7 @@ module.exports = function(keys, values, rereduce) {
     return lastValue;
   };
 
-  const calculateYesterdayValue = (values) => {
+  const calculateYesterdayValue = values => {
     const today = Date.now() / 1000;
     const yesterdayValue = values.reduce( (finalValue, value) => {
       if ( (finalValue.unixTime === undefined ||
@@ -37,8 +37,8 @@ module.exports = function(keys, values, rereduce) {
   let result;
 
   if (rereduce) {
-    const lastValues = values.map((value) => value.lastValue);
-    const yesterdayValues = values.map((value) => value.yesterdayValue);
+    const lastValues = values.map(value => value.lastValue);
+    const yesterdayValues = values.map(value => value.yesterdayValue);
     result = {
       lastValue: calculateLastValue(lastValues),
       yesterdayValue: calculateYesterdayValue(yesterdayValues),

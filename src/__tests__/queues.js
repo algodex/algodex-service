@@ -4,7 +4,7 @@ require('../__mocks__/Redis');
 
 // const Queue = require('bullmq').Queue;
 
-test('queues are created', (done) => {
+test('queues are created', done => {
   const getQueues = require('../queues');
   expect(getQueues).toThrowError(InvalidConfiguration);
 
