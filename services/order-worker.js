@@ -3,6 +3,8 @@ const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
+const sleepWhileWaitingForQueues =
+  require('../src/sleep-while-waiting-for-queues');
 
 const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   const promise = formattedEscrowsQueue.add('formattedEscrows', order,

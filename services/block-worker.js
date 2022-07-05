@@ -4,7 +4,8 @@ const verifyContracts = require('../src/verify-contracts');
 
 const getDirtyAccounts = require('../src/get-dirty-accounts');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
-const sleepWhileWaitingForQueues = require('../src/sleep-while-waiting-for-queues');
+const sleepWhileWaitingForQueues =
+  require('../src/sleep-while-waiting-for-queues');
 
 const getAssetQueuePromise = (assetQueue, assetId) => {
   const assetAddJob = {assetId: assetId};
