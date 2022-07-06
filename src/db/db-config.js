@@ -23,7 +23,6 @@ const databases = [
           map: require('../../views/chart/map').toString(),
           reduce: require('../../views/chart/reduce').toString(),
         },
-
       },
     },
   },
@@ -40,6 +39,14 @@ const databases = [
         },
         orderLookup: {
           map: require('../../views/formatted_orders/orderLookup-map').toString(),
+        },
+        distinctDates: {
+          map: require('../../views/formatted_orders/distinctDates-map').toString(),
+          reduce: '_count',
+        },
+        openOrderCount: {
+          map: require('../../views/formatted_orders/openOrderCount-map').toString(),
+          reduce: '_count',
         },
       },
     },
@@ -110,6 +117,10 @@ const databases = [
         max_block: {
           map: require('../../views/synced_blocks/max_block-map').toString(),
           reduce: require('../../views/synced_blocks/max_block-reduce').toString(),
+        },
+        min_block: {
+          map: require('../../views/synced_blocks/min_block-map').toString(),
+          reduce: require('../../views/synced_blocks/min_block-reduce').toString(),
         },
       },
     },
