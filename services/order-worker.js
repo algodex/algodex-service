@@ -164,10 +164,11 @@ module.exports = ({queues, databases}) =>{
             const formattedOrderPromise =
               getFormattedOrderQueuePromise(queues.formattedEscrows,
                   data);
-            const ownerBalancePromise =
-              getOwnerBalancePromise(queues.ownerBalance,
-                  order.value.ownerAddr, `${blockData.rnd}`);
-            return Promise.all([formattedOrderPromise, ownerBalancePromise]);
+            //const ownerBalancePromise =
+            //  getOwnerBalancePromise(queues.ownerBalance,
+            //      order.value.ownerAddr, `${blockData.rnd}`);
+            // eslint-disable-next-line max-len
+            return Promise.all([formattedOrderPromise]);//, ownerBalancePromise]);
           }).catch(function(err) {
             if (err.error === 'conflict') {
               console.error('conflict 11b', err);
