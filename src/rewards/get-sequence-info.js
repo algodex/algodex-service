@@ -1,4 +1,3 @@
-
 const getSequenceInfo = escrows => {
   const unixTimeToChangedEscrows = escrows.reduce( (timeline, escrow) => {
     const times = escrow.data.history.map(historyItem => historyItem.time);
@@ -21,4 +20,3 @@ const getSequenceInfo = escrows => {
 };
 
 module.exports = getSequenceInfo;
-
