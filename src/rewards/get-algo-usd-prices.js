@@ -16,7 +16,11 @@ const getAlgoUsdPrices = async () => {
             return {date: row[0], midPrice: // divide high and low by 2
               (parseFloat(row[2]) + parseFloat(row[3])) / 2};
           });
-          resolve(results);
+          const dateToPrice = results.reduce((map, row) => {
+            map.set(row.date, row.midPrice);
+            return map;
+          }, new Map());
+          resolve(dateToPrice);
         }).on('error', function(error) {
           console.log(error.message);
           reject(error);
