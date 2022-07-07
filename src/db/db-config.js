@@ -106,6 +106,10 @@ const databases = [
           map: require('../../views/formatted_history/allAssets-map').toString(),
           reduce: require('../../views/formatted_history/allAssets-reduce').toString(),
         },
+        activityView: {
+          map: require('../../views/formatted_history/activityView-map.js').toString(),
+          reduce: '_count',
+        },
       },
     },
   },
