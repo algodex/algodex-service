@@ -98,7 +98,8 @@ module.exports = ({queues, databases}) =>{
 
               const ordersJob = {account: account,
                 blockData: job.data, reducedOrder: row};
-              //console.log('queuing order: ' + ordersJob.account +' ' + ordersJob.blockData.rnd);
+              console.log('queuing order: ' + ordersJob.account
+                + ' ' + ordersJob.blockData.rnd);
               const promise = queues.orders.add('orders', ordersJob,
                   {removeOnComplete: true}).then(function() {
               }).catch(function(err) {

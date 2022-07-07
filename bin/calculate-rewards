@@ -70,7 +70,7 @@ async function run() {
       return map;
     }, {});
   const ownerWallets =
-    escrows.map( (escrow) => escrow.data.escrowInfo.ownerAddr);
+    escrows.map( escrow => escrow.data.escrowInfo.ownerAddr);
   const ownerBalanceData =
     await ownerBalanceDB.query('owner_balance/ownerAddr', {
       keys: ownerWallets});

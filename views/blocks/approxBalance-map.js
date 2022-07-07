@@ -59,3 +59,5 @@ module.exports = function(doc) {
     }
   }
 };
+
+//reducer: none

@@ -70,7 +70,8 @@ module.exports = ({queues, databases}) =>{
           .round(round).includeAll(true).do();
     } catch (e) {
       if (e.status === 500 &&
-        e.message.includes('not currently supported')) {
+        (e.message.includes('not currently supported') ||
+        e.message.includes('is not supported'))) {
         const doc = {
           _id: ownerAddr+'-'+round,
           noAccountInfo: true,
