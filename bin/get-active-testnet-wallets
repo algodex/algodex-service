@@ -5,6 +5,7 @@ require('dotenv').config();
 const getDatabases = require('../src/db/get-databases');
 const map = require('../views/chart/map');
 const databases = getDatabases();
+const fs = require('fs');
 
 const formattedEscrowDB = databases.formatted_escrow;
 const formattedHistoryDB = databases.formatted_history;
@@ -104,10 +105,37 @@ async function run() {
     const orderCount = entry.orderCount || 0;
     const dateCount = entry.dateCount || 0;
     const monthCount = entry.monthCount || 0;
-    return orderCount >= 5 && tradeCount >=10;
-      /*monthCount >= 2 && dateCount >= 5*/;
+    return orderCount >= 5 && tradeCount >=10
+      && monthCount >= 2 && dateCount >= 5;
   });
-  console.log(wallets);
+
+  const stream = fs.createWriteStream("12000_algx_eligibility.txt");
+  stream.once('open', function(fd) {
+    wallets.forEach(wallet => stream.write(wallet+"\n"));
+    stream.end();
+  });
+
+  const goodWalletSet = wallets.reduce( (set, wallet) => {
+    set.add(wallet);
+    return set;
+  }, new Set());
+
+  const walletsLowerElig = Object.keys(walletToInfo).filter(wallet => {
+    if (goodWalletSet.has(wallet)) {
+      return false;
+    }
+    const entry = walletToInfo[wallet];
+    const tradeCount = entry.tradeCount || 0;
+    const orderCount = entry.orderCount || 0;
+    const dateCount = entry.dateCount || 0;
+    return orderCount >= 5 && tradeCount >=10 && dateCount >= 2;
+  });
+
+  const stream2 = fs.createWriteStream("3000_algx_eligibility.txt");
+  stream2.once('open', function(fd) {
+    walletsLowerElig.forEach(wallet => stream2.write(wallet+"\n"));
+    stream2.end();
+  });
 }
 
 run();
