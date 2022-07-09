@@ -120,6 +120,33 @@ async function run() {
     return set;
   }, new Set());
 
+
+
+  // walletsLowerElig.forEach(wallet => {
+  //   goodWalletSet.add(wallet);
+  // });
+
+  const walletsThirdElig = Object.keys(walletToInfo).filter(wallet => {
+    if (goodWalletSet.has(wallet)) {
+      return false;
+    }
+    const entry = walletToInfo[wallet];
+    const tradeCount = entry.tradeCount || 0;
+    const orderCount = entry.orderCount || 0;
+    const dateCount = entry.dateCount || 0;
+    return (orderCount + tradeCount >=20) && dateCount >= 10;
+  });
+
+  walletsThirdElig.forEach(wallet => {
+    goodWalletSet.add(wallet);
+  });
+
+  const stream3 = fs.createWriteStream("8500_algx_rewards_testnet_wallets.txt");
+  stream3.once('open', function(fd) {
+    walletsThirdElig.forEach(wallet => stream3.write(wallet+"\n"));
+    stream3.end();
+  });
+
   const walletsLowerElig = Object.keys(walletToInfo).filter(wallet => {
     if (goodWalletSet.has(wallet)) {
       return false;
@@ -131,11 +158,12 @@ async function run() {
     return orderCount >= 5 && tradeCount >=10 && dateCount >= 2;
   });
 
-  const stream2 = fs.createWriteStream("3000_algx_eligibility.txt");
+  const stream2 = fs.createWriteStream("3000_algx_rewards_testnet_wallets.txt");
   stream2.once('open', function(fd) {
     walletsLowerElig.forEach(wallet => stream2.write(wallet+"\n"));
     stream2.end();
   });
+
 }
 
 run();
