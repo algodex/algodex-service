@@ -9,7 +9,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\server.js",
+            "program": "${workspaceFolder}/server.js",
             "env": {
                 "APP_CONTEXT": "broker"
             }
@@ -21,7 +21,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\server.js",
+            "program": "${workspaceFolder}/server.js",
             "env": {
                 "APP_CONTEXT": "block-worker"
             }
@@ -33,7 +33,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\server.js",
+            "program": "${workspaceFolder}/server.js",
             "env": {
                 "APP_CONTEXT": "order-worker"
             }
@@ -45,7 +45,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\server.js",
+            "program": "${workspaceFolder}/server.js",
             "env": {
                 "APP_CONTEXT": "owner-balance-worker"
             }
@@ -57,9 +57,21 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\server.js",
+            "program": "${workspaceFolder}/server.js",
             "env": {
                 "APP_CONTEXT": "trade-history-worker"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AlgxBalanceWorker",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/server.js",
+            "env": {
+                "APP_CONTEXT": "algx-balance-worker"
             }
         },
         {
@@ -69,7 +81,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\server.js",
+            "program": "${workspaceFolder}/server.js",
             "env": {
                 "APP_CONTEXT": "formatted-order-worker"
             }
@@ -81,7 +93,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\server.js",
+            "program": "${workspaceFolder}/server.js",
             "env": {
                 "APP_CONTEXT": "asset-worker"
             }
@@ -93,7 +105,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\server.js",
+            "program": "${workspaceFolder}/server.js",
             "env": {
                 "APP_CONTEXT": "socket"
             }

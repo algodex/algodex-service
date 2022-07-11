@@ -48,8 +48,8 @@ const compare = async function() {
   if (process.env.TESTMODE) { // Load only 5000 blocks
     //adjStart = 16583454;
     adjStart = 16252573;
-    //adjCurrent = adjStart + 200;
-    adjCurrent = 16980000;
+    adjCurrent = adjStart + 1000;
+    // adjCurrent = 16980000;
   }
   adjCurrent = 16980000;
   console.log('start is: ' + adjStart);
