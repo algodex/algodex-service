@@ -35,7 +35,75 @@ const checkInDB = async (algxBalanceDB, round) => {
   return false;
 };
 
-module.exports = ({queues, databases}) =>{
+const getCurrentBalanceMap = async (algxBalanceDB, accounts) => {
+  const result = await algxBalanceDB.query('algx_balance/algx_balance',
+      {reduce: true, group: true, keys: accounts});
+  const rows = result.rows;
+  return rows.reduce( (map, row) => {
+    const owner = row.key;
+    const balance = row.value;
+    map.set(owner, balance);
+  }, new Map());
+};
+
+const getChangedAccountValues = (ownerToBalance, block) => {
+  if (!block.txns) {
+    return [];
+  }
+  const algxAssetId = process.env.ALGX_ASSET_ID;
+  const newOwnerToBalance = block.txns.map(txn => txn.txn)
+      .filter(txn => txn.type === 'axfer')
+      .filter(txn => txn.xaid === parseInt(process.env.ALGX_ASSET_ID))
+      .reduce((ownerToBalance, txn) => {
+        //aamt, //arcv, snd, aclose
+        const sender = txn.snd;
+        const receiver = txn.arcv;
+        const aclose = txn.aclose;
+        let senderBalance = ownerToBalance.get(sender) || 0;
+        let receiverBalance =
+          receiver ? (ownerToBalance.get(receiver) || 0) : 0;
+        let closeReceiverBalance =
+          aclose ? (ownerToBalance.get(aclose) || 0) : 0;
+        const amount = txn.aamt || 0;
+
+        receiverBalance += amount;
+        closeReceiverBalance += Math.max(0, (senderBalance - amount));
+        senderBalance = Math.max(0, senderBalance - amount);
+        if (aclose) {
+          senderBalance = 0;
+          ownerToBalance.set(aclose, closeReceiverBalance);
+        }
+        if (sender) {
+          ownerToBalance.set(sender, senderBalance);
+        }
+        if (receiver) {
+          ownerToBalance.set(receiver, receiverBalance);
+        }
+        return ownerToBalance;
+      }, new Map(ownerToBalance));
+  console.log({newOwnerToBalance});
+  if (newOwnerToBalance.size === 0) {
+    return [];
+  }
+  const keys = Array.from(newOwnerToBalance.keys());
+  const changedAccounts = keys.reduce((set, key) => {
+    if (newOwnerToBalance.get(key) !== ownerToBalance.get(key)) {
+      set.add(key);
+    }
+    return set;
+  }, new Set());
+  const retarr = Array.from(changedAccounts)
+      .filter(account => newOwnerToBalance.has(account))
+      .map(account => {
+        return {
+          account,
+          balance: newOwnerToBalance.get(account),
+        };
+      });
+  return retarr;
+};
+
+module.exports = ({queues, databases}) => {
   if (!process.env.ALGX_ASSET_ID) {
     throw new Error('ALGX_ASSET_ID is not set!');
   }
@@ -45,12 +113,22 @@ module.exports = ({queues, databases}) =>{
     const block = job.data;
     const round = job.data.rnd;
     console.log(`Got job! Round: ${round}`);
-    // const isInDB = await checkInDB(algxBalanceDB, round);
-    // if (isInDB) {
-    //   // Nothing to do
-    //   return;
-    // }
+    const isInDB = await checkInDB(algxBalanceDB, round);
+    if (isInDB) {
+      // Nothing to do
+      return;
+    }
     const dirtyAccounts = getDirtyAccounts(block);
+    const ownerToLastBalance =
+      await getCurrentBalanceMap(algxBalanceDB, dirtyAccounts);
+    const changedAccountData =
+      getChangedAccountValues(ownerToLastBalance, block);
+    await algxBalanceDB.put(
+        {
+          _id: round+'',
+          changes: changedAccountData,
+        });
+    console.log(changedAccountData);
     // await addTxnsToDB(ownerBalanceDB, doc);
   }, {connection: queues.connection, concurrency: 50});
 
