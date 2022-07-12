@@ -29,7 +29,8 @@ module.exports = ({queues, databases}) =>{
       round: job.data.rnd,
     });
 
-    await sleepWhileWaitingForQueues(['tradeHistory', 'assets', 'orders']);
+    await sleepWhileWaitingForQueues(['tradeHistory', 'assets',
+      'orders', 'algxBalance']);
 
     const roundStr = `${job.data.rnd}`;
     try {
