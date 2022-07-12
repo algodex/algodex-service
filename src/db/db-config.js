@@ -27,6 +27,19 @@ const databases = [
     },
   },
   {
+    dbName: 'algx_balance',
+    appendOnly: true,
+    design: {
+      _id: '_design/algx_balance',
+      views: {
+        algx_balance: {
+          map: require('../../views/algx_balance/algx_balance-map').toString(),
+          reduce: require('../../views/algx_balance/algx_balance-reduce').toString(),
+        },
+      },
+    },
+  },
+  {
     dbName: 'formatted_escrow',
     design: {
       _id: '_design/formatted_escrow',

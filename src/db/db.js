@@ -15,7 +15,12 @@ module.exports = function(dbUrl) {
   }
 
   if (!db.hasOwnProperty(url)) {
-    db[url] = new PouchDB(url);
+    const username = process.env.COUCHDB_USERNAME || 'admin';
+    const password = process.env.COUCHDB_PASSWORD || 'dex';
+    const options = {auth: {
+      username, password,
+    }};
+    db[url] = new PouchDB(url, options);
   }
   return db[url];
 };

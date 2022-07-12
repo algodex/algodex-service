@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 /* eslint-disable require-jsdoc */
 require('dotenv').config();
-
 const getDatabases = require('../src/db/get-databases');
 const map = require('../views/chart/map');
-const databases = getDatabases();
+const databases = getDatabases('testnet_');
 const fs = require('fs');
 
 const formattedEscrowDB = databases.formatted_escrow;
@@ -28,9 +27,13 @@ const getWalletToDates = (rows, dateType) => {
 };
 
 async function run() {
-  const accountData =
-  await formattedEscrowDB.query('formatted_escrow/distinctDates',
-      {reduce: false} );
+  const escrowDates =
+    await formattedEscrowDB.query('formatted_escrow/distinctDates',
+        {reduce: false} );
+
+  const historyDates =
+      await formattedHistoryDB.query('formatted_history/distinctDates',
+          {reduce: false} );
 
   const tradeData =
     await formattedHistoryDB.query('formatted_history/activityView',
@@ -39,6 +42,8 @@ async function run() {
   const orderCountData =
     await formattedEscrowDB.query('formatted_escrow/openOrderCount',
         {reduce: true, group: true} );
+
+  const accountData = {rows: [...escrowDates.rows, ...historyDates.rows]};
 
   const walletToOrderCount = orderCountData.rows.reduce((map, row) => {
     const wallet = row.key;
@@ -109,7 +114,7 @@ async function run() {
       && monthCount >= 2 && dateCount >= 5;
   });
 
-  const stream = fs.createWriteStream("12000_algx_eligibility.txt");
+  const stream = fs.createWriteStream("12000_algx_rewards_testnet_wallets.txt");
   stream.once('open', function(fd) {
     wallets.forEach(wallet => stream.write(wallet+"\n"));
     stream.end();
