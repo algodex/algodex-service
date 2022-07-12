@@ -7,9 +7,9 @@ const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const getDirtyAccounts = require('../src/get-dirty-accounts');
 
-const addBalanceToDB = async (ownerBalanceDB, doc) => {
+const addBalanceToDB = async (algxBalanceDB, doc) => {
   try {
-    await ownerBalanceDB.put(withSchemaCheck('algx_balance', doc));
+    await algxBalanceDB.put(withSchemaCheck('algx_balance', doc));
   } catch (err) {
     if (err.error === 'conflict') {
       console.error(err);
@@ -51,9 +51,12 @@ const getChangedAccountValues = (ownerToBalance, block) => {
     return [];
   }
   const algxAssetId = process.env.ALGX_ASSET_ID;
+  if (algxAssetId === undefined) {
+    throw new Error('process.env.ALGX_ASSET_ID is not defined!');
+  }
   const newOwnerToBalance = block.txns.map(txn => txn.txn)
       .filter(txn => txn.type === 'axfer')
-      .filter(txn => txn.xaid === parseInt(process.env.ALGX_ASSET_ID))
+      .filter(txn => txn.xaid === parseInt(algxAssetId))
       .reduce((ownerToBalance, txn) => {
         //aamt, //arcv, snd, aclose
         const sender = txn.snd;
@@ -81,7 +84,6 @@ const getChangedAccountValues = (ownerToBalance, block) => {
         }
         return ownerToBalance;
       }, new Map(ownerToBalance));
-  console.log({newOwnerToBalance});
   if (newOwnerToBalance.size === 0) {
     return [];
   }
@@ -123,21 +125,16 @@ module.exports = ({queues, databases}) => {
       await getCurrentBalanceMap(algxBalanceDB, dirtyAccounts);
     const changedAccountData =
       getChangedAccountValues(ownerToLastBalance, block);
-    try {
-      await algxBalanceDB.put(
-          {
-            _id: round+'',
-            changes: changedAccountData,
-          });
-    } catch (e) {
-      if (error === 'conflict') {
-        console.error(e);
-      } else {
-        throw e;
-      }
+
+    if (changedAccountData.length > 0) {
+      console.log('has changes!');
+      console.log('has changes!');
+      
     }
-    console.log(changedAccountData);
-    // await addTxnsToDB(ownerBalanceDB, doc);
+    await addBalanceToDB(algxBalanceDB, {
+      _id: round+'',
+      changes: changedAccountData,
+    });
   }, {connection: queues.connection, concurrency: 50});
 
   algxBalanceWorker.on('error', err => {

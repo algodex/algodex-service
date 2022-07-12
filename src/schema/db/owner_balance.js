@@ -4,7 +4,7 @@ const schema = {
     _id: {type: 'string'},
     _rev: {type: 'string'},
     noAccountInfo: {type: 'boolean'},
-    assetId: {type: 'string', pattern: '[0-9]+'},
+    assetId: {type: 'string', pattern: '^[0-9]+$'},
     balance: {type: 'integer'},
   },
   oneOf: [

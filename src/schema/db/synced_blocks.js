@@ -1,7 +1,7 @@
 const schema = {
   type: 'object',
   properties: {
-    _id: {type: 'string', pattern: '[0-9]+'},
+    _id: {type: 'string', pattern: '^[0-9]+$'},
     _rev: {type: 'string'},
   },
   required: ['_id'],

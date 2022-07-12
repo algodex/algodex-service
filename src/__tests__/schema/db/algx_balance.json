@@ -1,0 +1,14 @@
+{
+  "_id": "16255313",
+  "_rev": "1-4a4adaf2eca6140caa62f5693af8499c",
+  "changes": [
+    {
+      "account": "ODXX4TP3IYQKIMFRYLA7AFKKFXUTFCXLU3YZVTGNW4VUNZBGKV7LQBG2DQ",
+      "balance": 3571429
+    },
+    {
+      "account": "4O2N4LS5MJ37PK6OVBWEFGZWZ4VYUPDWB4LKEVKRQ2PWCKXOZ7IKWARKDY",
+      "balance": 0
+    }
+  ]
+}
