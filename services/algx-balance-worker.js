@@ -123,11 +123,19 @@ module.exports = ({queues, databases}) => {
       await getCurrentBalanceMap(algxBalanceDB, dirtyAccounts);
     const changedAccountData =
       getChangedAccountValues(ownerToLastBalance, block);
-    await algxBalanceDB.put(
-        {
-          _id: round+'',
-          changes: changedAccountData,
-        });
+    try {
+      await algxBalanceDB.put(
+          {
+            _id: round+'',
+            changes: changedAccountData,
+          });
+    } catch (e) {
+      if (error === 'conflict') {
+        console.error(e);
+      } else {
+        throw e;
+      }
+    }
     console.log(changedAccountData);
     // await addTxnsToDB(ownerBalanceDB, doc);
   }, {connection: queues.connection, concurrency: 50});
