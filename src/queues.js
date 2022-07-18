@@ -47,26 +47,41 @@ module.exports = function() {
       'ownerBalance',
       'algxBalance',
     ];
-    const queuesObjs = queueNames.map(name => {
-      const obj = {};
-      obj[name] = new Queue(name,
-          {defaultJobOptions: defaultJobOptions, connection: connection},
-      );
-      return obj;
-    });
-    const schedulers = queueNames.map(name => {
-      const obj = {};
-      obj[name+'Scheduler'] =
-        new QueueScheduler(name, {connection: connection});
-      return obj;
-    });
+    const mapIntegrationTestName = name => {
+      if (process.env.INTEGRATION_TEST_MODE &&
+          process.env.INTEGRATION_TEST_MODE != 0) {
+        return 'integration_test__' + name;
+      }
+      return name;
+    };
+    const getOriginalName = name => {
+      return name.replace('integration_test__', '');
+    };
+
+    const queuesObjs = queueNames
+        .map(name => mapIntegrationTestName(name))
+        .map(name => {
+          const obj = {};
+          obj[name] = new Queue(name,
+              {defaultJobOptions: defaultJobOptions, connection: connection},
+          );
+          return obj;
+        });
+    const schedulers = queueNames
+        .map(name => mapIntegrationTestName(name))
+        .map(name => {
+          const obj = {};
+          obj[name+'Scheduler'] =
+            new QueueScheduler(name, {connection: connection});
+          return obj;
+        });
     const tempObjs = [...queuesObjs, ...schedulers];
     const finalObjs = tempObjs.reduce((finalObj, obj) => {
       const key = Object.keys(obj)[0];
-      finalObj[key] = obj[key];
+      finalObj[getOriginalName(key)] = obj[key];
       return finalObj;
     }, {});
-    queues = {connection, ...finalObjs};
+    queues = {connection, ...finalObjs, queueNames: queueNames};
     // queues = {
     //   connection,
     //   blocks: new Queue('blocks', {

@@ -4,10 +4,14 @@
 /* eslint-disable require-jsdoc */
 
 const childProcess = require('child_process');
-let isShuttingDown = false;
+let isGloballyShuttingDown = false;
 
 const dotenv = require('dotenv');
 const fs = require('fs');
+const sleep = require('../src/sleep');
+const getQueues = require('../src/queues');
+
+process.env.INTEGRATION_TEST_MODE = '1';
 
 const getFile = async file => {
   return await new Promise( (resolve) => {
@@ -25,12 +29,12 @@ const getConfig = async () => {
   return config;
 };
 
-async function runScript(scriptPath, callback) {
+async function runScript(scriptPath, appContext='') {
   // keep track of whether callback has been invoked to prevent multiple invocations
   const envConfig = await getConfig();
 
   const options = {env: {...envConfig,
-    'APP_CONTEXT': 'algx-balance-worker',
+    'APP_CONTEXT': appContext,
     'INTEGRATION_TEST_MODE': 1,
   }};
 
@@ -55,6 +59,20 @@ async function runScript(scriptPath, callback) {
       process.kill();
       resolve(err);
     });
+    let intervalID = null;
+    function checkShouldExit() {
+      if (isGloballyShuttingDown) {
+        console.log('EXITING....');
+        clearInterval(intervalID);
+        invoked = true;
+        process.kill();
+        resolve(null);
+      }
+    }
+
+    intervalID = setInterval(checkShouldExit, 500);
+
+
     // setTimeout(() => {
     //   console.log('killing sub process!');
     //   isShuttingDown = true;
@@ -63,19 +81,83 @@ async function runScript(scriptPath, callback) {
   });
 }
 
+const startServices = async services => {
+  services.forEach(service => {
+    runScript('./server.js', service);
+  });
+  await sleep(1000);
+};
+
+const clearQueues = async () => {
+  const queues = getQueues();
+  while (queues.connection.status === 'connecting') {
+    await sleep(100);
+  }
+  const keys = await queues.connection.keys('*integration_test__*');
+  if (keys?.length) {
+    await queues.connection.del(keys);
+  }
+  return;
+  // const deletePromises = keys.map(key => {
+  //   return queues.connection.del(key);
+  // });
+  // await Promise.all(deletePromises);
+};
+
+const initEnv = async () => {
+  config = await getConfig();
+  Object.keys(config).forEach(configKey => {
+    process.env[configKey] = config[configKey];
+  });
+};
+
 const runScripts = async () => {
+  console.log('here51');
+
   // runScript('./server.js', function(err) {
   //   if (err && !isShuttingDown) {
   //     throw err;
   //   }
   //   console.log('Finished running algodex-service integration test');
   // });
+  await initEnv();
+  await clearQueues();
+
   await runScript('./bin/remove-and-create-databases').then(err => {
-    if (err && !isShuttingDown) {
+    if (err && !isGloballyShuttingDown) {
       throw err;
     }
-    console.log('Finished running algodex-service integration test');
+    console.log('Finished remove-and-create-databases');
   });
+  await runScript('./bin/add-views').then(err => {
+    if (err && !isGloballyShuttingDown) {
+      throw err;
+    }
+    console.log('Finished add-views');
+  });
+
+  const services = [
+    'algx-balance-worker',
+    'asset-worker',
+    'block-worker',
+    'formatted-order-worker',
+    'order-worker',
+    'trade-history-worker',
+  ];
+  await startServices(services);
+
+  await runScript('./bin/sync-sequential').then(err => {
+    if (err && !isGloballyShuttingDown) {
+      throw err;
+    }
+    console.log('Finished sync-sequential');
+    // resolve('Completed Integration Test');
+  });
+
+  isGloballyShuttingDown = true;
+  // wait for all processes to shut down
+  await sleep(5000);
+  process.exit();
 };
 
 runScripts();

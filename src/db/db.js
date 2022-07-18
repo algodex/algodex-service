@@ -1,16 +1,8 @@
 const {InvalidConfiguration} = require('../Errors');
 const PouchDB = require('pouchdb-node');
+const convertURL = require('./convert-db-url');
 
 const db = [];
-
-const convertURL = dbUrl => {
-  const isIntegrationTest = process.env.INTEGRATION_TEST_MODE;
-  if (isIntegrationTest) {
-    const regex = /^.*\//ig;
-    return dbUrl.replaceAll(regex, '_integration_test/algodex_test_db/');
-  }
-  return dbUrl;
-};
 
 module.exports = function(dbUrl) {
   const url = convertURL(dbUrl);
