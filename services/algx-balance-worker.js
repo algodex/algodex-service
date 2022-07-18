@@ -48,7 +48,7 @@ const getCurrentBalanceMap = async (algxBalanceDB, accounts) => {
   }, new Map());
 };
 
-const getChangedAccountValues = (ownerToBalance, block) => {
+const getChangedAccountValues = (ownerToBalanceWithRounds, block) => {
   if (!block.txns) {
     return [];
   }
@@ -56,6 +56,13 @@ const getChangedAccountValues = (ownerToBalance, block) => {
   if (algxAssetId === undefined) {
     throw new Error('process.env.ALGX_ASSET_ID is not defined!');
   }
+
+  const ownerToBalance = Array.from(ownerToBalanceWithRounds.entries())
+      .reduce((map, entry) => {
+        map.set(entry[0], entry[1].balance);
+        return map;
+      }, new Map());
+
   const newOwnerToBalance = block.txns.map(txn => txn.txn)
       .filter(txn => txn.type === 'axfer')
       .filter(txn => txn.xaid === parseInt(algxAssetId))
@@ -99,6 +106,9 @@ const getChangedAccountValues = (ownerToBalance, block) => {
   const retarr = Array.from(changedAccounts)
       .filter(account => newOwnerToBalance.has(account))
       .map(account => {
+        if (typeof newOwnerToBalance.get(account) === 'object') {
+          throw new Error('incorrect type');
+        }
         return {
           account,
           balance: newOwnerToBalance.get(account) || 0,

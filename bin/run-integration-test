@@ -31,7 +31,7 @@ const getConfig = async () => {
 
 const processToAppContext = new Map();
 
-async function runScript(scriptPath, appContext='') {
+async function runScript(scriptPath, appContext='', args=null) {
   // keep track of whether callback has been invoked to prevent multiple invocations
   const envConfig = await getConfig();
   // const out = fs.openSync(`./integration_test/log/${appContext}_out.log`, 'a');
@@ -49,7 +49,7 @@ async function runScript(scriptPath, appContext='') {
     //console.log({envConfig});
     console.log('STARTING: ' + scriptPath + ' ' + appContext);
 
-    const process = childProcess.spawn(scriptPath, [], options);
+    const process = childProcess.spawn(scriptPath, args ? args : [], options);
     if (!process.pid) {
       throw new Error('no pid can be found!');
     }
@@ -172,7 +172,8 @@ const runScripts = async () => {
   await initEnv();
   await clearQueues();
 
-  await runScript('./bin/remove-and-create-databases', 'remove-and-create-databases').then(err => {
+  await runScript('./bin/remove-and-create-databases', 'remove-and-create-databases',
+      ['--removeAll']).then(err => {
     if (err && !isGloballyShuttingDown) {
       throw err;
     }
@@ -192,7 +193,7 @@ const runScripts = async () => {
     'order-worker',
     'trade-history-worker',
   ];
-  // await startServices(services);
+  await startServices(services);
 
   await runScript('./bin/sync-sequential', 'sync-sequential').then(err => {
     if (err && !isGloballyShuttingDown) {
