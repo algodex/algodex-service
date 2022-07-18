@@ -54,10 +54,10 @@ const checkAndGetInput = (
   ) { // FIXME - figure out max version from SDK
     throw new TypeError('invalid appId!');
   }
-  if (!isInt(assetLimitPriceN) || assetLimitPriceN <= 0) {
+  if (assetLimitPriceN <= 0) {
     throw new TypeError('invalid assetLimitPriceN!');
   }
-  if (!isInt(assetLimitPriceD) || assetLimitPriceD <= 0) {
+  if (assetLimitPriceD <= 0) {
     throw new TypeError('invalid assetLimitPriceD!');
   }
 
