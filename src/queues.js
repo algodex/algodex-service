@@ -38,41 +38,70 @@ module.exports = function() {
         delay: 300,
       },
     };
-    queues = {
-      connection,
-      blocks: new Queue('blocks', {
-        defaultJobOptions: defaultJobOptions, connection: connection},
-      ),
-      assets: new Queue('assets',
+    queueNames = [
+      'blocks',
+      'assets',
+      'orders',
+      'tradeHistory',
+      'formattedEscrows',
+      'ownerBalance',
+      'algxBalance',
+    ];
+    const queuesObjs = queueNames.map(name => {
+      const obj = {};
+      obj[name] = new Queue(name,
           {defaultJobOptions: defaultJobOptions, connection: connection},
-      ),
-      orders: new Queue('orders',
-          {defaultJobOptions: defaultJobOptions, connection: connection},
-      ),
-      tradeHistory: new Queue('tradeHistory',
-          {defaultJobOptions: defaultJobOptions, connection: connection},
-      ),
-      formattedEscrows: new Queue('formattedEscrows',
-          {defaultJobOptions: defaultJobOptions, connection: connection},
-      ),
-      ownerBalance: new Queue('ownerBalance',
-          {defaultJobOptions: defaultJobOptions, connection: connection},
-      ),
-      algxBalance: new Queue('algxBalance',
-          {defaultJobOptions: defaultJobOptions, connection: connection},
-      ),
-      blocksScheduler: new QueueScheduler('blocks', {connection: connection}),
-      ordersScheduler: new QueueScheduler('orders', {connection: connection}),
-      algxBalanceScheduler: new QueueScheduler('algxBalance',
-          {connection: connection}),
-      assetsScheduler: new QueueScheduler('assets', {connection: connection}),
-      tradeHistoryScheduler: new QueueScheduler('tradeHistory',
-          {connection: connection}),
-      formattedEscrowsScheduler: new QueueScheduler('formattedEscrows',
-          {connection: connection}),
-      ownerBalanceScheduler: new QueueScheduler('ownerBalance',
-          {connection: connection}),
-    };
+      );
+      return obj;
+    });
+    const schedulers = queueNames.map(name => {
+      const obj = {};
+      obj[name+'Scheduler'] =
+        new QueueScheduler(name, {connection: connection});
+      return obj;
+    });
+    const tempObjs = [...queuesObjs, ...schedulers];
+    const finalObjs = tempObjs.reduce((finalObj, obj) => {
+      const key = Object.keys(obj)[0];
+      finalObj[key] = obj[key];
+      return finalObj;
+    }, {});
+    queues = {connection, ...finalObjs};
+    // queues = {
+    //   connection,
+    //   blocks: new Queue('blocks', {
+    //     defaultJobOptions: defaultJobOptions, connection: connection},
+    //   ),
+    //   assets: new Queue('assets',
+    //       {defaultJobOptions: defaultJobOptions, connection: connection},
+    //   ),
+    //   orders: new Queue('orders',
+    //       {defaultJobOptions: defaultJobOptions, connection: connection},
+    //   ),
+    //   tradeHistory: new Queue('tradeHistory',
+    //       {defaultJobOptions: defaultJobOptions, connection: connection},
+    //   ),
+    //   formattedEscrows: new Queue('formattedEscrows',
+    //       {defaultJobOptions: defaultJobOptions, connection: connection},
+    //   ),
+    //   ownerBalance: new Queue('ownerBalance',
+    //       {defaultJobOptions: defaultJobOptions, connection: connection},
+    //   ),
+    //   algxBalance: new Queue('algxBalance',
+    //       {defaultJobOptions: defaultJobOptions, connection: connection},
+    //   ),
+    //   blocksScheduler: new QueueScheduler('blocks', {connection: connection}),
+    //   ordersScheduler: new QueueScheduler('orders', {connection: connection}),
+    //   algxBalanceScheduler: new QueueScheduler('algxBalance',
+    //       {connection: connection}),
+    //   assetsScheduler: new QueueScheduler('assets', {connection: connection}),
+    //   tradeHistoryScheduler: new QueueScheduler('tradeHistory',
+    //       {connection: connection}),
+    //   formattedEscrowsScheduler: new QueueScheduler('formattedEscrows',
+    //       {connection: connection}),
+    //   ownerBalanceScheduler: new QueueScheduler('ownerBalance',
+    //       {connection: connection}),
+    // };
   }
   return queues;
 };
