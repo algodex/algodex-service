@@ -3,12 +3,17 @@ const PouchDB = require('pouchdb-node');
 
 const db = [];
 
-// This function should be cleaned up in a future PR
-module.exports = function(dbUrl) {
-  const url = dbUrl;
-  if (process.env.INTEGRATION_TEST_MODE) {
-    console.log('in integration test!');
+const convertURL = dbUrl => {
+  const isIntegrationTest = process.env.INTEGRATION_TEST_MODE;
+  if (isIntegrationTest) {
+    const regex = /^.*\//ig;
+    return dbUrl.replaceAll(regex, '_integration_test/algodex_test_db/');
   }
+  return dbUrl;
+};
+
+module.exports = function(dbUrl) {
+  const url = convertURL(dbUrl);
   console.log({url});
   if (
     typeof url === 'undefined'
