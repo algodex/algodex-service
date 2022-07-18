@@ -29,20 +29,31 @@ const getConfig = async () => {
   return config;
 };
 
+const processToAppContext = new Map();
+
 async function runScript(scriptPath, appContext='') {
   // keep track of whether callback has been invoked to prevent multiple invocations
   const envConfig = await getConfig();
+  // const out = fs.openSync(`./integration_test/log/${appContext}_out.log`, 'a');
+  // const err = fs.openSync(`./integration_test/log/${appContext}_out.log`, 'a');
 
   const options = {env: {...envConfig,
     'APP_CONTEXT': appContext,
     'INTEGRATION_TEST_MODE': 1,
-  }};
+  },
+  //stdio: [ 'pipe', out, err ],
+  };
 
   return new Promise(resolve => {
     let invoked = false;
-    console.log({envConfig});
-    const process = childProcess.fork(scriptPath, options);
+    //console.log({envConfig});
+    console.log('STARTING: ' + scriptPath + ' ' + appContext);
 
+    const process = childProcess.spawn(scriptPath, [], options);
+    if (!process.pid) {
+      throw new Error('no pid can be found!');
+    }
+    processToAppContext.set(process.pid, appContext);
     // listen for errors as they may prevent the exit event from firing
     process.on('error', function(err) {
       if (invoked) return;
@@ -59,10 +70,11 @@ async function runScript(scriptPath, appContext='') {
       process.kill();
       resolve(err);
     });
+
     let intervalID = null;
     function checkShouldExit() {
       if (isGloballyShuttingDown) {
-        console.log('EXITING....');
+        console.log(appContext + ' EXITING....');
         clearInterval(intervalID);
         invoked = true;
         process.kill();
@@ -71,6 +83,24 @@ async function runScript(scriptPath, appContext='') {
     }
 
     intervalID = setInterval(checkShouldExit, 200);
+
+    process.stdout.setEncoding('utf8');
+    process.stdout.on('data', function(data) {
+      const context = processToAppContext.get(process.pid);
+      console.log(`${context}: `, data);
+    });
+    process.stderr.setEncoding('utf8');
+    process.stderr.on('data', function(data) {
+      const context = processToAppContext.get(process.pid);
+      console.error(`${context}: `, data);
+    });
+    // process.stderr.setEncoding('utf8');
+    // process.stderr.on('data', function(data) {
+    //   console.log(appContext + ' stderr: ' + data);
+
+    //   data=data.toString();
+    //   scriptOutput+=data;
+    // });
 
 
     // setTimeout(() => {
@@ -84,6 +114,7 @@ async function runScript(scriptPath, appContext='') {
 const startServices = async services => {
   services.forEach(service => {
     runScript('./server.js', service);
+    // runScript('./bin/mytest', service);
   });
   await sleep(1000);
 };
@@ -97,11 +128,29 @@ const clearQueues = async () => {
   if (keys?.length) {
     await queues.connection.del(keys);
   }
+  while (await getActiveCounts() > 0) {
+    console.log('active counts still above 0... sleeping');
+    await sleep(200);
+  }
   return;
   // const deletePromises = keys.map(key => {
   //   return queues.connection.del(key);
   // });
   // await Promise.all(deletePromises);
+};
+
+const getActiveCounts = async () => {
+  const queueObj = getQueues();
+  const queues = queueObj.queueNames.map(key => queueObj[key]);
+  const countPromises =
+    queues.map(queue => queue.getJobCounts('wait', 'active', 'delayed'));
+  const countResults = await Promise.all(countPromises);
+  const counts = countResults.reduce((totalResults, countResults) => {
+    return Object.keys(countResults).reduce((sum, key) =>
+      sum + countResults[key], 0) + totalResults;
+  }, 0);
+  console.log('job counts: ' + counts);
+  return counts;
 };
 
 const initEnv = async () => {
@@ -123,19 +172,18 @@ const runScripts = async () => {
   await initEnv();
   await clearQueues();
 
-  await runScript('./bin/remove-and-create-databases').then(err => {
+  await runScript('./bin/remove-and-create-databases', 'remove-and-create-databases').then(err => {
     if (err && !isGloballyShuttingDown) {
       throw err;
     }
     console.log('Finished remove-and-create-databases');
   });
-  await runScript('./bin/add-views').then(err => {
+  await runScript('./bin/add-views', 'add-views').then(err => {
     if (err && !isGloballyShuttingDown) {
       throw err;
     }
     console.log('Finished add-views');
   });
-
   const services = [
     'algx-balance-worker',
     'asset-worker',
@@ -144,9 +192,9 @@ const runScripts = async () => {
     'order-worker',
     'trade-history-worker',
   ];
-  await startServices(services);
+  // await startServices(services);
 
-  await runScript('./bin/sync-sequential').then(err => {
+  await runScript('./bin/sync-sequential', 'sync-sequential').then(err => {
     if (err && !isGloballyShuttingDown) {
       throw err;
     }
@@ -154,10 +202,22 @@ const runScripts = async () => {
     // resolve('Completed Integration Test');
   });
 
+  do {
+    await sleep(100);
+  } while (await getActiveCounts() > 0);
+
   isGloballyShuttingDown = true;
   // wait for all processes to shut down
   await sleep(1000);
   process.exit();
 };
+
+process.on('SIGINT', async function() {
+  console.log('Caught interrupt signal');
+  isGloballyShuttingDown = true;
+  await sleep(1000);
+  process.exit();
+});
+
 
 runScripts();

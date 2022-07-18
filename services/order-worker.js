@@ -5,6 +5,7 @@ const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
+const convertQueueURL = require('../src/convert-queue-url');
 
 const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   const promise = formattedEscrowsQueue.add('formattedEscrows', order,
@@ -135,7 +136,7 @@ module.exports = ({queues, databases}) =>{
   // Lighten the load on the broker and do batch processing
   console.log({escrowDB});
   console.log('in order-worker.js');
-  const indexedOrders = new Worker('orders', async job=>{
+  const indexedOrders = new Worker(convertQueueURL('orders'), async job=>{
     await sleepWhileWaitingForQueues(['formattedEscrows', 'ownerBalance']);
 
     const blockData = job.data.blockData;

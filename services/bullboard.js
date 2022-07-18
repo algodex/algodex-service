@@ -7,6 +7,11 @@ const {BullMQAdapter} = require('@bull-board/api/bullMQAdapter');
 const {ExpressAdapter} = require('@bull-board/express');
 // Configure Queues
 const getQueues = require('../src/queues');
+const args = require('minimist')(process.argv.slice(2));
+
+if (args.integrationTest) {
+  process.env.INTEGRATION_TEST_MODE = 1;
+}
 const queues = getQueues();
 
 const serverAdapter = new ExpressAdapter();

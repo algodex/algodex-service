@@ -6,6 +6,7 @@ const Worker = bullmq.Worker;
 const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const getDirtyAccounts = require('../src/get-dirty-accounts');
+const convertQueueURL = require('../src/convert-queue-url');
 
 const addBalanceToDB = async (algxBalanceDB, doc) => {
   try {
@@ -43,6 +44,7 @@ const getCurrentBalanceMap = async (algxBalanceDB, accounts) => {
     const owner = row.key;
     const balance = row.value;
     map.set(owner, balance);
+    return map;
   }, new Map());
 };
 
@@ -99,7 +101,7 @@ const getChangedAccountValues = (ownerToBalance, block) => {
       .map(account => {
         return {
           account,
-          balance: newOwnerToBalance.get(account),
+          balance: newOwnerToBalance.get(account) || 0,
         };
       });
   return retarr;
@@ -111,7 +113,7 @@ module.exports = ({queues, databases}) => {
   }
   const algxBalanceDB = databases.algx_balance;
 
-  const algxBalanceWorker = new Worker('algxBalance', async job => {
+  const algxBalanceWorker = new Worker(convertQueueURL('algxBalance'), async job => {
     const block = job.data;
     const round = job.data.rnd;
     console.log(`Got job! Round: ${round}`);

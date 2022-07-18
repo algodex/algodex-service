@@ -3,6 +3,7 @@ const {getBlock, waitForBlock} = require('../src/explorer');
 const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
+const convertQueueURL = require('../src/convert-queue-url');
 
 module.exports = ({queues, events, databases}) => {
   console.log({

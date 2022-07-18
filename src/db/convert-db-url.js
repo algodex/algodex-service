@@ -1,6 +1,6 @@
 
 const convertURL = dbUrl => {
-  const prefix = 'integration_test__'
+  const prefix = 'integration_test__';
   const isIntegrationTest = process.env.INTEGRATION_TEST_MODE &&
     process.env.INTEGRATION_TEST_MODE != 0;
 

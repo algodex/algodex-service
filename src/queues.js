@@ -1,4 +1,5 @@
 const Redis = require('ioredis');
+const convertQueueURL = require('./convert-queue-url');
 const Queue = require('bullmq').Queue;
 const QueueScheduler = require('bullmq').QueueScheduler;
 const {InvalidConfiguration} = require('./Errors');
@@ -47,13 +48,7 @@ module.exports = function() {
       'ownerBalance',
       'algxBalance',
     ];
-    const mapIntegrationTestName = name => {
-      if (process.env.INTEGRATION_TEST_MODE &&
-          process.env.INTEGRATION_TEST_MODE != 0) {
-        return 'integration_test__' + name;
-      }
-      return name;
-    };
+    const mapIntegrationTestName = name => convertQueueURL(name);
     const getOriginalName = name => {
       return name.replace('integration_test__', '');
     };

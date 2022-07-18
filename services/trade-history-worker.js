@@ -2,6 +2,7 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
+const convertQueueURL = require('../src/convert-queue-url');
 
 module.exports = ({queues, databases}) =>{
   const blockDB = databases.blocks;
@@ -12,7 +13,7 @@ module.exports = ({queues, databases}) =>{
   // Lighten the load on the broker and do batch processing
   console.log({blockDB});
   console.log('in trade-history-worker.js');
-  const tradeHistoryWorker = new Worker('tradeHistory', async job=>{
+  const tradeHistoryWorker = new Worker(convertQueueURL('tradeHistory'), async job=>{
     const blockId = job.data.block;
     console.log('received block: ' + blockId);
 

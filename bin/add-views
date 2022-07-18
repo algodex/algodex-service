@@ -3,11 +3,14 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-erase'));
 
-const databases = require('../src/db/db-config.js')();
+// const databases = require('../src/db/db-config.js')();
+const getDatabases = require('../src/db/get-databases');
+const databases = getDatabases();
+const databaseConfigs = require('../src/db/db-config.js')();
 
-const dbEndpoint = 'http://127.0.0.1:5984';
-const dbUsername = 'admin';
-const dbPassword = 'dex';
+// const dbEndpoint = 'http://127.0.0.1:5984';
+// const dbUsername = 'admin';
+// const dbPassword = 'dex';
 
 const args = require('minimist')(process.argv.slice(2));
 if (args.redoEveryDBExcept !== undefined &&
@@ -20,14 +23,26 @@ const excludeDBsSet = args.redoEveryDBExcept ? args.redoEveryDBExcept.split(',')
       return set;
     }, new Set()) : new Set();
 
-databases.forEach(database => {
-  const initializedDB = new PouchDB(dbEndpoint + '/' + database.dbName, {
-    auth: {
-      username: dbUsername,
-      password: dbPassword,
-    },
-  });
+const dbNameToDatabase = Object.keys(databases).reduce((map, dbKey) => {
+  console.log('db key: ' + dbKey);
+  const db = databases[dbKey];
+  map.set(dbKey, db);
+  return map;
+}, new Map());
+
+databaseConfigs.forEach(database => {
+  // const initializedDB = new PouchDB(dbEndpoint + '/' + database.dbName, {
+  //   auth: {
+  //     username: dbUsername,
+  //     password: dbPassword,
+  //   },
+  // });
+  console.log('zz' + database.dbName);
+  const initializedDB = dbNameToDatabase.get(database.dbName);
+  // console.log({dbNameToDatabase});
+
   if (!database.design) {
+    console.log('returning');
     return;
   }
   initializedDB.get(database.design._id).then(res=>{
@@ -54,5 +69,3 @@ databases.forEach(database => {
     }
   });
 });
-
-
