@@ -6,7 +6,9 @@ const db = [];
 // This function should be cleaned up in a future PR
 module.exports = function(dbUrl) {
   const url = dbUrl;
-
+  if (process.env.INTEGRATION_TEST_MODE) {
+    console.log('in integration test!');
+  }
   console.log({url});
   if (
     typeof url === 'undefined'
