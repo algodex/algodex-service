@@ -48,10 +48,15 @@ const compare = async function() {
   if (process.env.TESTMODE) { // Load only 5000 blocks
     //adjStart = 16583454;
     adjStart = 16252573;
-    adjCurrent = adjStart + 1000;
+    adjCurrent = adjStart + 200;
     // adjCurrent = 16980000;
   }
   adjCurrent = 16980000;
+  if (process.env.INTEGRATION_TEST_MODE) {
+    adjStart = 16583454;
+    adjCurrent = adjStart + 200;
+  }
+
   console.log('start is: ' + adjStart);
   console.log('current is: ' + adjCurrent);
   const rounds = createConsecutiveObject(adjStart, adjCurrent);
@@ -59,7 +64,7 @@ const compare = async function() {
   const blockDocs = allDocs.rows.filter((doc)=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds
   const blocksSet = new Set(blockDocs.map((doc)=>parseInt(doc.id)));
-
+  console.log('here1 ', Object.keys(rounds));
   for (const round of Object.keys(rounds)) {
     await sleepWhileWaitingForQueues(['blocks']);
     if (blocksSet.has(parseInt(round))) {
@@ -80,6 +85,8 @@ const compare = async function() {
       }
     } while (gotBlock === false);
   }
+  console.log('here2');
+  process.exit(0);
 };
 
 

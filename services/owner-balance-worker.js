@@ -4,6 +4,7 @@ const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
+const convertQueueURL = require('../src/convert-queue-url');
 
 const getAlgxBalance = accountInfo => {
   if (!accountInfo.account || !accountInfo.account.assets) {
@@ -54,7 +55,7 @@ module.exports = ({queues, databases}) =>{
   const ownerBalanceDB = databases.owner_balance;
   const indexerClient = initOrGetIndexer();
 
-  const ownerBalanceWorker = new Worker('ownerBalance', async job=>{
+  const ownerBalanceWorker = new Worker(convertQueueURL('ownerBalance'), async job=>{
     const ownerAddr = job.data.ownerAddr;
     const round = job.data.roundStr;
     console.log(`Got job! Round: ${round} OwnerAddr: ${ownerAddr}`);

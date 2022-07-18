@@ -1,6 +1,7 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 const verifyContracts = require('../src/verify-contracts');
+const convertQueueURL = require('../src/convert-queue-url');
 
 const getDirtyAccounts = require('../src/get-dirty-accounts');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
@@ -23,7 +24,7 @@ module.exports = ({queues, databases}) =>{
   const syncedBlocksDB = databases.synced_blocks;
   const blocksDB = databases.blocks;
 
-  const blocks = new Worker('blocks', async job=>{
+  const blocks = new Worker(convertQueueURL('blocks'), async job=>{
     console.debug({
       msg: 'Received block',
       round: job.data.rnd,

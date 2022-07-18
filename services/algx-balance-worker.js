@@ -6,6 +6,7 @@ const Worker = bullmq.Worker;
 const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const getDirtyAccounts = require('../src/get-dirty-accounts');
+const convertQueueURL = require('../src/convert-queue-url');
 
 const addBalanceToDB = async (algxBalanceDB, doc) => {
   try {
@@ -43,10 +44,11 @@ const getCurrentBalanceMap = async (algxBalanceDB, accounts) => {
     const owner = row.key;
     const balance = row.value;
     map.set(owner, balance);
+    return map;
   }, new Map());
 };
 
-const getChangedAccountValues = (ownerToBalance, block) => {
+const getChangedAccountValues = (ownerToBalanceWithRounds, block) => {
   if (!block.txns) {
     return [];
   }
@@ -54,6 +56,13 @@ const getChangedAccountValues = (ownerToBalance, block) => {
   if (algxAssetId === undefined) {
     throw new Error('process.env.ALGX_ASSET_ID is not defined!');
   }
+
+  const ownerToBalance = Array.from(ownerToBalanceWithRounds.entries())
+      .reduce((map, entry) => {
+        map.set(entry[0], entry[1].balance);
+        return map;
+      }, new Map());
+
   const newOwnerToBalance = block.txns.map(txn => txn.txn)
       .filter(txn => txn.type === 'axfer')
       .filter(txn => txn.xaid === parseInt(algxAssetId))
@@ -97,9 +106,12 @@ const getChangedAccountValues = (ownerToBalance, block) => {
   const retarr = Array.from(changedAccounts)
       .filter(account => newOwnerToBalance.has(account))
       .map(account => {
+        if (typeof newOwnerToBalance.get(account) === 'object') {
+          throw new Error('incorrect type');
+        }
         return {
           account,
-          balance: newOwnerToBalance.get(account),
+          balance: newOwnerToBalance.get(account) || 0,
         };
       });
   return retarr;
@@ -111,7 +123,7 @@ module.exports = ({queues, databases}) => {
   }
   const algxBalanceDB = databases.algx_balance;
 
-  const algxBalanceWorker = new Worker('algxBalance', async job => {
+  const algxBalanceWorker = new Worker(convertQueueURL('algxBalance'), async job => {
     const block = job.data;
     const round = job.data.rnd;
     console.log(`Got job! Round: ${round}`);

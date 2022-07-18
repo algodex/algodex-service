@@ -1,6 +1,7 @@
 const bullmq = require('bullmq');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const pushHistory = require('../src/push-history');
+const convertQueueURL = require('../src/convert-queue-url');
 
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
@@ -31,7 +32,7 @@ module.exports = ({queues, databases}) =>{
   console.log({formattedEscrowDB});
   console.log('in formatted-order-worker.js');
 
-  const formattedOrderWorker = new Worker('formattedEscrows', async job=>{
+  const formattedOrderWorker = new Worker(convertQueueURL('formattedEscrows'), async job=>{
     console.log('got formatted escrows job ', {job});
     const assetId = job.data.escrowInfo.assetId;
     const addr = job.data.indexerInfo.address;

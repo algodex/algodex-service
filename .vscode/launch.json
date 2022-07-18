@@ -123,6 +123,25 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Run Integration Test",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/bin/run-integration-test",
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Bullboard (Integration Test)",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/services/bullboard.js",
+            "args": ["--integrationTest"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "GetActiveTestnetWallets",
             "skipFiles": [
                 "<node_internals>/**"

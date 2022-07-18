@@ -2,6 +2,7 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
+const convertQueueURL = require('../src/convert-queue-url');
 
 const initOrGetIndexer = require('../src/get-indexer');
 
@@ -26,7 +27,7 @@ module.exports = ({queues, databases}) =>{
   console.log('in assets-worker.js');
   const indexer = initOrGetIndexer();
 
-  const assetsWorker = new Worker('assets', async job=>{
+  const assetsWorker = new Worker(convertQueueURL('assets'), async job=>{
     console.log('got assets job ', {job});
     const assetInCouch = await getAssetInCouch(assetDB, job.data.assetId);
     if (assetInCouch) {

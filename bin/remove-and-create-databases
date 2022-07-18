@@ -11,22 +11,32 @@
 const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-erase'));
 const getDatabases = require('../src/db/get-databases');
-
 const args = require('minimist')(process.argv.slice(2));
+// const removeAllExcept = args.removeAllExcept ?
+//   args.removeAllExcept.split(',')
+//       .reduce( (set, arg) => set.add(arg), new Set() ) :
+//       new Set();
 const extraDBsToRemoveSet = args.removeExtra ?
   args.removeExtra.split(',')
       .reduce( (set, arg) => set.add(arg), new Set() ) :
       new Set();
+const removeAll = args.removeAll ? true : false;
 
+// if (removeAllExcept.size() > 0 && extraDBsToRemoveSet.size > 0) {
+//   throw new Error('--removeAllExcept and --removeExtra cannot both be set!');
+// }
 // eslint-disable-next-line require-jsdoc
 async function runScript() {
   const databases = await getDatabases();
   const deletePromises = [];
   Object.values(databases).forEach( (db) => {
-    if (db.appendOnly && !extraDBsToRemoveSet.has(db.dbName) ) {
+    if (!removeAll && db.appendOnly && !extraDBsToRemoveSet.has(db.dbName) ) {
       // Do not delete appendOnly databases
       return;
     }
+    // if (db.appendOnly && removeAllExcept.has(db.dbName)) {
+    //   return;
+    // }
     deletePromises.push(
         db.destroy().then(function(res) {
           console.log('destroyed');

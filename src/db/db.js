@@ -1,14 +1,11 @@
 const {InvalidConfiguration} = require('../Errors');
 const PouchDB = require('pouchdb-node');
+const convertURL = require('./convert-db-url');
 
 const db = [];
 
-// This function should be cleaned up in a future PR
 module.exports = function(dbUrl) {
-  const url = dbUrl;
-  if (process.env.INTEGRATION_TEST_MODE) {
-    console.log('in integration test!');
-  }
+  const url = convertURL(dbUrl);
   console.log({url});
   if (
     typeof url === 'undefined'
