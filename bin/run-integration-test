@@ -70,7 +70,7 @@ async function runScript(scriptPath, appContext='') {
       }
     }
 
-    intervalID = setInterval(checkShouldExit, 500);
+    intervalID = setInterval(checkShouldExit, 200);
 
 
     // setTimeout(() => {
@@ -156,7 +156,7 @@ const runScripts = async () => {
 
   isGloballyShuttingDown = true;
   // wait for all processes to shut down
-  await sleep(5000);
+  await sleep(1000);
   process.exit();
 };
 
