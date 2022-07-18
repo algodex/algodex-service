@@ -216,9 +216,12 @@ const runScripts = async () => {
             return {result, name: db.dbName};
           },
           )));
+  if (!fs.existsSync('./integration_test/test_data')) {
+    fs.mkdirSync(dir);
+  }
   docs.forEach(doc => {
     const json = JSON.stringify(doc.result, null, 2);
-    const filename = `./integration_test/data/${doc.name}.txt`;
+    const filename = `./integration_test/test_data/${doc.name}.txt`;
     fs.writeFile(filename, json, err => {
       if (err) {
         console.error(err);
