@@ -14,7 +14,7 @@ lerna-debug.log*
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Integration test
-_integration_test
+integration_test/test_data
 
 # Runtime data
 pids
