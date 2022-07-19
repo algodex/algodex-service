@@ -37,7 +37,7 @@ databaseConfigs.forEach(database => {
   //     password: dbPassword,
   //   },
   // });
-  console.log('zz' + database.dbName);
+  // console.log('zz' + database.dbName);
   const initializedDB = dbNameToDatabase.get(database.dbName);
   // console.log({dbNameToDatabase});
 
