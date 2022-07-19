@@ -216,8 +216,10 @@ const runScripts = async () => {
             return {result, name: db.dbName};
           },
           )));
+
+  const testDataDir = './integration_test/test_data';
   if (!fs.existsSync('./integration_test/test_data')) {
-    fs.mkdirSync(dir);
+    fs.mkdirSync(testDataDir, {recursive: true});
   }
   docs.forEach(doc => {
     const json = JSON.stringify(doc.result, null, 2);
