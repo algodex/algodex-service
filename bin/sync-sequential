@@ -66,7 +66,9 @@ const compare = async function() {
   // Look in the database for existing blocks and remove them from rounds
   const blocksSet = new Set(blockDocs.map((doc)=>parseInt(doc.id)));
   console.log('here1 ', Object.keys(rounds));
+  let hadFirstRound = false;
   for (const round of Object.keys(rounds)) {
+    // Important! limit to 1 block at a time for blocks queue
     await sleepWhileWaitingForQueues(['blocks']);
     if (blocksSet.has(parseInt(round))) {
       console.log('Skipping ' + round);
@@ -78,6 +80,7 @@ const compare = async function() {
     do {
       try {
         const block = await getBlockFromDBOrNode(blocksDB, round);
+        block.firstBlock = !hadFirstRound;
         gotBlock = true;
         await queues.blocks.add('blocks', block, {removeOnComplete: true});
         console.log('Queue Round Sent', round);
@@ -85,6 +88,7 @@ const compare = async function() {
         console.log('could not fetch block', {e});
       }
     } while (gotBlock === false);
+    hadFirstRound = true;
   }
   console.log('here2');
   process.exit(0);

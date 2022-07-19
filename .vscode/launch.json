@@ -123,11 +123,11 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Run Integration Test",
+            "name": "Run End To End Test",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/bin/run-integration-test",
+            "program": "${workspaceFolder}/bin/run-end-to-end-test",
         },
         {
             "type": "node",
