@@ -10,11 +10,13 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
+*.diff
+
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Integration test
-_integration_test
+integration_test/test_data
 
 # Runtime data
 pids

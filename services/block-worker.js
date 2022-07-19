@@ -2,7 +2,7 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 const verifyContracts = require('../src/verify-contracts');
 const convertQueueURL = require('../src/convert-queue-url');
-
+const sleep = require('../src/sleep');
 const getDirtyAccounts = require('../src/get-dirty-accounts');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const sleepWhileWaitingForQueues =
@@ -69,16 +69,49 @@ module.exports = ({queues, databases}) =>{
     // eslint-disable-next-line max-len
     const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );
 
+    if (!job.data.firstBlock) {
+      // Get block before this round and make sure it exists in the DB
+      let foundPrevBlock = false;
+      const prevBlock = `${job.data.rnd - 1}`;
+      do {
+        try {
+          await blocksDB.get(prevBlock);
+          foundPrevBlock = true;
+        } catch (e) {
+          console.log(`${prevBlock} block not yet stored in DB!`);
+          await sleep(10);
+        }
+      } while (!foundPrevBlock);
+    }
     return Promise.all( [blocksDB.query('blocks/orders',
         {reduce: true, group: true, keys: dirtyAccounts})
         .then(async function(res) {
+          // This below situation occurs during testing. Basically, the
+          // known earliest round is after the current round because
+          // the block where the order was initialized
+          // wasn't yet in the database. So, filter any unknown orders
+          res.rows = res.rows.filter(row =>
+            row.value.earliestRound <= job.data.rnd)
+              .map(row => {
+                delete row.value['earliestRound'];
+                delete row.value['round'];
+                return row;
+              });
+          if (job.data.rnd === 16583571 && res?.rows.length === 1) {
+            console.log('block ' + job.data.rnd + ' query results: ' +
+              JSON.stringify(res?.rows));
+          } else if (job.data.rnd === 16583571) {
+            console.log('not condition');
+          }
           if (!res?.rows?.length) {
             return;
           }
           const assetIdSet = {};
+          const accountsToVerify = res.rows;
+          console.log('verifying ' + job.data.rnd, JSON.stringify(accountsToVerify));
           const validRows = await verifyContracts(res.rows,
               databases.verified_account);
-
+          console.log('got valid rows: ' + JSON.stringify(validRows));
           const assetsAndOrdersPromises =
             validRows.reduce( (allPromises, row) => {
             // add job

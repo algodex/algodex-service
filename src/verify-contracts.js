@@ -54,10 +54,10 @@ const checkAndGetInput = (
   ) { // FIXME - figure out max version from SDK
     throw new TypeError('invalid appId!');
   }
-  if (!isInt(assetLimitPriceN) || assetLimitPriceN <= 0) {
+  if (assetLimitPriceN <= 0) {
     throw new TypeError('invalid assetLimitPriceN!');
   }
-  if (!isInt(assetLimitPriceD) || assetLimitPriceD <= 0) {
+  if (assetLimitPriceD <= 0) {
     throw new TypeError('invalid assetLimitPriceD!');
   }
 
@@ -101,16 +101,24 @@ const verifyContract = async (
       '11e4dcfb445a8c7e8380848747f18afcd5d84ccb395e003e5b72127ca5e9a259',
       'http://ec2-3-18-80-65.us-east-2.compute.amazonaws.com', 8080 ); // FIXME - use env variables or pass in client
 
-  const compiledOrder = await withLogicSigAccount(withOrderbookEntry(input));
-  if (escrowAddress === compiledOrder?.contract?.escrow) {
-    return true;
-  }
-
+  let gotCompiledOrder = false;
+  do {
+    try {
+      const compiledOrder = await withLogicSigAccount(withOrderbookEntry(input));
+      gotCompiledOrder = true;
+      if (escrowAddress === compiledOrder?.contract?.escrow) {
+        return true;
+      }
+    } catch (e) {
+      throw e;
+    }
+  } while (!gotCompiledOrder);
   return false;
 };
 
 module.exports = async (rows, verifiedAccountDB) => {
   const realContracts = [];
+  const fakeContracts = [];
 
   const accounts = rows.map(row => row.key[0]);
 
@@ -139,14 +147,15 @@ module.exports = async (rows, verifiedAccountDB) => {
     if (isRealContract) {
       realContracts.push(row);
     } else {
-      console.log('fake contract found? ' + account);
+      // console.log('fake contract found? ' + account);
+      fakeContracts.push(row);
     }
 
     if (!verifDBHasAddrSet.has(account)) {
       rowsToAddtoDB.push(withSchemaCheck('verified_account', {
         _id: account,
         status: isRealContract ? 'verified' : 'fake',
-        version: row.value.version,
+        version: row.value?.version ? row.value?.version : '\u0099',
       }));
     }
   }
@@ -157,6 +166,11 @@ module.exports = async (rows, verifiedAccountDB) => {
     console.error('could not bulk add accounts to verified DB');
     console.error(e);
     throw e;
+  }
+
+  // Probably won't happen, but just in case.
+  if (realContracts.length + fakeContracts.length !== rows.length) {
+    throw new Error('Incorrect verification results length!');
   }
   return realContracts;
 };

@@ -10,7 +10,7 @@ const dotenv = require('dotenv');
 const fs = require('fs');
 const sleep = require('../src/sleep');
 const getQueues = require('../src/queues');
-
+const getDatabases = require('../src/db/get-databases');
 process.env.INTEGRATION_TEST_MODE = '1';
 
 const getFile = async file => {
@@ -204,11 +204,39 @@ const runScripts = async () => {
   });
 
   do {
-    await sleep(100);
+    await sleep(250);
   } while (await getActiveCounts() > 0);
 
-  isGloballyShuttingDown = true;
   // wait for all processes to shut down
+  const databases = await getDatabases();
+  console.log('starting shutdown...');
+  await sleep(250);
+
+  const docs = await Promise.all(
+      Object.keys(databases).map(dbName => databases[dbName])
+          .map(db => db.allDocs({includeDocs: true}).then(result => {
+            return {result, name: db.dbName};
+          },
+          )));
+
+  const testDataDir = './integration_test/test_data';
+  if (!fs.existsSync('./integration_test/test_data')) {
+    fs.mkdirSync(testDataDir, {recursive: true});
+  }
+  docs.forEach(doc => {
+    const json = JSON.stringify(doc.result, null, 2);
+    const filename = `./integration_test/test_data/${doc.name}.txt`;
+    fs.writeFile(filename, json, err => {
+      if (err) {
+        console.error(err);
+      }
+      // file written successfully
+    });
+    console.log('Wrote ' + filename);
+  });
+  console.log({docs});
+
+  isGloballyShuttingDown = true;
   await sleep(1000);
   process.exit();
 };
@@ -219,6 +247,5 @@ process.on('SIGINT', async function() {
   await sleep(1000);
   process.exit();
 });
-
 
 runScripts();

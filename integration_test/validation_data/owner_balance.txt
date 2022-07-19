@@ -1,0 +1,13 @@
+{
+  "total_rows": 1,
+  "offset": 0,
+  "rows": [
+    {
+      "id": "_design/owner_balance",
+      "key": "_design/owner_balance",
+      "value": {
+        "rev": "1-409a6949d960183320b53aa1075acc1e"
+      }
+    }
+  ]
+}
