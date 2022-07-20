@@ -130,6 +130,8 @@ const getOwnerBalancePromise = (queue, ownerAddr, roundStr) => {
   return promise;
 };
 
+// const queued = new Set();
+
 module.exports = ({queues, databases}) =>{
   const escrowDB = databases.escrow;
   const blockDB = databases.blocks;

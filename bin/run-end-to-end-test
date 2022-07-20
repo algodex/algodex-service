@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+/*
+ * Usage:
+ *
+ * bin/run-end-to-end-test --mode=[light|heavy] --doNotRunService=[serviceName]
+ *
+ */
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
@@ -194,6 +200,7 @@ const runScripts = async () => {
     }
     console.log('Finished add-views');
   });
+  const doNotRunService = args.doNotRunService;
   const services = [
     'algx-balance-worker',
     'asset-worker',
@@ -202,7 +209,8 @@ const runScripts = async () => {
     'order-worker',
     'trade-history-worker',
     'broker',
-  ];
+  ].filter(service => service !== doNotRunService);
+  console.log('starting service:', services);
   await startServices(services);
 
   // await runScript('./bin/sync-sequential', 'sync-sequential').then(err => {

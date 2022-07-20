@@ -1,4 +1,14 @@
 module.exports = {
+  'overrides': [
+    {
+      'files': [
+        '**/*.spec.js',
+        '**/*.spec.jsx',
+      ],
+      'env': {
+        'jest': true,
+      },
+    }],
   'globals': {
     'emit': true,
   },
@@ -16,5 +26,6 @@ module.exports = {
   'rules': {
     'linebreak-style': 0,
     'arrow-parens': ['error', 'as-needed'],
+    'no-undef': 'error',
   },
 };
