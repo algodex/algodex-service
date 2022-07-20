@@ -59,7 +59,7 @@ it('gets asset and orders promises', async () => {
     validRows: rows,
     blockData,
   };
-  const promises = getAssetsAndOrdersPromises(input);
+  getAssetsAndOrdersPromises(input);
   const results = await Promise.all(QueueMock.add.mock.results.map(result => result.value));
 
   expect(results).toEqual(['added', 'added', 'added', 'added']);
@@ -148,6 +148,4 @@ it('gets asset and orders promises', async () => {
       },
     ],
   ]);
-  // console.log(promises);
-  // expect(1).toBe(1);
 });
