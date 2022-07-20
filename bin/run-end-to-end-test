@@ -187,9 +187,6 @@ const runScripts = async () => {
     }
     console.log('Finished remove-and-create-databases');
   });
-  if (args.mode == 'light') {
-
-  }
 
   await runScript('./bin/add-views', 'add-views').then(err => {
     if (err && !isGloballyShuttingDown) {
