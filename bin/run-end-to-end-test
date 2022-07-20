@@ -11,7 +11,10 @@ const fs = require('fs');
 const sleep = require('../src/sleep');
 const getQueues = require('../src/queues');
 const getDatabases = require('../src/db/get-databases');
+const args = require('minimist')(process.argv.slice(2));
+
 process.env.INTEGRATION_TEST_MODE = '1';
+
 
 const getFile = async file => {
   return await new Promise( (resolve) => {
@@ -160,25 +163,31 @@ const initEnv = async () => {
   });
 };
 
+const getLightModeRemovalString = databases => {
+  const preserveDBs = new Set(['blocks', 'assets', 'indexed_escrow']);
+  const removeStr = Object.keys(databases).filter(name => !preserveDBs.has(name)).join(',');
+  return '--removeExtra='+removeStr;
+};
+
 const runScripts = async () => {
   console.log('here51');
 
-  // runScript('./server.js', function(err) {
-  //   if (err && !isShuttingDown) {
-  //     throw err;
-  //   }
-  //   console.log('Finished running algodex-service integration test');
-  // });
   await initEnv();
   await clearQueues();
+  const databases = await getDatabases();
+
+  const removeArg = args.mode === 'light' ?
+    getLightModeRemovalString(databases) : '--removeAll';
+  console.log({removeArg});
 
   await runScript('./bin/remove-and-create-databases', 'remove-and-create-databases',
-      ['--removeAll']).then(err => {
+      [removeArg]).then(err => {
     if (err && !isGloballyShuttingDown) {
       throw err;
     }
     console.log('Finished remove-and-create-databases');
   });
+
   await runScript('./bin/add-views', 'add-views').then(err => {
     if (err && !isGloballyShuttingDown) {
       throw err;
@@ -205,7 +214,6 @@ const runScripts = async () => {
   // });
   // const lastSyncedRound = 16583454 - 1;
   const maxSyncedRoundInTestMode = 16583654;
-  const databases = await getDatabases();
   const blocksDB = databases.blocks;
   do {
     try {

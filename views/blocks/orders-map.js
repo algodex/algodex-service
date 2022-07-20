@@ -1,4 +1,4 @@
-module.exports = function(doc) {
+module.exports = function(doc, emitCallback=null) {
   // Source: http://code.google.com/p/gflot/source/browse/trunk/flot/base64.js?r=153
   // Cached-Source: https://gist.github.com/AndreasMadsen/2693051
 
