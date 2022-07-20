@@ -7,7 +7,7 @@ const process = require('process');
 const {createConsecutiveObject} = require('../src/util');
 const {getAppsBlockRange, getBlock} = require('../src/explorer');
 const getQueues = require('../src/queues');
-
+const sleep = require('../src/sleep');
 // const {exit} = require('process');
 const getDatabases = require('../src/db/get-databases');
 const databases = getDatabases();
@@ -77,10 +77,24 @@ const compare = async function() {
     console.log('Queue Round', round);
     let gotBlock = false;
 
+    if (hadFirstRound) {
+      // Get block before this round and make sure it exists in the DB
+      let foundPrevBlock = false;
+      const prevBlock = `${round - 1}`;
+      do {
+        try {
+          await blocksDB.get(prevBlock);
+          foundPrevBlock = true;
+        } catch (e) {
+          // console.log(`${prevBlock} block not yet stored in DB!`);
+          await sleep(10);
+        }
+      } while (!foundPrevBlock);
+    }
+
     do {
       try {
         const block = await getBlockFromDBOrNode(blocksDB, round);
-        block.firstBlock = !hadFirstRound;
         gotBlock = true;
         await queues.blocks.add('blocks', block, {removeOnComplete: true});
         console.log('Queue Round Sent', round);

@@ -69,20 +69,6 @@ module.exports = ({queues, databases}) =>{
     // eslint-disable-next-line max-len
     const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );
 
-    if (!job.data.firstBlock) {
-      // Get block before this round and make sure it exists in the DB
-      let foundPrevBlock = false;
-      const prevBlock = `${job.data.rnd - 1}`;
-      do {
-        try {
-          await blocksDB.get(prevBlock);
-          foundPrevBlock = true;
-        } catch (e) {
-          console.log(`${prevBlock} block not yet stored in DB!`);
-          await sleep(10);
-        }
-      } while (!foundPrevBlock);
-    }
     return Promise.all( [blocksDB.query('blocks/orders',
         {reduce: true, group: true, keys: dirtyAccounts})
         .then(async function(res) {
