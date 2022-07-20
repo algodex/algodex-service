@@ -1,4 +1,4 @@
-const getAssetQueuePromise = require('../getAssetQueuePromise');
+const getAssetQueuePromise = require('./getAssetQueuePromise');
 
 const getAssetsAndOrdersPromises = ({queues, validRows, blockData}) => {
   const assetIdSet = {};

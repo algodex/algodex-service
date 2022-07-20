@@ -1,17 +1,153 @@
+/* eslint-disable max-len */
+/* eslint-disable require-jsdoc */
 const getAssetsAndOrdersPromises = require('./getAssetsAndOrdersPromises');
+const QueueMock = require('../../../src/__mocks__/QueueMock');
 
-const QueueMock = {
-  add: () => jest.fn( (input) => {
-    return new Promise( (resolve) => resolve(input));
-  }),
+const blockData = {
+  rnd: 555,
 };
+const rows = [
+  {
+    'key': [
+      '3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ',
+    ],
+    'value': {
+      'isAlgoBuyEscrow': false,
+      'type': 'close',
+      'orderInfo': '1-449-0-15322902',
+      'numerator': 1,
+      'assetId': 15322902,
+      'denominator': 449,
+      'minimum': 0,
+      'price': 449,
+      'ownerAddr': 'ZM4OVTFEW5NVM5O7PXPQE7YJ6JFCOKMDEO3BA7RZL4VD5MJS3P4ZGS2E6M',
+      'block': '16583486',
+      'ts': 1631352746,
+      'version': '\u0003',
+      'status': 'closed',
+    },
+  },
+  {
+    'key': [
+      'SGKHJD4H5VO5H2SDADDPJ32MXUBEDZYZTOSFPVHGXRHDLWEQUZ47UFNXNA',
+    ],
+    'value': {
+      'isAlgoBuyEscrow': true,
+      'type': 'open',
+      'orderInfo': '1-320-0-15322902',
+      'numerator': 1,
+      'assetId': 15322902,
+      'denominator': 320,
+      'minimum': 0,
+      'price': 320,
+      'ownerAddr': 'LRVOVB6VEEAFNBSUKLNY6SD643P5JSK3NZ75BVFH7YJA2XU7WXVZFYVGWA',
+      'block': '16583500',
+      'ts': 1631352805,
+      'version': '\u0003',
+      'status': 'open',
+    },
+  },
+];
 
-it('gets asset and orders promises', () => {
-  // const input = {
-  //   queues: {
-  //     order: new QueueMock(),
-  //     assets: new QueueMock(),
-  //   },
-  // },
-  expect(1).toBe(1);
+
+it('gets asset and orders promises', async () => {
+  const input = {
+    queues: {
+      orders: Object.create(QueueMock),
+      assets: Object.create(QueueMock),
+    },
+    validRows: rows,
+    blockData,
+  };
+  const promises = getAssetsAndOrdersPromises(input);
+  const results = await Promise.all(QueueMock.add.mock.results.map(result => result.value));
+
+  expect(results).toEqual(['added', 'added', 'added', 'added']);
+  expect(QueueMock.add.mock.calls).toEqual([
+    [
+      'assets',
+      {
+        'assetId': 15322902,
+      },
+      {
+        'removeOnComplete': true,
+      },
+    ],
+    [
+      'orders',
+      {
+        'account': '3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ',
+        'blockData': {
+          'rnd': 555,
+        },
+        'reducedOrder': {
+          'key': [
+            '3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ',
+          ],
+          'value': {
+            'isAlgoBuyEscrow': false,
+            'type': 'close',
+            'orderInfo': '1-449-0-15322902',
+            'numerator': 1,
+            'assetId': 15322902,
+            'denominator': 449,
+            'minimum': 0,
+            'price': 449,
+            'ownerAddr': 'ZM4OVTFEW5NVM5O7PXPQE7YJ6JFCOKMDEO3BA7RZL4VD5MJS3P4ZGS2E6M',
+            'block': '16583486',
+            'ts': 1631352746,
+            'version': '\u0003',
+            'status': 'closed',
+          },
+        },
+      },
+      {
+        'removeOnComplete': true,
+      },
+    ],
+    [
+      'assets',
+      {
+        'assetId': 15322902,
+      },
+      {
+        'removeOnComplete': true,
+      },
+    ],
+    [
+      'orders',
+      {
+        'account': 'SGKHJD4H5VO5H2SDADDPJ32MXUBEDZYZTOSFPVHGXRHDLWEQUZ47UFNXNA',
+        'blockData': {
+          'rnd': 555,
+        },
+        'reducedOrder': {
+          'key': [
+            'SGKHJD4H5VO5H2SDADDPJ32MXUBEDZYZTOSFPVHGXRHDLWEQUZ47UFNXNA',
+          ],
+          'value': {
+            'isAlgoBuyEscrow': true,
+            'type': 'open',
+            'orderInfo': '1-320-0-15322902',
+            'numerator': 1,
+            'assetId': 15322902,
+            'denominator': 320,
+            'minimum': 0,
+            'price': 320,
+            // eslint-disable-next-line max-len
+            'ownerAddr': 'LRVOVB6VEEAFNBSUKLNY6SD643P5JSK3NZ75BVFH7YJA2XU7WXVZFYVGWA',
+            'block': '16583500',
+            'ts': 1631352805,
+            'version': '\u0003',
+            'status': 'open',
+          },
+        },
+      },
+      {
+        'removeOnComplete': true,
+      },
+    ],
+  ]);
+  // console.log(promises);
+  // expect(1).toBe(1);
 });
