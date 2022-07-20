@@ -76,6 +76,7 @@ module.exports = ({queues, databases}) =>{
           // known earliest round is after the current round because
           // the block where the order was initialized
           // wasn't yet in the database. So, filter any unknown orders
+
           res.rows = res.rows.filter(row =>
             row.value.earliestRound <= job.data.rnd)
               .map(row => {
@@ -83,21 +84,18 @@ module.exports = ({queues, databases}) =>{
                 delete row.value['round'];
                 return row;
               });
-          if (job.data.rnd === 16583571 && res?.rows.length === 1) {
-            console.log('block ' + job.data.rnd + ' query results: ' +
-              JSON.stringify(res?.rows));
-          } else if (job.data.rnd === 16583571) {
-            console.log('not condition');
-          }
           if (!res?.rows?.length) {
             return;
           }
           const assetIdSet = {};
           const accountsToVerify = res.rows;
-          console.log('verifying ' + job.data.rnd, JSON.stringify(accountsToVerify));
+
+          console.log('verifying ' + job.data.rnd,
+              JSON.stringify(accountsToVerify));
           const validRows = await verifyContracts(res.rows,
               databases.verified_account);
           console.log('got valid rows: ' + JSON.stringify(validRows));
+
           const assetsAndOrdersPromises =
             validRows.reduce( (allPromises, row) => {
             // add job
