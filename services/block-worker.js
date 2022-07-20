@@ -7,18 +7,9 @@ const getDirtyAccounts = require('../src/get-dirty-accounts');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
-
-const getAssetQueuePromise = (assetQueue, assetId) => {
-  const assetAddJob = {assetId: assetId};
-  const promise = assetQueue.add('assets', assetAddJob,
-      {removeOnComplete: true}).then(function() {
-    //console.log('added asset: ' + assetId);
-  }).catch(function(err) {
-    console.error('error adding to assets queue:', {err} );
-    throw err;
-  });
-  return promise;
-};
+const getAssetQueuePromise = require('./block-worker/getAssetQueuePromise');
+const checkBlockNotSynced = require('./block-worker/checkBlockNotSynced');
+const addBlockToDB = require('./block-worker/addBlockToDB');
 
 module.exports = ({queues, databases}) =>{
   const syncedBlocksDB = databases.synced_blocks;
@@ -33,38 +24,9 @@ module.exports = ({queues, databases}) =>{
     await sleepWhileWaitingForQueues(['tradeHistory', 'assets',
       'orders', 'algxBalance']);
 
-    const roundStr = `${job.data.rnd}`;
-    try {
-      const syncedBlock = await syncedBlocksDB.get(roundStr);
-      if (syncedBlock) {
-        return; // Already synced, nothing left to do
-      }
-    } catch (e) {
-      if (e.error !== 'not_found') {
-        throw e;
-      }
-    }
+    await checkBlockNotSynced(blocksDB, job.data.rnd);
 
-    try {
-      await blocksDB.get(`${job.data.rnd}`);
-    } catch (e) {
-      if (e.error === 'not_found') {
-        try {
-          await blocksDB.post(withSchemaCheck('blocks', {_id: `${job.data.rnd}`,
-            type: 'block', ...job.data}));
-          console.debug({
-            msg: `Block stored`,
-            ...response,
-          });
-        } catch (err) {
-          if (err.error === 'conflict') {
-            console.error('already added! Still not supposed to happen');
-          } else {
-            throw err;
-          }
-        }
-      }
-    }
+    await addBlockToDB(job.data.rnd);
 
     // eslint-disable-next-line max-len
     const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );
