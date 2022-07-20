@@ -43,8 +43,9 @@ const compare = async function() {
     adjStart = 19162310; // Start in February 2022
   }
 
-  if (process.env.TESTMODE && process.env.ALGORAND_NETWORK !== 'testnet') {
-    throw new Error('TESTMODE is only allowed for testnet');
+  if (process.env.INTEGRATION_TEST_MODE &&
+      process.env.ALGORAND_NETWORK !== 'testnet') {
+    throw new Error('INTEGRATION_TEST_MODE is only allowed for testnet');
   }
   if (process.env.TESTMODE) { // Load only 5000 blocks
     //adjStart = 16583454;

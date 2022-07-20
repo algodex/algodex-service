@@ -192,23 +192,36 @@ const runScripts = async () => {
     'formatted-order-worker',
     'order-worker',
     'trade-history-worker',
+    'broker',
   ];
   await startServices(services);
 
-  await runScript('./bin/sync-sequential', 'sync-sequential').then(err => {
-    if (err && !isGloballyShuttingDown) {
-      throw err;
+  // await runScript('./bin/sync-sequential', 'sync-sequential').then(err => {
+  //   if (err && !isGloballyShuttingDown) {
+  //     throw err;
+  //   }
+  //   console.log('Finished sync-sequential');
+  //   // resolve('Completed Integration Test');
+  // });
+  // const lastSyncedRound = 16583454 - 1;
+  const maxSyncedRoundInTestMode = 16583654;
+  const databases = await getDatabases();
+  const blocksDB = databases.blocks;
+  do {
+    try {
+      await blocksDB.get(maxSyncedRoundInTestMode);
+      break;
+    } catch (e) {
+      console.log(`${maxSyncedRoundInTestMode} block not yet stored in DB!`, e);
+      await sleep(250);
     }
-    console.log('Finished sync-sequential');
-    // resolve('Completed Integration Test');
-  });
+  } while (1);
 
   do {
     await sleep(250);
   } while (await getActiveCounts() > 0);
 
   // wait for all processes to shut down
-  const databases = await getDatabases();
   console.log('starting shutdown...');
   await sleep(250);
 
