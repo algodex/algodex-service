@@ -19,6 +19,13 @@ You can find the contribution guides for getting started in [CONTRIBUTING.md](.g
 # Getting Started
 Use one of the following:
 
+#### Testing
+First make sure CouchDB and Redis services are running according to .testnet.local.env
+
+```
+bin/run-end-to-end-test --mode=light && jest
+```
+####
 #### Quick Start (Docker Only)
 
 ```shell
