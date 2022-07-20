@@ -4,6 +4,7 @@ const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
 const convertQueueURL = require('../src/convert-queue-url');
+const sleep = require('../src/sleep');
 
 module.exports = ({queues, events, databases}) => {
   console.log({
@@ -68,6 +69,7 @@ module.exports = ({queues, events, databases}) => {
     const blocksDB = databases.blocks;
 
     let lastSyncedRound;
+    let maxSyncedRoundInTestMode;
 
     const latestBlock = await waitForBlock({
       round: round['last-round'],
@@ -77,13 +79,41 @@ module.exports = ({queues, events, databases}) => {
 
     if (result.rows && result.rows.length > 0) {
       lastSyncedRound = parseInt(result.rows[0].value);
-    } else {
-      throw new Error('Please run sync_sequential script first!');
     }
 
+    if (process.env.INTEGRATION_TEST_MODE &&
+      process.env.ALGORAND_NETWORK !== 'testnet') {
+      throw new Error('INTEGRATION_TEST_MODE is only allowed for testnet');
+    }
+
+    if (process.env.INTEGRATION_TEST_MODE) {
+      lastSyncedRound = 16583454 - 1;
+      maxSyncedRoundInTestMode = 16583654;
+    }
+
+    let hadFirstRound = false;
     do {
       await sleepWhileWaitingForQueues(['blocks']);
-
+      if (hadFirstRound) {
+        // Get block before this round and make sure it exists in the DB
+        let foundPrevBlock = false;
+        const prevBlock = `${lastSyncedRound}`;
+        do {
+          try {
+            await blocksDB.get(prevBlock);
+            foundPrevBlock = true;
+          } catch (e) {
+            console.log(`${prevBlock} block not yet stored in DB!`);
+            await sleep(10);
+          }
+        } while (!foundPrevBlock);
+      }
+      if (process.env.INTEGRATION_TEST_MODE && maxSyncedRoundInTestMode &&
+        lastSyncedRound >= maxSyncedRoundInTestMode) {
+        console.log('last synced round found! exiting ',
+            lastSyncedRound, maxSyncedRoundInTestMode);
+        process.exit(0);
+      }
       lastSyncedRound++;
       console.log('In catchup mode, getting block: ' + lastSyncedRound);
       const block = await getBlockFromDBOrNode(blocksDB, lastSyncedRound);
@@ -93,6 +123,7 @@ module.exports = ({queues, events, databases}) => {
         msg: 'Published and Queued',
         round: lastSyncedRound,
       });
+      hadFirstRound = true;
     } while (lastSyncedRound < latestBlock['last-round']);
     round['last-round'] = lastSyncedRound;
     runWaitBlockSync();
