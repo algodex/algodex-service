@@ -79,6 +79,8 @@ module.exports = ({queues, events, databases}) => {
 
     if (result.rows && result.rows.length > 0) {
       lastSyncedRound = parseInt(result.rows[0].value);
+    } else {
+      lastSyncedRound = parseInt(process.env.GENESIS_LAUNCH_BLOCK);
     }
 
     if (process.env.INTEGRATION_TEST_MODE &&
