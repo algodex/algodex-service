@@ -1,6 +1,22 @@
 const verifyContracts = require('../../src/verify-contracts');
 const getAssetQueuePromise = require('../block-worker/getAssetQueuePromise');
 
+const removeEarliestRound = (rows, round) => {
+  if (!rows.length) {
+    return [];
+  }
+  const newRows = rows.filter(row => row.value.earliestRound <= round)
+      .map(row => {
+        return {...row};
+      })
+      .map(row => {
+        delete row.value['earliestRound'];
+        delete row.value['round'];
+        return row;
+      });
+  return newRows;
+};
+
 const getOrdersPromise = ({databases, queues, dirtyAccounts, blockData}) => {
   return databases.blocks.query('blocks/orders',
       {reduce: true, group: true, keys: dirtyAccounts})
@@ -10,14 +26,8 @@ const getOrdersPromise = ({databases, queues, dirtyAccounts, blockData}) => {
         // the block where the order was initialized
         // wasn't yet in the database. So, filter any unknown orders
 
-        res.rows = res.rows.filter(row =>
-          row.value.earliestRound <= blockData.rnd)
-            .map(row => {
-              delete row.value['earliestRound'];
-              delete row.value['round'];
-              return row;
-            });
-        if (!res?.rows?.length) {
+        res.rows = removeEarliestRound(res.rows, blockData.rnd);
+        if (!res.rows.length) {
           return;
         }
         const assetIdSet = {};
