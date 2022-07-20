@@ -1,7 +1,6 @@
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 const convertQueueURL = require('../src/convert-queue-url');
-const sleep = require('../src/sleep');
 const getDirtyAccounts = require('../src/get-dirty-accounts');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const sleepWhileWaitingForQueues =
