@@ -1,4 +1,14 @@
 module.exports = {
+  'overrides': [
+    {
+      'files': [
+        '**/*.spec.js',
+        '**/*.spec.jsx',
+      ],
+      'env': {
+        'jest': true,
+      },
+    }],
   'globals': {
     'emit': true,
   },
