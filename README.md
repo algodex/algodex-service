@@ -28,7 +28,7 @@ docker-compose up -f docker-compose.yml -f docker-compose.docker.yml
 ```
 
 ### Testing (Localhost with Docker Data)
-First make sure CouchDB and Redis services are running according to .testnet.local.env
+First make sure CouchDB and Redis services are running according to .testnet.local.env. The node.js should *not* be running as these will be started by the end-to-end test.
 
 ```
 bin/run-end-to-end-test --mode=light && jest
