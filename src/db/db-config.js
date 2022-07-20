@@ -123,6 +123,9 @@ const databases = [
           map: require('../../views/formatted_history/activityView-map.js').toString(),
           reduce: '_count',
         },
+        distinctDates: {
+          map: require('../../views/formatted_history/distinctDates-map.js').toString(),
+        },
       },
     },
   },
