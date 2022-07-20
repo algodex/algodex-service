@@ -194,6 +194,7 @@ const runScripts = async () => {
     }
     console.log('Finished add-views');
   });
+  const doNotRunService = args.doNotRunService;
   const services = [
     'algx-balance-worker',
     'asset-worker',
@@ -202,7 +203,8 @@ const runScripts = async () => {
     'order-worker',
     'trade-history-worker',
     'broker',
-  ];
+  ].filter(service => !!doNotRunService && service !== doNotRunService);
+  console.log(services);
   await startServices(services);
 
   // await runScript('./bin/sync-sequential', 'sync-sequential').then(err => {
