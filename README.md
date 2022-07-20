@@ -19,21 +19,22 @@ You can find the contribution guides for getting started in [CONTRIBUTING.md](.g
 # Getting Started
 Use one of the following:
 
-#### Testing (Localhost with Docker Data)
-First make sure CouchDB and Redis services are running according to .testnet.local.env
 
-```
-bin/run-end-to-end-test --mode=light && jest
-```
-####
-#### Quick Start (Docker Only)
+### Quick Start (Docker Only)
 Note: This has not been verified recently. The preferred method for now is to start the local services in VSCode. (Control+Shift+P or Command Shift P on Mac) Run Task -> Compose up Localhost)
 ```shell
 cp .testnet.docker.env .env
 docker-compose up -f docker-compose.yml -f docker-compose.docker.yml
 ```
 
-#### Development (Localhost with Docker Data)
+### Testing (Localhost with Docker Data)
+First make sure CouchDB and Redis services are running according to .testnet.local.env
+
+```
+bin/run-end-to-end-test --mode=light && jest
+```
+
+### Development (Localhost with Docker Data)
 
 ```shell
 # Shutdown any existing services then run
@@ -41,7 +42,7 @@ cp .testnet.localhost.env .env
 docker-compose up -f docker-compose.localhost.yml
 ```
 
-#### Manual Test Run (Localhost with Docker Data)
+### Manual Test Run (Localhost with Docker Data)
 
 ```shell
 export ALGORAND_NETWORK=testnet
