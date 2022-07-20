@@ -1,14 +1,15 @@
-const addBlockToDB = async round => {
+const withSchemaCheck = require('../../src/schema/with-db-schema-check');
+
+const addBlockToDB = async (blocksDB, round, blockData) => {
   try {
     await blocksDB.get(`${round}`);
   } catch (e) {
     if (e.error === 'not_found') {
       try {
         await blocksDB.post(withSchemaCheck('blocks', {_id: `${round}`,
-          type: 'block', ...job.data}));
+          type: 'block', ...blockData}));
         console.debug({
-          msg: `Block stored`,
-          ...response,
+          msg: `Block stored`, round: `${round}`,
         });
       } catch (err) {
         if (err.error === 'conflict') {

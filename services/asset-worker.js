@@ -39,7 +39,6 @@ module.exports = ({queues, databases}) =>{
         .then(async function(response) {
           console.debug({
             msg: `Asset ${job.data.assetId} stored`,
-            ...response,
           });
         }).catch(function(err) {
           if (err.error === 'conflict') {

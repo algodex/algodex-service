@@ -20,6 +20,7 @@ const getOrdersPromise = ({databases, queues, dirtyAccounts, blockData}) => {
 
         console.log('verifying ' + blockData.rnd,
             JSON.stringify(accountsToVerify));
+
         const validRows = await verifyContracts(res.rows,
             databases.verified_account);
         console.log('got valid rows: ' + JSON.stringify(validRows));

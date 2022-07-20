@@ -2,12 +2,12 @@ const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 const convertQueueURL = require('../src/convert-queue-url');
 const getDirtyAccounts = require('../src/get-dirty-accounts');
-const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
 const checkBlockNotSynced = require('./block-worker/checkBlockNotSynced');
 const addBlockToDB = require('./block-worker/addBlockToDB');
 const getOrdersPromise = require('./block-worker/getOrdersPromise');
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 module.exports = ({queues, databases}) =>{
   const syncedBlocksDB = databases.synced_blocks;
@@ -24,7 +24,7 @@ module.exports = ({queues, databases}) =>{
 
     await checkBlockNotSynced(blocksDB, job.data.rnd);
 
-    await addBlockToDB(job.data.rnd);
+    await addBlockToDB(blocksDB, job.data.rnd, job.data);
 
     // eslint-disable-next-line max-len
     const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );

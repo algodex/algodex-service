@@ -19,6 +19,7 @@ const getAssetsAndOrdersPromises = ({queues, validRows, blockData}) => {
       blockData: blockData, reducedOrder: row};
     console.log('queuing order: ' + ordersJob.account + ' ' +
       ordersJob.blockData.rnd);
+
     const promise = queues.orders.add('orders', ordersJob,
         {removeOnComplete: true}).then(function() {
     }).catch(function(err) {
