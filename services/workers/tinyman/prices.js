@@ -1,13 +1,8 @@
 const {PerformanceObserver, performance} = require('node:perf_hooks');
-const fetch = require('cross-fetch');
+const fetchLink = require('cross-fetch');
 
-/**
- * @typedef {import('ioredis').default} Redis
- */
-
-/**
- * @typedef {import('PouchDB')} PouchDB
- */
+// eslint-disable-next-line no-unused-vars
+const ALGX = require('../../../src/algx-types');
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 // Watch for Performance
@@ -21,7 +16,7 @@ if (isDevelopment) {
 
 /**
  *
- * @param {PouchDB} db Database instance to save to
+ * @param {ALGX.PouchDB} db Database instance to save to
  * @param {number} timestamp Timestamp for record keeping
  */
 module.exports = function(db, timestamp) {
@@ -32,6 +27,7 @@ module.exports = function(db, timestamp) {
   const url = process.env.ALGORAND_NETWORK === 'testnet' ?
     'https://testnet.analytics.tinyman.org/api/v1/current-asset-prices/' :
     'https://mainnet.analytics.tinyman.org/api/v1/current-asset-prices/';
+  // eslint-disable-next-line no-undef // FIXME: does this call work? Maybe refactor?
   fetch(url).then(async res=> {
     const prices = await res.json();
     await db.bulkDocs(Object.keys(prices).map(key => {

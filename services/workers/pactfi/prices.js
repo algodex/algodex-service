@@ -1,5 +1,7 @@
 const algosdk = require('algosdk');
 const pactsdk = require('@pactfi/pactsdk');
+// eslint-disable-next-line no-unused-vars
+const ALGX = require('../../../src/algx-types');
 
 // Algod SDK
 const algod = new algosdk.Algodv2(
@@ -33,7 +35,7 @@ if (isDevelopment) {
 /**
  * Adds PactFi Prices to the database
  *
- * @param {PouchDB} db PouchDB Instance
+ * @param {ALGX.PouchDB} db PouchDB Instance
  * @param {number} timestamp Unix Timestamp
  * @return {Promise<void>}
  */
@@ -41,6 +43,8 @@ module.exports = async (db, timestamp) => {
   if (isDevelopment) {
     performance.mark('Start');
   }
+  // FIXME: does this work? Need to test. Remove ts-ignore if so
+  // @ts-ignore
   const pools = await pact.listPools({limit: 1000});
   if (pools.results.length !== pools.count) {
     // Note: It doesn't seem like the next parameter is in use currently,
@@ -52,6 +56,7 @@ module.exports = async (db, timestamp) => {
   await db.bulkDocs(pools.results.map(pool=>{
     return {
       ...pool,
+      // @ts-ignore  FIXME - does this work below?  Remove ts-ignore if so
       'price': pool.pool_asset.price,
       'service': 'pactfi',
       'asset': {id: parseInt(pool.secondary_asset.algoid)},

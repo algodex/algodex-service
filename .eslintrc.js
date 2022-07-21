@@ -13,7 +13,8 @@ module.exports = {
     'emit': true,
   },
   'env': {
-    'browser': true,
+    'node': true,
+    'browser': false,
     'commonjs': true,
     'es2021': true,
   },

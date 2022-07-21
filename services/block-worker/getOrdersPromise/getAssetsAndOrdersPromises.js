@@ -21,8 +21,7 @@ const getAssetsAndOrdersPromises = ({queues, validRows, blockData}) => {
       ordersJob.blockData.rnd);
 
     const promise = queues.orders.add('orders', ordersJob,
-        {removeOnComplete: true}).then(function() {
-    }).catch(function(err) {
+        {removeOnComplete: true}).catch(function(err) {
       console.error('error adding to orders queue:', {err} );
       throw err;
     });

@@ -5,7 +5,7 @@ const {InvalidParameter} = require('./Errors');
  * Create an Array of consecutive numbers
  * @param {number} start
  * @param {number} length
- * @return {array<number>}
+ * @return {Array<number>}
  */
 const createConsecutiveArray = function( start, length) {
   if (start > length) {

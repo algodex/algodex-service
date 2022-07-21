@@ -10,7 +10,7 @@ const getQueues = require('../src/queues');
 const args = require('minimist')(process.argv.slice(2));
 
 if (args.integrationTest) {
-  process.env.INTEGRATION_TEST_MODE = 1;
+  process.env.INTEGRATION_TEST_MODE = '1';
 }
 const queues = getQueues();
 
@@ -24,7 +24,7 @@ createBullBoard(
         new BullMQAdapter(queues.assets),
         new BullMQAdapter(queues.tradeHistory),
         new BullMQAdapter(queues.formattedEscrows),
-        new BullMQAdapter(queues.ownerBalance),
+        new BullMQAdapter(queues.algxBalance),
       ],
       serverAdapter: serverAdapter,
     },

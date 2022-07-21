@@ -11,7 +11,9 @@ let queues; let connection;
  *
  * Return a singleton instance of the available queues
  *
- * @return {{assets: Queue, blocks: Queue, connection: Redis, orders: Queue}}
+ * @return {{assets: Queue, blocks: Queue,
+ *  connection: Redis, orders: Queue, tradeHistory: Queue,
+ *  formattedEscrows: Queue, algxBalance: Queue}}
  */
 module.exports = function() {
   if (
@@ -39,7 +41,7 @@ module.exports = function() {
         delay: 300,
       },
     };
-    queueNames = [
+    const queueNames = [
       'blocks',
       'assets',
       'orders',

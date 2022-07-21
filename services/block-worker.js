@@ -8,57 +8,73 @@ const checkBlockNotSynced = require('./block-worker/checkBlockNotSynced');
 const addBlockToDB = require('./block-worker/addBlockToDB');
 const getOrdersPromise = require('./block-worker/getOrdersPromise');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
+// eslint-disable-next-line no-unused-vars
+const ALGX = require('../src/algx-types');
 
-module.exports = ({queues, databases}) =>{
+
+const state = {};
+
+/**
+ *
+ *
+ * @param {ALGX.BlockJob} job
+ * @return {Promise}
+ */
+const performJob = async job=>{
+  const {databases, queues} = state;
   const syncedBlocksDB = databases.synced_blocks;
   const blocksDB = databases.blocks;
+  console.debug({
+    msg: 'Received block',
+    round: job.data.rnd,
+  });
 
-  const blocks = new Worker(convertQueueURL('blocks'), async job=>{
-    console.debug({
-      msg: 'Received block',
-      round: job.data.rnd,
-    });
+  await sleepWhileWaitingForQueues(['tradeHistory', 'assets',
+    'orders', 'algxBalance']);
 
-    await sleepWhileWaitingForQueues(['tradeHistory', 'assets',
-      'orders', 'algxBalance']);
+  await checkBlockNotSynced(blocksDB, job.data.rnd);
 
-    await checkBlockNotSynced(blocksDB, job.data.rnd);
+  await addBlockToDB(blocksDB, job.data.rnd, job.data);
 
-    await addBlockToDB(blocksDB, job.data.rnd, job.data);
 
-    // eslint-disable-next-line max-len
-    const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );
+  // eslint-disable-next-line max-len
+  const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );
 
-    return Promise.all( [getOrdersPromise({databases, queues,
-      dirtyAccounts, blockData: job.data}),
-    // The trade history is always from orders that previously existed
-    // in other blocks, so we can queue it in parallel
-    // to adding them to orders
-    queues.tradeHistory.add('tradeHistory', {block: `${job.data.rnd}`},
-        {removeOnComplete: true}).then(function() {
-    }).catch(function(err) {
-      console.error('error adding to trade history queue:', {err} );
-      throw err;
-    }),
-    queues.algxBalance.add('algxBalance', {...job.data},
-        {removeOnComplete: true}).then(function() {
-    }).catch(function(err) {
-      console.error('error adding to ALGX balance queue:', {err} );
-      throw err;
-    }),
-    // eslint-disable-next-line max-len
-    syncedBlocksDB.post(withSchemaCheck('synced_blocks', {_id: `${job.data.rnd}`}))
-        .then(function() { }).catch(function(err) {
-          if (err.error === 'conflict') {
-            console.error('Block was already synced! Not supposed to happen');
-          } else {
-            throw err;
-          }
-        }),
+  return Promise.all( [getOrdersPromise({databases, queues,
+    dirtyAccounts, blockData: job.data}),
+  // The trade history is always from orders that previously existed
+  // in other blocks, so we can queue it in parallel
+  // to adding them to orders
+  queues.tradeHistory.add('tradeHistory', {block: `${job.data.rnd}`},
+      {removeOnComplete: true}).then(function() {
+  }).catch(function(err) {
+    console.error('error adding to trade history queue:', {err} );
+    throw err;
+  }),
+  queues.algxBalance.add('algxBalance', {...job.data},
+      {removeOnComplete: true}).then(function() {
+  }).catch(function(err) {
+    console.error('error adding to ALGX balance queue:', {err} );
+    throw err;
+  }),
+  // eslint-disable-next-line max-len
+  syncedBlocksDB.post(withSchemaCheck('synced_blocks', {_id: `${job.data.rnd}`}))
+      .then(function() { }).catch(function(err) {
+        if (err.error === 'conflict') {
+          console.error('Block was already synced! Not supposed to happen');
+        } else {
+          throw err;
+        }
+      }),
 
-    ]);
-  }, {connection: queues.connection, concurrency: 50});
+  ]);
+};
 
+module.exports = ({queues, databases}) =>{
+  const blocks = new Worker(convertQueueURL('blocks'), performJob,
+      {connection: queues.connection, concurrency: 50});
+  state.queues = queues;
+  state.databases = databases;
   blocks.on('error', err => {
     console.error( {err} );
   });

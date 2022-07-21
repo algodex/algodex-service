@@ -1,0 +1,16 @@
+{
+  /*"compilerOptions": {
+    "checkJs": true
+  },*/
+  "include": ["src", "services"],
+  "exclude": ["node_modules", "node_modules/**", "views/**", "*/__tests__/*"],
+  "typeAcquisition": {
+    "include": ["jest"]
+  },
+
+  "compilerOptions": {
+    "checkJs": true,
+    "resolveJsonModule":true,
+  }
+
+}

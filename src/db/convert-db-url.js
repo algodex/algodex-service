@@ -2,7 +2,7 @@
 const convertURL = dbUrl => {
   const prefix = 'integration_test__';
   const isIntegrationTest = process.env.INTEGRATION_TEST_MODE &&
-    process.env.INTEGRATION_TEST_MODE != 0;
+    process.env.INTEGRATION_TEST_MODE !== '0';
 
   if (dbUrl.includes(prefix)) {
     return dbUrl;

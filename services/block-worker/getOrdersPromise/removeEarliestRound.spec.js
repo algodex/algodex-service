@@ -1,5 +1,4 @@
 const removeEarliestRound = require('./removeEarliestRound');
-
 it('removes round keys and invalid data', () => {
   const vals = [
     {value: {

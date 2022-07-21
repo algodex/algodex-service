@@ -9,17 +9,11 @@ const withSchemaCheck = require('../src/schema/with-db-schema-check');
 // https://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
 /**
 *  check if value is interger
-*  @param {number} value pass as parameter
-*  @return boolean value true if value is integer
+*  @param {string} value pass as parameter
 *  @return {boolean} true if value is integer other
 */
 function isInt(value) {
-  if (isNaN(value)) {
-    return false;
-  }
-
-  const x = parseFloat(value);
-  return (x | 0) === x;
+  return /^\d+$/.test(`${value}`);
 }
 
 const checkAndGetInput = (
@@ -37,7 +31,7 @@ const checkAndGetInput = (
   if (typeof escrowAddress !== 'string') {
     throw new TypeError('escrowAddress is not string!`');
   }
-  if (!isInt(assetId) || assetId < 0) {
+  if (assetId < 0) {
     throw new TypeError('invalid assetId!');
   }
   if (typeof isAlgoBuyEscrow !== 'boolean') {

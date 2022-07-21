@@ -6,7 +6,7 @@ const path = require('node:path');
 const getAlgoUsdPrices = async () => {
   const filePath = path.join(__dirname, 'ALGO-USD.csv');
   const promise = new Promise((resolve, reject) => {
-    rows = [];
+    const rows = [];
     fs.createReadStream(filePath)
         .pipe(parse({delimiter: ',', from_line: 2}))
         .on('data', function(row) {

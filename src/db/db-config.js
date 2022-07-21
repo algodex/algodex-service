@@ -1,4 +1,8 @@
 /* eslint-disable max-len */
+// @ts-nocheck
+// eslint-disable-next-line require-jsdoc, no-unused-vars
+globalThis.emit = function(a, b) {};
+
 const databases = [
   {
     dbName: 'blocks',

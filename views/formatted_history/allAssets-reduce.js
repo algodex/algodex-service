@@ -1,4 +1,6 @@
 
+// @ts-nocheck
+
 module.exports = function(keys, values, rereduce) {
   const calculateLastValue = values => {
     const lastValue = values.reduce( (finalValue, value) => {

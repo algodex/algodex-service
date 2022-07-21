@@ -42,7 +42,7 @@ module.exports = ({queues, databases}) =>{
             // testing and when starting from scratch with no blocks loaded
             // except from a random point
             const inIntegrationTest = process.env.INTEGRATION_TEST_MODE &&
-              process.env.INTEGRATION_TEST_MODE != 0;
+              process.env.INTEGRATION_TEST_MODE != '0';
 
             if (innerRows.length === 0 && !inIntegrationTest) {
               return;
@@ -74,13 +74,13 @@ module.exports = ({queues, databases}) =>{
                     indexer.lookupAssetByID(assetId).do());
                   const assetResults = await Promise.all(assetPromises);
                   const assetResultsMap = assetResults.reduce((obj, result) => {
-                      const assetId = result.asset.index;
-                      const decimals = result.asset.params.decimals;
-                      obj[`assetId:${assetId}`] = decimals;
-                      return obj;
-                    }, {});
+                    const assetId = result.asset.index;
+                    const decimals = result.asset.params.decimals;
+                    obj[`assetId:${assetId}`] = decimals;
+                    return obj;
+                  }, {});
                   const assetToDecimals = {...assetToDecimalsFromDB, ...assetResultsMap};
-                // const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
+                  // const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
 
                   const validHistoryRows = tradeHistoryRows
                       // eslint-disable-next-line max-len

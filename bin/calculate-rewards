@@ -3,7 +3,7 @@
 
 /* USAGE:
  *
- * This script will calculate all rewards for the epoch and upload them to the 
+ * This script will calculate all rewards for the epoch and upload them to the
  * database.
  *
  * bin/calculate-rewards --epoch={epoch}
@@ -13,7 +13,6 @@ require('dotenv').config();
 const cliProgress = require('cli-progress');
 const getDatabases = require('../src/db/get-databases');
 const getSequenceInfo = require('../src/rewards/get-sequence-info');
-const getBlocksToTime = require('../src/rewards/get-blocks-to-time');
 const getEpochEnd = require('../src/rewards/get-epoch-end');
 const getEpochStart = require('../src/rewards/get-epoch-start');
 const getSecondsInEpoch = require('../src/rewards/get-seconds-in-epoch');
@@ -143,7 +142,7 @@ async function run() {
         changeTime >= ownerChangeTimes[ownerstep]) {
         // eslint-disable-next-line max-len
         const timeKey = 'time:'+ownerChangeTimes[ownerstep];
-        timeToChangedOwners[timeKey].forEach( (addr) => {
+        timeToChangedOwners[timeKey].forEach( addr => {
           ownerWalletsBalanceChangeSet.add(addr);
         });
         ownerstep++; // Catch up to escrow time step

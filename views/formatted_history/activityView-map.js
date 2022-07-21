@@ -1,4 +1,6 @@
-module.exports = function (doc) {
+// @ts-nocheck
+
+module.exports = function(doc) {
   if (doc.tradeType === 'buy') {
     emit(doc.assetBuyerAddr, 1);
   } else if (doc.tradeType === 'sell') {
@@ -6,4 +8,4 @@ module.exports = function (doc) {
   }
 };
 
-//reducer: count
+// reducer: count

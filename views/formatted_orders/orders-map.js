@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 module.exports = function(doc) {
   /**
    * @param {int} unformattedPrice
