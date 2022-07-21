@@ -9,12 +9,16 @@ class NotFoundError extends Error {
 }
 
 module.exports = {
+  NotFoundError,
   DatabaseMock: Object.create({
     post: jest.fn(() => new Promise(resolve => {
       resolve('posted');
     })),
     get: jest.fn(() => new Promise(resolve => {
       resolve('get');
+    })),
+    query: jest.fn(() => new Promise(resolve => {
+      resolve('queried');
     })),
   }),
   DatabaseGetNotFoundMock: Object.create({

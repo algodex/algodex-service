@@ -25,7 +25,6 @@ it('removes round keys and invalid data', () => {
     {value: {
       otherData: 'some data2',
     }},
-
   ]);
 });
 
