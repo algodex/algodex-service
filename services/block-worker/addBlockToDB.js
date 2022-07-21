@@ -1,12 +1,14 @@
-// @ts-check
-
-
 const withSchemaCheck = require('../../src/schema/with-db-schema-check');
 
 /**
- *
- *
- * @param {*} blocksDB
+ * @typedef {Object} aaaaa description
+ * @param {number} a description
+ * @param {string} b description
+ * @param {*} c description
+ */
+
+/**
+ * @param {aaaaa} blocksDB
  * @param {number} round
  * @param {*} blockData
  * @return {Promise<any>}

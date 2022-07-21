@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 module.exports = function(doc) {
   const unixToEpoch = unixTime => {
     const rounded = Math.floor(unixTime);

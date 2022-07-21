@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 module.exports = function(doc) {
   const milliseconds = doc.unixTime * 1000;
   const dateObject = new Date(milliseconds);
@@ -8,4 +10,4 @@ module.exports = function(doc) {
     doc.assetBuyerAddr : doc.assetSellerAddr;
   emit(owner+':date', date);
   emit(owner+':month', monthYear);
-}
+};

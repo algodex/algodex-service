@@ -1,9 +1,15 @@
 {
-  "compilerOptions": {
+  /*"compilerOptions": {
     "checkJs": true
-  },
-  "exclude": ["node_modules", "**/node_modules/*"],
+  },*/
+  "include": ["src", "services"],
+  "exclude": ["node_modules", "node_modules/**", "views/**", "*/__tests__/*"],
   "typeAcquisition": {
     "include": ["jest"]
+  },
+
+  "compilerOptions": {
+    "checkJs": true,
   }
+
 }

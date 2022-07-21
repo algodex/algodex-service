@@ -1,5 +1,4 @@
 // eslint-disable-next-line require-jsdoc
-function emit() {}
 module.exports = function(doc) {
   // eslint-disable-next-line max-len
   if (typeof doc.type !== 'undefined' && doc.type === 'price' && typeof doc.price === 'number') {

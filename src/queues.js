@@ -39,7 +39,7 @@ module.exports = function() {
         delay: 300,
       },
     };
-    queueNames = [
+    const queueNames = [
       'blocks',
       'assets',
       'orders',
