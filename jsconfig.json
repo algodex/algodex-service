@@ -3,7 +3,7 @@
     "checkJs": true
   },*/
   "include": ["src", "services"],
-  "exclude": ["node_modules", "node_modules/**", "views/**", "*/__tests__/*"],
+  "exclude": ["node_modules", "node_modules/**", "views/**", "*/__tests__/*", , "*/__mocks__/*"],
   "typeAcquisition": {
     "include": ["jest"]
   },

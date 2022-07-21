@@ -2,9 +2,7 @@
 
 const addBlockToDB = require('./addBlockToDB');
 const loadJson = require('../../src/loadJson');
-const DatabaseMock = require('../../src/__mocks__/DatabaseMock');
-const DatabaseGetNotFoundMock =
-  require('../../src/__mocks__/DatabaseGetNotFoundMock');
+const {DatabaseMock, DatabaseGetNotFoundMock} = require('../../src/__mocks__/DatabaseMock');
 const db = Object.create(DatabaseMock);
 const dbGetNotFound = Object.create(DatabaseGetNotFoundMock);
 

@@ -5,6 +5,8 @@ const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const convertQueueURL = require('../src/convert-queue-url');
 
 const initOrGetIndexer = require('../src/get-indexer');
+// eslint-disable-next-line no-unused-vars
+const ALGX = require('../src/algx-types');
 
 const getAssetInCouch = async (assetDB, assetId) => {
   try {

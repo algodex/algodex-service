@@ -6,13 +6,6 @@ const queues = {
   assets: Object.create(QueueMock),
 };
 
-const getPromise2 = (assetQueue, assetId) => {
-  const assetAddJob = {assetId: assetId};
-  const promise = assetQueue.add('assets', assetAddJob,
-      {removeOnComplete: true}).then(function() {
-  });
-  return promise;
-};
 
 it('gets asset queue promise', async () => {
   const queueMockTest = await queues.orders.add('aaa', 'bbb', 'ccc');
