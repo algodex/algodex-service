@@ -2,25 +2,25 @@
 
 const addBlockToDB = require('./addBlockToDB');
 const loadJson = require('../../src/loadJson');
-const {DatabaseMock, DatabaseGetNotFoundMock} = require('../../src/__mocks__/DatabaseMock');
+const {DatabaseMock, DatabaseExpectedErrorMock} = require('../../src/__mocks__/DatabaseMock');
 
 it('adds block to DB', async () => {
   const obj = loadJson('../src/__tests__/schema/db/blocks.json');
   const promiseRes = await addBlockToDB(DatabaseMock, 44, obj);
   expect(promiseRes).toBe('get');
-  const promiseRes2 = await addBlockToDB(DatabaseGetNotFoundMock, 44, obj);
+  const promiseRes2 = await addBlockToDB(DatabaseExpectedErrorMock, 44, obj);
   expect(promiseRes2).toBe('posted');
   expect(DatabaseMock.get.mock.calls).toEqual([
     [
       '44',
     ],
   ]);
-  expect(DatabaseGetNotFoundMock.get.mock.calls).toEqual([
+  expect(DatabaseExpectedErrorMock.get.mock.calls).toEqual([
     [
       '44',
     ],
   ]);
-  expect(DatabaseGetNotFoundMock.post.mock.calls).toEqual([
+  expect(DatabaseExpectedErrorMock.post.mock.calls).toEqual([
     [
       {
         '_id': '15915394',

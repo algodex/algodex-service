@@ -8,11 +8,28 @@ class NotFoundError extends Error {
   }
 }
 
+class ConflictError extends Error {
+  constructor(message) {
+    super(message);
+    this.error = 'conflict';
+  }
+}
+
+class UnexpectedError extends Error {
+  constructor(message) {
+    super(message);
+    this.error = 'unexpected error';
+  }
+}
+
 module.exports = {
-  NotFoundError,
+  NotFoundError, ConflictError, UnexpectedError,
   DatabaseMock: Object.create({
     post: jest.fn(() => new Promise(resolve => {
       resolve('posted');
+    })),
+    put: jest.fn(() => new Promise(resolve => {
+      resolve('put');
     })),
     get: jest.fn(() => new Promise(resolve => {
       resolve('get');
@@ -21,9 +38,12 @@ module.exports = {
       resolve('queried');
     })),
   }),
-  DatabaseGetNotFoundMock: Object.create({
+  DatabaseExpectedErrorMock: Object.create({
     post: jest.fn(() => new Promise(resolve => {
       resolve('posted');
+    })),
+    put: jest.fn(() => new Promise(resolve => {
+      throw new ConflictError;
     })),
     get: jest.fn(() => new Promise(resolve => {
       throw new NotFoundError;
@@ -31,10 +51,13 @@ module.exports = {
   }),
   DatabaseBadErrorMock: Object.create({
     post: jest.fn(() => new Promise(resolve => {
-      throw new Error('bad post error');
+      throw new UnexpectedError;
+    })),
+    put: jest.fn(() => new Promise(resolve => {
+      throw new UnexpectedError;
     })),
     get: jest.fn(() => new Promise(resolve => {
-      throw new Error('bad get error');
+      throw new UnexpectedError;
     })),
   }),
 };
