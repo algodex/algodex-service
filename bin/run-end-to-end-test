@@ -12,37 +12,21 @@
 const childProcess = require('child_process');
 let isGloballyShuttingDown = false;
 
-const dotenv = require('dotenv');
 const fs = require('fs');
 const sleep = require('../src/sleep');
 const getQueues = require('../src/queues');
 const getDatabases = require('../src/db/get-databases');
 const args = require('minimist')(process.argv.slice(2));
+const {initTestnetEnv, getTestnetConfig} = require('../src/initTestnetEnv');
 
 process.env.INTEGRATION_TEST_MODE = '1';
 
-
-const getFile = async file => {
-  return await new Promise( (resolve) => {
-    fs.readFile(file, 'utf8', (err, data) => {
-      console.log(data);
-      resolve(data);
-    });
-  });
-};
-
-const getConfig = async () => {
-  const envContents = await getFile('./.testnet.localhost.env');
-  const buf = Buffer.from(envContents);
-  const config = dotenv.parse(buf);
-  return config;
-};
 
 const processToAppContext = new Map();
 
 async function runScript(scriptPath, appContext='', args=null) {
   // keep track of whether callback has been invoked to prevent multiple invocations
-  const envConfig = await getConfig();
+  const envConfig = await getTestnetConfig();
   // const out = fs.openSync(`./integration_test/log/${appContext}_out.log`, 'a');
   // const err = fs.openSync(`./integration_test/log/${appContext}_out.log`, 'a');
 
@@ -50,12 +34,12 @@ async function runScript(scriptPath, appContext='', args=null) {
     'APP_CONTEXT': appContext,
     'INTEGRATION_TEST_MODE': 1,
   },
-  //stdio: [ 'pipe', out, err ],
+  // stdio: [ 'pipe', out, err ],
   };
 
   return new Promise(resolve => {
     let invoked = false;
-    //console.log({envConfig});
+    // console.log({envConfig});
     console.log('STARTING: ' + scriptPath + ' ' + appContext);
 
     const process = childProcess.spawn(scriptPath, args ? args : [], options);
@@ -162,13 +146,6 @@ const getActiveCounts = async () => {
   return counts;
 };
 
-const initEnv = async () => {
-  config = await getConfig();
-  Object.keys(config).forEach(configKey => {
-    process.env[configKey] = config[configKey];
-  });
-};
-
 const getLightModeRemovalString = databases => {
   const preserveDBs = new Set(['blocks', 'assets', 'indexed_escrow']);
   const removeStr = Object.keys(databases).filter(name => !preserveDBs.has(name)).join(',');
@@ -178,7 +155,7 @@ const getLightModeRemovalString = databases => {
 const runScripts = async () => {
   console.log('here51');
 
-  await initEnv();
+  await initTestnetEnv();
   await clearQueues();
   const databases = await getDatabases();
 

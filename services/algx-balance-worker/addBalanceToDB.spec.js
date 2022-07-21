@@ -7,6 +7,7 @@ const addBalanceToDB = require('./addBalanceToDB');
 const algx_balance_data =
   require('../../src/__tests__/schema/db/algx_balance.json');
 
+require('dotenv').config();
 
 it('adds balance to DB', async () => {
   const result = await addBalanceToDB(DatabaseMock, algx_balance_data);
