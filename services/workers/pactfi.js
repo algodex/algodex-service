@@ -1,12 +1,13 @@
 const addPrices = require('./pactfi/prices');
+// eslint-disable-next-line no-unused-vars
+const ALGX = require('../../src/algx-types');
 
 /**
  * PactFi Worker
  *
  * By default it only watches for prices
  *
- * @param {Redis} events Redis Instance
- * @param {PouchDB} db PouchDB Instance
+ * @param {{events: ALGX.Redis, databases: ALGX.PouchDB}} moduleInput
  */
 module.exports = ({events, databases}) =>{
   const db = databases.prices;

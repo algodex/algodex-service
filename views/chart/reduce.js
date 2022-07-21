@@ -1,7 +1,6 @@
 // eslint-disable-next-line require-jsdoc
-function sum() {
+// @ts-nocheck
 
-}
 module.exports = function(keys, values, rereduce) {
   if (rereduce) {
     return {

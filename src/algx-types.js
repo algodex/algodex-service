@@ -17,6 +17,12 @@
  * @property {Block} data how the person is called
  */
 
+/**
+ * @typedef {Object} PouchDB
+ */
+/**
+ * @typedef {Object} Redis
+ */
 
 module.exports = {};
 

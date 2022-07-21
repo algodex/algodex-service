@@ -4,7 +4,7 @@ const convertQueueURL = name => {
   }
 
   if (process.env.INTEGRATION_TEST_MODE &&
-    process.env.INTEGRATION_TEST_MODE != 0) {
+    process.env.INTEGRATION_TEST_MODE != '0') {
     return 'integration_test__' + name;
   }
   return name;

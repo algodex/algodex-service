@@ -76,7 +76,7 @@ async function _getCurrentBlock(indexer) {
 
 /**
  *
- * @param {number }round
+ * @param {{round: number}} roundObj
  * @return {Promise<*>}
  */
 async function getBlock({round}) {
@@ -86,9 +86,10 @@ async function getBlock({round}) {
   return block;
 }
 
+
 /**
  *
- * @param {number} round
+ * @param {{round: number}} roundObj
  * @return {Promise<*>}
  */
 async function waitForBlock({round}) {

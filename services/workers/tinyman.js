@@ -1,10 +1,5 @@
-/**
- * @typedef {import('ioredis').default} Redis
- */
-
-/**
- * @typedef {import('PouchDB')} PouchDB
- */
+// eslint-disable-next-line no-unused-vars
+const ALGX = require('../../src/algx-types');
 
 /**
  * Add Prices
@@ -13,9 +8,7 @@
 const addPrices = require('./tinyman/prices');
 
 /**
- *
- * @param {Redis} events
- * @param {PouchDB} db
+ * @param {{events: ALGX.Redis, databases: ALGX.PouchDB}} moduleInput
  */
 module.exports = ({events, databases}) =>{
   const db = databases.prices;
