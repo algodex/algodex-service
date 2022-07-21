@@ -18,5 +18,13 @@ module.exports = {
       throw {'error': 'not_found'};
     })),
   },
+  DatabaseBadErrorMock: {
+    post: jest.fn(() => new Promise(resolve => {
+      throw new Error('bad post error');
+    })),
+    get: jest.fn(() => new Promise(resolve => {
+      throw new Error('bad get error');
+    })),
+  },
 };
 
