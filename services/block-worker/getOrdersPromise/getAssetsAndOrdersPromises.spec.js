@@ -49,7 +49,6 @@ const rows = [
   },
 ];
 
-
 it('gets asset and orders promises', async () => {
   const input = {
     queues: {
@@ -59,8 +58,8 @@ it('gets asset and orders promises', async () => {
     validRows: rows,
     blockData,
   };
-  getAssetsAndOrdersPromises(input);
-  const results = await Promise.all(QueueMock.add.mock.results.map(result => result.value));
+  const promises = getAssetsAndOrdersPromises(input);
+  const results = await Promise.all(promises);
 
   expect(results).toEqual(['added', 'added', 'added', 'added']);
   expect(QueueMock.add.mock.calls).toEqual([
