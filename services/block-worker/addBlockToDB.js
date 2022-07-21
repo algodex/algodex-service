@@ -1,5 +1,16 @@
+// @ts-check
+
+
 const withSchemaCheck = require('../../src/schema/with-db-schema-check');
 
+/**
+ *
+ *
+ * @param {*} blocksDB
+ * @param {number} round
+ * @param {*} blockData
+ * @return {Promise<any>}
+ */
 const addBlockToDB = async (blocksDB, round, blockData) => {
   try {
     return await blocksDB.get(`${round}`);

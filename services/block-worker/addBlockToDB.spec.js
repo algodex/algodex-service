@@ -1,4 +1,5 @@
 /* eslint-disable max-len */
+
 const addBlockToDB = require('./addBlockToDB');
 const loadJson = require('../../src/loadJson');
 const DatabaseMock = require('../../src/__mocks__/DatabaseMock');
