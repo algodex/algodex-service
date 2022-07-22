@@ -6,6 +6,20 @@ const sleepWhileWaitingForQueues =
 const convertQueueURL = require('../src/convert-queue-url');
 const sleep = require('../src/sleep');
 
+const waitForBlockToBeStored = async (blocksDB, blockNum) => {
+  const blockStr = `${blockNum}`;
+  let foundPrevBlock = false;
+  do {
+    try {
+      await blocksDB.get(blockStr);
+      foundPrevBlock = true;
+    } catch (e) {
+      console.log(`${blockStr} block not yet stored in DB!`);
+      await sleep(10);
+    }
+  } while (!foundPrevBlock);
+};
+
 module.exports = ({queues, events, databases}) => {
   console.log({
     msg: 'Broker Starting',
@@ -18,7 +32,7 @@ module.exports = ({queues, events, databases}) => {
      * Use genesis block as a flag for "fresh init"
      * @type {{"last-round": number}}
      */
-  let round = {
+  const round = {
     'last-round': 1,
   };
 
@@ -27,37 +41,50 @@ module.exports = ({queues, events, databases}) => {
    * @return {Promise<void>}
    */
   async function runWaitBlockSync() {
-    // Just in case the wait fails, skip if we are on the same block
+    console.log('in runWaitBlockSync!');
     const latestBlock = await waitForBlock({
       round: round['last-round'],
     });
 
+    // Just in case the wait fails, skip if we are on the same block
     if (round['last-round'] === latestBlock['last-round']) {
-      console.log('Waiting....');
+      // eslint-disable-next-line max-len
+      console.log(`Waiting.... known last round ${round['last-round']} latest block: ${latestBlock['last-round']}`);
     } else { // Submit the next round to the Queue and Publish event
       console.debug({
         msg: 'Processing Next Round',
         round: round['last-round'],
         next: latestBlock['last-round'],
       });
+      console.debug( new Date(). getTime());
+
+      await sleepWhileWaitingForQueues(['blocks']);
+
+      await waitForBlockToBeStored(databases.blocks, round['last-round']);
 
       let roundNumber = round['last-round'];
       roundNumber++;
 
       const block = await getBlock({round: roundNumber});
+      if (!block.rnd) {
+        // retry
+        runWaitBlockSync();
+        return;
+      }
       await queues.blocks.add('blocks', block, {removeOnComplete: true});
+
+      // waitForBlockToBeStored before publishing??? FIXME
       await events.publish(`blocks`, JSON.stringify(block.rnd));
       console.log({
         msg: 'Published and Queued',
         round: roundNumber,
       });
 
+      round['last-round'] = roundNumber;
       // Update last round cache
-      round = latestBlock;
-
-      // Rerun forever
-      runWaitBlockSync();
     }
+    // Rerun forever
+    runWaitBlockSync();
   }
 
   /**
@@ -98,17 +125,7 @@ module.exports = ({queues, events, databases}) => {
       await sleepWhileWaitingForQueues(['blocks']);
       if (hadFirstRound) {
         // Get block before this round and make sure it exists in the DB
-        let foundPrevBlock = false;
-        const prevBlock = `${lastSyncedRound}`;
-        do {
-          try {
-            await blocksDB.get(prevBlock);
-            foundPrevBlock = true;
-          } catch (e) {
-            console.log(`${prevBlock} block not yet stored in DB!`);
-            await sleep(10);
-          }
-        } while (!foundPrevBlock);
+        await waitForBlockToBeStored(databases.blocks, lastSyncedRound);
       }
       if (process.env.INTEGRATION_TEST_MODE && maxSyncedRoundInTestMode &&
         lastSyncedRound >= maxSyncedRoundInTestMode) {
@@ -119,7 +136,13 @@ module.exports = ({queues, events, databases}) => {
       lastSyncedRound++;
       console.log('In catchup mode, getting block: ' + lastSyncedRound);
       const block = await getBlockFromDBOrNode(blocksDB, lastSyncedRound);
+      if (!block.rnd) {
+        // retry
+        lastSyncedRound--;
+        continue;
+      }
       await queues.blocks.add('blocks', block, {removeOnComplete: true});
+      // waitForBlockToBeStored before publishing??? FIXME
       await events.publish(`blocks`, JSON.stringify(block.rnd));
       console.log({
         msg: 'Published and Queued',
@@ -128,6 +151,7 @@ module.exports = ({queues, events, databases}) => {
       hadFirstRound = true;
     } while (lastSyncedRound < latestBlock['last-round']);
     round['last-round'] = lastSyncedRound;
+
     runWaitBlockSync();
   }
 
