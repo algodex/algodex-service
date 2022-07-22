@@ -6,6 +6,8 @@ const process = require('process');
 const {createConsecutiveObject, cpuChunkArray} = require('../src/util');
 const {getAppsBlockRange, getBlock} = require('../src/explorer');
 // const getQueues = require('../src/queues');
+const args = require('minimist')(process.argv.slice(2));
+const {waitForBlock} = require('../src/explorer');
 
 const url = process.env.ALGORAND_NETWORK === 'testnet' ?
   'https://algoindexer.testnet.algoexplorerapi.io' :
@@ -15,6 +17,7 @@ const indexer = new algosdk.Indexer('', url, 443);
 
 // const queues = getQueues();
 const getDatabases = require('../src/db/get-databases');
+const {argv} = require('process');
 const databases = getDatabases();
 const db = databases.blocks;
 
@@ -34,10 +37,10 @@ const compare = async function() {
   ];
   // Get a range of blocks for a list of applications
   const {start, current} = await getAppsBlockRange(indexer, apps);
-  let realStart = start;
-  if (process.env.ALGORAND_NETWORK === 'mainnet') {
-    realStart = 19155000;
-  }
+  const realStart = process.env.GENESIS_LAUNCH_BLOCK;
+  // if (process.env.ALGORAND_NETWORK === 'mainnet') {
+  //   realStart = 19155000;
+  // }
   // Create an Object keyed by blocks in the range
   const rounds = createConsecutiveObject(realStart, current);
   // const rounds = createConsecutiveObject(start, start+5000);
@@ -48,10 +51,24 @@ const compare = async function() {
   existingBlocks.forEach(block=>{
     delete rounds[block];
   });
-
-  // Chunk the keys for Multi-Threaded workers
-  const chunks = cpuChunkArray(Object.keys(rounds).map(r=>parseInt(r)));
   console.log(start, current);
+  startSync(Object.keys(rounds));
+};
+
+const syncFromKnownRange = async startFrom => {
+  const latestBlockData = await waitForBlock({
+    round: 1,
+  });
+  const latestBlock = latestBlockData['last-round'];
+  console.log(`Starting sync between ${startFrom} and ${latestBlock}`);
+  const rounds = createConsecutiveObject(startFrom, latestBlock);
+  startSync(Object.keys(rounds));
+};
+
+const startSync = rounds => {
+  // Chunk the keys for Multi-Threaded workers
+  const chunks = cpuChunkArray(rounds.map(r=>parseInt(r)));
+
   // Chunk Process into Forks
   for (let i = 0; i < chunks.length; i++) {
     const worker = cluster.fork();
@@ -63,7 +80,6 @@ const compare = async function() {
     });
   }
 };
-
 // Fetch the block and add it to the storage queue
 
 
@@ -77,6 +93,9 @@ const queue = async function() {
       do {
         try {
           const block = await getBlock({round});
+          if (!block.rnd) {
+            continue;
+          }
           gotBlock = true;
           try {
             await db.post({_id: `${block.rnd}`, type: 'block', ...block});
@@ -102,7 +121,11 @@ const queue = async function() {
 (async () => {
   if (!cluster.isWorker) {
     console.log(`Primary ${process.pid} is running`);
-    await compare();
+    if (!args.startFrom) {
+      await compare();
+    } {
+      syncFromKnownRange(parseInt(args.startFrom));
+    }
     cluster.on('exit', (worker, code, signal) => {
       console.log({
         msg: 'Worker Died',
