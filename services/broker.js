@@ -151,26 +151,7 @@ module.exports = ({queues, events, databases}) => {
       hadFirstRound = true;
     } while (lastSyncedRound < latestBlock['last-round']);
     round['last-round'] = lastSyncedRound;
-    // const latestBlockUpdated = await waitForBlock({
-    //   round: round['last-round'],
-    // });
-    // if (latestBlock['last-round'] < latestBlockUpdated['last-round']) {
-    //   const prevBlock = lastSyncedRound;
-    //   let foundPrevBlock = false;
-    //   console.log('Checking if last block was synced');
-    //   do {
-    //     try {
-    //       await blocksDB.get(prevBlock);
-    //       foundPrevBlock = true;
-    //     } catch (e) {
-    //       console.log(`${prevBlock} block not yet stored in DB!`);
-    //       await sleep(10);
-    //     }
-    //   } while (!foundPrevBlock);
-    //   console.log('Running catchup again as latest block is now more recent!');
-    //   runCatchUp();
-    //   return;
-    // }
+
     runWaitBlockSync();
   }
 
