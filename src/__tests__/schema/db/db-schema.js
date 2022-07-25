@@ -1,5 +1,6 @@
 const withDBSchemaCheck = require('../../../schema/with-db-schema-check');
 const fs = require('fs');
+const getDatabases = require('../../../db/get-databases');
 
 const testSchema = dbName => {
   test(`${dbName} schema should pass`, ()=>{
@@ -11,15 +12,9 @@ const testSchema = dbName => {
   });
 };
 
-testSchema('indexed_escrow');
-testSchema('formatted_escrow');
-testSchema('escrow');
-testSchema('assets');
-testSchema('formatted_history');
-testSchema('owner_balance');
-testSchema('algx_balance');
-testSchema('synced_blocks');
-testSchema('blocks');
-testSchema('verified_account');
+const databases = getDatabases();
+Object.keys(databases)
+    .filter(dbName => dbName !== 'prices')
+    .forEach(dbName => testSchema(dbName));
 
 

@@ -13,7 +13,8 @@ const schema = {
     unix_time: {type: 'integer'},
     from_wallet: {type: 'string', pattern: '^[A-Z2-7]{58}$'},
   },
-  required: ['_id', 'data'],
+  required: ['_id', 'to_wallet', 'amount',
+    'assetId', 'epoch', 'network', 'unix_time', 'from_wallet'],
 };
 
 module.exports = () => {
