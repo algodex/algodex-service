@@ -43,8 +43,8 @@ const distributeRewards = async ({epoch, network, algodClient, indexer,
     throw new Error(`Not enough ALGX in wallet! ${totalNeededAlgx} vs ${algxBalance}`);
   }
   if (totalNeededAlgo > algoBalance) {
-    throw new Error(`Not enough ALGO in wallet!
-      ${totalNeededAlgo} vs ${algoBalance}`);
+    // eslint-disable-next-line max-len
+    throw new Error(`Not enough ALGO in wallet! ${totalNeededAlgo} vs ${algoBalance}`);
   }
 
   const pastDistAccountSet =
