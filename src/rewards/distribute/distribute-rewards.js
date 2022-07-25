@@ -1,8 +1,12 @@
 const algosdk = require('algosdk');
 const withDbSchemaCheck = require('../../schema/with-db-schema-check');
+const schema = require('./distribute-rewards-schema.js')();
+
 const getAlgxBalance =
   require('../../../services/owner-balance-worker/getAlgxBalance');
 const cliProgress = require('cli-progress');
+const Ajv = require('ajv');
+
 /**
  *
  * @param {Object} input
@@ -18,16 +22,14 @@ const cliProgress = require('cli-progress');
  * @param {Object} input.indexer
  * @return {Promise} promise
  */
-const distributeRewards = async ({epoch, network, algodClient, indexer,
-  rewardsDB, wallets, amount, fromAccount, accrualNetwork, assetId}) => {
-  if (typeof(amount) !== 'number' || isNaN(amount) || amount <= 0) {
-    throw new Error('amount is not a valid number!');
-  }
-  if (!Array.isArray(wallets)) {
-    throw new Error('wallets is not an array!');
-  }
-  if (!network || !(network === 'testnet' || network === 'mainnet')) {
-    throw new Error('network not well defined: ' + network);
+const distributeRewards = async input => {
+  const {epoch, network, algodClient, indexer,
+    rewardsDB, wallets, amount, fromAccount, accrualNetwork, assetId} = input;
+  const ajv = new Ajv();
+  const valid = ajv.validate(schema, input);
+  if (!valid) {
+    throw new Error('Invalid input to distributeRewards! ' +
+      JSON.stringify(ajv.errors));
   }
 
   const accountInfo = await indexer.lookupAccountByID(fromAccount.addr)
