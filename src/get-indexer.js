@@ -13,10 +13,7 @@ module.exports = () => {
   }
   const port = process.env.ALGORAND_INDEXER_PORT || '';
 
-  const token = {
-    'X-API-key': process.env.ALGORAND_INDEXER_TOKEN || '',
-    'X-Indexer-API-Token': process.env.ALGORAND_INDEXER_TOKEN || '',
-  };
+  const token = process.env.ALGORAND_INDEXER_TOKEN || '';
 
   indexerClient = new algosdk.Indexer(token, baseServer, port);
   return indexerClient;
