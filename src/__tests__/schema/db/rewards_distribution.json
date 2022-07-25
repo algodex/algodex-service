@@ -6,6 +6,8 @@
   "assetId": 15322902,
   "epoch": 1,
   "network": "testnet",
+  "accrualNetwork": "testnet",
   "unix_time": 1658759983,
-  "from_wallet": "AZNLR2URGFUPZNT75LQ36MA4IPNXIOZZPMFSDCNPKQ6H3E3L252LY2VFY4"
+  "from_wallet": "AZNLR2URGFUPZNT75LQ36MA4IPNXIOZZPMFSDCNPKQ6H3E3L252LY2VFY4",
+  "result": "success"
 }

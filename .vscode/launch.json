@@ -157,7 +157,8 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/bin/distribute-rewards",
-            "args": ["--inputFile=./src/__tests__/rewards/rewards_test_wallets.txt", "--amount=400"]
+            "args": ["--inputFile=./src/__tests__/rewards/rewards_test_wallets.txt", "--amount=0.003",
+                "--epoch=1", "--accrualNetwork=testnet"]
         },
     ]
 }
