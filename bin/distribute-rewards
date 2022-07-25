@@ -1,0 +1,31 @@
+#!/usr/bin/env node
+const fs = require('fs');
+const args = require('minimist')(process.argv.slice(2));
+const getAlgod = require('../src/algod');
+const getDatabases = require('../src/db/get-databases');
+const distributeRewards = require('../src/rewards/distribute/distribute-rewards');
+
+
+/* Usage
+ *
+ * ./distribute-rewards --inputFile=<file> --amount=<amount ALGX>
+ */
+
+const initAndDistribute = async () => {
+  const client = getAlgod();
+  const databases = getDatabases();
+  const inputFile = args.inputFile;
+  const amount = args.inputFile;
+  if (!inputFile) {
+    throw new Error('No input file defined!');
+  }
+  if (!amount) {
+    throw new Error('No amount defined!');
+  }
+  const data = fs.readFileSync(inputFile, 'utf8');
+  const wallets = data.split('\n').filter(line => line.length > 0);
+
+  distributeRewards(client, wallets, 
+  console.log(wallets);
+};
+initAndDistribute();

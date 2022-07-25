@@ -153,6 +153,18 @@ const databases = [
     dbName: 'prices',
   },
   {
+    dbName: 'rewards_distribution',
+    appendOnly: true,
+    design: {
+      _id: '_design/rewards_distribution',
+      views: {
+        rewards_distribution: {
+          map: require('../../views/rewards_distribution/rewards_distribution-map').toString(),
+        },
+      },
+    },
+  },
+  {
     dbName: 'owner_balance',
     appendOnly: true,
     design: {

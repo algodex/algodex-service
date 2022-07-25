@@ -10,12 +10,16 @@ test('verify end to end test', async () => {
   expect(1+1).toEqual(2);
   const databases = await getDatabases();
 
-  const verificationFileNames = Object.keys(databases).map(dbName => {
-    return `../../integration_test/validation_data/${dbName}.txt`;
-  });
-  const testFileNames = Object.keys(databases).map(dbName => {
-    return `../../integration_test/test_data/${dbName}.txt`;
-  });
+  const skipDBSet = new Set(['rewards_distribution']);
+
+  const verificationFileNames = Object.keys(databases)
+      .filter(dbName => !skipDBSet.has(dbName)).map(dbName => {
+        return `../../integration_test/validation_data/${dbName}.txt`;
+      });
+  const testFileNames = Object.keys(databases)
+      .filter(dbName => !skipDBSet.has(dbName)).map(dbName => {
+        return `../../integration_test/test_data/${dbName}.txt`;
+      });
   const verificationMap = new Map();
   const testMap = new Map();
   expect(testFileNames.length).toBe(verificationFileNames.length);
@@ -23,8 +27,8 @@ test('verify end to end test', async () => {
     throw new Error('file counts dont match');
   }
   for (let i = 0; i < testFileNames.length; i++) {
-    const testData = fs.readFileSync(path.resolve(__dirname,testFileNames[i]), 'utf8');
-    const verificationData = fs.readFileSync(path.resolve(__dirname,verificationFileNames[i]), 'utf8');
+    const testData = fs.readFileSync(path.resolve(__dirname, testFileNames[i]), 'utf8');
+    const verificationData = fs.readFileSync(path.resolve(__dirname, verificationFileNames[i]), 'utf8');
     const name = testFileNames[i].substring(testFileNames[i].lastIndexOf('/') + 1);
     verificationMap.set(name, verificationData);
     testMap.set(name, testData);
