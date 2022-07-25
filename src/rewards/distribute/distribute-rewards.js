@@ -16,6 +16,7 @@ const cliProgress = require('cli-progress');
  * @param {Object} input.fromAccount
  * @param {Number} input.assetId
  * @param {Object} input.indexer
+ * @return {Promise} promise
  */
 const distributeRewards = async ({epoch, network, algodClient, indexer,
   rewardsDB, wallets, amount, fromAccount, accrualNetwork, assetId}) => {
@@ -42,7 +43,8 @@ const distributeRewards = async ({epoch, network, algodClient, indexer,
     throw new Error(`Not enough ALGX in wallet! ${totalNeededAlgx} vs ${algxBalance}`);
   }
   if (totalNeededAlgo > algoBalance) {
-    throw new Error(`Not enough ALGO in wallet! ${totalNeededAlgo} vs ${algoBalance}`);
+    throw new Error(`Not enough ALGO in wallet!
+      ${totalNeededAlgo} vs ${algoBalance}`);
   }
 
   const pastDistAccountSet =
@@ -107,6 +109,18 @@ const getEpochKey = (accrualNetwork, epoch) => {
   return `${accrualNetwork}:${epoch}`;
 };
 
+/**
+ *
+ * @param {Object} input
+ * @param {Object} input.algodClient
+ * @param {Number} input.amount
+ * @param {Number} input.epoch
+ * @param {String} input.accrualNetwork
+ * @param {Object} input.fromAccount
+ * @param {Number} input.assetId
+ * @param {String} input.toWalletAddr
+ * @return {Promise} promise
+ */
 const sendRewards = async ({fromAccount, toWalletAddr, amount,
   algodClient, accrualNetwork, epoch, assetId}) => {
   const params = await algodClient.getTransactionParams().do();
@@ -132,6 +146,14 @@ const sendRewards = async ({fromAccount, toWalletAddr, amount,
   }
 };
 
+/**
+ *
+ * @param {Object} input
+ * @param {Number} input.epoch
+ * @param {String} input.accrualNetwork
+ * @param {Object} input.rewardsDB
+ * @return {Promise} promise
+ */
 const getPastDistributionsAccountsSet =
   async ({rewardsDB, accrualNetwork, epoch}) => {
     const epochKey = getEpochKey(accrualNetwork, epoch);
