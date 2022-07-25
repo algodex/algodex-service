@@ -1,24 +1,10 @@
-const { _ } = require('@algodex/algodex-sdk/lib/schema');
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const convertQueueURL = require('../src/convert-queue-url');
-
-const getAlgxBalance = accountInfo => {
-  if (!accountInfo.account || !accountInfo.account.assets) {
-    return 0;
-  }
-  const algxAsset = accountInfo.account.assets
-      .find( asset => asset['asset-id'] ===
-        parseInt(process.env.ALGX_ASSET_ID));
-  if (!algxAsset) {
-    return 0;
-  }
-
-  return algxAsset.amount;
-};
+const getAlgxBalance = require('./owner-balance-worker/getAlgxBalance');
 
 const checkInDB = async (ownerBalanceDB, ownerAddr, round) => {
   try {

@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 module.exports = function(doc) {
-  emit(doc._id, doc.network + ':' + doc.epoch);
+  emit(doc.accrualNetwork + ':' + doc.epoch,
+      {'result': doc.result, 'to_wallet': doc.to_wallet});
 };
 
