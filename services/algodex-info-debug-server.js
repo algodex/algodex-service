@@ -27,7 +27,8 @@ function timeConverter(UNIX_timestamp) {
 
 
 const wrapRows = rowsHtml => {
-  return '<html><body><table border=1>' + rowsHtml + '</table></body></html>';
+  return '<html><body><a href="/">Return</a><p><table border=1>' +
+     rowsHtml + '</table></body></html>';
 };
 const printRows = rows => {
   const tableHeaders = Object.keys(rows[0]).reduce((html, key) => {
@@ -57,12 +58,31 @@ const transformRows = rows => {
   });
   return newRows;
 };
+const getInputForm = () => {
+  return `
+  <html>
+  <body>
+  <form action="">
+  You are on ${process.env.ALGORAND_NETWORK}<p>
+  Enter Wallet Address: <input type="text" name="ownerAddr" />
+  <input type="submit" />
+  </form>
+  </body>
+  </html>
+  `;
+};
 app.get('/', async (req, res) => {
   const formattedEscrowDB = databases.formatted_escrow;
+  if (!req.query.ownerAddr) {
+    res.send(getInputForm());
+    return;
+  }
+  const ownerAddr = req.query.ownerAddr;
+
   try {
     const escrowData =
       await formattedEscrowDB.query('formatted_escrow/orders',
-          {reduce: false, key: ['ownerAddr', 'WYWRYK42XADLY3O62N52BOLT27DMPRA3WNBT2OBRT65N6OEZQWD4OSH6PI']} );
+          {reduce: false, key: ['ownerAddr', ownerAddr]} );
 
     const rows = escrowData.rows.map(row => row.value);
     const transformedRows = transformRows(rows);
