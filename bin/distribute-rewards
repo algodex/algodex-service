@@ -65,6 +65,7 @@ const printIntro = config => {
   const copy = JSON.parse(JSON.stringify(config));
   delete copy.rewardsDB;
   delete copy.indexer;
+  delete copy.wallets;
   copy.fromWallet = copy.fromAccount.addr;
   delete copy.fromAccount;
   console.log('ALGODEX REWARDS DISTRIBUTION');
