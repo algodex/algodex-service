@@ -160,5 +160,14 @@
             "args": ["--inputFile=./src/__tests__/rewards/rewards_test_wallets.txt", "--amount=0.003",
                 "--epoch=1", "--accrualNetwork=testnet"]
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Sync Blocks In Parallel",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/bin/sync.js",
+        },
     ]
 }

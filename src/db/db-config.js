@@ -27,6 +27,10 @@ const databases = [
           map: require('../../views/chart/map').toString(),
           reduce: require('../../views/chart/reduce').toString(),
         },
+        maxBlock: {
+          map: require('../../views/blocks/maxBlock-map').toString(),
+          reduce: require('../../views/blocks/maxBlock-reduce').toString(),
+        },
       },
     },
   },
