@@ -19,7 +19,7 @@ const indexer = new algosdk.Indexer('', url, 443);
 const getDatabases = require('../src/db/get-databases');
 const {argv} = require('process');
 const databases = getDatabases();
-const db = databases.blocks;
+const blocksDB = databases.blocks;
 
 const compare = async function() {
   if (!process.env.ALGORAND_NETWORK) {
@@ -44,7 +44,7 @@ const compare = async function() {
   // Create an Object keyed by blocks in the range
   const rounds = createConsecutiveObject(realStart, current);
   // const rounds = createConsecutiveObject(start, start+5000);
-  const allDocs = await db.allDocs();
+  const allDocs = await blocksDB.allDocs();
   const blockDocs = allDocs.rows.filter(doc=>!isNaN(doc.id));
   // Look in the database for existing blocks and remove them from rounds
   const existingBlocks = blockDocs.map(doc=>parseInt(doc.id));
@@ -98,7 +98,7 @@ const queue = async function() {
           }
           gotBlock = true;
           try {
-            await db.post({_id: `${block.rnd}`, type: 'block', ...block});
+            await blocksDB.post({_id: `${block.rnd}`, type: 'block', ...block});
           } catch (e) {
             if (e.error === 'conflict') {
               console.log('the block ['+block.rnd+']was already added!');
@@ -116,16 +116,23 @@ const queue = async function() {
   process.send('index');
 };
 
+const getStartBlock = async () => {
+  const maxBlock = await blocksDB.query('blocks/maxBlock',
+      {reduce: true, group: true} );
+  return maxBlock.rows[0].value;
+};
 
 // Run the Sync
 (async () => {
   if (!cluster.isWorker) {
     console.log(`Primary ${process.pid} is running`);
-    if (!args.startFrom) {
-      await compare();
-    } {
-      syncFromKnownRange(parseInt(args.startFrom));
-    }
+    const startBlock = await getStartBlock();
+
+    // if (!args.startFrom) {
+    //   await compare();
+    // } {
+    syncFromKnownRange(startBlock);
+    // }
     cluster.on('exit', (worker, code, signal) => {
       console.log({
         msg: 'Worker Died',

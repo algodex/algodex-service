@@ -163,11 +163,19 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Sync Blocks In Parallel",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/bin/sync.js",
+        },
+            "type": "node",
+            "request": "launch",
             "name": "Algodex Info Debug Server",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/services/algodex-info-debug-server.js",
-        },
+        }
     ]
 }
