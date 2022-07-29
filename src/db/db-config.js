@@ -199,7 +199,7 @@ const databases = [
       _id: '_design/vested_rewards',
       views: {
         ownerAddr: {
-          map: require('../../views/rewards/vested_rewards-map').toString(),
+          map: require('../../views/vested_rewards/vested_rewards-map').toString(),
         },
       },
     },
