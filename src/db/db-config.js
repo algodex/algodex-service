@@ -180,6 +180,30 @@ const databases = [
       },
     },
   },
+  {
+    dbName: 'rewards',
+    appendOnly: true,
+    design: {
+      _id: '_design/rewards',
+      views: {
+        ownerAddr: {
+          map: require('../../views/rewards/rewards-map').toString(),
+        },
+      },
+    },
+  },
+  {
+    dbName: 'vested_rewards',
+    appendOnly: true,
+    design: {
+      _id: '_design/vested_rewards',
+      views: {
+        ownerAddr: {
+          map: require('../../views/rewards/vested_rewards-map').toString(),
+        },
+      },
+    },
+  },
 ];
 
 module.exports = function() {
