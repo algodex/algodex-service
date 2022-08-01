@@ -10,6 +10,7 @@ const getAssetsAndOrdersPromises = ({queues, validRows, blockData}) => {
           queues.assets,
           assetId,
       );
+      console.log('creating asset add promise: ' + assetId);
       allPromises.push(assetAddPromise);
     }
 

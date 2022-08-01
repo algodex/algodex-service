@@ -75,6 +75,7 @@ module.exports = ({queues, databases}) =>{
           });
           return formattedOrderGet;
         }).catch(function(err) {
+          console.error('Error fetching asset: '+ assetId);
           throw err;
         });
 

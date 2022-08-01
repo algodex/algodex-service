@@ -18,7 +18,7 @@
   "author": "Michael Feher",
   "license": "UNLICENSED",
   "dependencies": {
-    "@algodex/algodex-sdk": "^2.0.1",
+    "@algodex/algodex-sdk": "^2.0.2",
     "@algofi/amm-v0": "^1.4.0",
     "@bull-board/express": "^3.11.1",
     "@pactfi/pactsdk": "^0.2.2",

@@ -23,7 +23,7 @@ process.env.INTEGRATION_TEST_MODE = '1';
 
 
 const getFile = async file => {
-  return await new Promise( (resolve) => {
+  return await new Promise( resolve => {
     fs.readFile(file, 'utf8', (err, data) => {
       console.log(data);
       resolve(data);
@@ -50,12 +50,12 @@ async function runScript(scriptPath, appContext='', args=null) {
     'APP_CONTEXT': appContext,
     'INTEGRATION_TEST_MODE': 1,
   },
-  //stdio: [ 'pipe', out, err ],
+  // stdio: [ 'pipe', out, err ],
   };
 
   return new Promise(resolve => {
     let invoked = false;
-    //console.log({envConfig});
+    // console.log({envConfig});
     console.log('STARTING: ' + scriptPath + ' ' + appContext);
 
     const process = childProcess.spawn(scriptPath, args ? args : [], options);
@@ -221,7 +221,7 @@ const runScripts = async () => {
   //   // resolve('Completed Integration Test');
   // });
   // const lastSyncedRound = 16583454 - 1;
-  const maxSyncedRoundInTestMode = 16583654;
+  const maxSyncedRoundInTestMode = 22675139;
   const blocksDB = databases.blocks;
   do {
     try {

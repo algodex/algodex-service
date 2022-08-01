@@ -27,7 +27,6 @@ const getOrdersPromise = ({databases, queues, dirtyAccounts, blockData}) => {
 
         const assetsAndOrdersPromises =
           getAssetsAndOrdersPromises({queues, validRows, blockData});
-
         return Promise.all(assetsAndOrdersPromises);
       }).catch(function(err) {
         if (err.error === 'not_found') {
