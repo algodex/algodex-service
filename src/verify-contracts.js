@@ -29,7 +29,7 @@ const checkAndGetInput = (
   // const minimumExecutionSizeInAlgo = orderSplit[2];
   const assetId = parseInt(orderSplit[3]);
 
-  version = version.charCodeAt(0) || 0;
+  version = version ? version.charCodeAt(0) : 0;
 
   if (isNaN(assetLimitPriceN) || isNaN(assetLimitPriceD)) {
     throw new TypeError('must be a number!');
