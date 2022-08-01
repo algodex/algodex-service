@@ -4,6 +4,7 @@ const Worker = bullmq.Worker;
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const convertQueueURL = require('../src/convert-queue-url');
 const initOrGetIndexer = require('../src/get-indexer');
+const withQueueSchemaCheck = require('../src/schema/with-queue-schema-check');
 
 module.exports = ({queues, databases}) =>{
   const blockDB = databases.blocks;
@@ -17,6 +18,7 @@ module.exports = ({queues, databases}) =>{
   const tradeHistoryWorker = new Worker(convertQueueURL('tradeHistory'), async job=>{
     const blockId = job.data.block;
     console.log('received block: ' + blockId);
+    withQueueSchemaCheck('tradeHistory', job.data);
 
     // 1. Get valid escrows from trade history
     // 2. Get asset information from DB

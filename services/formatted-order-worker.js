@@ -35,7 +35,7 @@ module.exports = ({queues, databases}) =>{
 
   const formattedOrderWorker = new Worker(convertQueueURL('formattedEscrows'), async job=>{
     console.log('got formatted escrows job ', {data: job.data});
-    withQueueSchemaCheck('formatted_escrow', job.data);
+    withQueueSchemaCheck('formattedEscrows', job.data);
     const assetId = job.data.escrowInfo.assetId;
     const addr = job.data.indexerInfo.address;
     const data = job.data;
