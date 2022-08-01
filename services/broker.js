@@ -116,10 +116,8 @@ module.exports = ({queues, events, databases}) => {
     }
 
     if (process.env.INTEGRATION_TEST_MODE) {
-      // lastSyncedRound = 16583454 - 1;
-      // maxSyncedRoundInTestMode = 16583654;
-      lastSyncedRound = 22675110 - 1;
-      maxSyncedRoundInTestMode = 22675139;
+      lastSyncedRound = 16583454 - 1;
+      maxSyncedRoundInTestMode = 16583654;
     }
 
     let hadFirstRound = false;
