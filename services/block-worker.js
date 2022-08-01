@@ -1,4 +1,7 @@
 const bullmq = require('bullmq');
+const withQueueSchemaCheck = require('../src/schema/with-queue-schema-check');
+
+
 const Worker = bullmq.Worker;
 const convertQueueURL = require('../src/convert-queue-url');
 const getDirtyAccounts = require('../src/get-dirty-accounts');
@@ -21,6 +24,7 @@ const state = {};
  * @return {Promise}
  */
 const performJob = async job=>{
+  withQueueSchemaCheck('blocks', job.data);
   const {databases, queues} = state;
   const syncedBlocksDB = databases.synced_blocks;
   const blocksDB = databases.blocks;

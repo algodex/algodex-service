@@ -1,4 +1,7 @@
 // const compile = require('@algodex/algodex-sdk/lib/order/compile');
+const sleep = require('./sleep');
+
+
 const {
   withOrderbookEntry,
   withLogicSigAccount,
@@ -26,12 +29,15 @@ const checkAndGetInput = (
   // const minimumExecutionSizeInAlgo = orderSplit[2];
   const assetId = parseInt(orderSplit[3]);
 
-  version = version.charCodeAt(0);
+  version = version ? version.charCodeAt(0) : 0;
 
+  if (isNaN(assetLimitPriceN) || isNaN(assetLimitPriceD)) {
+    throw new TypeError('must be a number!');
+  }
   if (typeof escrowAddress !== 'string') {
     throw new TypeError('escrowAddress is not string!`');
   }
-  if (assetId < 0) {
+  if (assetId < 0 || isNaN(assetId)) {
     throw new TypeError('invalid assetId!');
   }
   if (typeof isAlgoBuyEscrow !== 'boolean') {
@@ -40,10 +46,10 @@ const checkAndGetInput = (
   if (typeof ownerAddress !== 'string' || ownerAddress.length == 0) {
     throw new TypeError('invalid ownerAddress!');
   }
-  if (!isInt(appId) || appId < 0) {
+  if (!isInt(appId) || appId < 0 || isNaN(appId)) {
     throw new TypeError('invalid appId!');
   }
-  if (
+  if (isNaN(version) ||
     !isInt(version) || version <= 2 || version >= 8
   ) { // FIXME - figure out max version from SDK
     throw new TypeError('invalid appId!');
@@ -85,7 +91,7 @@ const verifyContract = async (
         escrowAddress,
         orderEntry, version, ownerAddress, appId, isAlgoBuyEscrow);
   } catch (e) {
-    console.log('Invalid input!');
+    console.log('Invalid input!', e);
     return false;
   }
   if (!input) {
@@ -98,13 +104,16 @@ const verifyContract = async (
   let gotCompiledOrder = false;
   do {
     try {
+      // eslint-disable-next-line max-len
       const compiledOrder = await withLogicSigAccount(withOrderbookEntry(input));
       gotCompiledOrder = true;
       if (escrowAddress === compiledOrder?.contract?.escrow) {
         return true;
       }
     } catch (e) {
-      throw e;
+      console.error('could not compile order', {input, e});
+      await sleep(1000);
+      // throw e;
     }
   } while (!gotCompiledOrder);
   return false;

@@ -12,6 +12,7 @@ const getCurrentBalanceMap =
 const getChangedAccountValues =
   require('./algx-balance-worker/getChangedAccountValues');
 // const { _ } = require('@algodex/algodex-sdk/lib/schema');
+const withQueueSchemaCheck = require('../src/schema/with-queue-schema-check');
 
 module.exports = ({queues, databases}) => {
   if (!process.env.ALGX_ASSET_ID) {
@@ -23,7 +24,8 @@ module.exports = ({queues, databases}) => {
     new Worker(convertQueueURL('algxBalance'), async job => {
       const block = job.data;
       const round = job.data.rnd;
-      console.log(`Got job! Round: ${round}`);
+      console.log(`Got balance job! Round: ${round}`);
+      withQueueSchemaCheck('algxBalance', job.data);
       const isInDB = await checkInDB(algxBalanceDB, round);
       if (isInDB) {
         // Nothing to do
