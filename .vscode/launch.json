@@ -169,6 +169,7 @@
             ],
             "program": "${workspaceFolder}/bin/sync.js",
         },
+        {
             "type": "node",
             "request": "launch",
             "name": "Algodex Info Debug Server",
