@@ -1,4 +1,7 @@
 const bullmq = require('bullmq');
+const withQueueSchemaCheck = require('../src/schema/with-queue-schema-check');
+
+
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 const initOrGetIndexer = require('../src/get-indexer');
@@ -139,16 +142,17 @@ module.exports = ({queues, databases}) =>{
   console.log({escrowDB});
   console.log('in order-worker.js');
   const indexedOrders = new Worker(convertQueueURL('orders'), async job=>{
+    console.debug({
+      msg: 'Received order job',
+      round: job.data.blockData.rnd,
+      account: job.data.account,
+    });
+    withQueueSchemaCheck('escrow', job.data);
     await sleepWhileWaitingForQueues(['formattedEscrows', 'ownerBalance']);
 
     const blockData = job.data.blockData;
     const order = job.data.reducedOrder;
     const account = job.data.account;
-    console.debug({
-      msg: 'Received order',
-      round: blockData.rnd,
-      account: account,
-    });
     const round = blockData.rnd;
 
     try {
@@ -167,11 +171,11 @@ module.exports = ({queues, databases}) =>{
             const formattedOrderPromise =
               getFormattedOrderQueuePromise(queues.formattedEscrows,
                   data);
-            //const ownerBalancePromise =
+            // const ownerBalancePromise =
             //  getOwnerBalancePromise(queues.ownerBalance,
             //      order.value.ownerAddr, `${blockData.rnd}`);
             // eslint-disable-next-line max-len
-            return Promise.all([formattedOrderPromise]);//, ownerBalancePromise]);
+            return Promise.all([formattedOrderPromise]);// , ownerBalancePromise]);
           }).catch(function(err) {
             if (err.error === 'conflict') {
               console.error('conflict 11b', err);

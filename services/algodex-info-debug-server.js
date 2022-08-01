@@ -31,6 +31,9 @@ const wrapRows = rowsHtml => {
      rowsHtml + '</table></body></html>';
 };
 const printRows = rows => {
+  if (!rows[0]) {
+    return '<html><body>NA</body></html>';
+  }
   const tableHeaders = Object.keys(rows[0]).reduce((html, key) => {
     return html + '<th>' + key + '</th>';
   }, '');
