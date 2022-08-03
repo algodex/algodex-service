@@ -3,6 +3,8 @@ const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const pushHistory = require('../src/push-history');
 const convertQueueURL = require('../src/convert-queue-url');
 const withQueueSchemaCheck = require('../src/schema/with-queue-schema-check');
+const sleep = require('../src/sleep');
+const throttle = require('lodash.throttle');
 
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
@@ -25,10 +27,13 @@ const setAssetHistory = data => {
   }
 };
 
+const activelyUpdatingOrderSet = new Set();
+
 module.exports = ({queues, databases}) =>{
   const formattedEscrowDB = databases.formatted_escrow;
   const assetDB = databases.assets;
   const verifiedDB = databases.verified_account;
+
   // Lighten the load on the broker and do batch processing
   console.log({formattedEscrowDB});
   console.log('in formatted-order-worker.js');
@@ -41,10 +46,19 @@ module.exports = ({queues, databases}) =>{
     const data = job.data;
 
     const assetGetPromise = assetDB.get(assetId)
-        .then(function(res) {
+        .then(async function(res) {
           console.log({res});
           data.assetDecimals = res.asset.params.decimals;
+          while (activelyUpdatingOrderSet.has(addr)) { // TODO: move to Redis
+            throttle(() => {
+              console.log('sleeping waiting for ' + addr);
+            }, 1000);
 
+            // Prevents document update conflicts when trying to
+            // update the same address at once
+            await sleep(25);
+          }
+          activelyUpdatingOrderSet.add(addr);
           const formattedOrderGet = formattedEscrowDB.get(addr).then(
               async function(res) {
                 data.history = res.data.history;
@@ -61,6 +75,11 @@ module.exports = ({queues, databases}) =>{
                   data: res.data,
                 })).then(function(res) {
                   console.log('added doc revision: ' + data);
+                  activelyUpdatingOrderSet.delete(addr);
+                }).catch(function(err) {
+                  console.error('error 442b', err);
+                  activelyUpdatingOrderSet.delete(addr);
+                  throw err;
                 });
               }).catch(function(err) {
             if (err.error === 'not_found') {
@@ -70,14 +89,21 @@ module.exports = ({queues, databases}) =>{
                     type: 'formatted_escrow', data: data}))
                   .then(function(response) {
                     console.log('posted formatted escrow');
+                    activelyUpdatingOrderSet.delete(addr);
+                  }).catch(function(err) {
+                    console.error('error 445b', err);
+                    activelyUpdatingOrderSet.delete(addr);
+                    throw err;
                   });
             } else {
+              activelyUpdatingOrderSet.delete(addr);
+              console.error('error 442a', err);
               throw err;
             }
           });
           return formattedOrderGet;
         }).catch(function(err) {
-          console.error('Error fetching asset: '+ assetId);
+          console.error('Error fetching asset: '+ assetId, err);
           throw err;
         });
 
