@@ -7,7 +7,8 @@ test.skip('get a block from explorer', async () => {
 
   process.env.ALGORAND_EXPLORER = 'https://api.testnet.algoexplorer.io';
   const block = await explorer.getBlock({round: 1986});
-  expect(block).toEqual(require('./block-testnet-1986.json'));
+
+  expect(block).toEqual(require('./blocks/block-testnet-1986.json'));
 });
 
 test.skip('wait for block from explorer', async () => {
