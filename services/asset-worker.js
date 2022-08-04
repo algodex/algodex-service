@@ -35,7 +35,8 @@ module.exports = ({queues, databases}) =>{
     if (assetInCouch) {
       return;
     }
-    const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
+    const assetData = await indexer.lookupAssetByID(job.data.assetId)
+        .includeAll().do();
     return assetDB.post(withSchemaCheck('assets', {_id: `${job.data.assetId}`,
       type: 'asset', ...assetData}))
         .then(async function(response) {
