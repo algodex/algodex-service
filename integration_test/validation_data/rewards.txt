@@ -1,0 +1,11 @@
+[
+  {
+    "_id": "_design/rewards",
+    "_rev": "1-0f1f08b22428ad5ddbd55c18a8b1ae98",
+    "views": {
+      "ownerAddr": {
+        "map": "function(doc) {\n  const obj = Object.assign({}, doc);\n  delete obj.ownerWallet;\n  delete obj._id;\n  delete obj._rev;\n  emit(doc.ownerWallet, obj);\n}"
+      }
+    }
+  }
+]

@@ -1,475 +1,856 @@
-{
-  "total_rows": 67,
-  "offset": 0,
-  "rows": [
-    {
-      "id": "16583459",
-      "key": "16583459",
-      "value": {
-        "rev": "1-94ab6ec83fe7ce73b969f6c00e461733"
-      }
-    },
-    {
-      "id": "16583462",
-      "key": "16583462",
-      "value": {
-        "rev": "1-80110855382a3d5bac71eca913b9adcd"
-      }
-    },
-    {
-      "id": "16583466",
-      "key": "16583466",
-      "value": {
-        "rev": "1-bded7745976e583dca7963569144a653"
-      }
-    },
-    {
-      "id": "16583467",
-      "key": "16583467",
-      "value": {
-        "rev": "1-5f70997905ebe861331e26cdbe9c6092"
-      }
-    },
-    {
-      "id": "16583469",
-      "key": "16583469",
-      "value": {
-        "rev": "1-f22bccea510ccac6fbe9d4bfb72662f4"
-      }
-    },
-    {
-      "id": "16583484",
-      "key": "16583484",
-      "value": {
-        "rev": "1-f1c02b6ab5453dbaa4291a7c463a0961"
-      }
-    },
-    {
-      "id": "16583486",
-      "key": "16583486",
-      "value": {
-        "rev": "1-b17be247d7cf91da732c21ab7c71220c"
-      }
-    },
-    {
-      "id": "16583488",
-      "key": "16583488",
-      "value": {
-        "rev": "1-4b619a07660dd930ece2fa76110a8382"
-      }
-    },
-    {
-      "id": "16583490",
-      "key": "16583490",
-      "value": {
-        "rev": "1-fab33834254484d5ca1f0daf13fbff79"
-      }
-    },
-    {
-      "id": "16583491",
-      "key": "16583491",
-      "value": {
-        "rev": "1-ad848af393091320a87b5508d6ef4fbf"
-      }
-    },
-    {
-      "id": "16583494",
-      "key": "16583494",
-      "value": {
-        "rev": "1-e3e67af1b55238be718a456d0ccd7c49"
-      }
-    },
-    {
-      "id": "16583495",
-      "key": "16583495",
-      "value": {
-        "rev": "1-f5be576d91a5221757368c28c5f50da6"
-      }
-    },
-    {
-      "id": "16583496",
-      "key": "16583496",
-      "value": {
-        "rev": "1-6c30dbedfa1ce5aee7e4f5d1e7312478"
-      }
-    },
-    {
-      "id": "16583503",
-      "key": "16583503",
-      "value": {
-        "rev": "1-40dcdb7e9639403a772cff3b91919756"
-      }
-    },
-    {
-      "id": "16583505",
-      "key": "16583505",
-      "value": {
-        "rev": "1-47922aaef8f525000a04ff2f8afcb2a0"
-      }
-    },
-    {
-      "id": "16583509",
-      "key": "16583509",
-      "value": {
-        "rev": "1-83b73b3ff2bdd461e76ba0aa4cb9967a"
-      }
-    },
-    {
-      "id": "16583514",
-      "key": "16583514",
-      "value": {
-        "rev": "1-4faaae8202d20380e6e94646156cc57f"
-      }
-    },
-    {
-      "id": "16583515",
-      "key": "16583515",
-      "value": {
-        "rev": "1-aa99983f9eb06d72d530c0a2df8baa18"
-      }
-    },
-    {
-      "id": "16583516",
-      "key": "16583516",
-      "value": {
-        "rev": "1-1bf0927c0e6388483135e7605cf37cf4"
-      }
-    },
-    {
-      "id": "16583518",
-      "key": "16583518",
-      "value": {
-        "rev": "1-64cbff7cf307393e1e22a23b5d0a5434"
-      }
-    },
-    {
-      "id": "16583520",
-      "key": "16583520",
-      "value": {
-        "rev": "1-7a025f867dbd95daa4548cca1ba1eb10"
-      }
-    },
-    {
-      "id": "16583521",
-      "key": "16583521",
-      "value": {
-        "rev": "1-46fa5ddafacd3b5a68d0e86c5a56920d"
-      }
-    },
-    {
-      "id": "16583522",
-      "key": "16583522",
-      "value": {
-        "rev": "1-a136e70083a908861f2d01c0069aa176"
-      }
-    },
-    {
-      "id": "16583525",
-      "key": "16583525",
-      "value": {
-        "rev": "1-18d01b56e11638cd97f9ce383d27f4bf"
-      }
-    },
-    {
-      "id": "16583526",
-      "key": "16583526",
-      "value": {
-        "rev": "1-674bece83f8418fa764661ac20759369"
-      }
-    },
-    {
-      "id": "16583538",
-      "key": "16583538",
-      "value": {
-        "rev": "1-c266163cc66283c7b022a951d410856f"
-      }
-    },
-    {
-      "id": "16583539",
-      "key": "16583539",
-      "value": {
-        "rev": "1-8a4e2f8312bd4cb430c419a63be3b6b3"
-      }
-    },
-    {
-      "id": "16583540",
-      "key": "16583540",
-      "value": {
-        "rev": "1-8944fdafd3c54c03ed3c19c06936b28d"
-      }
-    },
-    {
-      "id": "16583543",
-      "key": "16583543",
-      "value": {
-        "rev": "1-f3da7209a9b8504fa0e14a65be09586e"
-      }
-    },
-    {
-      "id": "16583545",
-      "key": "16583545",
-      "value": {
-        "rev": "1-677dc1f96d35ead95352f6b82de143e2"
-      }
-    },
-    {
-      "id": "16583553",
-      "key": "16583553",
-      "value": {
-        "rev": "1-2e02c0ee8c94ae4158d7e4abd293add4"
-      }
-    },
-    {
-      "id": "16583556",
-      "key": "16583556",
-      "value": {
-        "rev": "1-6786670f05680218147d4be1a6e781d1"
-      }
-    },
-    {
-      "id": "16583561",
-      "key": "16583561",
-      "value": {
-        "rev": "1-308612b74a2b7591925a9b32ecb685c8"
-      }
-    },
-    {
-      "id": "16583563",
-      "key": "16583563",
-      "value": {
-        "rev": "1-e977491166a32171bba6d821e3c79be9"
-      }
-    },
-    {
-      "id": "16583564",
-      "key": "16583564",
-      "value": {
-        "rev": "1-ffe7670cfff788c9a7c17b3d9314bddc"
-      }
-    },
-    {
-      "id": "16583567",
-      "key": "16583567",
-      "value": {
-        "rev": "1-f6325680979b99ec0b103e33c36cee7a"
-      }
-    },
-    {
-      "id": "16583568",
-      "key": "16583568",
-      "value": {
-        "rev": "1-9989b692e0c4452f40e62c29e652cb58"
-      }
-    },
-    {
-      "id": "16583575",
-      "key": "16583575",
-      "value": {
-        "rev": "1-25c364766eb3269fb9abe3b33a5c7905"
-      }
-    },
-    {
-      "id": "16583576",
-      "key": "16583576",
-      "value": {
-        "rev": "1-43826c11209bd0621b5fe7b98f95cbee"
-      }
-    },
-    {
-      "id": "16583580",
-      "key": "16583580",
-      "value": {
-        "rev": "1-2cbf076f1166cda92e38edf2ba77332f"
-      }
-    },
-    {
-      "id": "16583581",
-      "key": "16583581",
-      "value": {
-        "rev": "1-7a7557c35b867f9eb57906a0da68e309"
-      }
-    },
-    {
-      "id": "16583582",
-      "key": "16583582",
-      "value": {
-        "rev": "1-b30784e26da28b784fc1e7df3c68a731"
-      }
-    },
-    {
-      "id": "16583583",
-      "key": "16583583",
-      "value": {
-        "rev": "1-83666d3401399fe94e3ed5b7494f478a"
-      }
-    },
-    {
-      "id": "16583584",
-      "key": "16583584",
-      "value": {
-        "rev": "1-17bddd6ac3bb89b40b363218b765349f"
-      }
-    },
-    {
-      "id": "16583587",
-      "key": "16583587",
-      "value": {
-        "rev": "1-0d5032cb30474fc5dafa1461499954a5"
-      }
-    },
-    {
-      "id": "16583588",
-      "key": "16583588",
-      "value": {
-        "rev": "1-97c649e8756bc36c4503d1ad55757476"
-      }
-    },
-    {
-      "id": "16583592",
-      "key": "16583592",
-      "value": {
-        "rev": "1-36c9867e740331ae0a5c726860785ebc"
-      }
-    },
-    {
-      "id": "16583593",
-      "key": "16583593",
-      "value": {
-        "rev": "1-a01c49249a74401315795c45306ddf92"
-      }
-    },
-    {
-      "id": "16583594",
-      "key": "16583594",
-      "value": {
-        "rev": "1-7f89c8b21d0b2d7c36f8cede476fb5a7"
-      }
-    },
-    {
-      "id": "16583596",
-      "key": "16583596",
-      "value": {
-        "rev": "1-758e0c488bb0545785ebc37cd10df3f2"
-      }
-    },
-    {
-      "id": "16583598",
-      "key": "16583598",
-      "value": {
-        "rev": "1-fade1949621e5d9baa91747a6d2e1304"
-      }
-    },
-    {
-      "id": "16583602",
-      "key": "16583602",
-      "value": {
-        "rev": "1-ba80fc2345c08afca1f86195663909b7"
-      }
-    },
-    {
-      "id": "16583609",
-      "key": "16583609",
-      "value": {
-        "rev": "1-e3d09287fd7754d61a51e6e8469ee263"
-      }
-    },
-    {
-      "id": "16583611",
-      "key": "16583611",
-      "value": {
-        "rev": "1-b4417e1bd9ed49b3dab2bb7f79d2013a"
-      }
-    },
-    {
-      "id": "16583623",
-      "key": "16583623",
-      "value": {
-        "rev": "1-860081d147eef942e4dfeb11bde5110c"
-      }
-    },
-    {
-      "id": "16583627",
-      "key": "16583627",
-      "value": {
-        "rev": "1-2b2b1dbbbe4af63e3a0e418908f688f2"
-      }
-    },
-    {
-      "id": "16583628",
-      "key": "16583628",
-      "value": {
-        "rev": "1-e9bff9b6db3b87a2647e4c0e634a4897"
-      }
-    },
-    {
-      "id": "16583630",
-      "key": "16583630",
-      "value": {
-        "rev": "1-33680dae3990fe0b9324f7e558b35d88"
-      }
-    },
-    {
-      "id": "16583633",
-      "key": "16583633",
-      "value": {
-        "rev": "1-f18457ef258aa2b006cb94ada18cc212"
-      }
-    },
-    {
-      "id": "16583642",
-      "key": "16583642",
-      "value": {
-        "rev": "1-7c3d6c85f99b856265242d118b1c0d28"
-      }
-    },
-    {
-      "id": "16583644",
-      "key": "16583644",
-      "value": {
-        "rev": "1-bfe8f41a97b0ea7c16f2f6e0f55b0cdc"
-      }
-    },
-    {
-      "id": "16583646",
-      "key": "16583646",
-      "value": {
-        "rev": "1-6abd0c6f2b10487dc482caca3787262b"
-      }
-    },
-    {
-      "id": "16583648",
-      "key": "16583648",
-      "value": {
-        "rev": "1-0099fe7c6fe9a53ebb03ff83fc2f62c0"
-      }
-    },
-    {
-      "id": "16583650",
-      "key": "16583650",
-      "value": {
-        "rev": "1-efb7fe51a9fe51e00b0f08e5d491d612"
-      }
-    },
-    {
-      "id": "16583651",
-      "key": "16583651",
-      "value": {
-        "rev": "1-176ab20bd2ae9479538eee3da5696be9"
-      }
-    },
-    {
-      "id": "16583653",
-      "key": "16583653",
-      "value": {
-        "rev": "1-d4a803cc55959afc439f730a3f4b9110"
-      }
-    },
-    {
-      "id": "_design/algx_balance",
-      "key": "_design/algx_balance",
-      "value": {
-        "rev": "1-d3ee6646d210ea16243ea0789155e2e0"
+[
+  {
+    "_id": "16583459",
+    "_rev": "1-94ab6ec83fe7ce73b969f6c00e461733",
+    "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
+      {
+        "account": "YGQ3U6EQ6AXB3IEOQMYBDZ6LJH6YAGBOY3U4AZRVO5RZV7IP3BMNSTE35A",
+        "balance": 1481
+      }
+    ]
+  },
+  {
+    "_id": "16583462",
+    "_rev": "1-80110855382a3d5bac71eca913b9adcd",
+    "changes": [
+      {
+        "account": "OZYJXXGTVLR25273QI3GYTLBC5ZR2OPB6EQNCZPSAHWAUOYOOSLLDDWEJY",
+        "balance": 3561
+      },
+      {
+        "account": "MLKMGZCB73W34VZMKOTKON6PZQKB2UHNA63XPSWOAXU6A5RT3TNUTS3NHA",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583466",
+    "_rev": "1-bded7745976e583dca7963569144a653",
+    "changes": [
+      {
+        "account": "LOGQFVVBPIWMXRLMCJ24G74KOPTKJFB3LYOYRYPRYZCGYDS5HKTWD65N3A",
+        "balance": 2227
+      },
+      {
+        "account": "PTHFVMQBECFZYVKA5PIXSUOFBMPUPTSG7RWHMYUHOMV224HIIDDN6DL62E",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583467",
+    "_rev": "1-5f70997905ebe861331e26cdbe9c6092",
+    "changes": [
+      {
+        "account": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ",
+        "balance": 11129
+      },
+      {
+        "account": "ZM4OVTFEW5NVM5O7PXPQE7YJ6JFCOKMDEO3BA7RZL4VD5MJS3P4ZGS2E6M",
+        "balance": 0
+      }
+    ]
+  },
+  {
+    "_id": "16583469",
+    "_rev": "1-f22bccea510ccac6fbe9d4bfb72662f4",
+    "changes": [
+      {
+        "account": "PWDK422DBOCZZTL6QR4VDZK5YM67YUEBSQLKPZOPIR5XLSURAXSARHZ32Q",
+        "balance": 5568
+      }
+    ]
+  },
+  {
+    "_id": "16583484",
+    "_rev": "1-f1c02b6ab5453dbaa4291a7c463a0961",
+    "changes": [
+      {
+        "account": "FWLDN22TB2QG2UNX7I26HNLXPWFF3XVFPSZZRYRSVDDF7TQ2W5FTYIXOJU",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583486",
+    "_rev": "1-b17be247d7cf91da732c21ab7c71220c",
+    "changes": [
+      {
+        "account": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ",
+        "balance": 0
+      },
+      {
+        "account": "QWPSXIUY3SVB5I2AHHF5BEVZY4NTJ6H36CXCZSDUZ4UMPQXP7NJFTME7NY",
+        "balance": 1557
+      }
+    ]
+  },
+  {
+    "_id": "16583488",
+    "_rev": "1-4b619a07660dd930ece2fa76110a8382",
+    "changes": [
+      {
+        "account": "MGOE6KR35V5IMYQYKRW6GUPUG77YZEUMXVG2YVPGXNU33HFQPQJUQYXSQU",
+        "balance": 22272
+      },
+      {
+        "account": "MIEEPIZSWXE4ORMEOICM2EGN5ZAORVZXR5POHK6LPHHDAS5JS34IMFMSAQ",
+        "balance": 3005
+      }
+    ]
+  },
+  {
+    "_id": "16583490",
+    "_rev": "1-fab33834254484d5ca1f0daf13fbff79",
+    "changes": [
+      {
+        "account": "DBTSNCZIR4HKXDWJ4P626T72OTQWXDIMC72QJA6ALZSL4LLVURQ6DBEXYM",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583491",
+    "_rev": "1-ad848af393091320a87b5508d6ef4fbf",
+    "changes": [
+      {
+        "account": "J24UQGCWLPTYWQXM5XC3CTJ5TAHJLW2WEKRY4KJGGO67DLB4T2NLOW6CDI",
+        "balance": 2227
+      }
+    ]
+  },
+  {
+    "_id": "16583494",
+    "_rev": "1-e3e67af1b55238be718a456d0ccd7c49",
+    "changes": [
+      {
+        "account": "ZWRFU344NTGVXVHFYEHBLH23VLK5U4AGT7MZZIKALETG4AU77HTZMAKDKA",
+        "balance": 10696
+      }
+    ]
+  },
+  {
+    "_id": "16583495",
+    "_rev": "1-f5be576d91a5221757368c28c5f50da6",
+    "changes": [
+      {
+        "account": "GROTPLAVJVTH3WS5ONAZINPCSO4YXOOHMTNRMC4SAB6XE5VMNQGNB6GZNQ",
+        "balance": 433
+      },
+      {
+        "account": "5CLLNA6CYP45BFAYEIFL4Q5EL6SQS5X6L33QOIPLYOACQQFIJYGS2UX4IE",
+        "balance": 3340
+      },
+      {
+        "account": "LI7U4CVG7ZI5FI5LMCR3RL5ZJIMABTWVVQHLVNBRJVX24N2COW77Z3AUMU",
+        "balance": 2671
+      }
+    ]
+  },
+  {
+    "_id": "16583496",
+    "_rev": "1-6c30dbedfa1ce5aee7e4f5d1e7312478",
+    "changes": [
+      {
+        "account": "KRCLMJC5PQO5Z27BDTELZDKIYRM3FD4XI6JNXUW55EGDPJF6KH45OAP6UQ",
+        "balance": 2227
+      }
+    ]
+  },
+  {
+    "_id": "16583503",
+    "_rev": "1-40dcdb7e9639403a772cff3b91919756",
+    "changes": [
+      {
+        "account": "32RGOJ3BPBJC2FNJ4F7SO2M7TP3RNI6HJQN7P7HBKESGV6G3ODFMJDDFKI",
+        "balance": 0
+      },
+      {
+        "account": "TESTGYMB5OTGUAB567F3L35KLAYR62CAORLSYVB6AUSKWMHRMAFI4JHO5M",
+        "balance": 0
+      },
+      {
+        "account": "IQSVMB5N5NEKRGZO7P7O2AEYZYCWK3VQUDJ36UIOSKQCGXQ2K65UY2T64M",
+        "balance": 3097
+      }
+    ]
+  },
+  {
+    "_id": "16583505",
+    "_rev": "1-47922aaef8f525000a04ff2f8afcb2a0",
+    "changes": [
+      {
+        "account": "TESTGYMB5OTGUAB567F3L35KLAYR62CAORLSYVB6AUSKWMHRMAFI4JHO5M",
+        "balance": 15
+      }
+    ]
+  },
+  {
+    "_id": "16583509",
+    "_rev": "1-83b73b3ff2bdd461e76ba0aa4cb9967a",
+    "changes": [
+      {
+        "account": "MGOE6KR35V5IMYQYKRW6GUPUG77YZEUMXVG2YVPGXNU33HFQPQJUQYXSQU",
+        "balance": 16704
+      },
+      {
+        "account": "L4DHGS4CZMMLBZ2IHX4A7OEJIQKHKEYQ6BYSETF3B5ADCAZ2YZWEUDM3WQ",
+        "balance": 5568
+      }
+    ]
+  },
+  {
+    "_id": "16583514",
+    "_rev": "1-4faaae8202d20380e6e94646156cc57f",
+    "changes": [
+      {
+        "account": "JKIOHBQTLZDMU7CLPTSQVRXS5KLGW4TGUNY47OEJIG3XVPSXYAUANQYONE",
+        "balance": 4454
+      }
+    ]
+  },
+  {
+    "_id": "16583515",
+    "_rev": "1-aa99983f9eb06d72d530c0a2df8baa18",
+    "changes": [
+      {
+        "account": "EYSRBK33QQ4W5BVGFPJX7K5VBHBUELUHRTS6HBG64EVW5ZBMYH3JZO56OU",
+        "balance": 22268
+      }
+    ]
+  },
+  {
+    "_id": "16583516",
+    "_rev": "1-1bf0927c0e6388483135e7605cf37cf4",
+    "changes": [
+      {
+        "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+        "balance": 11136
+      },
+      {
+        "account": "DKN7HQJ5PJOG32RCVZWXZZ3QJP2NBMS2DB4QT7EIF6RSTCL2SB7VC7LODI",
+        "balance": 1624
+      },
+      {
+        "account": "2U5XUWANCMBW55FCZJDD5OWORBHOXVKQJG3N2UG6QOVHLW2SS5LOHB6I6M",
+        "balance": 408519
+      }
+    ]
+  },
+  {
+    "_id": "16583518",
+    "_rev": "1-64cbff7cf307393e1e22a23b5d0a5434",
+    "changes": [
+      {
+        "account": "KRCLMJC5PQO5Z27BDTELZDKIYRM3FD4XI6JNXUW55EGDPJF6KH45OAP6UQ",
+        "balance": 1670
+      },
+      {
+        "account": "QSXHI6OEBZO7BESFPUWP3SW7WANBYKAWQIKEWJ5MFHERR7TCIAIY4ITYXE",
+        "balance": 17821
+      },
+      {
+        "account": "OMHP5QWDEOLQLMM47XOBQG5U2TZL4EBUVQ52EIYYQO7YXDJRJCVYV6A6GE",
+        "balance": 557
+      }
+    ]
+  },
+  {
+    "_id": "16583520",
+    "_rev": "1-7a025f867dbd95daa4548cca1ba1eb10",
+    "changes": [
+      {
+        "account": "MK64XZBZUWOPX5HGGAGQO3K45SFWWIAPPP4SJDCSYGHIRGZGNY6TLCLHN4",
+        "balance": 2003
+      }
+    ]
+  },
+  {
+    "_id": "16583521",
+    "_rev": "1-46fa5ddafacd3b5a68d0e86c5a56920d",
+    "changes": [
+      {
+        "account": "ZC2YNATE75BSGCJRIHNUYSRMIX5WT5RTO5SPLGTT5IFGV2DYVFJMAEGBNM",
+        "balance": 19316
+      }
+    ]
+  },
+  {
+    "_id": "16583522",
+    "_rev": "1-a136e70083a908861f2d01c0069aa176",
+    "changes": [
+      {
+        "account": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
+        "balance": 25019
+      },
+      {
+        "account": "IOQISE7UXHHBFBFT3C4YZB6VH3W4WXJIWEYCH6WYWUZESOZUBLSSW7254Y",
+        "balance": 0
+      },
+      {
+        "account": "WC2EEVUO4HBQBJNCSZ2QK7J3IVZ6GPPOY2U6H7PWZBTZYZFBQNUS4FF2TI",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583525",
+    "_rev": "1-18d01b56e11638cd97f9ce383d27f4bf",
+    "changes": [
+      {
+        "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+        "balance": 26168
+      }
+    ]
+  },
+  {
+    "_id": "16583526",
+    "_rev": "1-674bece83f8418fa764661ac20759369",
+    "changes": [
+      {
+        "account": "76FHP33WBBWZ7QWITYOPOCXSOC4CPKNFXQWKNVOS5V6FW45GS6URIBASIU",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583538",
+    "_rev": "1-c266163cc66283c7b022a951d410856f",
+    "changes": [
+      {
+        "account": "5722B36DKBWAH6IGR6KVJMIKV5RUCNP242E2PU5B6ZWPRLGD3U2JNOHDMU",
+        "balance": 3340
+      },
+      {
+        "account": "WVQ3ASZULEPLASYJIOITHYHXDJUFBTEQEE6PPYRMIZUFFJSQ3HIBKV7RTE",
+        "balance": 1580
+      }
+    ]
+  },
+  {
+    "_id": "16583539",
+    "_rev": "1-8a4e2f8312bd4cb430c419a63be3b6b3",
+    "changes": [
+      {
+        "account": "ZC2YNATE75BSGCJRIHNUYSRMIX5WT5RTO5SPLGTT5IFGV2DYVFJMAEGBNM",
+        "balance": 4105
+      },
+      {
+        "account": "GROTPLAVJVTH3WS5ONAZINPCSO4YXOOHMTNRMC4SAB6XE5VMNQGNB6GZNQ",
+        "balance": 15644
+      }
+    ]
+  },
+  {
+    "_id": "16583540",
+    "_rev": "1-8944fdafd3c54c03ed3c19c06936b28d",
+    "changes": [
+      {
+        "account": "ZC2YNATE75BSGCJRIHNUYSRMIX5WT5RTO5SPLGTT5IFGV2DYVFJMAEGBNM",
+        "balance": 0
+      },
+      {
+        "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+        "balance": 38944
+      },
+      {
+        "account": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY",
+        "balance": 2941252
+      },
+      {
+        "account": "6KUXI7KGP7N44VSRMKKGGPLILOOTUD2M7V5CAZXSXSLKB5AVUMDZX67WEM",
+        "balance": 2227
+      }
+    ]
+  },
+  {
+    "_id": "16583543",
+    "_rev": "1-f3da7209a9b8504fa0e14a65be09586e",
+    "changes": [
+      {
+        "account": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
+        "balance": 10542
+      },
+      {
+        "account": "LWSJZPTHNTI324JRGIF4C6SNRCKRSAOLUHSNV3JQRL3EP5U3K5OYP6JIBI",
+        "balance": 14477
+      }
+    ]
+  },
+  {
+    "_id": "16583545",
+    "_rev": "1-677dc1f96d35ead95352f6b82de143e2",
+    "changes": [
+      {
+        "account": "XCYGBCFYSQ6SDTOPOPS3BG66TBUVUDHGHZOZM3YS757ZSCKMPQGMFSVMTM",
+        "balance": 3037
+      }
+    ]
+  },
+  {
+    "_id": "16583553",
+    "_rev": "1-2e02c0ee8c94ae4158d7e4abd293add4",
+    "changes": [
+      {
+        "account": "6K6BAS3H3FJEFVZ2G4QVPAQIVXVJKVBRGLNUGPXLAUZKB2AARJGJH2IIFI",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583556",
+    "_rev": "1-6786670f05680218147d4be1a6e781d1",
+    "changes": [
+      {
+        "account": "MXYCZM5VFV6SUX7ZSGJSB2VAPA3HOZ2DTOYM2VUWG3QBJLYATGU6UTD25A",
+        "balance": 1558
+      }
+    ]
+  },
+  {
+    "_id": "16583561",
+    "_rev": "1-308612b74a2b7591925a9b32ecb685c8",
+    "changes": [
+      {
+        "account": "XGVVFP3LFT5NHAONBDDDDT3ZWL57OIW5R3GT5NYQINEYSUNLI4VHB4HR4A",
+        "balance": 6681
+      }
+    ]
+  },
+  {
+    "_id": "16583563",
+    "_rev": "1-e977491166a32171bba6d821e3c79be9",
+    "changes": [
+      {
+        "account": "AAQDIXCQLUMMYOD4UJ52IZB3FOAJEZZIL2U4Z2WXGWB64NLLWYX76I3JFM",
+        "balance": 55803
+      }
+    ]
+  },
+  {
+    "_id": "16583564",
+    "_rev": "1-ffe7670cfff788c9a7c17b3d9314bddc",
+    "changes": [
+      {
+        "account": "TLD62VQNSHFKNSVX5DPQ7DGGU2HLGXLYZ53NR3UGV7AUIRCFKYQ5G5BZG4",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583567",
+    "_rev": "1-f6325680979b99ec0b103e33c36cee7a",
+    "changes": [
+      {
+        "account": "LWSJZPTHNTI324JRGIF4C6SNRCKRSAOLUHSNV3JQRL3EP5U3K5OYP6JIBI",
+        "balance": 7238
+      },
+      {
+        "account": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ",
+        "balance": 7239
+      }
+    ]
+  },
+  {
+    "_id": "16583568",
+    "_rev": "1-9989b692e0c4452f40e62c29e652cb58",
+    "changes": [
+      {
+        "account": "OZZZ2FCAMSNIAIPOZLH2U4XRSAA73FMRZ6NNJFGJPOZGVTKC45LBLASCBE",
+        "balance": 1780
+      }
+    ]
+  },
+  {
+    "_id": "16583575",
+    "_rev": "1-25c364766eb3269fb9abe3b33a5c7905",
+    "changes": [
+      {
+        "account": "NVSEUYRGZDR7RQUC5ZXUYABN55T3PTXQO3GXNDP2AXPBAWDF4N6EAUUF4A",
+        "balance": 4453
+      }
+    ]
+  },
+  {
+    "_id": "16583576",
+    "_rev": "1-43826c11209bd0621b5fe7b98f95cbee",
+    "changes": [
+      {
+        "account": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ",
+        "balance": 0
+      },
+      {
+        "account": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
+        "balance": 6654
+      },
+      {
+        "account": "Y5KCFJRO5KI6VQZNSZCC5RYOTTAM7BU4NXCTO5DNRMMVAWJVKIEUM4PVXY",
+        "balance": 32744
+      },
+      {
+        "account": "RPWVK2H2JRTZNX33K45PQZ7RSK7ALGAT7ZAPNHVJ4BV2HY2MRJSECIDUKE",
+        "balance": 11127
+      }
+    ]
+  },
+  {
+    "_id": "16583580",
+    "_rev": "1-2cbf076f1166cda92e38edf2ba77332f",
+    "changes": [
+      {
+        "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+        "balance": 34394
+      },
+      {
+        "account": "3FRO5IP2R6UAEGXFMJJXHUUMH24MB4RMQKWJ2WPHEOOIM24F2M3IEXGLTU",
+        "balance": 4550
+      },
+      {
+        "account": "EELIQTS2XZM3JIBIB5BDLRUHU52IEVMZLTWSYH3JXVM2YKQEFN6JVM4SRE",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583581",
+    "_rev": "1-7a7557c35b867f9eb57906a0da68e309",
+    "changes": [
+      {
+        "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+        "balance": 33102
+      },
+      {
+        "account": "AOH4O6IKXSQ5KJPE2PQHDX2QWQFCFMDGNOWZSHH4TVJPN6IR3YZZO32YGI",
+        "balance": 1292
+      }
+    ]
+  },
+  {
+    "_id": "16583582",
+    "_rev": "1-b30784e26da28b784fc1e7df3c68a731",
+    "changes": [
+      {
+        "account": "5XJX53OH5QCSNOCZ6WFQJGPE3CSJY22EAVUXSFYAXISDXGERG6Q6X2HVQI",
+        "balance": 1825
+      }
+    ]
+  },
+  {
+    "_id": "16583583",
+    "_rev": "1-83666d3401399fe94e3ed5b7494f478a",
+    "changes": [
+      {
+        "account": "K2HMLHRZSZ3BZONW2KIHCN4HKWWAIEZEQY2FO7SDXWNS47LHWZN4TZK7TQ",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583584",
+    "_rev": "1-17bddd6ac3bb89b40b363218b765349f",
+    "changes": [
+      {
+        "account": "Y5KCFJRO5KI6VQZNSZCC5RYOTTAM7BU4NXCTO5DNRMMVAWJVKIEUM4PVXY",
+        "balance": 4550
+      },
+      {
+        "account": "PMW7FTDUB26HAUKP452BITGQVSJOEVDYS3PIPI4UKSOGWQNFLEKZRDFKIQ",
+        "balance": 28194
+      }
+    ]
+  },
+  {
+    "_id": "16583587",
+    "_rev": "1-0d5032cb30474fc5dafa1461499954a5",
+    "changes": [
+      {
+        "account": "RPWVK2H2JRTZNX33K45PQZ7RSK7ALGAT7ZAPNHVJ4BV2HY2MRJSECIDUKE",
+        "balance": 5563
+      },
+      {
+        "account": "AOH4O6IKXSQ5KJPE2PQHDX2QWQFCFMDGNOWZSHH4TVJPN6IR3YZZO32YGI",
+        "balance": 6621
+      },
+      {
+        "account": "UFASEZNXBKKQL5PRC2MZ6VK4H5OY6D3RSODVCH7P6GLLJYWJQ6KM64IB44",
+        "balance": 235
+      }
+    ]
+  },
+  {
+    "_id": "16583588",
+    "_rev": "1-97c649e8756bc36c4503d1ad55757476",
+    "changes": [
+      {
+        "account": "OAGVQVBBEQVEHFXWW24PBML6VY4WUUVO4VTBAA4E6B3O22JEUL2AEFXIE4",
+        "balance": 2227
+      },
+      {
+        "account": "ZBC3KIANIK43TPN2TEPVGGXYPTKSQCBREOU42EHQ5ZIFJL3LJTCJMBJ3JQ",
+        "balance": 2227
+      }
+    ]
+  },
+  {
+    "_id": "16583592",
+    "_rev": "1-36c9867e740331ae0a5c726860785ebc",
+    "changes": [
+      {
+        "account": "K5MKARCHIM4YJXK6HZRSJJV23IDVOIT33J2VZ3X3PEOF3HG27KMFAWAVGI",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583593",
+    "_rev": "1-a01c49249a74401315795c45306ddf92",
+    "changes": [
+      {
+        "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+        "balance": 32687
+      },
+      {
+        "account": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q",
+        "balance": 415
+      }
+    ]
+  },
+  {
+    "_id": "16583594",
+    "_rev": "1-7f89c8b21d0b2d7c36f8cede476fb5a7",
+    "changes": [
+      {
+        "account": "AAQDIXCQLUMMYOD4UJ52IZB3FOAJEZZIL2U4Z2WXGWB64NLLWYX76I3JFM",
+        "balance": 27901
+      },
+      {
+        "account": "GJEYAP6TEMP55MQ7VUXGR3QNU5E6LGQIGCZ3QQFRDOGDGBIVPMO5242P7M",
+        "balance": 27902
+      }
+    ]
+  },
+  {
+    "_id": "16583596",
+    "_rev": "1-758e0c488bb0545785ebc37cd10df3f2",
+    "changes": [
+      {
+        "account": "ZFPVKSD3PK4KMSKO7BW2U4DYOXPHNP6LZ37LSP45JEDUTC73PZ55FKAXIM",
+        "balance": 4454
+      }
+    ]
+  },
+  {
+    "_id": "16583598",
+    "_rev": "1-fade1949621e5d9baa91747a6d2e1304",
+    "changes": [
+      {
+        "account": "EVJ3CICXS6XXARVVW2SLV4XK57LC6UQHPSM7IEOWIEGHDIBIETDUB2UR6U",
+        "balance": 11136
+      }
+    ]
+  },
+  {
+    "_id": "16583602",
+    "_rev": "1-ba80fc2345c08afca1f86195663909b7",
+    "changes": [
+      {
+        "account": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q",
+        "balance": 0
+      },
+      {
+        "account": "I3LMETLVXEJRCIWDDMH3P7O6ACYPK5F3PPFCS3SOHWNOGEOCUWHPS3OOC4",
+        "balance": 3335
+      },
+      {
+        "account": "EOZPAG7XOILFP574DMKA2CD4AMS23SFFHW6FZDITF6E6SFT4PXK27FLRAY",
+        "balance": 4454
+      }
+    ]
+  },
+  {
+    "_id": "16583609",
+    "_rev": "1-e3d09287fd7754d61a51e6e8469ee263",
+    "changes": [
+      {
+        "account": "EYSRBK33QQ4W5BVGFPJX7K5VBHBUELUHRTS6HBG64EVW5ZBMYH3JZO56OU",
+        "balance": 16701
+      },
+      {
+        "account": "3FRO5IP2R6UAEGXFMJJXHUUMH24MB4RMQKWJ2WPHEOOIM24F2M3IEXGLTU",
+        "balance": 6171
+      },
+      {
+        "account": "GJEYAP6TEMP55MQ7VUXGR3QNU5E6LGQIGCZ3QQFRDOGDGBIVPMO5242P7M",
+        "balance": 31848
+      }
+    ]
+  },
+  {
+    "_id": "16583611",
+    "_rev": "1-b4417e1bd9ed49b3dab2bb7f79d2013a",
+    "changes": [
+      {
+        "account": "H3YR2YJGV5N7Y432DM24CMGI3ZHJ7YOQHQVUV3QNDPAOX7KFG2OG4XWEVE",
+        "balance": 144766
+      }
+    ]
+  },
+  {
+    "_id": "16583623",
+    "_rev": "1-860081d147eef942e4dfeb11bde5110c",
+    "changes": [
+      {
+        "account": "4XASPZYDMVGHZ26VVXLOGP6O7SHOK74CZWPNANGYNWWMGBNVKO7KRKR7N4",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583627",
+    "_rev": "1-2b2b1dbbbe4af63e3a0e418908f688f2",
+    "changes": [
+      {
+        "account": "XDGYL44LQ4PMPUJHSV776ZLNM2NUPFH2B7LYVXSWVFA66V6LYCR45RIG3E",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583628",
+    "_rev": "1-e9bff9b6db3b87a2647e4c0e634a4897",
+    "changes": [
+      {
+        "account": "GJEYAP6TEMP55MQ7VUXGR3QNU5E6LGQIGCZ3QQFRDOGDGBIVPMO5242P7M",
+        "balance": 44809
+      },
+      {
+        "account": "UFASEZNXBKKQL5PRC2MZ6VK4H5OY6D3RSODVCH7P6GLLJYWJQ6KM64IB44",
+        "balance": 10179
+      },
+      {
+        "account": "SZHAGPYKW763Y7XLWS62FQHCG6IG5567YFFFSIRSYQ6UDONYYJX4NWTU3Y",
+        "balance": 0
+      },
+      {
+        "account": "2M4WWWGXV3YUAH23UGCFGJXAYQ4PL5B5CUDRUR3DOZ22IPVY23GZ7FJJ2A",
+        "balance": 11745
+      }
+    ]
+  },
+  {
+    "_id": "16583630",
+    "_rev": "1-33680dae3990fe0b9324f7e558b35d88",
+    "changes": [
+      {
+        "account": "PMW7FTDUB26HAUKP452BITGQVSJOEVDYS3PIPI4UKSOGWQNFLEKZRDFKIQ",
+        "balance": 13717
+      },
+      {
+        "account": "VANBKKYIPHRBM62TCTN6YNZ3IPSQZIBZUXR6OIHQJHGDVKJOETSPUTFSZI",
+        "balance": 14477
+      }
+    ]
+  },
+  {
+    "_id": "16583633",
+    "_rev": "1-f18457ef258aa2b006cb94ada18cc212",
+    "changes": [
+      {
+        "account": "W6N3N5A6YDKKVUIYV7TRHXRA53PBGFSIUXVWK3KFZ5N2TGIFMFMHSZWUSA",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583642",
+    "_rev": "1-7c3d6c85f99b856265242d118b1c0d28",
+    "changes": [
+      {
+        "account": "VANBKKYIPHRBM62TCTN6YNZ3IPSQZIBZUXR6OIHQJHGDVKJOETSPUTFSZI",
+        "balance": 7238
+      },
+      {
+        "account": "UFASEZNXBKKQL5PRC2MZ6VK4H5OY6D3RSODVCH7P6GLLJYWJQ6KM64IB44",
+        "balance": 17418
+      }
+    ]
+  },
+  {
+    "_id": "16583644",
+    "_rev": "1-bfe8f41a97b0ea7c16f2f6e0f55b0cdc",
+    "changes": [
+      {
+        "account": "OBMUYBDZILLQVX3E7BKTWX6HLPLFHTXJOD3AM3NFA6HKTJ5AEWFBP5J3LM",
+        "balance": 4454
+      }
+    ]
+  },
+  {
+    "_id": "16583646",
+    "_rev": "1-6abd0c6f2b10487dc482caca3787262b",
+    "changes": [
+      {
+        "account": "SQCVLIFQXXGC7TIHODEASOXKIU57HQTDEUX3GTN2GVYXHNW436DONEMHMY",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583648",
+    "_rev": "1-0099fe7c6fe9a53ebb03ff83fc2f62c0",
+    "changes": [
+      {
+        "account": "HCAVQOWQCWD435QY7GJMFTNHUKFI5VW5EQTTARPAA7IRWAEKMICYNQXCB4",
+        "balance": 6681
+      }
+    ]
+  },
+  {
+    "_id": "16583650",
+    "_rev": "1-efb7fe51a9fe51e00b0f08e5d491d612",
+    "changes": [
+      {
+        "account": "H3YR2YJGV5N7Y432DM24CMGI3ZHJ7YOQHQVUV3QNDPAOX7KFG2OG4XWEVE",
+        "balance": 253332
+      }
+    ]
+  },
+  {
+    "_id": "16583651",
+    "_rev": "1-176ab20bd2ae9479538eee3da5696be9",
+    "changes": [
+      {
+        "account": "5ZNZMUHRK5V3MTQA2J2GREN75YP6EYPTWMNF6OVSSKVWO465EIIGSDMUEU",
+        "balance": 3340
+      }
+    ]
+  },
+  {
+    "_id": "16583653",
+    "_rev": "1-d4a803cc55959afc439f730a3f4b9110",
+    "changes": [
+      {
+        "account": "VANBKKYIPHRBM62TCTN6YNZ3IPSQZIBZUXR6OIHQJHGDVKJOETSPUTFSZI",
+        "balance": 3619
+      },
+      {
+        "account": "VFUKS5SJJ5LX3ZSLHJWJRG7W3X5URKHCWANC27RWDVAQDOPIEXVPHHSBUM",
+        "balance": 3619
+      }
+    ]
+  },
+  {
+    "_id": "_design/algx_balance",
+    "_rev": "1-d3ee6646d210ea16243ea0789155e2e0",
+    "views": {
+      "algx_balance": {
+        "map": "function(doc) {\n  doc.changes.forEach(change => {\n    emit(change.account, {\n      balance: change.balance,\n      round: parseInt(doc._id),\n    });\n  });\n}",
+        "reduce": "function(keys, values, rereduce) {\n  return values.reduce( (retval, val) => {\n    if (val.round > retval.round) {\n      retval = val;\n    }\n    return retval;\n  });\n}"
       }
     }
-  ]
-}
+  }
+]

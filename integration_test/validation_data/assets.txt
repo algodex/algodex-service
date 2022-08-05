@@ -1,83 +1,276 @@
-{
-  "total_rows": 11,
-  "offset": 0,
-  "rows": [
-    {
-      "id": "15322902",
-      "key": "15322902",
-      "value": {
-        "rev": "1-426e2a3c99819c6690264abac4c6a313"
+[
+  {
+    "_id": "15322902",
+    "_rev": "1-5d6f44d9e20e24e1a87711c131ad9378",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 13596306,
+      "deleted": false,
+      "index": 15322902,
+      "params": {
+        "clawback": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "creator": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "decimals": 6,
+        "default-frozen": false,
+        "freeze": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "manager": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "name": "Lamps",
+        "name-b64": "TGFtcHM=",
+        "reserve": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "total": 100000000000,
+        "unit-name": "LAMP",
+        "unit-name-b64": "TEFNUA=="
       }
     },
-    {
-      "id": "15409802",
-      "key": "15409802",
-      "value": {
-        "rev": "1-3f7afe86603977a256726d3d0d058767"
+    "current-round": 23276117
+  },
+  {
+    "_id": "15409802",
+    "_rev": "1-5aed9c096f0a90280d8cdeccc278ded4",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 13662066,
+      "deleted": false,
+      "index": 15409802,
+      "params": {
+        "clawback": "BSSJBJJJHK5BL46F2S2HXXS3SYJS547YIQYQ3THZY7JVLP4CM5H3AIWM5E",
+        "creator": "BSSJBJJJHK5BL46F2S2HXXS3SYJS547YIQYQ3THZY7JVLP4CM5H3AIWM5E",
+        "decimals": 6,
+        "default-frozen": false,
+        "freeze": "BSSJBJJJHK5BL46F2S2HXXS3SYJS547YIQYQ3THZY7JVLP4CM5H3AIWM5E",
+        "manager": "BSSJBJJJHK5BL46F2S2HXXS3SYJS547YIQYQ3THZY7JVLP4CM5H3AIWM5E",
+        "name": "PuddinPoints",
+        "name-b64": "UHVkZGluUG9pbnRz",
+        "reserve": "BSSJBJJJHK5BL46F2S2HXXS3SYJS547YIQYQ3THZY7JVLP4CM5H3AIWM5E",
+        "total": 1000000000000000,
+        "unit-name": "PUPO",
+        "unit-name-b64": "UFVQTw==",
+        "url": "https://puddingpoints.com",
+        "url-b64": "aHR0cHM6Ly9wdWRkaW5ncG9pbnRzLmNvbQ=="
       }
     },
-    {
-      "id": "15870866",
-      "key": "15870866",
-      "value": {
-        "rev": "1-d2c8f7224edf277c3681425e77d80284"
+    "current-round": 23276120
+  },
+  {
+    "_id": "15870866",
+    "_rev": "1-1d3668bedfe5f2a8c6f3a02fec826918",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 14200055,
+      "deleted": false,
+      "index": 15870866,
+      "params": {
+        "clawback": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "creator": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "decimals": 0,
+        "default-frozen": false,
+        "freeze": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "manager": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "name": "Gesture",
+        "name-b64": "R2VzdHVyZQ==",
+        "reserve": "PBSSJ2W6FDXVRPT4L4FGHTX2IHY3VREI44SB7VJTVT75UT6ER3CTVD6B74",
+        "total": 10000000000,
+        "unit-name": "GEST",
+        "unit-name-b64": "R0VTVA==",
+        "url": "https://gesture.qtune.io",
+        "url-b64": "aHR0cHM6Ly9nZXN0dXJlLnF0dW5lLmlv"
       }
     },
-    {
-      "id": "16056043",
-      "key": "16056043",
-      "value": {
-        "rev": "1-a1319c4fb528d30896fb02c89fa23064"
+    "current-round": 23276120
+  },
+  {
+    "_id": "16056043",
+    "_rev": "1-c40a70228d23547a5eec990af21c4ac7",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 14673960,
+      "deleted": false,
+      "index": 16056043,
+      "params": {
+        "clawback": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+        "creator": "WYWRYK42XADLY3O62N52BOLT27DMPRA3WNBT2OBRT65N6OEZQWD4OSH6PI",
+        "decimals": 6,
+        "default-frozen": false,
+        "freeze": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+        "manager": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+        "name": "Plant coin 2",
+        "name-b64": "UGxhbnQgY29pbiAy",
+        "reserve": "WYWRYK42XADLY3O62N52BOLT27DMPRA3WNBT2OBRT65N6OEZQWD4OSH6PI",
+        "total": 5000000000000000,
+        "unit-name": "PLNT",
+        "unit-name-b64": "UExOVA==",
+        "url": "https://www.example.com/",
+        "url-b64": "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20v"
       }
     },
-    {
-      "id": "22060777",
-      "key": "22060777",
-      "value": {
-        "rev": "1-d1501a7a39ade7e2977e19b97c25defc"
+    "current-round": 23276122
+  },
+  {
+    "_id": "22060777",
+    "_rev": "1-a9c1170fa51dd632319ac5925916ecb4",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 15917936,
+      "deleted": false,
+      "index": 22060777,
+      "params": {
+        "clawback": "XTEI2ZFNQJVFNOKZIS5WN7OVOKCUKGVL5MEBYSIVUXI76NAPR4G3KPFOJI",
+        "creator": "XTEI2ZFNQJVFNOKZIS5WN7OVOKCUKGVL5MEBYSIVUXI76NAPR4G3KPFOJI",
+        "decimals": 2,
+        "default-frozen": false,
+        "freeze": "XTEI2ZFNQJVFNOKZIS5WN7OVOKCUKGVL5MEBYSIVUXI76NAPR4G3KPFOJI",
+        "manager": "XTEI2ZFNQJVFNOKZIS5WN7OVOKCUKGVL5MEBYSIVUXI76NAPR4G3KPFOJI",
+        "name": "WaveCoin",
+        "name-b64": "V2F2ZUNvaW4=",
+        "reserve": "XTEI2ZFNQJVFNOKZIS5WN7OVOKCUKGVL5MEBYSIVUXI76NAPR4G3KPFOJI",
+        "total": 20000000,
+        "unit-name": "WAVE",
+        "unit-name-b64": "V0FWRQ==",
+        "url": "https://glasswave.co/wavecoin",
+        "url-b64": "aHR0cHM6Ly9nbGFzc3dhdmUuY28vd2F2ZWNvaW4="
       }
     },
-    {
-      "id": "22847685",
-      "key": "22847685",
-      "value": {
-        "rev": "1-be8ba08f88cc7ed72eab72fb695be7d9"
+    "current-round": 23276120
+  },
+  {
+    "_id": "22847685",
+    "_rev": "1-ce38f11921ba21ee8a8ee29f919249bb",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 16065861,
+      "deleted": false,
+      "index": 22847685,
+      "params": {
+        "clawback": "7DDNOLLLCR5RL7OA6KBY637TCNOD6HZBGUC227O7V7PVP6MCBALR4JR6CQ",
+        "creator": "7DDNOLLLCR5RL7OA6KBY637TCNOD6HZBGUC227O7V7PVP6MCBALR4JR6CQ",
+        "decimals": 6,
+        "default-frozen": false,
+        "freeze": "7DDNOLLLCR5RL7OA6KBY637TCNOD6HZBGUC227O7V7PVP6MCBALR4JR6CQ",
+        "manager": "7DDNOLLLCR5RL7OA6KBY637TCNOD6HZBGUC227O7V7PVP6MCBALR4JR6CQ",
+        "name": "USDC",
+        "name-b64": "VVNEQw==",
+        "reserve": "7DDNOLLLCR5RL7OA6KBY637TCNOD6HZBGUC227O7V7PVP6MCBALR4JR6CQ",
+        "total": 1000000000000000000,
+        "unit-name": "USDC",
+        "unit-name-b64": "VVNEQw==",
+        "url": "https://algobank.finance",
+        "url-b64": "aHR0cHM6Ly9hbGdvYmFuay5maW5hbmNl"
       }
     },
-    {
-      "id": "23749470",
-      "key": "23749470",
-      "value": {
-        "rev": "1-f1c128229b14dc0094bd8658e9b34d79"
+    "current-round": 23276122
+  },
+  {
+    "_id": "23749470",
+    "_rev": "1-fcce6318aa51acf871576ed65d104a2a",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 16241800,
+      "deleted": false,
+      "index": 23749470,
+      "params": {
+        "clawback": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+        "creator": "ECFSUDRHB5JAGG5CFBWTAHDPBVF3BNEI3IHJ3YH7OSRW45FKIZAR3UA3XQ",
+        "decimals": 0,
+        "default-frozen": false,
+        "freeze": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+        "manager": "ECFSUDRHB5JAGG5CFBWTAHDPBVF3BNEI3IHJ3YH7OSRW45FKIZAR3UA3XQ",
+        "metadata-hash": "ZmQ1MzdkN2U1YWU2M2NkNzdjMTA1N2QwN2I0Y2NjOWU=",
+        "name": "Equivalent #03",
+        "name-b64": "RXF1aXZhbGVudCAjMDM=",
+        "reserve": "ECFSUDRHB5JAGG5CFBWTAHDPBVF3BNEI3IHJ3YH7OSRW45FKIZAR3UA3XQ",
+        "total": 1,
+        "unit-name": "EQV03",
+        "unit-name-b64": "RVFWMDM=",
+        "url": "https://tinyurl.com/3ssnbmj4",
+        "url-b64": "aHR0cHM6Ly90aW55dXJsLmNvbS8zc3NuYm1qNA=="
       }
     },
-    {
-      "id": "24257476",
-      "key": "24257476",
-      "value": {
-        "rev": "1-7d878eee9c060b66730790963ec3e0f4"
+    "current-round": 23276123
+  },
+  {
+    "_id": "24257476",
+    "_rev": "1-d15d5242356d4d69aa803c65b322a2a1",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 16325237,
+      "deleted": false,
+      "index": 24257476,
+      "params": {
+        "clawback": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+        "creator": "CREAMP4BGRDSA7PMARWPUN6SRMN2W7NTEO6KAUCWK4AOV5LG5ZXRU5LKY4",
+        "decimals": 0,
+        "default-frozen": false,
+        "freeze": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+        "manager": "CREAMP4BGRDSA7PMARWPUN6SRMN2W7NTEO6KAUCWK4AOV5LG5ZXRU5LKY4",
+        "name": "ZOMBO.COIN",
+        "name-b64": "Wk9NQk8uQ09JTg==",
+        "reserve": "CREAMP4BGRDSA7PMARWPUN6SRMN2W7NTEO6KAUCWK4AOV5LG5ZXRU5LKY4",
+        "total": 1111010,
+        "unit-name": "ZOMBO",
+        "unit-name-b64": "Wk9NQk8=",
+        "url": "zombo.com",
+        "url-b64": "em9tYm8uY29t"
       }
     },
-    {
-      "id": "24270812",
-      "key": "24270812",
-      "value": {
-        "rev": "1-c965b4f66cc88b75ea5a8ede17b1d1af"
+    "current-round": 23276121
+  },
+  {
+    "_id": "24270812",
+    "_rev": "1-5994a5fb87356ad5ef4886b917018642",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 16327845,
+      "deleted": false,
+      "index": 24270812,
+      "params": {
+        "clawback": "NKLWNKFWSEDSGMHDI5X2QJNJQTXOGQLHDYBQ4X44WUMVWRIBDTU7K4ITBY",
+        "creator": "NKLWNKFWSEDSGMHDI5X2QJNJQTXOGQLHDYBQ4X44WUMVWRIBDTU7K4ITBY",
+        "decimals": 0,
+        "default-frozen": false,
+        "freeze": "NKLWNKFWSEDSGMHDI5X2QJNJQTXOGQLHDYBQ4X44WUMVWRIBDTU7K4ITBY",
+        "manager": "NKLWNKFWSEDSGMHDI5X2QJNJQTXOGQLHDYBQ4X44WUMVWRIBDTU7K4ITBY",
+        "name": "ShitCoin",
+        "name-b64": "U2hpdENvaW4=",
+        "reserve": "NKLWNKFWSEDSGMHDI5X2QJNJQTXOGQLHDYBQ4X44WUMVWRIBDTU7K4ITBY",
+        "total": 10000000000,
+        "unit-name": "Shit",
+        "unit-name-b64": "U2hpdA=="
       }
     },
-    {
-      "id": "24819405",
-      "key": "24819405",
-      "value": {
-        "rev": "1-aa3504a0eba0ff22d0b640121a9603c5"
+    "current-round": 23276121
+  },
+  {
+    "_id": "24819405",
+    "_rev": "1-a8bf82c9a43d51b39bc2554de12d834a",
+    "type": "asset",
+    "asset": {
+      "created-at-round": 16415944,
+      "deleted": false,
+      "index": 24819405,
+      "params": {
+        "clawback": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+        "creator": "ZHKAFJY5CDRDZKLW72JJBMT277D2TFZZ6G6BNJA7FJICQY5EJRQ5L6VR5M",
+        "decimals": 4,
+        "default-frozen": false,
+        "freeze": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAY5HFKQ",
+        "manager": "ZHKAFJY5CDRDZKLW72JJBMT277D2TFZZ6G6BNJA7FJICQY5EJRQ5L6VR5M",
+        "name": "Frozy Coin",
+        "name-b64": "RnJvenkgQ29pbg==",
+        "reserve": "ZHKAFJY5CDRDZKLW72JJBMT277D2TFZZ6G6BNJA7FJICQY5EJRQ5L6VR5M",
+        "total": 50000000000000,
+        "unit-name": "FRZ",
+        "unit-name-b64": "RlJa"
       }
     },
-    {
-      "id": "_design/assets",
-      "key": "_design/assets",
-      "value": {
-        "rev": "1-4867da9ca051db0587d0d9f90b6589fb"
+    "current-round": 23276123
+  },
+  {
+    "_id": "_design/assets",
+    "_rev": "1-4867da9ca051db0587d0d9f90b6589fb",
+    "views": {
+      "assets": {
+        "map": "function(doc) {\n  emit(doc._id, doc);\n}"
       }
     }
-  ]
-}
+  }
+]
