@@ -3,6 +3,7 @@ const bullmq = require('bullmq');
 const handleAlgxBalanceJob =
   require('./algx-balance-worker/handleAlgxBalanceJob');
 
+
 const Worker = bullmq.Worker;
 const process = require('node:process');
 // const algosdk = require('algosdk');
@@ -17,7 +18,7 @@ module.exports = ({queues, databases}) => {
   const algxBalanceWorker =
     new Worker(convertQueueURL('algxBalance'),
         async job => handleAlgxBalanceJob(job, algxBalanceDB)
-        , {connection: queues.connection, concurrency: 50});
+        , {connection: queues.connection, concurrency: 1});
 
   algxBalanceWorker.on('error', err => {
     console.error( {err} );

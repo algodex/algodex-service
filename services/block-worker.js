@@ -55,12 +55,12 @@ const performJob = async job=>{
     console.error('error adding to trade history queue:', {err} );
     throw err;
   }),
-  queues.algxBalance.add('algxBalance', {...job.data},
-      {removeOnComplete: true}).then(function() {
-  }).catch(function(err) {
-    console.error('error adding to ALGX balance queue:', {err} );
-    throw err;
-  }),
+  // queues.algxBalance.add('algxBalance', {...job.data},
+  //     {removeOnComplete: true}).then(function() {
+  // }).catch(function(err) {
+  //   console.error('error adding to ALGX balance queue:', {err} );
+  //   throw err;
+  // }),
   // eslint-disable-next-line max-len
   syncedBlocksDB.post(withSchemaCheck('synced_blocks', {_id: `${job.data.rnd}`}))
       .then(function() { }).catch(function(err) {

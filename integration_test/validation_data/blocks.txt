@@ -1413,7 +1413,7 @@
       "id": "_design/blocks",
       "key": "_design/blocks",
       "value": {
-        "rev": "1-124f464874282b629663ec361524d054"
+        "rev": "1-a5b71b5a324e159a22bad54751127769"
       }
     }
   ]

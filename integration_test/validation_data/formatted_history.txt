@@ -650,7 +650,7 @@
       "id": "_design/formatted_history",
       "key": "_design/formatted_history",
       "value": {
-        "rev": "1-834f41d556c3f5b50cec3e6c542cbef0"
+        "rev": "1-79af955f3edf7cb805359078a952d806"
       }
     }
   ]

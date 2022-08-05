@@ -1413,7 +1413,7 @@
       "id": "_design/synced_blocks",
       "key": "_design/synced_blocks",
       "value": {
-        "rev": "1-6941b0f36b52094a17f093777e855f9c"
+        "rev": "1-124ec700e32935e5a1b66f5439fa649c"
       }
     }
   ]
