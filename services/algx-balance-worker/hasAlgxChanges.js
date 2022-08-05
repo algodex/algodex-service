@@ -10,7 +10,8 @@ const hasAlgxChanges = block => {
   const algxTransfer = block.txns.map(txn => txn.txn)
       .filter(txn => txn.type === 'axfer')
       .filter(txn => txn.xaid === parseInt(algxAssetId))
-      .find(txn => txn.aamt && txn.aamt > 0);
+      .find(txn => (txn.aamt && txn.aamt > 0) || txn.aclose !== undefined);
+
   if (!algxTransfer) {
     return false;
   }

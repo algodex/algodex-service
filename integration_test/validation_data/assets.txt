@@ -1,7 +1,7 @@
 [
   {
     "_id": "15322902",
-    "_rev": "1-5d6f44d9e20e24e1a87711c131ad9378",
+    "_rev": "1-7e1f26bab21aeae7b247304b9496c7d1",
     "type": "asset",
     "asset": {
       "created-at-round": 13596306,
@@ -22,11 +22,11 @@
         "unit-name-b64": "TEFNUA=="
       }
     },
-    "current-round": 23276117
+    "current-round": 23276467
   },
   {
     "_id": "15409802",
-    "_rev": "1-5aed9c096f0a90280d8cdeccc278ded4",
+    "_rev": "1-181b4f92f6647f1f6a15ed058a86dc98",
     "type": "asset",
     "asset": {
       "created-at-round": 13662066,
@@ -49,11 +49,11 @@
         "url-b64": "aHR0cHM6Ly9wdWRkaW5ncG9pbnRzLmNvbQ=="
       }
     },
-    "current-round": 23276120
+    "current-round": 23276469
   },
   {
     "_id": "15870866",
-    "_rev": "1-1d3668bedfe5f2a8c6f3a02fec826918",
+    "_rev": "1-be6738a62436b01513075bbfc3fe954d",
     "type": "asset",
     "asset": {
       "created-at-round": 14200055,
@@ -76,11 +76,11 @@
         "url-b64": "aHR0cHM6Ly9nZXN0dXJlLnF0dW5lLmlv"
       }
     },
-    "current-round": 23276120
+    "current-round": 23276469
   },
   {
     "_id": "16056043",
-    "_rev": "1-c40a70228d23547a5eec990af21c4ac7",
+    "_rev": "1-0080cd4c100099e1487825cdab0ee966",
     "type": "asset",
     "asset": {
       "created-at-round": 14673960,
@@ -103,11 +103,11 @@
         "url-b64": "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20v"
       }
     },
-    "current-round": 23276122
+    "current-round": 23276470
   },
   {
     "_id": "22060777",
-    "_rev": "1-a9c1170fa51dd632319ac5925916ecb4",
+    "_rev": "1-d35fddaf42ccc42f58b33d3c95ce6e1c",
     "type": "asset",
     "asset": {
       "created-at-round": 15917936,
@@ -130,11 +130,11 @@
         "url-b64": "aHR0cHM6Ly9nbGFzc3dhdmUuY28vd2F2ZWNvaW4="
       }
     },
-    "current-round": 23276120
+    "current-round": 23276469
   },
   {
     "_id": "22847685",
-    "_rev": "1-ce38f11921ba21ee8a8ee29f919249bb",
+    "_rev": "1-46390cd3af49d6603b182a8771711c0b",
     "type": "asset",
     "asset": {
       "created-at-round": 16065861,
@@ -157,11 +157,11 @@
         "url-b64": "aHR0cHM6Ly9hbGdvYmFuay5maW5hbmNl"
       }
     },
-    "current-round": 23276122
+    "current-round": 23276470
   },
   {
     "_id": "23749470",
-    "_rev": "1-fcce6318aa51acf871576ed65d104a2a",
+    "_rev": "1-d75e89528a7b74b1d19c3b98e3fad976",
     "type": "asset",
     "asset": {
       "created-at-round": 16241800,
@@ -185,11 +185,11 @@
         "url-b64": "aHR0cHM6Ly90aW55dXJsLmNvbS8zc3NuYm1qNA=="
       }
     },
-    "current-round": 23276123
+    "current-round": 23276471
   },
   {
     "_id": "24257476",
-    "_rev": "1-d15d5242356d4d69aa803c65b322a2a1",
+    "_rev": "1-6a1d23e1f15ec957b551110e5d095d42",
     "type": "asset",
     "asset": {
       "created-at-round": 16325237,
@@ -212,11 +212,11 @@
         "url-b64": "em9tYm8uY29t"
       }
     },
-    "current-round": 23276121
+    "current-round": 23276469
   },
   {
     "_id": "24270812",
-    "_rev": "1-5994a5fb87356ad5ef4886b917018642",
+    "_rev": "1-b85b32496f072dbb0502e541242d211f",
     "type": "asset",
     "asset": {
       "created-at-round": 16327845,
@@ -237,11 +237,11 @@
         "unit-name-b64": "U2hpdA=="
       }
     },
-    "current-round": 23276121
+    "current-round": 23276470
   },
   {
     "_id": "24819405",
-    "_rev": "1-a8bf82c9a43d51b39bc2554de12d834a",
+    "_rev": "1-d7518b810706a0eb8a9629e825bb0319",
     "type": "asset",
     "asset": {
       "created-at-round": 16415944,
@@ -262,7 +262,7 @@
         "unit-name-b64": "RlJa"
       }
     },
-    "current-round": 23276123
+    "current-round": 23276471
   },
   {
     "_id": "_design/assets",

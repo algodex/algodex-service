@@ -392,6 +392,16 @@
     ]
   },
   {
+    "_id": "16583547",
+    "_rev": "1-bc3c609ffb1022eafe536c809952733b",
+    "changes": [
+      {
+        "account": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY",
+        "balance": 0
+      }
+    ]
+  },
+  {
     "_id": "16583553",
     "_rev": "1-2e02c0ee8c94ae4158d7e4abd293add4",
     "changes": [
@@ -840,6 +850,16 @@
       {
         "account": "VFUKS5SJJ5LX3ZSLHJWJRG7W3X5URKHCWANC27RWDVAQDOPIEXVPHHSBUM",
         "balance": 3619
+      }
+    ]
+  },
+  {
+    "_id": "16583654",
+    "_rev": "1-b09e7f4fc92bf06327c20be49f300a10",
+    "changes": [
+      {
+        "account": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
+        "balance": 0
       }
     ]
   },
