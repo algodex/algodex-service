@@ -153,7 +153,7 @@ module.exports = ({queues, events, databases}) => {
       lastSyncedRound++;
       console.log('In catchup mode, getting block: ' + lastSyncedRound);
       const block = await getBlockFromDBOrNode(blocksDB, lastSyncedRound);
-      if (!block.rnd) {
+      if (block.rnd === undefined) {
         // retry
         lastSyncedRound--;
         continue;
