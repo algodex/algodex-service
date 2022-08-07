@@ -98,9 +98,9 @@ const verifyContract = async (
     return false;
   }
   input.client = new algosdk.Algodv2(
-      '11e4dcfb445a8c7e8380848747f18afcd5d84ccb395e003e5b72127ca5e9a259',
-      'http://ec2-3-18-80-65.us-east-2.compute.amazonaws.com', 8080 ); // FIXME - use env variables or pass in client
-
+      process.env.ALGORAND_TOKEN,
+      process.env.ALGORAND_ALGOD_SERVER,
+      process.env.ALGORAND_ALGOD_PORT );
   let gotCompiledOrder = false;
   do {
     try {
