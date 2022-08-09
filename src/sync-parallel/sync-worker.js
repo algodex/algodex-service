@@ -39,8 +39,10 @@ const getAndAddBlocksFromChunk = async function({index, chunk}) {
 };
 
 const run = async () => {
-  await getAndAddBlocksFromChunk({index: workerData.index,
-    chunk: workerData.chunk, blocksDB: workerData.blocksDB});
+  await getAndAddBlocksFromChunk({
+    index: workerData.index,
+    chunk: workerData.chunk,
+  });
   parentPort.postMessage(`finished from worker index ${workerData.index}`);
 };
 
