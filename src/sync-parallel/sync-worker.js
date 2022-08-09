@@ -6,7 +6,7 @@ const getDatabases = require('../db/get-databases');
 const databases = getDatabases();
 const blocksDB = databases.blocks;
 
-const queue = async function({index, chunk}) {
+const getAndAddBlocksFromChunk = async function({index, chunk}) {
   console.log('Worker working');
   console.log(`Worker index is ${index}`);
 
@@ -39,7 +39,7 @@ const queue = async function({index, chunk}) {
 };
 
 const run = async () => {
-  await queue({index: workerData.index,
+  await getAndAddBlocksFromChunk({index: workerData.index,
     chunk: workerData.chunk, blocksDB: workerData.blocksDB});
   parentPort.postMessage(`finished from worker index ${workerData.index}`);
 };
