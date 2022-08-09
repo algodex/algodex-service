@@ -11,19 +11,12 @@ const dbGetNotFound = Object.create(DatabaseGetNotFoundMock);
 it('adds block to DB', async () => {
   const obj = loadJson('../src/__tests__/schema/db/blocks.json');
   const promiseRes = await addBlockToDB(db, 44, obj);
-  expect(promiseRes).toBe('get');
+  expect(promiseRes).toBe('posted');
   const promiseRes2 = await addBlockToDB(dbGetNotFound, 44, obj);
   expect(promiseRes2).toBe('posted');
-  expect(db.get.mock.calls).toEqual([
-    [
-      '44',
-    ],
-  ]);
-  expect(dbGetNotFound.get.mock.calls).toEqual([
-    [
-      '44',
-    ],
-  ]);
+  expect(db.get.mock.calls).toEqual(
+      []);
+  expect(dbGetNotFound.get.mock.calls).toEqual([]);
   expect(dbGetNotFound.post.mock.calls).toEqual([
     [
       {

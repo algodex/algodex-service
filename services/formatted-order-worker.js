@@ -67,12 +67,22 @@ module.exports = ({queues, databases}) =>{
                   const version = verifiedAccount.version;
                   data.escrowInfo.version = version;
                 }
+                if (data.escrowInfo.block && res.data.escrowInfo.block &&
+                  data.escrowInfo.block < res.data.escrowInfo.block) {
+                  data.escrowInfo = res.data.escrowInfo;
+                  data.lastUpdateUnixTime = res.data.lastUpdateUnixTime;
+                  data.lastUpdateRound = res.data.lastUpdateRound;
+                }
+                if (data.indexerInfo.round && res.data.indexerInfo.round &&
+                  data.indexerInfo.round < res.data.indexerInfo.round) {
+                  data.indexerInfo = res.data.indexerInfo;
+                }
                 setAssetHistory(data);
                 // eslint-disable-next-line max-len
                 return formattedEscrowDB.put(withSchemaCheck('formatted_escrow', {
                   _id: res._id,
                   _rev: res._rev,
-                  data: res.data,
+                  data,
                 })).then(function(res) {
                   console.log('added doc revision: ' + data);
                   activelyUpdatingOrderSet.delete(addr);

@@ -1,209 +1,1218 @@
-{
-  "total_rows": 29,
-  "offset": 0,
-  "rows": [
-    {
-      "id": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ",
-      "key": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ",
-      "value": {
-        "rev": "2-12899b940aa01585c82e20679cd06169"
-      }
-    },
-    {
-      "id": "5BB3OIJLMCDNVDJMNPTXUWP5KMJM42NWQ6SETZCLSQPKDAX26YFVN22ZCI",
-      "key": "5BB3OIJLMCDNVDJMNPTXUWP5KMJM42NWQ6SETZCLSQPKDAX26YFVN22ZCI",
-      "value": {
-        "rev": "1-b0034655be661517d72bbe89ad94193c"
-      }
-    },
-    {
-      "id": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
-      "key": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
-      "value": {
-        "rev": "4-e27487726cf3a1b9835dc7607e291608"
-      }
-    },
-    {
-      "id": "BOS6PHIZPV5FA6S4T4ZY6HSTES7TLEICTIE6MWJFCUKGJAMNXBBKXNIECI",
-      "key": "BOS6PHIZPV5FA6S4T4ZY6HSTES7TLEICTIE6MWJFCUKGJAMNXBBKXNIECI",
-      "value": {
-        "rev": "2-f8d9cde852e0af155b0611a26e74c41f"
-      }
-    },
-    {
-      "id": "CYM7TCEHQAN5X2QAYCG674XR4BA3E3NMSTJTYI5ABFBBNOSDZHTFOY64DE",
-      "key": "CYM7TCEHQAN5X2QAYCG674XR4BA3E3NMSTJTYI5ABFBBNOSDZHTFOY64DE",
-      "value": {
-        "rev": "1-ad796c60341da742c4a2fe590a3085d3"
-      }
-    },
-    {
-      "id": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY",
-      "key": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY",
-      "value": {
-        "rev": "2-c5013eb01c9fab854e52e637a590a9e5"
-      }
-    },
-    {
-      "id": "E7AAFHYNAEMY3UJHABD465VWQYAGUVKR4FXLJA5YURY4XH6UHYVDKX5W3Q",
-      "key": "E7AAFHYNAEMY3UJHABD465VWQYAGUVKR4FXLJA5YURY4XH6UHYVDKX5W3Q",
-      "value": {
-        "rev": "1-6ab2bab0aa19e6e404436d0891d1e9bd"
-      }
-    },
-    {
-      "id": "F2NJDQ2NB3AWIVZBWTM3LUI34ROTQGTTQ4KL6EJIENNUKBLASTA2Y2D2IU",
-      "key": "F2NJDQ2NB3AWIVZBWTM3LUI34ROTQGTTQ4KL6EJIENNUKBLASTA2Y2D2IU",
-      "value": {
-        "rev": "1-027697896ffa41d1617c95b1efb407bb"
-      }
-    },
-    {
-      "id": "FISW3KBXXNYRX4WDDHVXG7LKL6XFZH3A3I77TRW5PHTBLE2P7X2L7LQLFE",
-      "key": "FISW3KBXXNYRX4WDDHVXG7LKL6XFZH3A3I77TRW5PHTBLE2P7X2L7LQLFE",
-      "value": {
-        "rev": "1-844e35af28a41ccffaeff4ddd95b84d6"
-      }
-    },
-    {
-      "id": "G4DGEHYTW7P2LXFLYFLTEVTNBOQ4IVXGD644NAV5VNDRLQ7HZPI3D4GY7I",
-      "key": "G4DGEHYTW7P2LXFLYFLTEVTNBOQ4IVXGD644NAV5VNDRLQ7HZPI3D4GY7I",
-      "value": {
-        "rev": "2-6c690f3b439139412624cbda193896dd"
-      }
-    },
-    {
-      "id": "I6AUNNUWQAV5ETT3NZLZTM2W2DRBR7VBADQHWPY3RQNRFLC6MQ6OOT2NGA",
-      "key": "I6AUNNUWQAV5ETT3NZLZTM2W2DRBR7VBADQHWPY3RQNRFLC6MQ6OOT2NGA",
-      "value": {
-        "rev": "1-9d126b5951cb6b4710504e5d28f2ddee"
-      }
-    },
-    {
-      "id": "J5OTFGIJOBRAYK2ZXIEM35H7OVUDS45FTUFJSMEBQZ4VUW33UERUU6TZNE",
-      "key": "J5OTFGIJOBRAYK2ZXIEM35H7OVUDS45FTUFJSMEBQZ4VUW33UERUU6TZNE",
-      "value": {
-        "rev": "1-b2a10ea2de608caf2aa63198cc1c3e1a"
-      }
-    },
-    {
-      "id": "KKFXEUVLVXPKW2WANYLKBIG6XKSW2BDJFDXX5GP5TMSPP3L4V7U3ZBO47E",
-      "key": "KKFXEUVLVXPKW2WANYLKBIG6XKSW2BDJFDXX5GP5TMSPP3L4V7U3ZBO47E",
-      "value": {
-        "rev": "1-8e9805298ed73c17797432737dc679ee"
-      }
-    },
-    {
-      "id": "L4DHGS4CZMMLBZ2IHX4A7OEJIQKHKEYQ6BYSETF3B5ADCAZ2YZWEUDM3WQ",
-      "key": "L4DHGS4CZMMLBZ2IHX4A7OEJIQKHKEYQ6BYSETF3B5ADCAZ2YZWEUDM3WQ",
-      "value": {
-        "rev": "1-52e4e0d5085a09f50a0037ecb23380fc"
-      }
-    },
-    {
-      "id": "NS6VMAQW7OQQ5ZLVUWB2CIEE7OHEMRMS33XS5N4IM4VAZWCVC5AL2K457U",
-      "key": "NS6VMAQW7OQQ5ZLVUWB2CIEE7OHEMRMS33XS5N4IM4VAZWCVC5AL2K457U",
-      "value": {
-        "rev": "1-b0ac60d0ace569ccb097b77a69b55216"
-      }
-    },
-    {
-      "id": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q",
-      "key": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q",
-      "value": {
-        "rev": "2-2dbbb2496905da74a4124013c6610b75"
-      }
-    },
-    {
-      "id": "OMHP5QWDEOLQLMM47XOBQG5U2TZL4EBUVQ52EIYYQO7YXDJRJCVYV6A6GE",
-      "key": "OMHP5QWDEOLQLMM47XOBQG5U2TZL4EBUVQ52EIYYQO7YXDJRJCVYV6A6GE",
-      "value": {
-        "rev": "1-4f9e88d1ee09c822f53651338b0a83c4"
-      }
-    },
-    {
-      "id": "ORCGPGK7HJTBMLFAPOWHDD3CWX4JHWNTFSXTPER5PWRWDFNBMLDJVLMTVY",
-      "key": "ORCGPGK7HJTBMLFAPOWHDD3CWX4JHWNTFSXTPER5PWRWDFNBMLDJVLMTVY",
-      "value": {
-        "rev": "1-5b66c1594ba6a998951746551a2cbad9"
-      }
-    },
-    {
-      "id": "OZIL44HEQGLMJYIQRIK6BRYLAYXD6QVR2PT6EU4QICPV3NHAEYLVRROHH4",
-      "key": "OZIL44HEQGLMJYIQRIK6BRYLAYXD6QVR2PT6EU4QICPV3NHAEYLVRROHH4",
-      "value": {
-        "rev": "2-3aeecdf528ad20dfae0b6b46ac033edf"
-      }
-    },
-    {
-      "id": "PMW7FTDUB26HAUKP452BITGQVSJOEVDYS3PIPI4UKSOGWQNFLEKZRDFKIQ",
-      "key": "PMW7FTDUB26HAUKP452BITGQVSJOEVDYS3PIPI4UKSOGWQNFLEKZRDFKIQ",
-      "value": {
-        "rev": "2-ce62e325758844235aac610bc607571c"
-      }
-    },
-    {
-      "id": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4",
-      "key": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4",
-      "value": {
-        "rev": "6-f0c92e536739c1280ab8d72ffdf8a79a"
-      }
-    },
-    {
-      "id": "PYXYEKP5QEBAYAJMKIYL3SEEI2JUXHZ7CJWFYGDAF4HC64PSR33YMLLEIQ",
-      "key": "PYXYEKP5QEBAYAJMKIYL3SEEI2JUXHZ7CJWFYGDAF4HC64PSR33YMLLEIQ",
-      "value": {
-        "rev": "2-7ed3353da33681e37cc311ee05a91843"
-      }
-    },
-    {
-      "id": "S6E3KNFTQAXPURT62OXART4JI5CBNLYFRFLTGX6LHZ3SR7EV33XOKE2F3Q",
-      "key": "S6E3KNFTQAXPURT62OXART4JI5CBNLYFRFLTGX6LHZ3SR7EV33XOKE2F3Q",
-      "value": {
-        "rev": "1-9dd0b00dc0f557d10b998d27b3a9b9ee"
-      }
-    },
-    {
-      "id": "SGKHJD4H5VO5H2SDADDPJ32MXUBEDZYZTOSFPVHGXRHDLWEQUZ47UFNXNA",
-      "key": "SGKHJD4H5VO5H2SDADDPJ32MXUBEDZYZTOSFPVHGXRHDLWEQUZ47UFNXNA",
-      "value": {
-        "rev": "1-25157afba05219d373f3d6301f33f977"
-      }
-    },
-    {
-      "id": "ULCDFRUBXF6QKLTXLGQFY26TFWT4UVJ3TJXP3E6GRNL7WAZ6VR42GIP25U",
-      "key": "ULCDFRUBXF6QKLTXLGQFY26TFWT4UVJ3TJXP3E6GRNL7WAZ6VR42GIP25U",
-      "value": {
-        "rev": "1-90665b0a1bd36dec09b9c73230a06c90"
-      }
-    },
-    {
-      "id": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ",
-      "key": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ",
-      "value": {
-        "rev": "2-6eff345771dc67c735553b4468184c3a"
-      }
-    },
-    {
-      "id": "VFUKS5SJJ5LX3ZSLHJWJRG7W3X5URKHCWANC27RWDVAQDOPIEXVPHHSBUM",
-      "key": "VFUKS5SJJ5LX3ZSLHJWJRG7W3X5URKHCWANC27RWDVAQDOPIEXVPHHSBUM",
-      "value": {
-        "rev": "1-4e74619c0a346a02156a547d19c5dc03"
-      }
-    },
-    {
-      "id": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU",
-      "key": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU",
-      "value": {
-        "rev": "2-218ff3a82cf8f530a1c1386f0665aaeb"
-      }
-    },
-    {
-      "id": "_design/formatted_escrow",
-      "key": "_design/formatted_escrow",
-      "value": {
-        "rev": "1-e43b8658825879bcc8352d418dd7cdb9"
+[
+  {
+    "_id": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ",
+    "_rev": "2-2898a99307012f327911efa54fb935b6",
+    "data": {
+      "indexerInfo": {
+        "_id": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ-16583486",
+        "address": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ",
+        "algoAmount": 0,
+        "round": 23276467,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "close",
+        "orderInfo": "1-449-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 449,
+        "minimum": 0,
+        "price": 449,
+        "ownerAddr": "ZM4OVTFEW5NVM5O7PXPQE7YJ6JFCOKMDEO3BA7RZL4VD5MJS3P4ZGS2E6M",
+        "block": "16583486",
+        "ts": 1631352746,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631352746,
+      "lastUpdateRound": 16583486,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 11129,
+          "round": 16583467,
+          "time": 1631352665
+        },
+        {
+          "asaAmount": 0,
+          "round": 16583486,
+          "time": 1631352746
+        }
+      ]
+    }
+  },
+  {
+    "_id": "5BB3OIJLMCDNVDJMNPTXUWP5KMJM42NWQ6SETZCLSQPKDAX26YFVN22ZCI",
+    "_rev": "1-b0034655be661517d72bbe89ad94193c",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "5BB3OIJLMCDNVDJMNPTXUWP5KMJM42NWQ6SETZCLSQPKDAX26YFVN22ZCI-16583645",
+        "address": "5BB3OIJLMCDNVDJMNPTXUWP5KMJM42NWQ6SETZCLSQPKDAX26YFVN22ZCI",
+        "algoAmount": 19999000,
+        "round": 16583645,
+        "asaAmount": 0,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "1-442-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 442,
+        "minimum": 0,
+        "price": 442,
+        "ownerAddr": "KK3WM7REED26X6ED7O7CTDONWCTP5FGSAL3RE4R5USD3BRWHVZJRKNATGY",
+        "block": "16583645",
+        "ts": 1631353423,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353423,
+      "lastUpdateRound": 16583645,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 19999000,
+          "round": 16583645,
+          "time": 1631353423
+        }
+      ]
+    }
+  },
+  {
+    "_id": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
+    "_rev": "4-f5348f92d9baa75c474d0205f934f2eb",
+    "data": {
+      "indexerInfo": {
+        "_id": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ-16583654",
+        "address": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
+        "algoAmount": 0,
+        "round": 23276472,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "close",
+        "orderInfo": "1-449-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 449,
+        "minimum": 0,
+        "price": 449,
+        "ownerAddr": "IOQISE7UXHHBFBFT3C4YZB6VH3W4WXJIWEYCH6WYWUZESOZUBLSSW7254Y",
+        "block": "16583654",
+        "ts": 1631353461,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631353461,
+      "lastUpdateRound": 16583654,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 25019,
+          "round": 16583522,
+          "time": 1631352899
+        },
+        {
+          "asaAmount": 10542,
+          "round": 16583543,
+          "time": 1631352988
+        },
+        {
+          "asaAmount": 6654,
+          "round": 16583576,
+          "time": 1631353128
+        },
+        {
+          "asaAmount": 0,
+          "round": 16583654,
+          "time": 1631353461
+        }
+      ]
+    }
+  },
+  {
+    "_id": "BOS6PHIZPV5FA6S4T4ZY6HSTES7TLEICTIE6MWJFCUKGJAMNXBBKXNIECI",
+    "_rev": "2-7a7a691d543d0d01b0afae0e2dbcfe52",
+    "data": {
+      "indexerInfo": {
+        "_id": "BOS6PHIZPV5FA6S4T4ZY6HSTES7TLEICTIE6MWJFCUKGJAMNXBBKXNIECI-16583646",
+        "address": "BOS6PHIZPV5FA6S4T4ZY6HSTES7TLEICTIE6MWJFCUKGJAMNXBBKXNIECI",
+        "algoAmount": 0,
+        "round": 23276472,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "close",
+        "orderInfo": "1-10-0-22847685",
+        "numerator": 1,
+        "assetId": 22847685,
+        "denominator": 10,
+        "minimum": 0,
+        "price": 10,
+        "ownerAddr": "IOQISE7UXHHBFBFT3C4YZB6VH3W4WXJIWEYCH6WYWUZESOZUBLSSW7254Y",
+        "block": "16583646",
+        "ts": 1631353427,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631353427,
+      "lastUpdateRound": 16583646,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 596225,
+          "round": 16583615,
+          "time": 1631353295
+        },
+        {
+          "asaAmount": 0,
+          "round": 16583646,
+          "time": 1631353427
+        }
+      ]
+    }
+  },
+  {
+    "_id": "CYM7TCEHQAN5X2QAYCG674XR4BA3E3NMSTJTYI5ABFBBNOSDZHTFOY64DE",
+    "_rev": "1-ca438d70dd9c03cbecfbc4235a83adf2",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "CYM7TCEHQAN5X2QAYCG674XR4BA3E3NMSTJTYI5ABFBBNOSDZHTFOY64DE-16583502",
+        "address": "CYM7TCEHQAN5X2QAYCG674XR4BA3E3NMSTJTYI5ABFBBNOSDZHTFOY64DE",
+        "algoAmount": 5993000,
+        "round": 23276468,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "1-5-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 5,
+        "minimum": 0,
+        "price": 5,
+        "ownerAddr": "3FRO5IP2R6UAEGXFMJJXHUUMH24MB4RMQKWJ2WPHEOOIM24F2M3IEXGLTU",
+        "block": "16583502",
+        "ts": 1631352814,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631352814,
+      "lastUpdateRound": 16583502,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 5993000,
+          "round": 16583502,
+          "time": 1631352814
+        }
+      ]
+    }
+  },
+  {
+    "_id": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY",
+    "_rev": "2-aa23b8b1e80df6cf291fc97e0d617c2f",
+    "data": {
+      "indexerInfo": {
+        "_id": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY-16583547",
+        "address": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY",
+        "algoAmount": 0,
+        "round": 23276469,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "close",
+        "orderInfo": "1-448-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 448,
+        "minimum": 0,
+        "price": 448,
+        "ownerAddr": "ZC2YNATE75BSGCJRIHNUYSRMIX5WT5RTO5SPLGTT5IFGV2DYVFJMAEGBNM",
+        "block": "16583547",
+        "ts": 1631353005,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631353005,
+      "lastUpdateRound": 16583547,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 2941252,
+          "round": 16583540,
+          "time": 1631352975
+        },
+        {
+          "asaAmount": 0,
+          "round": 16583547,
+          "time": 1631353005
+        }
+      ]
+    }
+  },
+  {
+    "_id": "E7AAFHYNAEMY3UJHABD465VWQYAGUVKR4FXLJA5YURY4XH6UHYVDKX5W3Q",
+    "_rev": "1-a494d596ba56b9d8481f336b89019dc1",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "E7AAFHYNAEMY3UJHABD465VWQYAGUVKR4FXLJA5YURY4XH6UHYVDKX5W3Q-16583614",
+        "address": "E7AAFHYNAEMY3UJHABD465VWQYAGUVKR4FXLJA5YURY4XH6UHYVDKX5W3Q",
+        "algoAmount": 1349000,
+        "round": 23276471,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "10-15-0-15322902",
+        "numerator": 10,
+        "assetId": 15322902,
+        "denominator": 15,
+        "minimum": 0,
+        "price": 1.5,
+        "ownerAddr": "YMIHGTLM72XH434HHI3BAQLXTGC6CKG2XVCU3F2ARIDFCNNYUIB5SJ3K4E",
+        "block": "16583614",
+        "ts": 1631353290,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353290,
+      "lastUpdateRound": 16583614,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 1349000,
+          "round": 16583614,
+          "time": 1631353290
+        }
+      ]
+    }
+  },
+  {
+    "_id": "F2NJDQ2NB3AWIVZBWTM3LUI34ROTQGTTQ4KL6EJIENNUKBLASTA2Y2D2IU",
+    "_rev": "1-08a5c7c462bd03ee4a3f80586c5083c7",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "F2NJDQ2NB3AWIVZBWTM3LUI34ROTQGTTQ4KL6EJIENNUKBLASTA2Y2D2IU-16583524",
+        "address": "F2NJDQ2NB3AWIVZBWTM3LUI34ROTQGTTQ4KL6EJIENNUKBLASTA2Y2D2IU",
+        "algoAmount": 1497000,
+        "round": 23276468,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "1000000-1000008-0-15322902",
+        "numerator": 1000000,
+        "assetId": 15322902,
+        "denominator": 1000008,
+        "minimum": 0,
+        "price": 1.000008,
+        "ownerAddr": "3FRO5IP2R6UAEGXFMJJXHUUMH24MB4RMQKWJ2WPHEOOIM24F2M3IEXGLTU",
+        "block": "16583524",
+        "ts": 1631352907,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631352907,
+      "lastUpdateRound": 16583524,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 1497000,
+          "round": 16583524,
+          "time": 1631352907
+        }
+      ]
+    }
+  },
+  {
+    "_id": "FISW3KBXXNYRX4WDDHVXG7LKL6XFZH3A3I77TRW5PHTBLE2P7X2L7LQLFE",
+    "_rev": "1-844e35af28a41ccffaeff4ddd95b84d6",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "FISW3KBXXNYRX4WDDHVXG7LKL6XFZH3A3I77TRW5PHTBLE2P7X2L7LQLFE-16583561",
+        "address": "FISW3KBXXNYRX4WDDHVXG7LKL6XFZH3A3I77TRW5PHTBLE2P7X2L7LQLFE",
+        "algoAmount": 6614649,
+        "round": 16583561,
+        "asaAmount": 0,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "1-2500000-0-24257476",
+        "numerator": 1,
+        "assetId": 24257476,
+        "denominator": 2500000,
+        "minimum": 0,
+        "price": 2500000,
+        "ownerAddr": "TRVIZLBN6JFC4IJVMXWB3PP5DTW5HIAMZIZSDNTYSWU4QXDMPINI754C4A",
+        "block": "16583561",
+        "ts": 1631353065,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353065,
+      "lastUpdateRound": 16583561,
+      "assetDecimals": 0,
+      "history": [
+        {
+          "algoAmount": 6614649,
+          "round": 16583561,
+          "time": 1631353065
+        }
+      ]
+    }
+  },
+  {
+    "_id": "G4DGEHYTW7P2LXFLYFLTEVTNBOQ4IVXGD644NAV5VNDRLQ7HZPI3D4GY7I",
+    "_rev": "2-3345888b7abc52b617f5598d59690d33",
+    "data": {
+      "indexerInfo": {
+        "_id": "G4DGEHYTW7P2LXFLYFLTEVTNBOQ4IVXGD644NAV5VNDRLQ7HZPI3D4GY7I-16583609",
+        "address": "G4DGEHYTW7P2LXFLYFLTEVTNBOQ4IVXGD644NAV5VNDRLQ7HZPI3D4GY7I",
+        "algoAmount": 0,
+        "round": 23276471,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "close",
+        "orderInfo": "1-1000000-0-24270812",
+        "numerator": 1,
+        "assetId": 24270812,
+        "denominator": 1000000,
+        "minimum": 0,
+        "price": 1000000,
+        "ownerAddr": "UBHMWUFDC5V5SYD5ZUHNXC4WJRAN3Q6HBL62KISLVVQMS43QNM3DEJ4UFY",
+        "block": "16583609",
+        "ts": 1631353269,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631353269,
+      "lastUpdateRound": 16583609,
+      "assetDecimals": 0,
+      "history": [
+        {
+          "asaAmount": 1,
+          "round": 16583571,
+          "time": 1631353107
+        },
+        {
+          "asaAmount": 0,
+          "round": 16583609,
+          "time": 1631353269
+        }
+      ]
+    }
+  },
+  {
+    "_id": "I6AUNNUWQAV5ETT3NZLZTM2W2DRBR7VBADQHWPY3RQNRFLC6MQ6OOT2NGA",
+    "_rev": "1-010d758898d1e75dbd76cbbc77380727",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "I6AUNNUWQAV5ETT3NZLZTM2W2DRBR7VBADQHWPY3RQNRFLC6MQ6OOT2NGA-16583595",
+        "address": "I6AUNNUWQAV5ETT3NZLZTM2W2DRBR7VBADQHWPY3RQNRFLC6MQ6OOT2NGA",
+        "algoAmount": 5079590,
+        "round": 23276470,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "10000-445-0-16056043",
+        "numerator": 10000,
+        "assetId": 16056043,
+        "denominator": 445,
+        "minimum": 0,
+        "price": 0.0445,
+        "ownerAddr": "TRVIZLBN6JFC4IJVMXWB3PP5DTW5HIAMZIZSDNTYSWU4QXDMPINI754C4A",
+        "block": "16583595",
+        "ts": 1631353209,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353209,
+      "lastUpdateRound": 16583595,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 5079590,
+          "round": 16583595,
+          "time": 1631353209
+        }
+      ]
+    }
+  },
+  {
+    "_id": "J5OTFGIJOBRAYK2ZXIEM35H7OVUDS45FTUFJSMEBQZ4VUW33UERUU6TZNE",
+    "_rev": "1-f174c602ae6d64b5762548dc9e490269",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "J5OTFGIJOBRAYK2ZXIEM35H7OVUDS45FTUFJSMEBQZ4VUW33UERUU6TZNE-16583626",
+        "address": "J5OTFGIJOBRAYK2ZXIEM35H7OVUDS45FTUFJSMEBQZ4VUW33UERUU6TZNE",
+        "algoAmount": 5000408,
+        "round": 23276471,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "1-200-0-24819405",
+        "numerator": 1,
+        "assetId": 24819405,
+        "denominator": 200,
+        "minimum": 0,
+        "price": 200,
+        "ownerAddr": "3AUXK5A2IP3BSJFKPVWCL5WHABEEQS76GLJL4YHDLS3F4PRJOETYECZZTE",
+        "block": "16583626",
+        "ts": 1631353341,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353341,
+      "lastUpdateRound": 16583626,
+      "assetDecimals": 4,
+      "history": [
+        {
+          "algoAmount": 5000408,
+          "round": 16583626,
+          "time": 1631353341
+        }
+      ]
+    }
+  },
+  {
+    "_id": "KKFXEUVLVXPKW2WANYLKBIG6XKSW2BDJFDXX5GP5TMSPP3L4V7U3ZBO47E",
+    "_rev": "1-8e9805298ed73c17797432737dc679ee",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "KKFXEUVLVXPKW2WANYLKBIG6XKSW2BDJFDXX5GP5TMSPP3L4V7U3ZBO47E-16583647",
+        "address": "KKFXEUVLVXPKW2WANYLKBIG6XKSW2BDJFDXX5GP5TMSPP3L4V7U3ZBO47E",
+        "algoAmount": 9566730,
+        "round": 16583647,
+        "asaAmount": 0,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "10-1-0-15409802",
+        "numerator": 10,
+        "assetId": 15409802,
+        "denominator": 1,
+        "minimum": 0,
+        "price": 0.1,
+        "ownerAddr": "AGJWRKZGNJP2VNF5G2UNLSF6LFWTCZSP3IBUOOPQACSX32BQCRXUUDL6X4",
+        "block": "16583647",
+        "ts": 1631353431,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353431,
+      "lastUpdateRound": 16583647,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 9566730,
+          "round": 16583647,
+          "time": 1631353431
+        }
+      ]
+    }
+  },
+  {
+    "_id": "L4DHGS4CZMMLBZ2IHX4A7OEJIQKHKEYQ6BYSETF3B5ADCAZ2YZWEUDM3WQ",
+    "_rev": "1-52e4e0d5085a09f50a0037ecb23380fc",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "L4DHGS4CZMMLBZ2IHX4A7OEJIQKHKEYQ6BYSETF3B5ADCAZ2YZWEUDM3WQ-16583509",
+        "address": "L4DHGS4CZMMLBZ2IHX4A7OEJIQKHKEYQ6BYSETF3B5ADCAZ2YZWEUDM3WQ",
+        "algoAmount": 497000,
+        "round": 16583509,
+        "asaAmount": 5568,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "open",
+        "orderInfo": "1-449-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 449,
+        "minimum": 0,
+        "price": 449,
+        "ownerAddr": "MGOE6KR35V5IMYQYKRW6GUPUG77YZEUMXVG2YVPGXNU33HFQPQJUQYXSQU",
+        "block": "16583509",
+        "ts": 1631352843,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631352843,
+      "lastUpdateRound": 16583509,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 5568,
+          "round": 16583509,
+          "time": 1631352843
+        }
+      ]
+    }
+  },
+  {
+    "_id": "NS6VMAQW7OQQ5ZLVUWB2CIEE7OHEMRMS33XS5N4IM4VAZWCVC5AL2K457U",
+    "_rev": "1-b0ac60d0ace569ccb097b77a69b55216",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "NS6VMAQW7OQQ5ZLVUWB2CIEE7OHEMRMS33XS5N4IM4VAZWCVC5AL2K457U-16583538",
+        "address": "NS6VMAQW7OQQ5ZLVUWB2CIEE7OHEMRMS33XS5N4IM4VAZWCVC5AL2K457U",
+        "algoAmount": 3664396,
+        "round": 16583538,
+        "asaAmount": 0,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "1-150000-0-15870866",
+        "numerator": 1,
+        "assetId": 15870866,
+        "denominator": 150000,
+        "minimum": 0,
+        "price": 150000,
+        "ownerAddr": "TRVIZLBN6JFC4IJVMXWB3PP5DTW5HIAMZIZSDNTYSWU4QXDMPINI754C4A",
+        "block": "16583538",
+        "ts": 1631352967,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631352967,
+      "lastUpdateRound": 16583538,
+      "assetDecimals": 0,
+      "history": [
+        {
+          "algoAmount": 3664396,
+          "round": 16583538,
+          "time": 1631352967
+        }
+      ]
+    }
+  },
+  {
+    "_id": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q",
+    "_rev": "2-9b5d42d8391549057ca664b53ee57922",
+    "data": {
+      "indexerInfo": {
+        "_id": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q-16583602",
+        "address": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q",
+        "algoAmount": 0,
+        "round": 23276470,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "apat": [
+          "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+          "I3LMETLVXEJRCIWDDMH3P7O6ACYPK5F3PPFCS3SOHWNOGEOCUWHPS3OOC4"
+        ],
+        "type": "execute_with_closeout",
+        "orderInfo": "1-445-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 445,
+        "minimum": 0,
+        "price": 445,
+        "ownerAddr": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+        "block": "16583602",
+        "ts": 1631353239,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631353239,
+      "lastUpdateRound": 16583602,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 415,
+          "round": 16583593,
+          "time": 1631353201
+        },
+        {
+          "asaAmount": 0,
+          "round": 16583602,
+          "time": 1631353239
+        }
+      ]
+    }
+  },
+  {
+    "_id": "OMHP5QWDEOLQLMM47XOBQG5U2TZL4EBUVQ52EIYYQO7YXDJRJCVYV6A6GE",
+    "_rev": "1-4f9e88d1ee09c822f53651338b0a83c4",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "OMHP5QWDEOLQLMM47XOBQG5U2TZL4EBUVQ52EIYYQO7YXDJRJCVYV6A6GE-16583518",
+        "address": "OMHP5QWDEOLQLMM47XOBQG5U2TZL4EBUVQ52EIYYQO7YXDJRJCVYV6A6GE",
+        "algoAmount": 497000,
+        "round": 16583518,
+        "asaAmount": 557,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "open",
+        "orderInfo": "1-449-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 449,
+        "minimum": 0,
+        "price": 449,
+        "ownerAddr": "KRCLMJC5PQO5Z27BDTELZDKIYRM3FD4XI6JNXUW55EGDPJF6KH45OAP6UQ",
+        "block": "16583518",
+        "ts": 1631352882,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631352882,
+      "lastUpdateRound": 16583518,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 557,
+          "round": 16583518,
+          "time": 1631352882
+        }
+      ]
+    }
+  },
+  {
+    "_id": "ORCGPGK7HJTBMLFAPOWHDD3CWX4JHWNTFSXTPER5PWRWDFNBMLDJVLMTVY",
+    "_rev": "1-af7851c0c4ded12315e94e38a79b052b",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "ORCGPGK7HJTBMLFAPOWHDD3CWX4JHWNTFSXTPER5PWRWDFNBMLDJVLMTVY-16583634",
+        "address": "ORCGPGK7HJTBMLFAPOWHDD3CWX4JHWNTFSXTPER5PWRWDFNBMLDJVLMTVY",
+        "algoAmount": 8741270,
+        "round": 23276471,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "1-52856250-0-23749470",
+        "numerator": 1,
+        "assetId": 23749470,
+        "denominator": 52856250,
+        "minimum": 0,
+        "price": 52856250,
+        "ownerAddr": "TRVIZLBN6JFC4IJVMXWB3PP5DTW5HIAMZIZSDNTYSWU4QXDMPINI754C4A",
+        "block": "16583634",
+        "ts": 1631353376,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353376,
+      "lastUpdateRound": 16583634,
+      "assetDecimals": 0,
+      "history": [
+        {
+          "algoAmount": 8741270,
+          "round": 16583634,
+          "time": 1631353376
+        }
+      ]
+    }
+  },
+  {
+    "_id": "OZIL44HEQGLMJYIQRIK6BRYLAYXD6QVR2PT6EU4QICPV3NHAEYLVRROHH4",
+    "_rev": "2-581c6ccbd167fc590c8cf9442a1f1a1b",
+    "data": {
+      "indexerInfo": {
+        "_id": "OZIL44HEQGLMJYIQRIK6BRYLAYXD6QVR2PT6EU4QICPV3NHAEYLVRROHH4-16583572",
+        "address": "OZIL44HEQGLMJYIQRIK6BRYLAYXD6QVR2PT6EU4QICPV3NHAEYLVRROHH4",
+        "algoAmount": 0,
+        "round": 23276470,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "close",
+        "orderInfo": "1-445-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 445,
+        "minimum": 0,
+        "price": 445,
+        "ownerAddr": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
+        "block": "16583572",
+        "ts": 1631353111,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631353111,
+      "lastUpdateRound": 16583572,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 3249114,
+          "round": 16583554,
+          "time": 1631353035
+        },
+        {
+          "algoAmount": 0,
+          "round": 16583572,
+          "time": 1631353111
+        }
+      ]
+    }
+  },
+  {
+    "_id": "PMW7FTDUB26HAUKP452BITGQVSJOEVDYS3PIPI4UKSOGWQNFLEKZRDFKIQ",
+    "_rev": "2-c8302a80e6ef1e8980fcb7e466d49052",
+    "data": {
+      "indexerInfo": {
+        "_id": "PMW7FTDUB26HAUKP452BITGQVSJOEVDYS3PIPI4UKSOGWQNFLEKZRDFKIQ-16583630",
+        "address": "PMW7FTDUB26HAUKP452BITGQVSJOEVDYS3PIPI4UKSOGWQNFLEKZRDFKIQ",
+        "algoAmount": 497000,
+        "round": 16583630,
+        "asaAmount": 13717,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "open",
+        "orderInfo": "1-449-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 449,
+        "minimum": 0,
+        "price": 449,
+        "ownerAddr": "Y5KCFJRO5KI6VQZNSZCC5RYOTTAM7BU4NXCTO5DNRMMVAWJVKIEUM4PVXY",
+        "block": "16583584",
+        "ts": 1631353162,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353358,
+      "lastUpdateRound": 16583630,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 28194,
+          "round": 16583584,
+          "time": 1631353162
+        },
+        {
+          "asaAmount": 13717,
+          "round": 16583630,
+          "time": 1631353358
+        }
+      ]
+    }
+  },
+  {
+    "_id": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4",
+    "_rev": "6-63b3e4a760c5cd9b55b0644a98105b8c",
+    "data": {
+      "indexerInfo": {
+        "_id": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4-16583609",
+        "address": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4",
+        "algoAmount": 0,
+        "round": 23276471,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "apat": [
+          "3FRO5IP2R6UAEGXFMJJXHUUMH24MB4RMQKWJ2WPHEOOIM24F2M3IEXGLTU",
+          "EYSRBK33QQ4W5BVGFPJX7K5VBHBUELUHRTS6HBG64EVW5ZBMYH3JZO56OU"
+        ],
+        "type": "execute_with_closeout",
+        "orderInfo": "1-449-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 449,
+        "minimum": 0,
+        "price": 449,
+        "ownerAddr": "3FRO5IP2R6UAEGXFMJJXHUUMH24MB4RMQKWJ2WPHEOOIM24F2M3IEXGLTU",
+        "block": "16583609",
+        "ts": 1631353269,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631353269,
+      "lastUpdateRound": 16583609,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 672950,
+          "round": 16583538,
+          "time": 1631352967
+        },
+        {
+          "algoAmount": 1436560,
+          "round": 16583545,
+          "time": 1631352996
+        },
+        {
+          "algoAmount": 2047248,
+          "round": 16583563,
+          "time": 1631353073
+        },
+        {
+          "algoAmount": 0,
+          "round": 16583580,
+          "time": 1631353145
+        },
+        {
+          "algoAmount": 732215,
+          "round": 16583591,
+          "time": 1631353192
+        },
+        {
+          "algoAmount": 0,
+          "round": 16583609,
+          "time": 1631353269
+        }
+      ]
+    }
+  },
+  {
+    "_id": "PYXYEKP5QEBAYAJMKIYL3SEEI2JUXHZ7CJWFYGDAF4HC64PSR33YMLLEIQ",
+    "_rev": "2-db00764a8fc46a4febb4083eb69a7e38",
+    "data": {
+      "indexerInfo": {
+        "_id": "PYXYEKP5QEBAYAJMKIYL3SEEI2JUXHZ7CJWFYGDAF4HC64PSR33YMLLEIQ-16583642",
+        "address": "PYXYEKP5QEBAYAJMKIYL3SEEI2JUXHZ7CJWFYGDAF4HC64PSR33YMLLEIQ",
+        "algoAmount": 0,
+        "round": 23276471,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "close",
+        "orderInfo": "10-42-0-22847685",
+        "numerator": 10,
+        "assetId": 22847685,
+        "denominator": 42,
+        "minimum": 0,
+        "price": 4.2,
+        "ownerAddr": "IOQISE7UXHHBFBFT3C4YZB6VH3W4WXJIWEYCH6WYWUZESOZUBLSSW7254Y",
+        "block": "16583642",
+        "ts": 1631353410,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631353410,
+      "lastUpdateRound": 16583642,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 17270421,
+          "round": 16583593,
+          "time": 1631353201
+        },
+        {
+          "algoAmount": 0,
+          "round": 16583642,
+          "time": 1631353410
+        }
+      ]
+    }
+  },
+  {
+    "_id": "S6E3KNFTQAXPURT62OXART4JI5CBNLYFRFLTGX6LHZ3SR7EV33XOKE2F3Q",
+    "_rev": "1-9dd0b00dc0f557d10b998d27b3a9b9ee",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "S6E3KNFTQAXPURT62OXART4JI5CBNLYFRFLTGX6LHZ3SR7EV33XOKE2F3Q-16583545",
+        "address": "S6E3KNFTQAXPURT62OXART4JI5CBNLYFRFLTGX6LHZ3SR7EV33XOKE2F3Q",
+        "algoAmount": 497000,
+        "round": 16583545,
+        "asaAmount": 10,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "open",
+        "orderInfo": "1-496000-0-22060777",
+        "numerator": 1,
+        "assetId": 22060777,
+        "denominator": 496000,
+        "minimum": 0,
+        "price": 496000,
+        "ownerAddr": "IOQISE7UXHHBFBFT3C4YZB6VH3W4WXJIWEYCH6WYWUZESOZUBLSSW7254Y",
+        "block": "16583545",
+        "ts": 1631352996,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631352996,
+      "lastUpdateRound": 16583545,
+      "assetDecimals": 2,
+      "history": [
+        {
+          "asaAmount": 10,
+          "round": 16583545,
+          "time": 1631352996
+        }
+      ]
+    }
+  },
+  {
+    "_id": "SGKHJD4H5VO5H2SDADDPJ32MXUBEDZYZTOSFPVHGXRHDLWEQUZ47UFNXNA",
+    "_rev": "1-25157afba05219d373f3d6301f33f977",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "SGKHJD4H5VO5H2SDADDPJ32MXUBEDZYZTOSFPVHGXRHDLWEQUZ47UFNXNA-16583500",
+        "address": "SGKHJD4H5VO5H2SDADDPJ32MXUBEDZYZTOSFPVHGXRHDLWEQUZ47UFNXNA",
+        "algoAmount": 35999000,
+        "round": 16583500,
+        "asaAmount": 0,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "1-320-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 320,
+        "minimum": 0,
+        "price": 320,
+        "ownerAddr": "LRVOVB6VEEAFNBSUKLNY6SD643P5JSK3NZ75BVFH7YJA2XU7WXVZFYVGWA",
+        "block": "16583500",
+        "ts": 1631352805,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631352805,
+      "lastUpdateRound": 16583500,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 35999000,
+          "round": 16583500,
+          "time": 1631352805
+        }
+      ]
+    }
+  },
+  {
+    "_id": "ULCDFRUBXF6QKLTXLGQFY26TFWT4UVJ3TJXP3E6GRNL7WAZ6VR42GIP25U",
+    "_rev": "1-90665b0a1bd36dec09b9c73230a06c90",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "ULCDFRUBXF6QKLTXLGQFY26TFWT4UVJ3TJXP3E6GRNL7WAZ6VR42GIP25U-16583616",
+        "address": "ULCDFRUBXF6QKLTXLGQFY26TFWT4UVJ3TJXP3E6GRNL7WAZ6VR42GIP25U",
+        "algoAmount": 224999000,
+        "round": 16583616,
+        "asaAmount": 0,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "1-750000-0-24270812",
+        "numerator": 1,
+        "assetId": 24270812,
+        "denominator": 750000,
+        "minimum": 0,
+        "price": 750000,
+        "ownerAddr": "UBHMWUFDC5V5SYD5ZUHNXC4WJRAN3Q6HBL62KISLVVQMS43QNM3DEJ4UFY",
+        "block": "16583616",
+        "ts": 1631353299,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353299,
+      "lastUpdateRound": 16583616,
+      "assetDecimals": 0,
+      "history": [
+        {
+          "algoAmount": 224999000,
+          "round": 16583616,
+          "time": 1631353299
+        }
+      ]
+    }
+  },
+  {
+    "_id": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ",
+    "_rev": "2-70131d7aa299c798bc9818faa3af3c6b",
+    "data": {
+      "indexerInfo": {
+        "_id": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ-16583576",
+        "address": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ",
+        "algoAmount": 0,
+        "round": 23276470,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "apat": [
+          "LWSJZPTHNTI324JRGIF4C6SNRCKRSAOLUHSNV3JQRL3EP5U3K5OYP6JIBI",
+          "RPWVK2H2JRTZNX33K45PQZ7RSK7ALGAT7ZAPNHVJ4BV2HY2MRJSECIDUKE"
+        ],
+        "type": "execute_with_closeout",
+        "orderInfo": "1-449-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 449,
+        "minimum": 0,
+        "price": 449,
+        "ownerAddr": "LWSJZPTHNTI324JRGIF4C6SNRCKRSAOLUHSNV3JQRL3EP5U3K5OYP6JIBI",
+        "block": "16583576",
+        "ts": 1631353128,
+        "version": "\u0003",
+        "status": "closed"
+      },
+      "lastUpdateUnixTime": 1631353128,
+      "lastUpdateRound": 16583576,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 7239,
+          "round": 16583567,
+          "time": 1631353090
+        },
+        {
+          "asaAmount": 0,
+          "round": 16583576,
+          "time": 1631353128
+        }
+      ]
+    }
+  },
+  {
+    "_id": "VFUKS5SJJ5LX3ZSLHJWJRG7W3X5URKHCWANC27RWDVAQDOPIEXVPHHSBUM",
+    "_rev": "1-4e74619c0a346a02156a547d19c5dc03",
+    "type": "formatted_escrow",
+    "data": {
+      "indexerInfo": {
+        "_id": "VFUKS5SJJ5LX3ZSLHJWJRG7W3X5URKHCWANC27RWDVAQDOPIEXVPHHSBUM-16583653",
+        "address": "VFUKS5SJJ5LX3ZSLHJWJRG7W3X5URKHCWANC27RWDVAQDOPIEXVPHHSBUM",
+        "algoAmount": 497000,
+        "round": 16583653,
+        "asaAmount": 3619,
+        "isApproximate": true
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": false,
+        "type": "open",
+        "orderInfo": "1-442-0-15322902",
+        "numerator": 1,
+        "assetId": 15322902,
+        "denominator": 442,
+        "minimum": 0,
+        "price": 442,
+        "ownerAddr": "VANBKKYIPHRBM62TCTN6YNZ3IPSQZIBZUXR6OIHQJHGDVKJOETSPUTFSZI",
+        "block": "16583653",
+        "ts": 1631353457,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353457,
+      "lastUpdateRound": 16583653,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "asaAmount": 3619,
+          "round": 16583653,
+          "time": 1631353457
+        }
+      ]
+    }
+  },
+  {
+    "_id": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU",
+    "_rev": "2-d465961f40d624d235cb809785bbd033",
+    "data": {
+      "indexerInfo": {
+        "_id": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU-16583573",
+        "address": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU",
+        "algoAmount": 6457968,
+        "round": 23276470,
+        "asaAmount": 0
+      },
+      "escrowInfo": {
+        "isAlgoBuyEscrow": true,
+        "type": "open",
+        "orderInfo": "10-1-0-15409802",
+        "numerator": 10,
+        "assetId": 15409802,
+        "denominator": 1,
+        "minimum": 0,
+        "price": 0.1,
+        "ownerAddr": "TRVIZLBN6JFC4IJVMXWB3PP5DTW5HIAMZIZSDNTYSWU4QXDMPINI754C4A",
+        "block": "16583550",
+        "ts": 1631353018,
+        "version": "\u0003",
+        "status": "open"
+      },
+      "lastUpdateUnixTime": 1631353116,
+      "lastUpdateRound": 16583573,
+      "assetDecimals": 6,
+      "history": [
+        {
+          "algoAmount": 3481026,
+          "round": 16583550,
+          "time": 1631353018
+        },
+        {
+          "algoAmount": 6457968,
+          "round": 16583573,
+          "time": 1631353116
+        }
+      ]
+    }
+  },
+  {
+    "_id": "_design/formatted_escrow",
+    "_rev": "1-aed4f36d10e8800be47bdb2137e126c1",
+    "views": {
+      "orders": {
+        "map": "function(doc) {\n  /**\n   * @param {int} unformattedPrice\n   * @param {int} decimals\n   * @return {string}\n   */\n  function getFormattedPrice(unformattedPrice, decimals) {\n    if (isNaN(unformattedPrice)) {\n      return null;\n    }\n    const price = unformattedPrice * Math.pow(10, (decimals - 6));\n    // return number_format((float)$price, 6, '.', '');\n    return price;\n  }\n\n  /**\n   * @param {int} asaAmount\n   * @param {int} decimals\n   * @return {string}\n   */\n  function getFormattedASAAmount(asaAmount, decimals) {\n    if (isNaN(asaAmount)) {\n      return null;\n    }\n\n    const val = asaAmount / Math.pow(10, decimals);\n    return val;\n    // return number_format((float)$val, $decimals, '.', '');\n  }\n\n  const history = doc.data.history;\n  const lastHistory = history[history.length - 1];\n  if (lastHistory.algoAmount > 0 || lastHistory.asaAmount > 0) {\n    const asaAmount = doc.data.indexerInfo.asaAmount;\n    const n = doc.data.escrowInfo.numerator;\n    const d = doc.data.escrowInfo.denominator;\n    const asaPrice = n > 0 ? (d/n) : null;\n    const decimals = doc.data.assetDecimals;\n\n    const escrowInfo = {\n      ownerAddress: doc.data.escrowInfo.ownerAddr,\n      escrowAddress: doc._id,\n      algoAmount: doc.data.indexerInfo.algoAmount,\n      asaAmount: asaAmount,\n      assetLimitPriceD: doc.data.escrowInfo.denominator,\n      assetLimitPriceN: doc.data.escrowInfo.numerator,\n      asaPrice: asaPrice,\n      formattedPrice: getFormattedPrice(asaPrice, decimals),\n      formattedASAAmount: getFormattedASAAmount(asaAmount, decimals),\n      round: doc.data.lastUpdateRound,\n      unix_time: doc.data.lastUpdateUnixTime,\n      decimals: decimals,\n      version: doc.data.escrowInfo.version,\n      isAlgoBuyEscrow: doc.data.escrowInfo.isAlgoBuyEscrow,\n    };\n    emit(['assetId', doc.data.escrowInfo.assetId], escrowInfo);\n    emit(['ownerAddr', escrowInfo.ownerAddress], escrowInfo);\n  }\n}"
+      },
+      "epochs": {
+        "map": "function(doc) {\r\n  const unixToEpoch = unixTime => {\r\n    const rounded = Math.floor(unixTime);\r\n    const start = 1629950400; // start time. change mainnet or testnet\r\n    const secondsInEpoch = 604800;\r\n    return Math.floor((rounded - start) / secondsInEpoch) + 1;\r\n  };\r\n\r\n  const getEpochFromEscrow = escrow => {\r\n    const history = escrow.history;\r\n    let startTime = null;\r\n    let endTime = null;\r\n    const epochSet = {};\r\n    for (let i = 0; i < history.length; i++) {\r\n      const hasBalance = history[i].asaAmount > 0 || history[i].algoAmount > 0;\r\n      if (startTime === null && hasBalance) {\r\n        startTime = history[i].time;\r\n      } else if (startTime !== null && !hasBalance) {\r\n        endTime = history[i].time;\r\n        const startEpoch = unixToEpoch(startTime);\r\n        const endEpoch = unixToEpoch(endTime);\r\n        const epochCount = endEpoch - startEpoch + 1;\r\n        const epochs = Array(epochCount)\r\n            .fill().map((element, index) => index + startEpoch);\r\n        epochs.forEach(epoch => epochSet[`epoch:${epoch}`] = 1);\r\n        startTime = null;\r\n        endTime = null;\r\n      }\r\n    }\r\n    const lastIndex = history.length - 1;\r\n    let stillOpen = false;\r\n    if (history[lastIndex].asaAmount > 0 || history[lastIndex].algoAmount > 0) {\r\n      const lastEpoch = unixToEpoch(history[lastIndex].time);\r\n      epochSet[`epoch:${lastEpoch}`] = 1;\r\n      stillOpen = true;\r\n    }\r\n    const epochs = Object.keys(epochSet).map( key => key.split(':')[1]);\r\n    return {\r\n      epochs,\r\n      stillOpen,\r\n    };\r\n  };\r\n\r\n  if (doc.data === undefined) {\r\n    return;\r\n  }\r\n  if (doc.data.history === undefined) {\r\n    return;\r\n  }\r\n  if (doc.data.history.length === 0) {\r\n    return;\r\n  }\r\n\r\n  const historyData = {\r\n    address: doc._id,\r\n    history: doc.data.history,\r\n  };\r\n\r\n  const epochData = getEpochFromEscrow(historyData);\r\n  epochData.epochs.forEach(epoch => {\r\n    emit(epoch, doc._id);\r\n  });\r\n  if (epochData.stillOpen) {\r\n    emit('stillOpen', doc._id);\r\n  }\r\n}"
+      },
+      "orderLookup": {
+        "map": "function(doc) {\n  emit(doc._id, doc);\n}"
+      },
+      "distinctDates": {
+        "map": "function(doc) {\r\n  doc.data.history\r\n      .filter(item => {\r\n        // first epoch\r\n        // eslint-disable-next-line no-undef\r\n        log(item); return item.time >= 1629950400 && item.time <= 1644469199;\r\n      })\r\n      .filter(item => (item.algoAmount && item.algoAmount > 0) ||\r\n      (item.asaAmount && item.asaAmount > 0))\r\n      .forEach(item => {\r\n        const milliseconds = item.time * 1000;\r\n        const dateObject = new Date(milliseconds);\r\n        // eslint-disable-next-line max-len\r\n        const humanDateFormat = dateObject.toLocaleString(); // 2019-12-9 10:30:15\r\n        const date = humanDateFormat.split(',')[0];\r\n        const monthYear = date.split('/')[0] + '/' + date.split('/')[2];\r\n        emit(doc.data.escrowInfo.ownerAddr+':date', date);\r\n        emit(doc.data.escrowInfo.ownerAddr+':month', monthYear);\r\n      });\r\n}",
+        "reduce": "_count"
+      },
+      "openOrderCount": {
+        "map": "function(doc) {\r\n  doc.data.history\r\n      .filter(item => {\r\n        // first epoch\r\n        // eslint-disable-next-line no-undef\r\n        log(item); return item.time >= 1629950400 && item.time <= 1644469199;\r\n      })\r\n      .filter(item => (item.algoAmount && item.algoAmount > 0) ||\r\n      (item.asaAmount && item.asaAmount > 0))\r\n      .forEach(item => {\r\n        emit(doc.data.escrowInfo.ownerAddr, 1);\r\n      });\r\n}",
+        "reduce": "_count"
       }
     }
-  ]
-}
+  }
+]

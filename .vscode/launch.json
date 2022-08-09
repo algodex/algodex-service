@@ -172,6 +172,15 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Clear Queues",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/bin/clear-redis-queues",
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Algodex Info Debug Server",
             "skipFiles": [
                 "<node_internals>/**"

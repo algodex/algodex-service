@@ -1,0 +1,11 @@
+[
+  {
+    "_id": "_design/rewards_distribution",
+    "_rev": "1-bf33610403176e8f74ef338a444e4101",
+    "views": {
+      "rewards_distribution": {
+        "map": "function(doc) {\n  emit(doc.accrualNetwork + ':' + doc.epoch,\n      {'result': doc.result, 'to_wallet': doc.to_wallet});\n}"
+      }
+    }
+  }
+]

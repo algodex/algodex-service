@@ -7,7 +7,6 @@ const fs = require('fs');
 const path = require('path');
 
 test('verify end to end test', async () => {
-  expect(1+1).toEqual(2);
   const databases = await getDatabases();
 
   // FIXME - fix later
@@ -38,20 +37,27 @@ test('verify end to end test', async () => {
   expect(verificationMap.size).toBe(testMap.size);
   const keysSet = new Set([...Array.from(verificationMap.keys()), ...Array.from(testMap.keys())]);
   const keys = Array.from(keysSet);
-  const removeRevision = entry => {
-    if (entry.value) {
-      delete entry.value.rev;
+  const removeRevisionAndOtherData = entry => {
+    delete entry._rev;
+    if (entry.data?.indexerInfo?.round) {
+      entry.data.indexerInfo.round = 12345;
+    }
+    if ('current-round' in entry) {
+      entry['current-round'] = 12345;
+    }
+    if ('round' in entry) {
+      entry['round'] = 12345;
     }
     return entry;
   };
   const sortById = objs => {
-    objs.sort((a, b) => (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0));
+    objs.sort((a, b) => (a._id > b._id) ? 1 : ((b._id > a._id) ? -1 : 0));
   };
   keys.forEach(key => {
     const testData = JSON.parse(testMap.get(key));
     const verifData = JSON.parse(verificationMap.get(key));
-    const testDataNoRev = testData.rows.map(removeRevision);
-    const verifDataNoRev = verifData.rows.map(removeRevision);
+    const testDataNoRev = testData.map(removeRevisionAndOtherData);
+    const verifDataNoRev = verifData.map(removeRevisionAndOtherData);
     sortById(testDataNoRev);
     sortById(verifDataNoRev);
     try {

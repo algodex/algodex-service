@@ -1,6 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 const algosdk = require('algosdk');
 const SwaggerClient = require('swagger-client');
+const sleep = require('./sleep');
+
 
 let client;
 
@@ -93,10 +95,18 @@ async function getBlock({round}) {
  * @return {Promise<*>}
  */
 async function waitForBlock({round}) {
-  const api = await _getAPI();
-  // eslint-disable-next-line
-  const {obj} = await api.block.WaitForBlock({round}); // eslint-disable-line
-  return obj;
+  do {
+    try {
+      const api = await _getAPI();
+      // eslint-disable-next-line
+      const {obj} = await api.block.WaitForBlock({round}); // eslint-disable-line
+      return obj;
+    } catch (e) {
+      // eslint-disable-next-line max-len
+      console.error(`Could not call WaitForBlock block round: ${round}! Sleeping 500ms`, e);
+      await sleep(500);
+    }
+  } while (1);
 }
 
 /**

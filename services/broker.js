@@ -1,10 +1,24 @@
 const {getBlock, waitForBlock} = require('../src/explorer');
 
 const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
+const hasAlgxChanges = require('./algx-balance-worker/hasAlgxChanges');
+
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
 const convertQueueURL = require('../src/convert-queue-url');
 const sleep = require('../src/sleep');
+
+const getBlockPromises = (queues, block) => {
+  const hasAlgxTransactions = hasAlgxChanges(block);
+  const retarr = [
+    queues.blocks.add('blocks', block, {removeOnComplete: true}),
+  ];
+  if (hasAlgxTransactions) {
+    retarr.push(
+        queues.algxBalance.add('algxBalance', block, {removeOnComplete: true}));
+  }
+  return retarr;
+};
 
 const waitForBlockToBeStored = async (blocksDB, blockNum) => {
   const blockStr = `${blockNum}`;
@@ -61,6 +75,7 @@ module.exports = ({queues, events, databases}) => {
       await sleepWhileWaitingForQueues(['blocks']);
 
       await waitForBlockToBeStored(databases.blocks, round['last-round']);
+      await events.publish(`blocks`, JSON.stringify(round['last-round']));
 
       let roundNumber = round['last-round'];
       roundNumber++;
@@ -71,10 +86,9 @@ module.exports = ({queues, events, databases}) => {
         runWaitBlockSync();
         return;
       }
-      await queues.blocks.add('blocks', block, {removeOnComplete: true});
 
-      // waitForBlockToBeStored before publishing??? FIXME
-      await events.publish(`blocks`, JSON.stringify(block.rnd));
+      await Promise.all(getBlockPromises(queues, block));
+
       console.log({
         msg: 'Published and Queued',
         round: roundNumber,
@@ -125,8 +139,11 @@ module.exports = ({queues, events, databases}) => {
       await sleepWhileWaitingForQueues(['blocks']);
       if (hadFirstRound) {
         // Get block before this round and make sure it exists in the DB
+        // Probably unnecessary now since concurrency is 1? FIXME
         await waitForBlockToBeStored(databases.blocks, lastSyncedRound);
       }
+      events.publish(`blocks`, JSON.stringify(lastSyncedRound));
+
       if (process.env.INTEGRATION_TEST_MODE && maxSyncedRoundInTestMode &&
         lastSyncedRound >= maxSyncedRoundInTestMode) {
         console.log('last synced round found! exiting ',
@@ -136,14 +153,13 @@ module.exports = ({queues, events, databases}) => {
       lastSyncedRound++;
       console.log('In catchup mode, getting block: ' + lastSyncedRound);
       const block = await getBlockFromDBOrNode(blocksDB, lastSyncedRound);
-      if (!block.rnd) {
+      if (block.rnd === undefined) {
         // retry
         lastSyncedRound--;
         continue;
       }
-      await queues.blocks.add('blocks', block, {removeOnComplete: true});
-      // waitForBlockToBeStored before publishing??? FIXME
-      await events.publish(`blocks`, JSON.stringify(block.rnd));
+      await Promise.all(getBlockPromises(queues, block));
+
       console.log({
         msg: 'Published and Queued',
         round: lastSyncedRound,

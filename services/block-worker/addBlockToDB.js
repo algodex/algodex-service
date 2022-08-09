@@ -15,24 +15,19 @@ const withSchemaCheck = require('../../src/schema/with-db-schema-check');
  */
 const addBlockToDB = async (blocksDB, round, blockData) => {
   try {
-    return await blocksDB.get(`${round}`);
-  } catch (e) {
-    if (e.error === 'not_found') {
-      try {
-        const result =
+    const result =
           await blocksDB.post(withSchemaCheck('blocks', {_id: `${round}`,
             type: 'block', ...blockData}));
-        console.debug({
-          msg: `Block stored`, round: `${round}`,
-        });
-        return result;
-      } catch (err) {
-        if (err.error === 'conflict') {
-          console.error('already added! Still not supposed to happen');
-        } else {
-          throw err;
-        }
-      }
+    console.debug({
+      msg: `Block stored`, round: `${round}`,
+    });
+    return result;
+  } catch (err) {
+    if (err.error === 'conflict') {
+      // eslint-disable-next-line max-len
+      console.error(`already added block ${round}! Still not supposed to happen`);
+    } else {
+      throw err;
     }
   }
 };

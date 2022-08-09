@@ -1,13 +1,11 @@
-{
-  "total_rows": 1,
-  "offset": 0,
-  "rows": [
-    {
-      "id": "_design/owner_balance",
-      "key": "_design/owner_balance",
-      "value": {
-        "rev": "1-409a6949d960183320b53aa1075acc1e"
+[
+  {
+    "_id": "_design/owner_balance",
+    "_rev": "1-409a6949d960183320b53aa1075acc1e",
+    "views": {
+      "ownerAddr": {
+        "map": "function(doc) {\n  emit(doc._id.split('-')[0],\n      {block: doc._id.split('-')[1], balance: doc.balance} );\n}"
       }
     }
-  ]
-}
+  }
+]

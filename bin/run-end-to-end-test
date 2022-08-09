@@ -23,7 +23,7 @@ process.env.INTEGRATION_TEST_MODE = '1';
 
 
 const getFile = async file => {
-  return await new Promise( (resolve) => {
+  return await new Promise( resolve => {
     fs.readFile(file, 'utf8', (err, data) => {
       console.log(data);
       resolve(data);
@@ -50,12 +50,12 @@ async function runScript(scriptPath, appContext='', args=null) {
     'APP_CONTEXT': appContext,
     'INTEGRATION_TEST_MODE': 1,
   },
-  //stdio: [ 'pipe', out, err ],
+  // stdio: [ 'pipe', out, err ],
   };
 
   return new Promise(resolve => {
     let invoked = false;
-    //console.log({envConfig});
+    // console.log({envConfig});
     console.log('STARTING: ' + scriptPath + ' ' + appContext);
 
     const process = childProcess.spawn(scriptPath, args ? args : [], options);
@@ -243,7 +243,7 @@ const runScripts = async () => {
 
   const docs = await Promise.all(
       Object.keys(databases).map(dbName => databases[dbName])
-          .map(db => db.allDocs({includeDocs: true}).then(result => {
+          .map(db => db.allDocs({include_docs: true}).then(result => {
             return {result, name: db.dbName};
           },
           )));
@@ -253,7 +253,7 @@ const runScripts = async () => {
     fs.mkdirSync(testDataDir, {recursive: true});
   }
   docs.forEach(doc => {
-    const json = JSON.stringify(doc.result, null, 2);
+    const json = JSON.stringify(doc.result.rows.map(row => row.doc), null, 2);
     const filename = `./integration_test/test_data/${doc.name}.txt`;
     fs.writeFile(filename, json, err => {
       if (err) {
