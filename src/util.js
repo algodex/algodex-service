@@ -47,8 +47,8 @@ const cpuChunkArray = function(arr) {
     throw new InvalidParameter('Must be an Array!');
   }
   const chunks = [];
-  const chunk = arr.length / os.cpus().length;
-  for (let i = 0, l = arr.length; i < l; i += chunk) {
+  const chunk = Math.max(arr.length / os.cpus().length, 1);
+  for (let i = 0; i < arr.length; i += chunk) {
     chunks.push(arr.slice(i, i + chunk));
   }
   return chunks;
