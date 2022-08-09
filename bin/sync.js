@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const syncParallel = require('../src/sync-parallel/sync-parallel');
+const {syncParallel} = require('../src/sync-parallel/sync-parallel');
 
 syncParallel();
 // const algosdk = require('algosdk');

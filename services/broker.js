@@ -2,6 +2,8 @@ const {getBlock, waitForBlock} = require('../src/explorer');
 
 const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
 const hasAlgxChanges = require('./algx-balance-worker/hasAlgxChanges');
+const {syncParallel} = require('../src/sync-parallel/sync-parallel');
+
 
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
@@ -122,6 +124,12 @@ module.exports = ({queues, events, databases}) => {
       lastSyncedRound = parseInt(result.rows[0].value);
     } else {
       lastSyncedRound = parseInt(process.env.GENESIS_LAUNCH_BLOCK);
+    }
+
+    if (lastSyncedRound > 0 &&
+      lastSyncedRound < latestBlock['last-round'] - 10 &&
+      !process.env.INTEGRATION_TEST_MODE) {
+      await syncParallel();
     }
 
     if (process.env.INTEGRATION_TEST_MODE &&
