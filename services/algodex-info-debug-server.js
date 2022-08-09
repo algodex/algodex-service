@@ -56,25 +56,69 @@ const transformRows = rows => {
     hideKeys.forEach(key => delete newRow[key]);
     const timeFormatted = timeConverter(row['unix_time']);
     delete newRow.unix_time;
+    newRow.amount =
+      newRow.isAlgoBuyEscrow ? newRow.algoAmount : newRow.asaAmount;
+    delete newRow.asaAmount;
+    delete newRow.algoAmount;
+
     newRow.datetime = `<a target="_null" href="https://testnet.algoexplorer.io/address/${row.escrowAddress}">${timeFormatted}</a>`;
     return newRow;
   });
   return newRows;
 };
+
+const transformHistoryRows = rows => {
+  const hideKeys = ['ownerAddress', 'assetSellerAddr',
+    'assetBuyerAddr', 'groupId', 'escrowAddr'];
+  rows.sort((a, b) => a.unixTime > b.unixTime ? -1 : 1);
+
+  const newRows = rows.map(row => {
+    const newRow = {...row};
+    hideKeys.forEach(key => delete newRow[key]);
+    const timeFormatted = timeConverter(row['unixTime']);
+    delete newRow.unix_time;
+
+    newRow.datetime = `<a target="_null" href="https://testnet.algoexplorer.io/address/${row.escrowAddr}">${timeFormatted}</a>`;
+    return newRow;
+  });
+  return newRows;
+};
+
 const getInputForm = () => {
   return `
   <html>
   <body>
+  <div style='margin: 20px; padding:20px; background-color:#EEE'>
   <form action="">
   You are on ${process.env.ALGORAND_NETWORK}<p>
   Enter Wallet Address: <input type="text" name="ownerAddr" />
   <input type="submit" />
   </form>
+  </div>
   </body>
   </html>
   `;
 };
+
+const getMenu = () => {
+  return `
+    <html>
+    <body>
+    <div style='margin: 20px; padding:20px; background-color:#EEE'>
+    <a href='/orders'>Orders</a><p>
+    <a href='/history'>History</a></p>
+    </div>
+    </body>
+    </html>
+  `;
+};
+
 app.get('/', async (req, res) => {
+  res.send(getMenu());
+  return;
+});
+
+app.get('/orders', async (req, res) => {
   const formattedEscrowDB = databases.formatted_escrow;
   if (!req.query.ownerAddr) {
     res.send(getInputForm());
@@ -95,7 +139,28 @@ app.get('/', async (req, res) => {
   }
 });
 
+app.get('/history', async (req, res) => {
+  const formattedHistoryDB = databases.formatted_history;
+  if (!req.query.ownerAddr) {
+    res.send(getInputForm());
+    return;
+  }
+  const ownerAddr = req.query.ownerAddr;
+
+  try {
+    const escrowData =
+      await formattedHistoryDB.query('formatted_history/activityView',
+          {reduce: false, key: ownerAddr} );
+
+    const rows = escrowData.rows.map(row => row.value);
+    const transformedRows = transformHistoryRows(rows);
+    res.send(printRows(transformedRows));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`http://localhost:${port}/`);
 });
 
