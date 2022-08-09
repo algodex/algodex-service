@@ -33,24 +33,25 @@ module.exports = function(doc) {
   const history = doc.data.history;
   const lastHistory = history[history.length - 1];
   if (lastHistory.algoAmount > 0 || lastHistory.asaAmount > 0) {
-    const asaAmount = doc.data.indexerInfo.asaAmount;
     const n = doc.data.escrowInfo.numerator;
     const d = doc.data.escrowInfo.denominator;
     const asaPrice = n > 0 ? (d/n) : null;
     const decimals = doc.data.assetDecimals;
-
+    const lastHistoryItemIndex = doc.data.history.length - 1;
+    const lastHistoryItem = doc.data.history[lastHistoryItemIndex];
+    const asaAmount = lastHistoryItem.asaAmount || 0;
     const escrowInfo = {
       ownerAddress: doc.data.escrowInfo.ownerAddr,
       escrowAddress: doc._id,
-      algoAmount: doc.data.indexerInfo.algoAmount,
+      algoAmount: lastHistoryItem.algoAmount,
       asaAmount: asaAmount,
       assetLimitPriceD: doc.data.escrowInfo.denominator,
       assetLimitPriceN: doc.data.escrowInfo.numerator,
       asaPrice: asaPrice,
       formattedPrice: getFormattedPrice(asaPrice, decimals),
       formattedASAAmount: getFormattedASAAmount(asaAmount, decimals),
-      round: doc.data.lastUpdateRound,
-      unix_time: doc.data.lastUpdateUnixTime,
+      round: lastHistory.round,
+      unix_time: lastHistory.time,
       decimals: decimals,
       version: doc.data.escrowInfo.version,
       isAlgoBuyEscrow: doc.data.escrowInfo.isAlgoBuyEscrow,
