@@ -56,8 +56,12 @@ test('verify end to end test', async () => {
   keys.forEach(key => {
     const testData = JSON.parse(testMap.get(key));
     const verifData = JSON.parse(verificationMap.get(key));
-    const testDataNoRev = testData.map(removeRevisionAndOtherData);
-    const verifDataNoRev = verifData.map(removeRevisionAndOtherData);
+    const testDataNoRev = testData
+        .filter(doc => !doc._id.includes('_design/'))
+        .map(removeRevisionAndOtherData);
+    const verifDataNoRev = verifData
+        .filter(doc => !doc._id.includes('_design/'))
+        .map(removeRevisionAndOtherData);
     sortById(testDataNoRev);
     sortById(verifDataNoRev);
     try {
