@@ -8,9 +8,18 @@ use serde::{Serialize, Deserialize};
 struct CouchDBResp {
     total_rows: u32,
     offset: u32,
-    rows: Vec<HashMap<String, String>>,
-    // I'm making headers into another struct here to show some possibilities. You can of course make it a HashMap like args
+    rows: Vec<CouchDBResult>,
 }
+
+#[derive(Deserialize, Debug)]
+struct CouchDBResult {
+    key: String,
+    value: String,
+    id: String
+}
+
+//  {"key": "1", "value": "ZW6G62RBX7RQEX3IPVNYVPURUESD6NRUA5U3GG4YL2NP5SCIDXH66KB7X4", "id": "ZW6G62RBX7RQEX3IPVNYVPURUESD6NRUA5U3GG4YL2NP5SCIDXH66KB7X4"}, 
+
 
 
 #[tokio::main]
