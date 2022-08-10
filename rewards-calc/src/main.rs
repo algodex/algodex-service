@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use urlencoding::encode;
 use reqwest;
 use serde::{Serialize, Deserialize};
+use serde_json;
 
 #[derive(Deserialize, Debug)]
 struct CouchDBResp {
@@ -18,9 +19,22 @@ struct CouchDBResult {
     id: String
 }
 
-//  {"key": "1", "value": "ZW6G62RBX7RQEX3IPVNYVPURUESD6NRUA5U3GG4YL2NP5SCIDXH66KB7X4", "id": "ZW6G62RBX7RQEX3IPVNYVPURUESD6NRUA5U3GG4YL2NP5SCIDXH66KB7X4"}, 
+async fn query_couch_db(couch_url: &String, db_name: &String, index_name: &String, 
+    view_name: &String, keys: &Vec<String>)
+    -> Result<CouchDBResp, Box<dyn std::error::Error>> {
 
+    let query = serde_json::to_string(keys).unwrap();
+    let query_encoded = encode(query.as_str());
 
+    let full = format!("{}/{}/_design/{}/_view/{}?keys={}",
+        couch_url, db_name, index_name, view_name, query_encoded);
+
+    let resp = reqwest::get(full).await?;
+
+    let result: CouchDBResp = resp.json().await?;
+
+    return Ok(result);
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -32,22 +46,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // println!("{:?}", result.get("ALGORAND_NETWORK").take());
 
     let couch_dburl = result.get("COUCHDB_BASE_URL").expect("Missing COUCHDB_BASE_URL");
-    println!("{}", couch_dburl);
-
-    let query = "[\"1\"]";
-    let query_encoded = encode(query);
-    //let full = format!("{}/formatted_escrow/_design/formatted_escrow/_view/epochs?keys=%5B%221%22%5D",
-    //    couch_dburl);  // ["1"]
-    let full = format!("{}/formatted_escrow/_design/formatted_escrow/_view/epochs?keys={}",
-        couch_dburl, query_encoded);
-
-    let resp = reqwest::get(full).await?;
-    // let text = body.text().await?;
-    // let slice = &text[..100];
-    // println!("{}", slice);
-
-    let result: CouchDBResp = resp.json().await?;
-
+    let keys = [String::from("1")].to_vec();
+    let result = query_couch_db(&couch_dburl,
+        &String::from("formatted_escrow"),
+        &String::from("formatted_escrow"),
+        &String::from("epochs"), &keys).await;
     println!("{:?}", result);
     Ok(())
 }
