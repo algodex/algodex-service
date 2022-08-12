@@ -20,7 +20,7 @@ pub struct CouchDBResult<T> {
 }
 
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct EscrowValue {
     #[serde(rename = "_id")]
     pub id: String,
@@ -29,7 +29,7 @@ pub struct EscrowValue {
     pub data: Data,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Data {
     #[serde(rename = "indexerInfo")]
     pub indexer_info: IndexerInfo,
@@ -44,7 +44,7 @@ pub struct Data {
     pub history: Vec<History>,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct EscrowInfo {
     #[serde(rename = "isAlgoBuyEscrow")]
     pub is_algo_buy_escrow: bool,
@@ -67,7 +67,7 @@ pub struct EscrowInfo {
     pub status: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct History {
     #[serde(rename = "algoAmount")]
     pub algo_amount: Option<u64>,
@@ -77,7 +77,7 @@ pub struct History {
     pub time: u32,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct IndexerInfo {
     #[serde(rename = "_id")]
     pub id: String,

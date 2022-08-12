@@ -25,12 +25,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // println!("{:?}", result.get("ALGORAND_NETWORK").take());
 
     let couch_dburl = env.get("COUCHDB_BASE_URL").expect("Missing COUCHDB_BASE_URL");
-    let keys = [String::from("1")].to_vec();
+    let keys = [String::from("2")].to_vec();
     let accountEpochDataQueryRes = query_couch_db::<String>(&couch_dburl,
         &"formatted_escrow".to_string(),
         &"formatted_escrow".to_string(),
         &"epochs".to_string(), &keys).await;
-    let accountData = &accountEpochDataQueryRes.unwrap().results[0].rows;
+    let accountData = accountEpochDataQueryRes.unwrap().results.remove(0).rows;
     let escrowAddrs:Vec<String> = accountData.iter().map(|row| String::clone(&row.value)).collect();
     //println!("{:?}", escrowAddrs);
     
@@ -39,9 +39,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         &"formatted_escrow".to_string(),
         &"orderLookup".to_string(), &escrowAddrs).await;
 
-    let formattedEscrowData = &formattedEscrowDataQueryRes.unwrap().results[0].rows;
+    let formattedEscrowData = formattedEscrowDataQueryRes.unwrap().results.remove(0).rows;
 
-    let escrows: Vec<&EscrowValue> = formattedEscrowData.iter().map(|row| &row.value).collect();
+    let escrows: Vec<EscrowValue> = formattedEscrowData.iter().map(|row| row.value.clone()).collect();
     let escrowAddrToData:HashMap<&String,&EscrowValue> = formattedEscrowData.iter().fold(HashMap::new(), |mut map, row| {
             map.insert(&row.id, &row.value);
             map
@@ -62,20 +62,20 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
      //FIXME - change to read args for epoch
     let epochLaunchTime = env.get("EPOCH_LAUNCH_UNIX_TIME").unwrap().parse::<u32>().unwrap();
-    let epochStart = getEpochStart(1, epochLaunchTime);
+    let epochStart = getEpochStart(2, epochLaunchTime);
 
-    let epochEnd = getEpochEnd(1, epochLaunchTime);
+    let epochEnd = getEpochEnd(2, epochLaunchTime);
 
-    let allAssetsSet = escrowAddrToData.keys().fold(HashSet::new(), |mut set, escrow| {
+    let allAssetsSet: HashSet<u32> = escrowAddrToData.keys().fold(HashSet::new(), |mut set, escrow| {
         let asset = escrowAddrToData.get(escrow).unwrap().data.escrow_info.asset_id;
-        set.insert(asset);
+        set.insert(asset.clone());
         set
     });
-    let allAssets: Vec<&u32> = allAssetsSet.iter().collect();
+    let allAssets: Vec<u32> = allAssetsSet.clone().into_iter().collect();
 
-    dbg!(allAssetsSet);
+    // dbg!(allAssetsSet);
 
-    /*let initialState = InitialState {
+    let initialState = InitialState {
         allAssets,
         allAssetsSet,
         epochStart,
@@ -86,39 +86,66 @@ async fn main() -> Result<(), Box<dyn Error>> {
         unixTimes,
         formattedEscrowData,
         escrowAddrs,
-        accountData
-    };*/
+        accountData,
+        escrows
+    };
 
-    // const allAssetsSet = Object.keys(escrowAddrToData).reduce((set, escrow) => {
-    //     const asset = escrowAddrToData[escrow].data.escrowInfo.assetId;
-    //     set.add(asset);
-    //     return set;
-    //   }, new Set());
+    //dbg!(initialState);
 
-//FIXME    
-    // const blockSet = ownerBalanceData.rows.reduce(
-    //     (set, row) => set.add(row.value.block), new Set());
-
-
-    // let blockTimeData = query_couch_db::<BlockTime>(&couch_dburl, &"blocks",
-    //     &"blocks", &"blockToTime", keys)
-    // {
-    //     "id": "10",
-    //     "key": "10",
-    //     "value": 1560210705
-    //   }
-
-    // let timesData = await blockDB.query('blocks/blockToTime', {
-    //     keys: Array.from(blockSet)});
-
+    let mut timestep = epochStart;
+    let mut escrowstep = 0;
+    let mut ownerstep = 0;
 
     println!("{} {}", epochStart, epochEnd);
 
+    //state machine data
+
+    let escrowToBalance = getInitialBalances(timestep, &initialState.escrows);
+    dbg!(escrowToBalance);
     Ok(())
 }
 
+fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<String, u64> {
+    return escrows.iter().fold(HashMap::new(), |mut escrowToBalance, escrow| {
+        let addr = &escrow.id;
+        let history = &escrow.data.history;
+        let mut balance = 0; //FIXME?
+        for historyItem in history {
+            if (historyItem.time <= unixTime) {
+                balance = match escrow.data.escrow_info.is_algo_buy_escrow {
+                    true => historyItem.algo_amount.clone().unwrap(),
+                    false => historyItem.asa_amount.clone().unwrap()
+                }
+            } else {
+                break;
+            }
+        }
+        escrowToBalance.insert(String::from(addr), balance);
+        escrowToBalance
+    });
+}
+/*
+const getInitialBalances = (unixTime, escrows) => {
+    return escrows.reduce( (escrowToBalance, escrow) => {
+      const addr = escrow._id;
+      const history = escrow.data.history;
+      let balance = 0;
+      for (let i = 0; i < history.length; i++) {
+        if (history[i].time <= unixTime) {
+          balance = history[i].algoAmount || history[i].asaAmount;
+        } else {
+          break;
+        }
+      }
+      escrowToBalance[addr] = balance;
+      return escrowToBalance;
+    }, {});
+  };
+
+*/
+#[derive(Debug)]
 struct InitialState {
-    allAssets: Vec<&'static u32>,
+    allAssets: Vec<u32>,
     allAssetsSet: HashSet<u32>,
     epochStart: u32,
     epochEnd: u32,
@@ -126,9 +153,10 @@ struct InitialState {
     escrowTimeToBalance: HashMap<EscrowTimeKey, u64>,
     unixTimeToChangedEscrows: HashMap<u32, Vec<String>>,
     unixTimes: Vec<u32>,
-    formattedEscrowData: Vec<CouchDBResult<EscrowValue>>,
+    formattedEscrowData:Vec<CouchDBResult<EscrowValue>>,
     escrowAddrs: Vec<String>,
-    accountData: Vec<CouchDBResult<String>>
+    accountData: Vec<CouchDBResult<String>>,
+    escrows: Vec<EscrowValue>
 }
 
 /*
@@ -161,7 +189,7 @@ fn getEpochEnd(epoch: u8, epochLaunchTime: u32,) -> u32 {
 
   
 
-fn getEscrowAndTimeToBalance(escrows: &Vec<&EscrowValue>) -> HashMap<EscrowTimeKey,u64> {
+fn getEscrowAndTimeToBalance(escrows: &Vec<EscrowValue>) -> HashMap<EscrowTimeKey,u64> {
     let escrowTimeMap: HashMap<EscrowTimeKey,u64> = escrows.iter().fold(HashMap::new(), |mut escrowTimeMap, escrow| {
         escrow.data.history.iter().for_each(|historyItem| {
             let time = historyItem.time;
@@ -177,7 +205,7 @@ fn getEscrowAndTimeToBalance(escrows: &Vec<&EscrowValue>) -> HashMap<EscrowTimeK
 
     escrowTimeMap
 }
-fn getSequenceInfo(escrows: &Vec<&EscrowValue>) -> (HashMap<u32, Vec<String>>,Vec<u32>) {
+fn getSequenceInfo(escrows: &Vec<EscrowValue>) -> (HashMap<u32, Vec<String>>,Vec<u32>) {
     let unixTimeToChangedEscrows: HashMap<u32, Vec<String>> =
         escrows.iter().fold(HashMap::new(), |mut timeline, escrow| {
             let times: Vec<u32> = escrow.data.history.iter().map(|historyItem| historyItem.time).collect();
