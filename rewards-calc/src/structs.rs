@@ -32,62 +32,62 @@ pub struct EscrowValue {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Data {
     #[serde(rename = "indexerInfo")]
-    indexer_info: IndexerInfo,
+    pub indexer_info: IndexerInfo,
     #[serde(rename = "escrowInfo")]
-    escrow_info: EscrowInfo,
+    pub escrow_info: EscrowInfo,
     #[serde(rename = "lastUpdateUnixTime")]
-    last_update_unix_time: i64,
+    pub last_update_unix_time: i64,
     #[serde(rename = "lastUpdateRound")]
-    last_update_round: i64,
+    pub last_update_round: i64,
     #[serde(rename = "assetDecimals")]
-    asset_decimals: i64,
-    history: Vec<History>,
+    pub asset_decimals: i64,
+    pub history: Vec<History>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct EscrowInfo {
     #[serde(rename = "isAlgoBuyEscrow")]
-    is_algo_buy_escrow: bool,
-    apat: Option<Vec<String>>,
+    pub is_algo_buy_escrow: bool,
+    pub apat: Option<Vec<String>>,
     #[serde(rename = "type")]
-    escrow_info_type: String,
+    pub escrow_info_type: String,
     #[serde(rename = "orderInfo")]
-    order_info: String,
-    numerator: i64,
+    pub order_info: String,
+    pub numerator: i64,
     #[serde(rename = "assetId")]
-    asset_id: i64,
-    denominator: i64,
-    minimum: i64,
-    price: f64,
+    pub asset_id: i64,
+    pub denominator: i64,
+    pub minimum: i64,
+    pub price: f64,
     #[serde(rename = "ownerAddr")]
-    owner_addr: String,
-    block: String,
-    ts: i64,
-    version: String,
-    status: String,
+    pub owner_addr: String,
+    pub block: String,
+    pub ts: i64,
+    pub version: String,
+    pub status: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct History {
     #[serde(rename = "algoAmount")]
-    algo_amount: Option<i64>,
-    asa_amount: Option<i64>,
-    round: i64,
-    time: i64,
+    pub algo_amount: Option<i64>,
+    pub asa_amount: Option<i64>,
+    pub round: i64,
+    pub time: i64,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct IndexerInfo {
     #[serde(rename = "_id")]
-    id: String,
+    pub id: String,
     #[serde(rename = "_rev")]
-    rev: String,
-    address: String,
+    pub rev: String,
+    pub address: String,
     #[serde(rename = "algoAmount")]
-    algo_amount: i64,
-    round: i64,
+    pub algo_amount: i64,
+    pub round: i64,
     #[serde(rename = "asaAmount")]
-    asa_amount: i64,
+    pub asa_amount: i64,
 }
 
 

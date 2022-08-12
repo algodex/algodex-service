@@ -38,14 +38,66 @@ async fn main() -> Result<(), Box<dyn Error>> {
         &"orderLookup".to_string(), &escrowAddrs).await;
 
     let firstResultRows = &formatted_escrow_data.unwrap().results[0].rows;
+
+    let escrows: Vec<&EscrowValue> = firstResultRows.iter().map(|row| &row.value).collect();
     let escrowAddrToData:HashMap<&String,&EscrowValue> = firstResultRows.iter().fold(HashMap::new(), |mut map, row| {
             map.insert(&row.id, &row.value);
             map
         });
-    println!("{:?}", escrowAddrToData);
-    //println!("{:?}", result);
-    //let resultVal = result.unwrap();
+    //println!("{:?}", escrowAddrToData);
 
+    let ownerWallets = escrows.iter().map(|escrow| &escrow.data.escrow_info.owner_addr);
+
+
+    let formatted_escrow_data = query_couch_db::<EscrowValue>(&couch_dburl,
+        &"formatted_escrow".to_string(),
+        &"formatted_escrow".to_string(),
+        &"orderLookup".to_string(), &escrowAddrs).await;
+
+    let (unixTimeToChangedEscrows, unixTimes) = getSequenceInfo(&escrows);
 
     Ok(())
 }
+
+
+fn getSequenceInfo(escrows: &Vec<&EscrowValue>) -> (HashMap<i64, Vec<String>>,Vec<i64>) {
+    let unixTimeToChangedEscrows: HashMap<i64, Vec<String>> =
+        escrows.iter().fold(HashMap::new(), |mut timeline, escrow| {
+            let times: Vec<i64> = escrow.data.history.iter().map(|historyItem| historyItem.time).collect();
+            times.iter().for_each(|time| {
+                if (!timeline.contains_key(time)) {
+                    timeline.insert(time.clone(), Vec::new());
+                }
+                let mut addrArr = timeline.get_mut(time).unwrap();
+                addrArr.push(escrow.id.clone());
+            });
+            timeline
+        });
+
+    let unixTimes = unixTimeToChangedEscrows.keys().cloned().collect();
+
+    return (unixTimeToChangedEscrows, unixTimes);
+}
+
+// const getSequenceInfo = escrows => {
+//     const unixTimeToChangedEscrows = escrows.reduce( (timeline, escrow) => {
+//       const times = escrow.data.history.map(historyItem => historyItem.time);
+//       times.forEach( time => {
+//         const key = 'ts:'+time;
+//         if (!(key in timeline)) {
+//           timeline[key] = [];
+//         }
+//         const addrArr = timeline[key];
+//         addrArr.push(escrow._id); // push escrow address
+//       });
+//       return timeline;
+//     }, {});
+  
+//     const changedEscrowSeq = Object.keys(unixTimeToChangedEscrows)
+//         .map(key => parseInt(key.split(':')[1]));
+//     changedEscrowSeq.sort();
+  
+//     return {unixTimeToChangedEscrows, changedEscrowSeq};
+//   };
+
+  
