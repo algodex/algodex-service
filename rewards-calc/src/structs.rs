@@ -36,11 +36,11 @@ pub struct Data {
     #[serde(rename = "escrowInfo")]
     pub escrow_info: EscrowInfo,
     #[serde(rename = "lastUpdateUnixTime")]
-    pub last_update_unix_time: i64,
+    pub last_update_unix_time: u32,
     #[serde(rename = "lastUpdateRound")]
-    pub last_update_round: i64,
+    pub last_update_round: u32,
     #[serde(rename = "assetDecimals")]
-    pub asset_decimals: i64,
+    pub asset_decimals: u8,
     pub history: Vec<History>,
 }
 
@@ -53,16 +53,16 @@ pub struct EscrowInfo {
     pub escrow_info_type: String,
     #[serde(rename = "orderInfo")]
     pub order_info: String,
-    pub numerator: i64,
+    pub numerator: u64,
     #[serde(rename = "assetId")]
-    pub asset_id: i64,
-    pub denominator: i64,
-    pub minimum: i64,
+    pub asset_id: u32,
+    pub denominator: u64,
+    pub minimum: u8,
     pub price: f64,
     #[serde(rename = "ownerAddr")]
     pub owner_addr: String,
     pub block: String,
-    pub ts: i64,
+    pub ts: u32,
     pub version: String,
     pub status: String,
 }
@@ -70,10 +70,11 @@ pub struct EscrowInfo {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct History {
     #[serde(rename = "algoAmount")]
-    pub algo_amount: Option<i64>,
-    pub asa_amount: Option<i64>,
-    pub round: i64,
-    pub time: i64,
+    pub algo_amount: Option<u64>,
+    #[serde(rename = "asaAmount")]
+    pub asa_amount: Option<u64>,
+    pub round: u32,
+    pub time: u32,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -84,10 +85,10 @@ pub struct IndexerInfo {
     pub rev: String,
     pub address: String,
     #[serde(rename = "algoAmount")]
-    pub algo_amount: i64,
-    pub round: i64,
+    pub algo_amount: u64,
+    pub round: u32,
     #[serde(rename = "asaAmount")]
-    pub asa_amount: i64,
+    pub asa_amount: u64,
 }
 
 
@@ -99,4 +100,11 @@ pub struct Keys {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Queries {
     pub queries: Vec<Keys>,
+}
+
+
+#[derive(Eq, Hash, PartialEq, Debug)]
+pub struct EscrowTimeKey {
+    pub escrow: String,
+    pub unix_time: u32
 }

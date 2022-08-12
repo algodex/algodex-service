@@ -1,9 +1,10 @@
 use dotenv;
 use std::collections::HashMap;
 use std::error::Error;
-
+use std::fmt;
 mod structs;
-use structs::{EscrowValue};
+use structs::{EscrowValue, EscrowTimeKey};
+use crate::structs::History;
 
 mod query_couch;
 
@@ -56,14 +57,48 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let (unixTimeToChangedEscrows, unixTimes) = getSequenceInfo(&escrows);
 
+    let escrowTimeToBalance = getEscrowAndTimeToBalance(&escrows);
+    dbg!(escrowTimeToBalance);
     Ok(())
 }
 
+/*
+const getEscrowAndTimeToBalance = escrows => {
+    const escrowTimeMap = escrows.reduce( (escrowTimeMap, escrow) => {
+      escrow.data.history.forEach(historyItem => {
+        const time = historyItem.time;
+        const balance = escrow.data.escrowInfo.isAlgoBuyEscrow ?
+          historyItem.algoAmount : historyItem.asaAmount;
+        const key = escrow._id+':'+time;
+        escrowTimeMap[key] = balance;
+      });
+      return escrowTimeMap;
+    }, {});
+    return escrowTimeMap;
+  };
+*/
 
-fn getSequenceInfo(escrows: &Vec<&EscrowValue>) -> (HashMap<i64, Vec<String>>,Vec<i64>) {
-    let unixTimeToChangedEscrows: HashMap<i64, Vec<String>> =
+
+fn getEscrowAndTimeToBalance(escrows: &Vec<&EscrowValue>) -> HashMap<EscrowTimeKey,u64> {
+    let escrowTimeMap: HashMap<EscrowTimeKey,u64> = escrows.iter().fold(HashMap::new(), |mut escrowTimeMap, escrow| {
+        escrow.data.history.iter().for_each(|historyItem| {
+            let time = historyItem.time;
+            let balance = match escrow.data.escrow_info.is_algo_buy_escrow {
+                true => historyItem.algo_amount,
+                false => historyItem.asa_amount
+            };
+            let key = EscrowTimeKey{escrow: escrow.id.clone(), unix_time: time};
+            escrowTimeMap.insert(key, balance.unwrap());
+        });
+        escrowTimeMap
+    });
+
+    escrowTimeMap
+}
+fn getSequenceInfo(escrows: &Vec<&EscrowValue>) -> (HashMap<u32, Vec<String>>,Vec<u32>) {
+    let unixTimeToChangedEscrows: HashMap<u32, Vec<String>> =
         escrows.iter().fold(HashMap::new(), |mut timeline, escrow| {
-            let times: Vec<i64> = escrow.data.history.iter().map(|historyItem| historyItem.time).collect();
+            let times: Vec<u32> = escrow.data.history.iter().map(|historyItem| historyItem.time).collect();
             times.iter().for_each(|time| {
                 if (!timeline.contains_key(time)) {
                     timeline.insert(time.clone(), Vec::new());
