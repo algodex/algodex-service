@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use urlencoding::encode;
 use reqwest;
 use serde::{Serialize, Deserialize};
+use serde::de::DeserializeOwned;
 use serde_json;
 use serde_path_to_error;
 use std::error::Error;
@@ -115,24 +116,6 @@ pub struct IndexerInfo {
 }
 
 
-
-async fn query_couch_db(couch_url: &String, db_name: &String, index_name: &String, 
-    view_name: &String, keys: &Vec<String>)
-    -> Result<(CouchDBResp<String>), Box<dyn Error>> {
-
-    let query = serde_json::to_string(keys).unwrap();
-    let query_encoded = encode(query.as_str());
-
-    let full = format!("{}/{}/_design/{}/_view/{}?keys={}",
-        couch_url, db_name, index_name, view_name, query_encoded);
-
-    let resp = reqwest::get(full).await?;
-
-    let result: CouchDBResp<String> = resp.json().await?;
-
-    return Ok(result);
-}
-
 #[derive(Serialize, Deserialize, Debug)]
 struct Keys {
     keys: Vec<String>
@@ -143,9 +126,11 @@ struct Queries {
     queries: Vec<Keys>,
 }
 
-async fn query_couch_db_with_post(couch_url: &String, db_name: &String, index_name: &String, 
+async fn query_couch_db<T>(couch_url: &String, db_name: &String, index_name: &String, 
     view_name: &String, keys: &Vec<String>)
-    -> Result<(CouchDBOuterResp<EscrowValue>), Box<dyn Error>> {
+    -> Result<(CouchDBOuterResp<T>), Box<dyn Error>> 
+    where T: DeserializeOwned
+    {
 
     let client = reqwest::Client::new();
 
@@ -175,10 +160,12 @@ async fn query_couch_db_with_post(couch_url: &String, db_name: &String, index_na
         .send()
         .await?;
 
-    let text = resp.text().await?;
+    let res = resp.text().await?;
+    //let owned = res.to_owned();
+    //let text: &'a String = &owned;
+    let result: CouchDBOuterResp<T> = serde_json::from_str(&res)?;
+        //let deserializer = &mut serde_json::Deserializer::from_str(&text);
 
-    let deserializer = &mut serde_json::Deserializer::from_str(&text);
-    let result: CouchDBOuterResp<EscrowValue> = serde_json::from_str(&text)?;
     //let result: Result<CouchDBOuterResp<EscrowValue>, _> = serde_path_to_error::deserialize(deserializer);
     // dbg!(&result);
 
@@ -215,14 +202,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let couch_dburl = result.get("COUCHDB_BASE_URL").expect("Missing COUCHDB_BASE_URL");
     let keys = [String::from("1")].to_vec();
-    let formatted_escrow_epochs = query_couch_db(&couch_dburl,
+    let formatted_escrow_epochs = query_couch_db::<String>(&couch_dburl,
         &"formatted_escrow".to_string(),
         &"formatted_escrow".to_string(),
         &"epochs".to_string(), &keys).await;
-    let escrowAddrs:Vec<String> = formatted_escrow_epochs.unwrap().rows.into_iter().map(|row| row.value).collect();
+    let resultRows = &formatted_escrow_epochs.unwrap().results[0].rows;
+    let escrowAddrs:Vec<String> = resultRows.into_iter().map(|row| String::clone(&row.value)).collect();
     //println!("{:?}", escrowAddrs);
     
-    let formatted_escrow_data = query_couch_db_with_post(&couch_dburl,
+    let formatted_escrow_data = query_couch_db::<EscrowValue>(&couch_dburl,
         &"formatted_escrow".to_string(),
         &"formatted_escrow".to_string(),
         &"orderLookup".to_string(), &escrowAddrs).await;
