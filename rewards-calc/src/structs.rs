@@ -91,6 +91,13 @@ pub struct IndexerInfo {
     pub asa_amount: u64,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct BlockTime {
+    pub id: String,
+    pub key: String,
+    pub value: u32,
+}
+
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Keys {
