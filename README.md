@@ -27,6 +27,15 @@ cp .testnet.localhost.env .env
 docker-compose up -f docker-compose.localhost.yml
 ```
 
+## Building rust rewards calculation on ubuntu
+
+```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+sudo apt install build-essential
+sudo apt-get install pkg-config libssl-dev
+cd rewards-calc
+cargo build
+```
 
 ### Testing (Localhost with Docker Data)
 First make sure CouchDB and Redis services are running according to .testnet.local.env. The node.js should *not* be running as these will be started by the end-to-end test.
