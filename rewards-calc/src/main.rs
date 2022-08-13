@@ -179,8 +179,69 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
   }
 
+  let mut rewardsFinal: Vec<OwnerFinalRewardsResult> = Vec::new();
+  
+  stateMachine.ownerWalletAssetToRewards.keys().for_each(|ownerWallet| {
+    let mut finalEntry = stateMachine.ownerWalletAssetToRewards.get(ownerWallet).unwrap().values()
+      .fold(OwnerFinalRewardsResult::default(), |mut qualityEntry, assetQualityEntry| {
+        let OwnerRewardsResult {ref algxBalanceSum, ref qualitySum, ref depth, ref uptime, ..} = assetQualityEntry;
+        let algxAvg = algxBalanceSum / getSecondsInEpoch() as u64;
+        let uptimeStr = format!("{uptime}");
+        let uptimef64 = uptimeStr.parse::<f64>().unwrap();
+        let qualityFinal = qualitySum.powf(0.5) * uptimef64.powi(5) * depth.powf(0.3);
+
+        qualityEntry.uptime += uptime;
+        qualityEntry.qualitySum += qualitySum;
+        qualityEntry.depthSum += depth;
+        qualityEntry.qualityFinal += qualityFinal;
+        qualityEntry
+        //qualityEntry.algxAvg += algxAvg /
+        //           Object.keys(ownerWalletAssetToRewards[ownerWallet]).length;
+      });
+    finalEntry.ownerWallet = ownerWallet.clone();
+    rewardsFinal.push(finalEntry);
+  });
+  rewardsFinal.sort_by(|a, b| a.qualityFinal.partial_cmp(&b.qualityFinal).unwrap());
+  dbg!(rewardsFinal);
+  // const rewardFinals =
+  // Object.keys(ownerWalletAssetToRewards).map(ownerWallet => {
+  //   return Object.values(ownerWalletAssetToRewards[ownerWallet])
+  //       .reduce((qualityEntry, assetQualityEntry) => {
+  //         const {qualitySum, depth, uptime} = assetQualityEntry;
+  //         const algxAvg = assetQualityEntry.algxBalanceSum /
+  //           getSecondsInEpoch();
+  //         const qualityFinal = (qualitySum ** 0.5) *
+  //           (uptime ** 5) * (depth ** 0.3); // (algxAvg ** 0.2) * FIXME FOR MAINNET
+  //         qualityEntry.uptime += uptime;
+  //         qualityEntry.qualitySum += qualitySum;
+  //         qualityEntry.depthSum += depth;
+  //         qualityEntry.algxAvg += algxAvg /
+  //           Object.keys(ownerWalletAssetToRewards[ownerWallet]).length;
+  //         qualityEntry.qualityFinal += qualityFinal;
+  //         return qualityEntry;
+  //       }, {ownerWallet, uptime: 0, depthSum: 0,
+  //         qualitySum: 0, algxAvg: 0, qualityFinal: 0});
+  // });
+  // rewardFinals.sort((a, b) => a.qualityFinal < b.qualityFinal ? 1 : -1);
+  // console.log(rewardFinals);
+
+
+
   Ok(())
 }
+
+
+
+#[derive(Debug, Default)]
+pub struct OwnerFinalRewardsResult {
+  ownerWallet: String,
+  algxBalanceSum: u64,
+  qualitySum: f64,
+  qualityFinal: f64,
+  uptime: u64,
+  depthSum: f64
+}
+
 
 fn updateBalances (changedEscrows: &Vec<String>, changeTime: &u32, escrowToBalance: &mut HashMap<String, u64>,
   escrowTimeToBalance: &HashMap<EscrowTimeKey, u64>) {

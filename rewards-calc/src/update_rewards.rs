@@ -14,10 +14,10 @@ pub struct QualityResult {
 
 #[derive(Debug, Default)]
 pub struct OwnerRewardsResult {
-  algxBalanceSum: u64,
-  qualitySum: f64,
-  uptime: u64,
-  depth: f64
+  pub algxBalanceSum: u64,
+  pub qualitySum: f64,
+  pub uptime: u64,
+  pub depth: f64
 }
 
 impl QualityResult {
@@ -161,7 +161,7 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       entry.algxBalanceSum += algxBalance;
       entry.qualitySum += quality;
       if (totalBidDepth > 0.0) {
-        entry.depth += askDepth / totalBidDepth;
+        entry.depth += bidDepth / totalBidDepth;
       }
       if (totalAskDepth > 0.0) {
         entry.depth += askDepth / totalAskDepth;
