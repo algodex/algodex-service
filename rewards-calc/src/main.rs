@@ -203,29 +203,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
   });
   rewardsFinal.sort_by(|a, b| a.qualityFinal.partial_cmp(&b.qualityFinal).unwrap());
   dbg!(rewardsFinal);
-  // const rewardFinals =
-  // Object.keys(ownerWalletAssetToRewards).map(ownerWallet => {
-  //   return Object.values(ownerWalletAssetToRewards[ownerWallet])
-  //       .reduce((qualityEntry, assetQualityEntry) => {
-  //         const {qualitySum, depth, uptime} = assetQualityEntry;
-  //         const algxAvg = assetQualityEntry.algxBalanceSum /
-  //           getSecondsInEpoch();
-  //         const qualityFinal = (qualitySum ** 0.5) *
-  //           (uptime ** 5) * (depth ** 0.3); // (algxAvg ** 0.2) * FIXME FOR MAINNET
-  //         qualityEntry.uptime += uptime;
-  //         qualityEntry.qualitySum += qualitySum;
-  //         qualityEntry.depthSum += depth;
-  //         qualityEntry.algxAvg += algxAvg /
-  //           Object.keys(ownerWalletAssetToRewards[ownerWallet]).length;
-  //         qualityEntry.qualityFinal += qualityFinal;
-  //         return qualityEntry;
-  //       }, {ownerWallet, uptime: 0, depthSum: 0,
-  //         qualitySum: 0, algxAvg: 0, qualityFinal: 0});
-  // });
-  // rewardFinals.sort((a, b) => a.qualityFinal < b.qualityFinal ? 1 : -1);
-  // console.log(rewardFinals);
-
-
 
   Ok(())
 }
