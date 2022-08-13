@@ -7,6 +7,9 @@ use structs::{EscrowValue, EscrowTimeKey};
 use crate::structs::History;
 use crate::structs::CouchDBOuterResp;
 mod query_couch;
+mod get_spreads;
+use get_spreads::getSpreads;
+
 use crate::structs::CouchDBResult;
 
 use query_couch::query_couch_db;
@@ -42,8 +45,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let formattedEscrowData = formattedEscrowDataQueryRes.unwrap().results.remove(0).rows;
 
     let escrows: Vec<EscrowValue> = formattedEscrowData.iter().map(|row| row.value.clone()).collect();
-    let escrowAddrToData:HashMap<&String,&EscrowValue> = formattedEscrowData.iter().fold(HashMap::new(), |mut map, row| {
-            map.insert(&row.id, &row.value);
+    let escrowAddrToData:HashMap<String,EscrowValue> = formattedEscrowData.iter().fold(HashMap::new(), |mut map, row| {
+            map.insert(row.id.clone(), row.value.clone());
             map
         });
     //println!("{:?}", escrowAddrToData);
@@ -87,7 +90,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
         formattedEscrowData,
         escrowAddrs,
         accountData,
-        escrows
+        escrows,
+        escrowAddrToData,
     };
 
     //dbg!(initialState);
@@ -101,7 +105,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     //state machine data
 
     let escrowToBalance = getInitialBalances(timestep, &initialState.escrows);
-    dbg!(escrowToBalance);
+    let spreads = getSpreads(&escrowToBalance, &initialState.escrowAddrToData);
+    dbg!(spreads);
     Ok(())
 }
 
@@ -124,25 +129,7 @@ fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<Stri
         escrowToBalance
     });
 }
-/*
-const getInitialBalances = (unixTime, escrows) => {
-    return escrows.reduce( (escrowToBalance, escrow) => {
-      const addr = escrow._id;
-      const history = escrow.data.history;
-      let balance = 0;
-      for (let i = 0; i < history.length; i++) {
-        if (history[i].time <= unixTime) {
-          balance = history[i].algoAmount || history[i].asaAmount;
-        } else {
-          break;
-        }
-      }
-      escrowToBalance[addr] = balance;
-      return escrowToBalance;
-    }, {});
-  };
 
-*/
 #[derive(Debug)]
 struct InitialState {
     allAssets: Vec<u32>,
@@ -156,18 +143,11 @@ struct InitialState {
     formattedEscrowData:Vec<CouchDBResult<EscrowValue>>,
     escrowAddrs: Vec<String>,
     accountData: Vec<CouchDBResult<String>>,
-    escrows: Vec<EscrowValue>
+    escrows: Vec<EscrowValue>,
+    escrowAddrToData: HashMap<String, EscrowValue>
 }
 
-/*
-const getEpochStart = epoch => {
-    const start = parseInt(process.env.EPOCH_LAUNCH_UNIX_TIME);
-    const secondsInEpoch = getSecondsInEpoch();
-    return start + (secondsInEpoch * (epoch - 1));
-  };
-  
-  module.exports = getEpochStart;
-*/
+
 
 fn getSecondsInEpoch() -> u32 {
     return 604800;
