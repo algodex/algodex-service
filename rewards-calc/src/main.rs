@@ -16,12 +16,13 @@ use get_spreads::getSpreads;
 use rand::Rng;
 use crate::update_rewards::OwnerRewardsResult;
 use crate::structs::CouchDBResult;
-
+use crate::update_rewards::{QualityType, OwnerFinalRewardsResult, ProtectedQualityType};
 use query_couch::query_couch_db;
 use crate::get_spreads::Spread;
 //aaa {"results":[
 //{"total_rows":305541,"offset":71,"rows":[
 //    {"id":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","key":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","value":{
+use QualityType::{Quality, Uptime, Depth, Price, AlgxBalance};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -185,14 +186,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut finalEntry = stateMachine.ownerWalletAssetToRewards.get(ownerWallet).unwrap().values()
       .fold(OwnerFinalRewardsResult::default(), |mut qualityEntry, assetQualityEntry| {
         let OwnerRewardsResult {ref algxBalanceSum, ref qualitySum, ref depth, ref uptime, ..} = assetQualityEntry;
-        let algxAvg = algxBalanceSum / getSecondsInEpoch() as u64;
-        let uptimeStr = format!("{uptime}");
+        let algxAvg = algxBalanceSum.getAlgx() / getSecondsInEpoch() as u64;
+        let uptimeStr = format!("{}", uptime.getUptime());
         let uptimef64 = uptimeStr.parse::<f64>().unwrap();
-        let qualityFinal = qualitySum.powf(0.5) * uptimef64.powi(5) * depth.powf(0.3);
+        let qualityFinal = ProtectedQualityType::from(Quality(
+          qualitySum.getQuality().powf(0.5) * uptimef64.powi(5) * depth.getDepth().powf(0.3)
+        ));
 
-        qualityEntry.uptime += uptime;
-        qualityEntry.qualitySum += qualitySum;
-        qualityEntry.depthSum += depth;
+        qualityEntry.uptime += *uptime;
+        qualityEntry.qualitySum += *qualitySum;
+        qualityEntry.depthSum += *depth;
         qualityEntry.qualityFinal += qualityFinal;
         qualityEntry
         //qualityEntry.algxAvg += algxAvg /
@@ -201,22 +204,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     finalEntry.ownerWallet = ownerWallet.clone();
     rewardsFinal.push(finalEntry);
   });
-  rewardsFinal.sort_by(|a, b| a.qualityFinal.partial_cmp(&b.qualityFinal).unwrap());
+  rewardsFinal.sort_by(|a, b| a.qualityFinal.getQuality().partial_cmp(&b.qualityFinal.getQuality()).unwrap());
   dbg!(rewardsFinal);
 
   Ok(())
-}
-
-
-
-#[derive(Debug, Default)]
-pub struct OwnerFinalRewardsResult {
-  ownerWallet: String,
-  algxBalanceSum: u64,
-  qualitySum: f64,
-  qualityFinal: f64,
-  uptime: u64,
-  depthSum: f64
 }
 
 

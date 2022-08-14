@@ -1,6 +1,7 @@
 # Logs
 logs
 .DS_STORE
+*.swp
 *.log
 *.cpuprofile
 undefined
