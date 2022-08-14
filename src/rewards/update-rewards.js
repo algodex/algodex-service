@@ -1,9 +1,10 @@
 
 const updateRewards = ({ownerWalletAssetToRewards, ownerWalletToALGXBalance,
-  spreads, escrowToBalance, escrowAddrToData, assetId}) => {
+  spreads, escrowToBalance, assetIdToEscrow, escrowAddrToData, assetId}) => {
   const inputtedAssetId = assetId;
   const qualityAnalytics =
-    Object.keys(escrowToBalance).filter(escrow => escrowToBalance[escrow] > 0)
+    assetIdToEscrow.get(inputtedAssetId)
+        .filter(escrow => escrowToBalance[escrow] > 0)
         .filter(escrow => {
           const assetId = escrowAddrToData[escrow].data.escrowInfo.assetId;
           const spread = spreads[`asset:${assetId}`];

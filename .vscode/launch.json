@@ -118,7 +118,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/bin/calculate-rewards",
-            "args": ["--epoch=1"]
+            "args": ["--epoch=2"]
         },
         {
             "type": "node",

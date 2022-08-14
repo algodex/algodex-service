@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 /* eslint-disable require-jsdoc */
 
+// IMPORTANT NOTE!!
+// This script is now deprecated.
+// Please use the /rewards-calc rust script instead.
+
 /* USAGE:
  *
  * This script will calculate all rewards for the epoch and upload them to the
@@ -18,7 +22,7 @@ const getEpochStart = require('../src/rewards/get-epoch-start');
 const getSecondsInEpoch = require('../src/rewards/get-seconds-in-epoch');
 const getInitialBalances = require('../src/rewards/get-initial-balances');
 // eslint-disable-next-line max-len
-const getOwnerBalanceAtTime = require('../src/rewards/get-owner-balance-at-time');
+// const getOwnerBalanceAtTime = require('../src/rewards/get-owner-balance-at-time');
 const getInitialOwnerWalletToBalances =
   require('../src/rewards/get-initial-owner-wallet-to-balances');
 // eslint-disable-next-line max-len
@@ -68,11 +72,24 @@ async function run() {
       map[row.id] = row.value;
       return map;
     }, {});
+
+  const assetIdToEscrow = Object.keys(escrowAddrToData).reduce((assetIdToEscrow, escrow) => {
+    const assetId = escrowAddrToData[escrow].data.escrowInfo.assetId;
+    if (!assetIdToEscrow.has(assetId)) {
+      assetIdToEscrow.set(assetId, []);
+    }
+
+    const arr = assetIdToEscrow.get(assetId);
+    arr.push(escrow);
+
+    return assetIdToEscrow;
+  }, new Map());
   const ownerWallets =
     escrows.map( escrow => escrow.data.escrowInfo.ownerAddr);
   const ownerBalanceData =
     await ownerBalanceDB.query('owner_balance/ownerAddr', {
       keys: ownerWallets});
+
 
   const {unixTimeToChangedEscrows, changedEscrowSeq} = getSequenceInfo(escrows);
   const escrowTimeToBalance = getEscrowAndTimeToBalance(escrows);
@@ -88,9 +105,12 @@ async function run() {
     return set;
   }, new Set());
   const allAssets = Array.from(allAssetsSet);
+  console.time('doSomething');
+
   const initialState = {
     allAssets,
     accountData,
+    assetIdToEscrow,
     changedEscrowSeq,
     escrows,
     escrowAddrs,
@@ -196,6 +216,7 @@ async function run() {
   });
   rewardFinals.sort((a, b) => a.qualityFinal < b.qualityFinal ? 1 : -1);
   console.log(rewardFinals);
+  console.timeEnd('doSomething');
 }
 
 run();
