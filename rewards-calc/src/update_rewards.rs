@@ -31,15 +31,15 @@ impl<T> Add for ProtectedQualityType<T> where T: Copy+Clone+Add<Output = T> {
 
   fn add(self, _rhs: ProtectedQualityType<T>) -> ProtectedQualityType<T> {
     let (i, k) = self.getSameTypeValsOrPanic(&_rhs);
-    let sum = i + k;
-    return self.getValOfSameType(sum);
+    let res = i + k;
+    return self.getValOfSameType(res);
   }
 }
 impl<T> AddAssign for ProtectedQualityType<T> where T: Copy+Clone+AddAssign+Add<Output = T> {
   fn add_assign(&mut self, _rhs: ProtectedQualityType<T>) {
     let (i, k) = self.getSameTypeValsOrPanic(&_rhs);
-    let sum = i + k;
-    self.val = *self.getValOfSameType(sum).getVal();
+    let res = i + k;
+    self.val = *self.getValOfSameType(res).getVal();
   }
 }
 impl<T> Sub for ProtectedQualityType<T> where T: Copy+Clone+Sub<Output = T> {
@@ -47,8 +47,8 @@ impl<T> Sub for ProtectedQualityType<T> where T: Copy+Clone+Sub<Output = T> {
 
   fn sub(self, _rhs: ProtectedQualityType<T>) -> ProtectedQualityType<T> {
     let (i, k) = self.getSameTypeValsOrPanic(&_rhs);
-    let sum = i - k;
-    return self.getValOfSameType(sum);
+    let res = i - k;
+    return self.getValOfSameType(res);
   }
 }
 impl<T> Div for ProtectedQualityType<T> where T: Copy+Clone+Div<Output = T> {
@@ -56,8 +56,8 @@ impl<T> Div for ProtectedQualityType<T> where T: Copy+Clone+Div<Output = T> {
 
   fn div(self, _rhs: ProtectedQualityType<T>) -> ProtectedQualityType<T> {
     let (i, k) = self.getSameTypeValsOrPanic(&_rhs);
-    let sum = i / k;
-    return self.getValOfSameType(sum);
+    let res = i / k;
+    return self.getValOfSameType(res);
   }
 }
 impl<T> Mul for ProtectedQualityType<T> where T: Copy+Clone+Mul<Output = T> {
@@ -65,8 +65,8 @@ impl<T> Mul for ProtectedQualityType<T> where T: Copy+Clone+Mul<Output = T> {
 
   fn mul(self, _rhs: ProtectedQualityType<T>) -> ProtectedQualityType<T> {
     let (i, k) = self.getSameTypeValsOrPanic(&_rhs);
-    let sum = i * k;
-    return self.getValOfSameType(sum);
+    let res = i * k;
+    return self.getValOfSameType(res);
   }
 }
 

@@ -198,8 +198,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         qualityEntry.depthSum += *depth;
         qualityEntry.qualityFinal += qualityFinal;
         qualityEntry
-        //qualityEntry.algxAvg += algxAvg /
-        //           Object.keys(ownerWalletAssetToRewards[ownerWallet]).length;
+
       });
     finalEntry.ownerWallet = ownerWallet.clone();
     rewardsFinal.push(finalEntry);
