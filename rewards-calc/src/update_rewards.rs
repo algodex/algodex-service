@@ -1,27 +1,63 @@
 use crate::StateMachine;
 use crate::InitialState;
 use crate::getSpreads;
+use core::panic;
 use std::collections::HashMap;
 use crate::structs::{EscrowValue};
+use std::ops::{Add,Sub,Div,Mul,AddAssign};
+use crate::quality_type::{*};
 
 #[derive(Debug)]
 pub struct QualityResult {
   addr: String,
-  quality: f64,
-  bidDepth: f64,
-  askDepth: f64
+  quality: Quality,
+  bidDepth: BidDepth,
+  askDepth: AskDepth
 }
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct OwnerRewardsResult {
-  pub algxBalanceSum: u64,
-  pub qualitySum: f64,
-  pub uptime: u64,
-  pub depth: f64
+  pub algxBalanceSum: AlgxBalance,
+  pub qualitySum: Quality,
+  pub uptime: Uptime,
+  pub depth: Depth
 }
 
+#[derive(Debug)]
+pub struct OwnerFinalRewardsResult {
+  pub ownerWallet: String,
+  pub algxBalanceSum: AlgxBalance,
+  pub qualitySum: Quality,
+  pub qualityFinal: Quality,
+  pub uptime: Uptime,
+  pub depthSum: Depth
+}
+
+impl Default for OwnerFinalRewardsResult {
+  fn default() -> Self {
+      Self {
+        ownerWallet: String::from("NOWALLET"),
+        algxBalanceSum: AlgxBalance::from(0), 
+        qualitySum: Quality::from(0.0),
+        qualityFinal: Quality::from(0.0),
+        uptime: Uptime::from(0),
+        depthSum: Depth::from(0.0)
+      }
+  }
+}
+
+impl Default for OwnerRewardsResult {
+  fn default() -> Self {
+      Self { 
+        algxBalanceSum: AlgxBalance::from(0), 
+        qualitySum: Quality::from(0.0),
+        uptime: Uptime::from(0),
+        depth: Depth::from(0.0)
+      }
+  }
+}
 impl QualityResult {
-  pub fn new(addr: String, quality: f64, bidDepth: f64, askDepth: f64) -> QualityResult {
+  pub fn new(addr: String, quality: Quality, bidDepth: BidDepth, askDepth: AskDepth) -> QualityResult {
     QualityResult {
       addr, quality, bidDepth, askDepth
     }
@@ -29,7 +65,8 @@ impl QualityResult {
 }
 
 impl OwnerRewardsResult {
-  pub fn new(algxBalanceSum: u64, qualitySum: f64, uptime: u64, depth: f64) -> OwnerRewardsResult {
+  pub fn new(algxBalanceSum: AlgxBalance, qualitySum: Quality,
+    uptime: Uptime, depth: Depth) -> OwnerRewardsResult {
     OwnerRewardsResult {
       algxBalanceSum, qualitySum, uptime, depth
     }
@@ -77,7 +114,8 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       let midMarket = (ask + bid) / 2.0;
       let distanceFromSpread = (price - midMarket).abs();
       let percentDistant = distanceFromSpread / midMarket;
-      let depth = (exchangeRate as f64) * (*balance as f64) * price / (10_i64.pow(*decimals as u32) as f64);
+      let depth =
+        (exchangeRate as f64) * (*balance as f64) * price / (10_i64.pow(*decimals as u32) as f64);
       let orderType = match escrowAddrToData.get(escrow).unwrap().data.escrow_info.is_algo_buy_escrow {
         true => Bid,
         false => Ask
@@ -109,11 +147,13 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
         Ask => depth,
         _ => 0f64
       };
-      return QualityResult {addr: escrow.clone(), quality, bidDepth, askDepth};
+      return QualityResult {addr: escrow.clone(), quality: Quality::from(quality),
+        bidDepth: BidDepth::from(bidDepth), askDepth: AskDepth::from(askDepth)};
     })
     .collect();
 
-  let ownerWalletToQuality: HashMap<&String, QualityResult> = qualityAnalytics.iter().filter(|entry| entry.quality > 0.0)
+  let ownerWalletToQuality: HashMap<&String, QualityResult> = qualityAnalytics.iter()
+    .filter(|entry| entry.quality.val() > 0.0)
     .fold(HashMap::new(), |mut ownerWalletToQuality, entry| {
       
       let ownerAddr = &escrowAddrToData.get(&entry.addr).unwrap().data.escrow_info.owner_addr;
@@ -121,7 +161,8 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       let qualityDataOpt = ownerWalletToQuality.get(ownerAddr);
       if let None = qualityDataOpt {
         ownerWalletToQuality.insert(ownerAddr, 
-          QualityResult { addr: ownerAddr.clone(), quality: 0.0, bidDepth: 0.0, askDepth: 0.0 });
+          QualityResult { addr: ownerAddr.clone(), quality: Quality::from(0.0),
+            bidDepth: BidDepth::from(0.0), askDepth: AskDepth::from(0.0) });
       }
 
       let qualityEntry = ownerWalletToQuality.get_mut(ownerAddr).unwrap();
@@ -131,18 +172,21 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       ownerWalletToQuality
     });
 
-    let totalBidDepth = qualityAnalytics.iter().fold(0.0, |sum, entry| sum + entry.bidDepth);
-    let totalAskDepth = qualityAnalytics.iter().fold(0.0, |sum, entry| sum + entry.askDepth);
+    let totalBidDepth = qualityAnalytics.iter().fold(BidDepth::from(0.0),
+      |sum, entry| sum + entry.bidDepth);
+    let totalAskDepth = qualityAnalytics.iter().fold(AskDepth::from(0.0),
+      |sum, entry| sum + entry.askDepth);
   
     ownerWalletToQuality.keys()
     .map(|owner| *owner)
     .for_each(|owner| {
-      let algxBalance = 0;
+      let algxBalance = AlgxBalance::from(0);
       let res: QualityResult;
       let qualityResult = match ownerWalletToQuality.get(owner) {
         Some(q) => q,
         None => {
-          res = QualityResult::new(owner.clone(), 0.0,0.0, 0.0);
+          res = QualityResult::new(owner.clone(), Quality::from(0.0),
+            BidDepth::from(0.0), AskDepth::from(0.0));
           &res
         }
       };
@@ -159,16 +203,16 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
 
       let entry = assetRewardsMap.get_mut(inputtedAssetId).unwrap();
       entry.algxBalanceSum += algxBalance;
-      entry.qualitySum += quality;
-      if (totalBidDepth > 0.0) {
-        entry.depth += bidDepth / totalBidDepth;
+      entry.qualitySum += *quality;
+      if (totalBidDepth.val() > 0.0) {
+        entry.depth += bidDepth.asDepth() / totalBidDepth.asDepth();
       }
-      if (totalAskDepth > 0.0) {
-        entry.depth += askDepth / totalAskDepth;
+      if (totalAskDepth.val() > 0.0) {
+        entry.depth += askDepth.asDepth() / totalAskDepth.asDepth();
       } 
 
-      if (*quality > 0.0000001) {
-        entry.uptime += 1;
+      if (quality.val() > 0.0000001) {
+        entry.uptime += Uptime::from(1);
       }
     })
 }
