@@ -86,7 +86,25 @@ async fn main() -> Result<(), Box<dyn Error>> {
     Grouped(val) => val,
     _ => {panic!("Unexpected ungrouped value for formattedEscrowDataQueryRes")},
   }.remove(0).rows;
-  println!("{:?}", algxBalanceData);
+
+  let algx_change_rounds_set: HashSet<u32> = algxBalanceData.iter()
+    .map(|row| row.value.round)
+    .fold(HashSet::new(), |mut set, item| {
+      set.insert(item);
+      set
+    });
+  let blocks_vec:Vec<String> = algx_change_rounds_set.iter()
+    .map(|round|round.to_string()).collect();
+
+  let blockTimesDataQueryRes = query_couch_db::<u32>(&couch_dburl,
+    &"blocks".to_string(),
+    &"blocks".to_string(),
+    &"blockToTime".to_string(), &blocks_vec, false).await;
+  let blockTimesData = match blockTimesDataQueryRes.unwrap().results {
+    Ungrouped(val) => val,
+    _ => {panic!("Unexpected grouped value for blockTimesDataQueryRes")},
+  }.remove(0).rows;
+  println!("{:?}", blockTimesData);
 
 
   // let formatted_escrow_data = query_couch_db::<EscrowValue>(&couch_dburl,
