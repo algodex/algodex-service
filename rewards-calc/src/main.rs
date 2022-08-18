@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::{fmt, time};
 mod structs;
-use structs::{EscrowValue, EscrowTimeKey};
+use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue};
 use crate::structs::History;
 use crate::structs::CouchDBOuterResp;
 mod query_couch;
@@ -39,7 +39,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let accountEpochDataQueryRes = query_couch_db::<String>(&couch_dburl,
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
-      &"epochs".to_string(), &keys).await;
+      &"epochs".to_string(), &keys, false).await;
   let accountData = accountEpochDataQueryRes.unwrap().results.remove(0).rows;
   let escrowAddrs:Vec<String> = accountData.iter().map(|row| String::clone(&row.value)).collect();
   //println!("{:?}", escrowAddrs);
@@ -47,7 +47,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let formattedEscrowDataQueryRes = query_couch_db::<EscrowValue>(&couch_dburl,
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
-      &"orderLookup".to_string(), &escrowAddrs).await;
+      &"orderLookup".to_string(), &escrowAddrs, false).await;
 
   let formattedEscrowData = formattedEscrowDataQueryRes.unwrap().results.remove(0).rows;
 
@@ -69,7 +69,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   //println!("{:?}", escrowAddrToData);
 
-  let ownerWallets = escrows.iter().map(|escrow| &escrow.data.escrow_info.owner_addr);
+  let ownerWallets: Vec<String> = escrows.iter().map(|escrow| &escrow.data.escrow_info.owner_addr).cloned().collect();
+
+  let algxBalanceDataQueryRes = query_couch_db::<AlgxBalanceValue>(&couch_dburl,
+    &"algx_balance".to_string(),
+    &"algx_balance".to_string(),
+    &"algx_balance".to_string(), &ownerWallets, true).await;
+  let algxBalanceData = algxBalanceDataQueryRes.unwrap().results.remove(0).rows;
+  println!("{:?}", algxBalanceData);
 
 
   // let formatted_escrow_data = query_couch_db::<EscrowValue>(&couch_dburl,

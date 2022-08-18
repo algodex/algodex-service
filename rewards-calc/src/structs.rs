@@ -1,5 +1,6 @@
 use serde::{Serialize, Deserialize};
 
+
 #[derive(Deserialize, Debug)]
 pub struct CouchDBOuterResp<T> {
     pub results: Vec<CouchDBResp<T>>,
@@ -27,6 +28,13 @@ pub struct EscrowValue {
     #[serde(rename = "_rev")]
     pub rev: String,
     pub data: Data,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AlgxBalanceValue {
+    pub id: String,
+    pub balance: u64,
+    pub round: u32,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -101,12 +109,13 @@ pub struct BlockTime {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Keys {
-    pub keys: Vec<String>
+    pub keys: Vec<String>,
+    pub group: bool
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Queries {
-    pub queries: Vec<Keys>,
+    pub queries: Vec<Keys>
 }
 
 
