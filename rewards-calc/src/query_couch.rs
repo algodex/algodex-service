@@ -47,7 +47,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(couch_url: &String, db_name: &S
   let res = resp.text().await?;
   //let owned = res.to_owned();
   //let text: &'a String = &owned;
-  println!("aaa {}",&res[0..1000]);
+//   println!("aaa {}",&res[0..1000]);
 
   let result: CouchDBOuterResp<T> = serde_json::from_str(&res)?;
       //let deserializer = &mut serde_json::Deserializer::from_str(&text);

@@ -6,6 +6,7 @@ mod structs;
 use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue};
 use crate::structs::History;
 use crate::structs::CouchDBOuterResp;
+use crate::structs::CouchDBResultsType::{Grouped, Ungrouped};
 mod query_couch;
 mod get_spreads;
 mod update_spreads;
@@ -40,7 +41,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
       &"epochs".to_string(), &keys, false).await;
-  let accountData = accountEpochDataQueryRes.unwrap().results.remove(0).rows;
+  let accountData = match accountEpochDataQueryRes.unwrap().results {
+      Ungrouped(val) => val,
+      _ => {panic!("Unexpected grouped value for accountEpochDataQueryRes")},
+  }.remove(0).rows;
   let escrowAddrs:Vec<String> = accountData.iter().map(|row| String::clone(&row.value)).collect();
   //println!("{:?}", escrowAddrs);
   
@@ -49,7 +53,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
       &"formatted_escrow".to_string(),
       &"orderLookup".to_string(), &escrowAddrs, false).await;
 
-  let formattedEscrowData = formattedEscrowDataQueryRes.unwrap().results.remove(0).rows;
+  let formattedEscrowData = match formattedEscrowDataQueryRes.unwrap().results {
+    Ungrouped(val) => val,
+    _ => {panic!("Unexpected grouped value for formattedEscrowDataQueryRes")},
+  }.remove(0).rows;
 
   let escrows: Vec<EscrowValue> = formattedEscrowData.iter().map(|row| row.value.clone()).collect();
   let escrowAddrToData:HashMap<String,EscrowValue> = formattedEscrowData.iter().fold(HashMap::new(), |mut map, row| {
@@ -75,7 +82,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     &"algx_balance".to_string(),
     &"algx_balance".to_string(),
     &"algx_balance".to_string(), &ownerWallets, true).await;
-  let algxBalanceData = algxBalanceDataQueryRes.unwrap().results.remove(0).rows;
+  let algxBalanceData = match algxBalanceDataQueryRes.unwrap().results {
+    Grouped(val) => val,
+    _ => {panic!("Unexpected ungrouped value for formattedEscrowDataQueryRes")},
+  }.remove(0).rows;
   println!("{:?}", algxBalanceData);
 
 

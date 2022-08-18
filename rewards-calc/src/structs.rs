@@ -1,9 +1,20 @@
 use serde::{Serialize, Deserialize};
 
+#[derive(Deserialize, Debug)]
+#[serde(untagged)]
+pub enum CouchDBResultsType<T> {
+    Ungrouped(Vec<CouchDBResp<T>>),
+    Grouped(Vec<CouchDBGroupedResp<T>>)
+}
 
 #[derive(Deserialize, Debug)]
 pub struct CouchDBOuterResp<T> {
-    pub results: Vec<CouchDBResp<T>>,
+    pub results: CouchDBResultsType<T>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct CouchDBGroupedResp<T> {
+    pub rows: Vec<CouchDBGroupedResult<T>>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -12,6 +23,13 @@ pub struct CouchDBResp<T> {
     pub offset: u32,
     pub rows: Vec<CouchDBResult<T>>,
 }
+
+#[derive(Deserialize, Debug)]
+pub struct CouchDBGroupedResult<T> {
+    pub key: String,
+    pub value: T
+}
+
 
 #[derive(Deserialize, Debug)]
 pub struct CouchDBResult<T> {
@@ -32,7 +50,6 @@ pub struct EscrowValue {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AlgxBalanceValue {
-    pub id: String,
     pub balance: u64,
     pub round: u32,
 }
