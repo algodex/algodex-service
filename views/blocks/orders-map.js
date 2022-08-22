@@ -118,10 +118,11 @@ module.exports = function(doc, emitCallback=null) {
 
         group.forEach( txn => {
           if (txn.txn && txn.txn.type) {
-            const isAlgodex = ( txn.txn.apid === 22045503 ||
-              txn.txn.apid === 22045522);
+            const isAlgodex = ( txn.txn.apid === '<ALGODEX_ALGO_ESCROW_APP>' ||
+              txn.txn.apid === '<ALGODEX_ASA_ESCROW_APP>');
             if (txn.txn.type === 'appl' && isAlgodex) {
-              const isAlgoBuyEscrow = txn.txn.apid === 22045503;
+              // eslint-disable-next-line max-len
+              const isAlgoBuyEscrow = txn.txn.apid === '<ALGODEX_ALGO_ESCROW_APP>';
               const appCallType = atob(txn.txn.apaa[0]);
               if (appCallType === 'execute') {
                 // Do nothing as we are only tracking when escrows open or close

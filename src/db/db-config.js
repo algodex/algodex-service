@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
 // @ts-nocheck
 // eslint-disable-next-line require-jsdoc, no-unused-vars
+require('dotenv').config();
 globalThis.emit = function(a, b) {};
 
 const databases = [
@@ -209,7 +210,27 @@ const databases = [
   },
 ];
 
-module.exports = function() {
+const replaceEnvs = viewStr => {
+  Object.keys(process.env).forEach(envKey => {
+    viewStr = viewStr.replaceAll('\'<'+envKey+'>\'', process.env[envKey]);
+  });
+  return viewStr;
+};
+
+const withReplaceEnv = databases => {
+  databases.forEach(dbObj => {
+    if (dbObj.design?.views === undefined) {
+      return;
+    }
+    Object.keys(dbObj.design.views).forEach(viewName => {
+      const viewStr = replaceEnvs(dbObj.design.views[viewName].map);
+      dbObj.design.views[viewName].map = viewStr;
+    });
+  });
   return databases;
+};
+
+module.exports = function() {
+  return withReplaceEnv(databases);
 };
 

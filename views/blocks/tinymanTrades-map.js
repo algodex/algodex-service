@@ -1,7 +1,7 @@
 module.exports = function(doc) {
   const groupsWithUsdcTrade = doc.txns
       .map(txn => txn.txn)
-      .filter(txn => txn.apid === 62368684)
+      .filter(txn => txn.apid === '<TINYMAN_APP>')
       .filter(txn => {
         return true;
       })
