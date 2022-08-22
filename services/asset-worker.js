@@ -50,7 +50,7 @@ module.exports = ({queues, databases}) =>{
             throw err;
           }
         });
-  }, {connection: queues.connection, concurrency: 50});
+  }, {connection: queues.connection, concurrency: 250});
 
   assetsWorker.on('error', err => {
     console.error( {err} );

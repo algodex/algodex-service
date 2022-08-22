@@ -76,7 +76,7 @@ const performJob = async job=>{
 
 module.exports = ({queues, databases}) =>{
   const blocks = new Worker(convertQueueURL('blocks'), performJob,
-      {connection: queues.connection, concurrency: 50});
+      {connection: queues.connection, concurrency: 250});
   state.queues = queues;
   state.databases = databases;
   blocks.on('error', err => {

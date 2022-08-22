@@ -112,7 +112,7 @@ module.exports = ({queues, databases}) =>{
           console.log(e);
           throw e;
         });
-  }, {connection: queues.connection, concurrency: 50});
+  }, {connection: queues.connection, concurrency: 250});
 
   tradeHistoryWorker.on('error', err => {
     console.error( {err} );

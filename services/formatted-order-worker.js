@@ -136,7 +136,7 @@ module.exports = ({queues, databases}) =>{
           }
         });
       */
-  }, {connection: queues.connection, concurrency: 50});
+  }, {connection: queues.connection, concurrency: 250});
 
   formattedOrderWorker.on('error', err => {
     console.error( {err} );

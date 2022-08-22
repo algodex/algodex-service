@@ -186,7 +186,7 @@ module.exports = ({queues, databases}) =>{
     } catch (err) {
       throw err;
     }
-  }, {connection: queues.connection, concurrency: 50});
+  }, {connection: queues.connection, concurrency: 250});
 
   indexedOrders.on('error', err => {
     console.error( {err} );
