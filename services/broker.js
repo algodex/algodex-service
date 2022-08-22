@@ -3,11 +3,12 @@ const {getBlock, waitForBlock} = require('../src/explorer');
 const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
 const hasAlgxChanges = require('./algx-balance-worker/hasAlgxChanges');
 const {syncParallel} = require('../src/sync-parallel/sync-parallel');
+const throttle = require('lodash.throttle');
 
+const axios = require('axios').default;
 
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
-const convertQueueURL = require('../src/convert-queue-url');
 const sleep = require('../src/sleep');
 
 const getBlockPromises = (queues, block) => {
@@ -103,6 +104,36 @@ module.exports = ({queues, events, databases}) => {
     runWaitBlockSync();
   }
 
+  const waitForViewBuilding = async (blocksDB, didTrigger = false) => {
+    const couchUrl = process.env.COUCHDB_BASE_URL;
+    let loop = true;
+    while (loop) {
+      await sleep(500);
+      await axios.get(couchUrl + '/_active_tasks')
+          .then(async function(response) {
+            // handle success
+            if (response.data.length === 0) {
+              if (!didTrigger) {
+                // Try to get max block
+                await blocksDB.query('blocks/maxBlock',
+                    {reduce: true, group: true});
+                // Wait again
+                await waitForViewBuilding(blocksDB, true);
+              }
+              loop = false;
+              return;
+            } else {
+              throttle(() => {
+                console.log('Waiting for DB indexes to rebuild...');
+              }, 5000);
+            }
+          }).catch(function(error) {
+            console.error('Unexpected error when fetching active tasks! ',
+                error);
+          });
+    }
+  };
+
   /**
      * Run the Broker
      * @return {Promise<void>}
@@ -110,6 +141,7 @@ module.exports = ({queues, events, databases}) => {
   async function runCatchUp() {
     const syncedBlocksDB = databases.synced_blocks;
     const blocksDB = databases.blocks;
+    await waitForViewBuilding(blocksDB);
 
     let lastSyncedRound;
     let maxSyncedRoundInTestMode;
@@ -126,11 +158,14 @@ module.exports = ({queues, events, databases}) => {
       lastSyncedRound = parseInt(process.env.GENESIS_LAUNCH_BLOCK);
     }
 
+
     if (lastSyncedRound > 0 &&
       lastSyncedRound < latestBlock['last-round'] - 10 &&
       !process.env.INTEGRATION_TEST_MODE) {
       await syncParallel();
     }
+
+    await waitForViewBuilding(blocksDB);
 
     if (process.env.INTEGRATION_TEST_MODE &&
       process.env.ALGORAND_NETWORK !== 'testnet') {
