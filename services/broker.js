@@ -117,7 +117,9 @@ module.exports = ({queues, events, databases}) => {
       await axios.get(couchUrl + '/_active_tasks')
           .then(async function(response) {
             // handle success
-            if (response.data.length === 0) {
+            if (response.data.length === 0 ||
+              response.data.filter(item =>
+                item.type !== 'view_compaction').length === 0) {
               if (!didTrigger) {
                 // Try to get max block
                 await blocksDB.query('blocks/maxBlock',
