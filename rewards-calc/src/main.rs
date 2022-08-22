@@ -22,6 +22,7 @@ use crate::update_rewards::OwnerFinalRewardsResult;
 use query_couch::query_couch_db;
 use crate::get_spreads::Spread;
 use crate::quality_type::Quality;
+use crate::structs::CouchDBGroupedResult;
 //aaa {"results":[
 //{"total_rows":305541,"offset":71,"rows":[
 //    {"id":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","key":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","value":{
@@ -82,10 +83,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     &"algx_balance".to_string(),
     &"algx_balance".to_string(),
     &"algx_balance".to_string(), &ownerWallets, true).await;
-  let algxBalanceData = match algxBalanceDataQueryRes.unwrap().results {
+  let mut algxBalanceData = match algxBalanceDataQueryRes.unwrap().results {
     Grouped(val) => val,
     _ => {panic!("Unexpected ungrouped value for formattedEscrowDataQueryRes")},
   }.remove(0).rows;
+
+  algxBalanceData.sort_by(|a, b| a.value.round.partial_cmp(&b.value.round).unwrap());
 
   let algx_change_rounds_set: HashSet<u32> = algxBalanceData.iter()
     .map(|row| row.value.round)
@@ -104,7 +107,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
     Ungrouped(val) => val,
     _ => {panic!("Unexpected grouped value for blockTimesDataQueryRes")},
   }.remove(0).rows;
-  println!("{:?}", blockTimesData);
+  let blockToUnixTime: HashMap<u32, u32> = blockTimesData.iter().fold(HashMap::new(),|mut map, block| {
+    let key = block.key.parse::<u32>().unwrap();
+    map.insert(key, block.value);
+    map
+  });
+  // println!("{:?}", blockTimesData);
 
 
   // let formatted_escrow_data = query_couch_db::<EscrowValue>(&couch_dburl,
@@ -132,9 +140,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
   // dbg!(allAssetsSet);
 
   let initialState = InitialState {
+      algxBalanceData,
       allAssets,
       allAssetsSet,
       assetIdToEscrows,
+      blockToUnixTime,
       changedEscrowSeq,
       epochStart,
       epochEnd,
@@ -162,10 +172,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let spreads = getSpreads(&escrowToBalance, &initialState.escrowAddrToData);
 
   let ownerWalletAssetToRewards: HashMap<String,HashMap<u32,OwnerRewardsResult>> = HashMap::new();
+  let ownerWalletToALGXBalance: HashMap<&String,u64> = HashMap::new();
 
   let mut stateMachine = StateMachine {
       escrowToBalance,
-      //ownerWalletToALGXBalance,
+      ownerWalletToALGXBalance,
       ownerWalletAssetToRewards,
       spreads,
     };
@@ -173,13 +184,27 @@ async fn main() -> Result<(), Box<dyn Error>> {
   //dbg!(spreads);
 
   let mut rng = rand::thread_rng();
+  let mut owner_wallet_step = 0;
 
   loop {
     let curMinute = timestep / 60;
     timestep = ((curMinute + 1) * 60) + rng.gen_range(0..60);
     let mut escrowDidChange = false;
-    let ownerWalletsBalanceChangeSet:HashSet<String> = HashSet::new();
-
+    // let ownerWalletsBalanceChangeSet:HashSet<String> = HashSet::new();
+    loop {
+      let owner_balance_entry = &initialState.algxBalanceData[owner_wallet_step];
+      let owner_wallet_time = getTimeFromRound(&initialState.blockToUnixTime,
+          &owner_balance_entry.value.round);
+      if (owner_wallet_time > timestep) {
+        break;
+      }
+      let wallet:&String = &owner_balance_entry.key;
+      stateMachine.ownerWalletToALGXBalance.insert(wallet, owner_balance_entry.value.balance);
+      owner_wallet_step += 1;
+      if (owner_wallet_step >= initialState.algxBalanceData.len()) {
+        break;
+      }
+    }
 
     while (escrowstep < initialState.changedEscrowSeq.len() &&
       initialState.changedEscrowSeq[escrowstep] <= timestep) {
@@ -222,16 +247,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let mut finalEntry = stateMachine.ownerWalletAssetToRewards.get(ownerWallet).unwrap().values()
       .fold(OwnerFinalRewardsResult::default(), |mut qualityEntry, assetQualityEntry| {
         let OwnerRewardsResult {ref algxBalanceSum, ref qualitySum, ref depth, ref uptime, ..} = assetQualityEntry;
-        let algxAvg = algxBalanceSum.val() / getSecondsInEpoch() as u64;
+        let algxAvg = (algxBalanceSum.val() as f64) / (getSecondsInEpoch() as f64);
         let uptimeStr = format!("{}", uptime.val());
         let uptimef64 = uptimeStr.parse::<f64>().unwrap();
         let qualityFinal = Quality::from(
-          qualitySum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3)
+          qualitySum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3) * algxAvg.powf(0.2)
         );
 
         qualityEntry.uptime += *uptime;
         qualityEntry.qualitySum += *qualitySum;
         qualityEntry.depthSum += *depth;
+        qualityEntry.algxBalanceSum += *algxBalanceSum;
         qualityEntry.qualityFinal += qualityFinal;
         qualityEntry
 
@@ -245,7 +271,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
   Ok(())
 }
 
-
+fn getTimeFromRound (blockToUnixTime: &HashMap<u32, u32>, round: &u32) -> u32 {
+  return *blockToUnixTime.get(round).unwrap();
+}
 fn updateBalances (changedEscrows: &Vec<String>, changeTime: &u32, escrowToBalance: &mut HashMap<String, u64>,
   escrowTimeToBalance: &HashMap<EscrowTimeKey, u64>) {
     changedEscrows.iter().for_each(|escrow| {
@@ -263,10 +291,11 @@ fn updateBalances (changedEscrows: &Vec<String>, changeTime: &u32, escrowToBalan
 // };
 
 #[derive(Debug)]
-pub struct StateMachine {
+pub struct StateMachine<'a> {
     escrowToBalance: HashMap<String, u64>,
     spreads: HashMap<u32, Spread>,
-    ownerWalletAssetToRewards: HashMap<String,HashMap<u32,OwnerRewardsResult>>
+    ownerWalletAssetToRewards: HashMap<String,HashMap<u32,OwnerRewardsResult>>,
+    ownerWalletToALGXBalance: HashMap<&'a String,u64>
 }
 
 fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<String, u64> {
@@ -291,9 +320,11 @@ fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<Stri
 
 #[derive(Debug)]
 pub struct InitialState {
+    algxBalanceData: Vec<CouchDBGroupedResult<AlgxBalanceValue>>,
     allAssets: Vec<u32>,
     allAssetsSet: HashSet<u32>,
     assetIdToEscrows: HashMap<u32, Vec<String>>,
+    blockToUnixTime: HashMap<u32, u32>,
     epochStart: u32,
     epochEnd: u32,
     epochLaunchTime: u32,
