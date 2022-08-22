@@ -31,6 +31,9 @@ const databases = [
           map: require('../../views/blocks/maxBlock-map').toString(),
           reduce: require('../../views/blocks/maxBlock-reduce').toString(),
         },
+        tinymanTrades: {
+          map: require('../../views/blocks/tinymanTrades-map').toString(),
+        },
       },
     },
   },
