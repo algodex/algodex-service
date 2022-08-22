@@ -107,6 +107,11 @@ module.exports = ({queues, events, databases}) => {
   const waitForViewBuilding = async (blocksDB, didTrigger = false) => {
     const couchUrl = process.env.COUCHDB_BASE_URL;
     let loop = true;
+
+    const waitLogThrottle = throttle(() => {
+      console.log('Waiting for DB indexes to rebuild...');
+    }, 5000);
+
     while (loop) {
       await sleep(500);
       await axios.get(couchUrl + '/_active_tasks')
@@ -123,9 +128,7 @@ module.exports = ({queues, events, databases}) => {
               loop = false;
               return;
             } else {
-              throttle(() => {
-                console.log('Waiting for DB indexes to rebuild...');
-              }, 5000);
+              waitLogThrottle();
             }
           }).catch(function(error) {
             console.error('Unexpected error when fetching active tasks! ',
