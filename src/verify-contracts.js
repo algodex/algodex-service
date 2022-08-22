@@ -145,7 +145,9 @@ module.exports = async (rows, verifiedAccountDB) => {
       await verifyContract(account, row.value.orderInfo,
           row.value.version, row.value.ownerAddr,
           // FIXME - use env variables
-          row.value.isAlgoBuyEscrow ? 22045503 : 22045522,
+          row.value.isAlgoBuyEscrow ?
+            parseInt(process.env.ALGODEX_ALGO_ESCROW_APP) :
+            parseInt(process.env.ALGODEX_ASA_ESCROW_APP),
           row.value.isAlgoBuyEscrow);
     if (isRealContract) {
       realContracts.push(row);
