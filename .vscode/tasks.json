@@ -3,16 +3,6 @@
   "tasks": [
     {
       "type": "shell",
-      "label": "compose-up-dev",
-      "command": "cp .testnet.docker.env .env; docker-compose -f docker-compose.yml -f docker-compose.docker.yml up -d --build",
-      "presentation": {
-        "reveal": "always",
-        "panel": "new"
-      },
-      "problemMatcher": []
-    },
-    {
-      "type": "shell",
       "label": "compose-up-localhost",
       "command": "cp .testnet.localhost.env .env; docker-compose -f docker-compose.localhost.yml up -d --build",
       "presentation": {
