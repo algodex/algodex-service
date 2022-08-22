@@ -1,8 +1,20 @@
 use serde::{Serialize, Deserialize};
 
 #[derive(Deserialize, Debug)]
+#[serde(untagged)]
+pub enum CouchDBResultsType<T> {
+    Ungrouped(Vec<CouchDBResp<T>>),
+    Grouped(Vec<CouchDBGroupedResp<T>>)
+}
+
+#[derive(Deserialize, Debug)]
 pub struct CouchDBOuterResp<T> {
-    pub results: Vec<CouchDBResp<T>>,
+    pub results: CouchDBResultsType<T>,
+}
+
+#[derive(Deserialize, Debug)]
+pub struct CouchDBGroupedResp<T> {
+    pub rows: Vec<CouchDBGroupedResult<T>>,
 }
 
 #[derive(Deserialize, Debug)]
@@ -11,6 +23,13 @@ pub struct CouchDBResp<T> {
     pub offset: u32,
     pub rows: Vec<CouchDBResult<T>>,
 }
+
+#[derive(Deserialize, Debug)]
+pub struct CouchDBGroupedResult<T> {
+    pub key: String,
+    pub value: T
+}
+
 
 #[derive(Deserialize, Debug)]
 pub struct CouchDBResult<T> {
@@ -27,6 +46,12 @@ pub struct EscrowValue {
     #[serde(rename = "_rev")]
     pub rev: String,
     pub data: Data,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AlgxBalanceValue {
+    pub balance: u64,
+    pub round: u32,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -101,12 +126,13 @@ pub struct BlockTime {
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Keys {
-    pub keys: Vec<String>
+    pub keys: Vec<String>,
+    pub group: bool
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Queries {
-    pub queries: Vec<Keys>,
+    pub queries: Vec<Keys>
 }
 
 
