@@ -31,5 +31,6 @@ test('chunk array by CPU cores', ()=>{
   }).toThrowError(InvalidParameter);
 
   const arry = cpuChunkArray(createConsecutiveArray(10, 150));
-  expect(arry.length).toEqual(os.cpus().length + 1); // FIXME, could be slightly optimized
+  // FIXME, could be slightly optimized
+  expect([os.cpus().length + 1, os.cpus().length]).toContain(arry.length);
 });

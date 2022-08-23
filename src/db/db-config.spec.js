@@ -1,9 +1,14 @@
 /* eslint-disable max-len */
 
-const dbConfig = require('./db-config')();
 
 test('has replaced view names', () => {
+  process.env.ALGODEX_ALGO_ESCROW_APP = '1312312312';
+  process.env.TINYMAN_APP = '21332131';
+  const dbConfig = require('./db-config')();
+
   const viewMap = dbConfig[0].design.views.orders.map;
+
+
   expect(viewMap.includes('txn.txn.apid === \'<ALGODEX_ALGO_ESCROW_APP>\'')).toBe(false);
   expect(viewMap.includes(`txn.txn.apid === ${process.env.ALGODEX_ALGO_ESCROW_APP}`)).toBe(true);
 
