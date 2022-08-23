@@ -38,105 +38,88 @@ module.exports = ({queues, databases}) =>{
   console.log({formattedEscrowDB});
   console.log('in formatted-order-worker.js');
 
-  const formattedOrderWorker = new Worker(convertQueueURL('formattedEscrows'), async job=>{
-    console.log('got formatted escrows job ', {data: job.data});
-    withQueueSchemaCheck('formattedEscrows', job.data);
-    const assetId = job.data.escrowInfo.assetId;
-    const addr = job.data.indexerInfo.address;
-    const data = job.data;
+  const formattedOrderWorker = new Worker(convertQueueURL('formattedEscrows'),
+      async job=>{
+        console.log('got formatted escrows job ', {data: job.data});
+        withQueueSchemaCheck('formattedEscrows', job.data);
+        const assetId = job.data.escrowInfo.assetId;
+        const addr = job.data.indexerInfo.address;
+        const data = job.data;
 
-    const assetGetPromise = assetDB.get(assetId)
-        .then(async function(res) {
-          console.log({res});
-          data.assetDecimals = res.asset.params.decimals;
-          while (activelyUpdatingOrderSet.has(addr)) { // TODO: move to Redis
-            throttle(() => {
-              console.log('sleeping waiting for ' + addr);
-            }, 1000);
+        const assetGetPromise = assetDB.get(assetId)
+            .then(async function(res) {
+              console.log({res});
+              data.assetDecimals = res.asset.params.decimals;
+              while (activelyUpdatingOrderSet.has(addr)) { // TODO: move to Redis
+                throttle(() => {
+                  console.log('sleeping waiting for ' + addr);
+                }, 1000);
 
-            // Prevents document update conflicts when trying to
-            // update the same address at once
-            await sleep(25);
-          }
-          activelyUpdatingOrderSet.add(addr);
-          const formattedOrderGet = formattedEscrowDB.get(addr).then(
-              async function(res) {
-                data.history = res.data.history;
-                if (!data.escrowInfo.version) {
-                  const verifiedAccount = await verifiedDB.get(addr);
-                  const version = verifiedAccount.version;
-                  data.escrowInfo.version = version;
-                }
-                if (data.escrowInfo.block && res.data.escrowInfo.block &&
+                // Prevents document update conflicts when trying to
+                // update the same address at once
+                await sleep(25);
+              }
+              activelyUpdatingOrderSet.add(addr);
+              const formattedOrderGet = formattedEscrowDB.get(addr).then(
+                  async function(res) {
+                    data.history = res.data.history;
+                    if (!data.escrowInfo.version) {
+                      const verifiedAccount = await verifiedDB.get(addr);
+                      const version = verifiedAccount.version;
+                      data.escrowInfo.version = version;
+                    }
+                    if (data.escrowInfo.block && res.data.escrowInfo.block &&
                   data.escrowInfo.block < res.data.escrowInfo.block) {
-                  data.escrowInfo = res.data.escrowInfo;
-                  data.lastUpdateUnixTime = res.data.lastUpdateUnixTime;
-                  data.lastUpdateRound = res.data.lastUpdateRound;
-                }
-                if (data.indexerInfo.round && res.data.indexerInfo.round &&
+                      data.escrowInfo = res.data.escrowInfo;
+                      data.lastUpdateUnixTime = res.data.lastUpdateUnixTime;
+                      data.lastUpdateRound = res.data.lastUpdateRound;
+                    }
+                    if (data.indexerInfo.round && res.data.indexerInfo.round &&
                   data.indexerInfo.round < res.data.indexerInfo.round) {
-                  data.indexerInfo = res.data.indexerInfo;
-                }
-                setAssetHistory(data);
-                // eslint-disable-next-line max-len
-                return formattedEscrowDB.put(withSchemaCheck('formatted_escrow', {
-                  _id: res._id,
-                  _rev: res._rev,
-                  data,
-                })).then(function(res) {
-                  console.log('added doc revision: ' + data);
-                  activelyUpdatingOrderSet.delete(addr);
-                }).catch(function(err) {
-                  console.error('error 442b', err);
-                  activelyUpdatingOrderSet.delete(addr);
-                  throw err;
-                });
-              }).catch(function(err) {
-            if (err.error === 'not_found') {
-              setAssetHistory(data);
-              return formattedEscrowDB.post(
-                  withSchemaCheck('formatted_escrow', {_id: `${addr}`,
-                    type: 'formatted_escrow', data: data}))
-                  .then(function(response) {
-                    console.log('posted formatted escrow');
-                    activelyUpdatingOrderSet.delete(addr);
+                      data.indexerInfo = res.data.indexerInfo;
+                    }
+                    setAssetHistory(data);
+                    // eslint-disable-next-line max-len
+                    return formattedEscrowDB.put(withSchemaCheck('formatted_escrow', {
+                      _id: res._id,
+                      _rev: res._rev,
+                      data,
+                    })).then(function(res) {
+                      console.log('added doc revision: ' + data);
+                      activelyUpdatingOrderSet.delete(addr);
+                    }).catch(function(err) {
+                      console.error('error 442b', err);
+                      activelyUpdatingOrderSet.delete(addr);
+                      throw err;
+                    });
                   }).catch(function(err) {
-                    console.error('error 445b', err);
-                    activelyUpdatingOrderSet.delete(addr);
-                    throw err;
-                  });
-            } else {
-              activelyUpdatingOrderSet.delete(addr);
-              console.error('error 442a', err);
+                if (err.error === 'not_found') {
+                  setAssetHistory(data);
+                  return formattedEscrowDB.post(
+                      withSchemaCheck('formatted_escrow', {_id: `${addr}`,
+                        type: 'formatted_escrow', data: data}))
+                      .then(function(response) {
+                        console.log('posted formatted escrow');
+                        activelyUpdatingOrderSet.delete(addr);
+                      }).catch(function(err) {
+                        console.error('error 445b', err);
+                        activelyUpdatingOrderSet.delete(addr);
+                        throw err;
+                      });
+                } else {
+                  activelyUpdatingOrderSet.delete(addr);
+                  console.error('error 442a', err);
+                  throw err;
+                }
+              });
+              return formattedOrderGet;
+            }).catch(function(err) {
+              console.error('Error fetching asset: '+ assetId, err);
               throw err;
-            }
-          });
-          return formattedOrderGet;
-        }).catch(function(err) {
-          console.error('Error fetching asset: '+ assetId, err);
-          throw err;
-        });
+            });
 
-    return assetGetPromise;
-
-
-    // const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
-    /* return assetDB.post({_id: `${job.data.assetId}`,
-      type: 'asset', ...assetData})
-        .then(async function(response) {
-          console.debug({
-            msg: `Asset ${job.data.assetId} stored`,
-            ...response,
-          });
-        }).catch(function(err) {
-          if (err.error === 'conflict') {
-            console.log('asset already added');
-          } else {
-            throw err;
-          }
-        });
-      */
-  }, {connection: queues.connection, concurrency: 250});
+        return assetGetPromise;
+      }, {connection: queues.connection, concurrency: 250});
 
   formattedOrderWorker.on('error', err => {
     console.error( {err} );

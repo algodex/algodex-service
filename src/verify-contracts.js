@@ -3,12 +3,17 @@ const sleep = require('./sleep');
 
 
 const {
+  // @ts-ignore
   withOrderbookEntry,
+  // @ts-ignore
   withLogicSigAccount,
+// @ts-ignore
 } = require('@algodex/algodex-sdk/lib/order/compile');
+
 const algosdk = require('algosdk');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
+// eslint-disable-next-line max-len
 // https://stackoverflow.com/questions/14636536/how-to-check-if-a-variable-is-an-integer-in-javascript
 /**
 *  check if value is interger

@@ -82,7 +82,6 @@ module.exports = ({queues, databases}) =>{
                     return obj;
                   }, {});
                   const assetToDecimals = {...assetToDecimalsFromDB, ...assetResultsMap};
-                  // const assetData = await indexer.lookupAssetByID(job.data.assetId).do();
 
                   const validHistoryRows = tradeHistoryRows
                       // eslint-disable-next-line max-len

@@ -28,5 +28,6 @@ module.exports = {
     'linebreak-style': 0,
     'arrow-parens': ['error', 'as-needed'],
     'no-undef': 'error',
+    'max-len': ['error', {'code': 90}],
   },
 };

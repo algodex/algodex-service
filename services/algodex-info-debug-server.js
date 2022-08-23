@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+/* eslint-disable max-len */
 const express = require('express');
 const getDatabases = require('../src/db/get-databases');
 
@@ -9,12 +11,13 @@ const databases = getDatabases();
 /**
  *
  * https://stackoverflow.com/questions/847185/convert-a-unix-timestamp-to-time-in-javascript
- * @param {number} UNIX_timestamp
+ * @param {number} unix_timestamp
  * @return {string}
  */
-function timeConverter(UNIX_timestamp) {
-  const a = new Date(UNIX_timestamp * 1000);
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function timeConverter(unix_timestamp) {
+  const a = new Date(unix_timestamp * 1000);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const year = a.getFullYear();
   const month = months[a.getMonth()];
   const date = a.getDate();

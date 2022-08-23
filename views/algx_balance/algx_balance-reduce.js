@@ -5,4 +5,5 @@ module.exports = function(keys, values, rereduce) {
     }
     return retval;
   });
-}
+};
+

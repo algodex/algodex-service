@@ -9,7 +9,7 @@
     "start-service": "cross-env APP_CONTEXT=socket npm start",
     "start-tiny": "cross-env APP_CONTEXT=tinyman npm start",
     "test": "npm run test-unit && npm run lint",
-    "test-unit": "jest",
+    "test-unit": "jest --testPathIgnorePatterns=verify-end-to-end",
     "dev-test": "jest --watch",
     "lint": "eslint src/*.js services/*.js bin/*.js views/**/*.js server.js",
     "prepare": "husky install",
