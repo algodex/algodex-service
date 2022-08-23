@@ -34,10 +34,14 @@ module.exports = function(doc) {
     const userXferAmount = group[2].txn.amt || group[2].txn.aamt;
     const poolXferType = group[3].txn.type;
     const userXferType = group[2].txn.type;
-    const assetId = group[2].txn.xaid || group[3].txn.xaid;
+    const poolXferAssetId = group[3].txn.xaid || 1;
+    const userXferAssetId = group[2].txn.xaid || 1;
     if ((poolXferType === 'pay' && userXferType === 'axfer') ||
     (poolXferType === 'axfer' && userXferType === 'pay')) {
-      emit([assetId, doc.ts], {round: doc.rnd, assetId,
+      const asset1 = Math.min(poolXferAssetId, userXferAssetId);
+      const asset2 = Math.max(poolXferAssetId, userXferAssetId);
+      emit([asset1, asset2, doc.ts], {round: doc.rnd, poolXferAssetId,
+        userXferAssetId,
         unix_time: doc.ts, poolXferType, poolXferAmount,
         userXferAmount, userXferType});
     }
