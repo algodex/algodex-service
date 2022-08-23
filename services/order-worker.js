@@ -122,17 +122,6 @@ const getIndexedEscrowInfo = async (blockDB, indexedEscrowDB,
   }
 };
 
-const getOwnerBalancePromise = (queue, ownerAddr, roundStr) => {
-  const jobData = {'ownerAddr': ownerAddr, 'roundStr': roundStr};
-  const promise = queue.add('ownerBalance', jobData,
-      {removeOnComplete: true}).then(function() {
-  }).catch(function(err) {
-    console.error('error adding to ownerBalance queue:', {err} );
-    throw err;
-  });
-  return promise;
-};
-
 // const queued = new Set();
 
 module.exports = ({queues, databases}) =>{

@@ -28,6 +28,9 @@ module.exports = function(keys, values, rereduce) {
       'l': Math.min.apply(null, values),
       'h': Math.max.apply(null, values),
       'c': values[values.length - 1],
+      // FIXME - figure out if we need this view.
+      // sum below needs to be defined if so.
+      // eslint-disable-next-line no-undef
       'sum': sum(values),
       'count': values.length,
       'sumsqr': (function() {

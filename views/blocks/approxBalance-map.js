@@ -60,4 +60,4 @@ module.exports = function(doc) {
   }
 };
 
-//reducer: none
+// reducer: none
