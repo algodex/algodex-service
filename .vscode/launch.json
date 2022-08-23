@@ -1,6 +1,29 @@
 {
     "version": "0.2.0",
     "configurations": [
+        {
+            "cwd": "${workspaceFolder}/api",
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug API",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--manifest-path=api/Cargo.toml",
+                    "--bin=api",
+                    "--package=api"
+                ],
+                "filter": {
+                    "name": "api",
+                    "kind": "bin"
+                }
+            },
+            "program": "${cargo:program}",
+            "args": [
+                // "user_arg1",
+                // "user_arg2"
+            ]
+        },
     
         {
             "type": "node",
