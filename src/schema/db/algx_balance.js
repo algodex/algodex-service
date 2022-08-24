@@ -11,8 +11,9 @@ const schema = {
       },
       required: ['account', 'balance'],
     }},
+    unix_time: {type: 'integer'},
   },
-  required: ['changes', '_id'],
+  required: ['changes', '_id', 'unix_time'],
   additionalProperties: false,
 };
 

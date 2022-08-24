@@ -90,6 +90,7 @@ const handleAlgxBalanceJob = async (job, algxBalanceDB) => {
   await addBalanceToDB(algxBalanceDB, {
     _id: round+'',
     changes: changedAccountData,
+    unix_time: block.ts,
   });
 };
 
