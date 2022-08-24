@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const process = require('node:process');
 
 const getChangedAccountValues = (ownerToBalanceWithRounds, block) => {
@@ -11,10 +12,19 @@ const getChangedAccountValues = (ownerToBalanceWithRounds, block) => {
 
   const ownerToBalance = Array.from(ownerToBalanceWithRounds.entries())
       .reduce((map, entry) => {
-        map.set(entry[0], entry[1].balance);
+        map.set(entry[0], {
+          address: entry[0],
+          amount: entry[1].balance,
+        });
         return map;
       }, new Map());
 
+  const createEmptyOwnerBalance = address => {
+    return {
+      address,
+      amount: 0,
+    };
+  };
   const newOwnerToBalance = block.txns.map(txn => txn.txn)
       .filter(txn => txn.type === 'axfer')
       .filter(txn => txn.xaid === parseInt(algxAssetId))
@@ -23,34 +33,40 @@ const getChangedAccountValues = (ownerToBalanceWithRounds, block) => {
         const sender = txn.snd;
         const receiver = txn.arcv;
         const aclose = txn.aclose;
-        let senderBalance = ownerToBalance.get(sender) || 0;
-        let receiverBalance =
-          receiver ? (ownerToBalance.get(receiver) || 0) : 0;
-        let closeReceiverBalance =
-          aclose ? (ownerToBalance.get(aclose) || 0) : 0;
-        const amount = txn.aamt || 0;
 
-        receiverBalance += amount;
-        closeReceiverBalance += Math.max(0, (senderBalance - amount));
-        senderBalance = Math.max(0, senderBalance - amount);
-        if (aclose) {
-          senderBalance = 0;
-          ownerToBalance.set(aclose, closeReceiverBalance);
-        }
-        if (sender) {
-          ownerToBalance.set(sender, senderBalance);
-        }
+        const senderBalance = ownerToBalance.get(sender) ||
+          createEmptyOwnerBalance(sender);
+        ownerToBalance.set(sender, senderBalance);
+        const receiverBalance = ownerToBalance.get(receiver) ||
+          createEmptyOwnerBalance(receiver);
         if (receiver) {
           ownerToBalance.set(receiver, receiverBalance);
         }
+        const closeReceiverBalance = ownerToBalance.get(aclose) ||
+          createEmptyOwnerBalance(aclose);
+        if (aclose) {
+          ownerToBalance.set(aclose, closeReceiverBalance);
+        }
+
+        const amount = txn.aamt || 0;
+
+        receiverBalance.amount += amount;
+        senderBalance.amount -= amount;
+        if (aclose) {
+          const closeAmount = senderBalance.amount;
+          closeReceiverBalance.amount += closeAmount;
+          senderBalance.amount -= closeAmount;
+        }
         return ownerToBalance;
-      }, new Map(ownerToBalance));
+      }, new Map(JSON.parse(
+          JSON.stringify(Array.from(ownerToBalance)),
+      )));
   if (newOwnerToBalance.size === 0) {
     return [];
   }
   const keys = Array.from(newOwnerToBalance.keys());
   const changedAccounts = keys.reduce((set, key) => {
-    if (newOwnerToBalance.get(key) !== ownerToBalance.get(key)) {
+    if (newOwnerToBalance.get(key).amount !== ownerToBalance.get(key)?.amount) {
       set.add(key);
     }
     return set;
@@ -58,12 +74,12 @@ const getChangedAccountValues = (ownerToBalanceWithRounds, block) => {
   const retarr = Array.from(changedAccounts)
       .filter(account => newOwnerToBalance.has(account))
       .map(account => {
-        if (typeof newOwnerToBalance.get(account) === 'object') {
+        if (typeof newOwnerToBalance.get(account) !== 'object') {
           throw new Error('incorrect type');
         }
         return {
           account,
-          balance: newOwnerToBalance.get(account) || 0,
+          balance: Math.max(0, newOwnerToBalance.get(account).amount),
         };
       });
   return retarr;

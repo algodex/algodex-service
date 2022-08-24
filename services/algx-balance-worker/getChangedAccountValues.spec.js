@@ -12,7 +12,9 @@ test('gets correct changed values', () => {
       });
   const changedValues = getChangedAccountValues(ownerToBalanceMap, blockTestnet16627873);
   expect(changedValues).toEqual(
-      [{'account': '4WD4SFG5LF4WJLQ7E7MHY7L7S2A6HPBXNYXRYFS2V7HONO5UMKMEAUPX3A', 'balance': 164830},
-        {'account': 'DUE565PAEADF3L5PNQ7TJNGEDZ5GN7STBUM2LSFVSBMZKSHV52U46SVFWI', 'balance': 9252}]);
+      [{'account': '4WD4SFG5LF4WJLQ7E7MHY7L7S2A6HPBXNYXRYFS2V7HONO5UMKMEAUPX3A',
+        'balance': 164830},
+      {'account': 'DUE565PAEADF3L5PNQ7TJNGEDZ5GN7STBUM2LSFVSBMZKSHV52U46SVFWI',
+        'balance': 9252}]);
   // expect(changedValues)
 });
