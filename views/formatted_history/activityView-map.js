@@ -5,11 +5,8 @@ module.exports = function(doc) {
 
   delete newDoc._id;
   delete newDoc._rev;
-  if (doc.tradeType === 'buy') {
-    emit(doc.assetBuyerAddr, newDoc);
-  } else if (doc.tradeType === 'sell') {
-    emit(doc.assetSellerAddr, newDoc);
-  }
+  emit(doc.assetBuyerAddr, newDoc);
+  emit(doc.assetBuyerAddr, newDoc);
 };
 
 // reducer: count
