@@ -55,6 +55,7 @@ module.exports = function(doc) {
       decimals: decimals,
       version: doc.data.escrowInfo.version,
       isAlgoBuyEscrow: doc.data.escrowInfo.isAlgoBuyEscrow,
+      assetId: doc.data.escrowInfo.assetId,
     };
     emit(['assetId', doc.data.escrowInfo.assetId], escrowInfo);
     emit(['ownerAddr', escrowInfo.ownerAddress], escrowInfo);
