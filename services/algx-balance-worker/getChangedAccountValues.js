@@ -73,14 +73,13 @@ const getChangedAccountValues = (ownerToBalanceWithRounds, block) => {
   }, new Set());
   const retarr = Array.from(changedAccounts)
       .filter(account => newOwnerToBalance.has(account))
-      .filter(account => newOwnerToBalance.get(account).amount > 0)
       .map(account => {
         if (typeof newOwnerToBalance.get(account) !== 'object') {
           throw new Error('incorrect type');
         }
         return {
           account,
-          balance: newOwnerToBalance.get(account).amount,
+          balance: Math.max(0, newOwnerToBalance.get(account).amount),
         };
       });
   return retarr;

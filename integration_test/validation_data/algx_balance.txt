@@ -1,8 +1,12 @@
 [
   {
     "_id": "16583459",
-    "_rev": "1-6f39f055b0ae19ae7995c003449315d3",
+    "_rev": "1-3af76f96798938f742236e10b4538483",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "YGQ3U6EQ6AXB3IEOQMYBDZ6LJH6YAGBOY3U4AZRVO5RZV7IP3BMNSTE35A",
         "balance": 1481
@@ -12,8 +16,12 @@
   },
   {
     "_id": "16583462",
-    "_rev": "1-8fb041133307e9eb4804cb975986c81d",
+    "_rev": "1-b67df947c46da79c575fa44cfb3fe57d",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "OZYJXXGTVLR25273QI3GYTLBC5ZR2OPB6EQNCZPSAHWAUOYOOSLLDDWEJY",
         "balance": 3561
@@ -27,8 +35,12 @@
   },
   {
     "_id": "16583466",
-    "_rev": "1-c0725242a1e19170fbaec3f97db7dde0",
+    "_rev": "1-0b5d169a0fd52a243b3e7405ee8023be",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "LOGQFVVBPIWMXRLMCJ24G74KOPTKJFB3LYOYRYPRYZCGYDS5HKTWD65N3A",
         "balance": 2227
@@ -42,19 +54,27 @@
   },
   {
     "_id": "16583467",
-    "_rev": "1-241a211d23daade38fc38c0a8456fd05",
+    "_rev": "1-eb5c35f1d3ac1bd6a4ab29c89b8d7448",
     "changes": [
       {
         "account": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ",
         "balance": 11129
+      },
+      {
+        "account": "ZM4OVTFEW5NVM5O7PXPQE7YJ6JFCOKMDEO3BA7RZL4VD5MJS3P4ZGS2E6M",
+        "balance": 0
       }
     ],
     "unix_time": 1631352665
   },
   {
     "_id": "16583469",
-    "_rev": "1-23c19eaaa3c08dfe5558a0942a3850a7",
+    "_rev": "1-c23504c54826a7574976ed37b7a7cede",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "PWDK422DBOCZZTL6QR4VDZK5YM67YUEBSQLKPZOPIR5XLSURAXSARHZ32Q",
         "balance": 5568
@@ -64,8 +84,12 @@
   },
   {
     "_id": "16583484",
-    "_rev": "1-207bf5e2ea708ef0dadff4e278b8d53c",
+    "_rev": "1-f283b5c8de5b938986b8d1d258d349b1",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "FWLDN22TB2QG2UNX7I26HNLXPWFF3XVFPSZZRYRSVDDF7TQ2W5FTYIXOJU",
         "balance": 3340
@@ -75,11 +99,19 @@
   },
   {
     "_id": "16583486",
-    "_rev": "1-fc88d5f8a9697b0019e6015ba0ff8ace",
+    "_rev": "1-0f1d036e84fa8761349e92c992704d77",
     "changes": [
+      {
+        "account": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ",
+        "balance": 0
+      },
       {
         "account": "ZM4OVTFEW5NVM5O7PXPQE7YJ6JFCOKMDEO3BA7RZL4VD5MJS3P4ZGS2E6M",
         "balance": 11129
+      },
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
       },
       {
         "account": "QWPSXIUY3SVB5I2AHHF5BEVZY4NTJ6H36CXCZSDUZ4UMPQXP7NJFTME7NY",
@@ -90,8 +122,12 @@
   },
   {
     "_id": "16583488",
-    "_rev": "1-b760a475795dd4e2c26e541228f61f7f",
+    "_rev": "1-bc3b2b8a91def8d7ae58db6973fb3f64",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "MGOE6KR35V5IMYQYKRW6GUPUG77YZEUMXVG2YVPGXNU33HFQPQJUQYXSQU",
         "balance": 22272
@@ -105,8 +141,12 @@
   },
   {
     "_id": "16583490",
-    "_rev": "1-537c9142568e42d5aa0f5bafd9953eb0",
+    "_rev": "1-8d6d94b5ecb7ae5bdf48881428f649f1",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "DBTSNCZIR4HKXDWJ4P626T72OTQWXDIMC72QJA6ALZSL4LLVURQ6DBEXYM",
         "balance": 3340
@@ -116,8 +156,12 @@
   },
   {
     "_id": "16583491",
-    "_rev": "1-c0b2128fd17df95d7263c0eb7629bf43",
+    "_rev": "1-06ae04e1fd6a06c3e91864d665f7ab72",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "J24UQGCWLPTYWQXM5XC3CTJ5TAHJLW2WEKRY4KJGGO67DLB4T2NLOW6CDI",
         "balance": 2227
@@ -142,8 +186,16 @@
   },
   {
     "_id": "16583495",
-    "_rev": "1-629122389f32704629fdc14e10a477ff",
+    "_rev": "1-4ee8911cd0d980818360c8fa96fcc906",
     "changes": [
+      {
+        "account": "ZM4OVTFEW5NVM5O7PXPQE7YJ6JFCOKMDEO3BA7RZL4VD5MJS3P4ZGS2E6M",
+        "balance": 0
+      },
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "GROTPLAVJVTH3WS5ONAZINPCSO4YXOOHMTNRMC4SAB6XE5VMNQGNB6GZNQ",
         "balance": 433
@@ -161,8 +213,12 @@
   },
   {
     "_id": "16583496",
-    "_rev": "1-bdec6419fa0820080f5bdf02441ef3bc",
+    "_rev": "1-6078a4cd35e79616d66ee441b05fc980",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "KRCLMJC5PQO5Z27BDTELZDKIYRM3FD4XI6JNXUW55EGDPJF6KH45OAP6UQ",
         "balance": 2227
@@ -172,8 +228,16 @@
   },
   {
     "_id": "16583503",
-    "_rev": "1-a3efc8a362f318ba6d541cc554b47c3d",
+    "_rev": "1-8416bbd6e5dcdcd10529c2ee26b4b09b",
     "changes": [
+      {
+        "account": "32RGOJ3BPBJC2FNJ4F7SO2M7TP3RNI6HJQN7P7HBKESGV6G3ODFMJDDFKI",
+        "balance": 0
+      },
+      {
+        "account": "TESTGYMB5OTGUAB567F3L35KLAYR62CAORLSYVB6AUSKWMHRMAFI4JHO5M",
+        "balance": 0
+      },
       {
         "account": "IQSVMB5N5NEKRGZO7P7O2AEYZYCWK3VQUDJ36UIOSKQCGXQ2K65UY2T64M",
         "balance": 3097
@@ -183,11 +247,15 @@
   },
   {
     "_id": "16583505",
-    "_rev": "1-d220d7d0e11c198f3068676242f08fdd",
+    "_rev": "1-655a8cecac8b819d5d7abf982eccd4da",
     "changes": [
       {
         "account": "TESTGYMB5OTGUAB567F3L35KLAYR62CAORLSYVB6AUSKWMHRMAFI4JHO5M",
         "balance": 15
+      },
+      {
+        "account": "32RGOJ3BPBJC2FNJ4F7SO2M7TP3RNI6HJQN7P7HBKESGV6G3ODFMJDDFKI",
+        "balance": 0
       }
     ],
     "unix_time": 1631352826
@@ -209,8 +277,12 @@
   },
   {
     "_id": "16583514",
-    "_rev": "1-6a9b0ba84b2d55fa6fd0dc10dc14d516",
+    "_rev": "1-dd75b6bf410c3b674314da3b176f22ad",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "JKIOHBQTLZDMU7CLPTSQVRXS5KLGW4TGUNY47OEJIG3XVPSXYAUANQYONE",
         "balance": 4454
@@ -220,8 +292,12 @@
   },
   {
     "_id": "16583515",
-    "_rev": "1-04b1b4a8c87641e418920d4c2d09af9d",
+    "_rev": "1-9bbf6eb0bad45614415ab530f8856490",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "EYSRBK33QQ4W5BVGFPJX7K5VBHBUELUHRTS6HBG64EVW5ZBMYH3JZO56OU",
         "balance": 22268
@@ -231,8 +307,12 @@
   },
   {
     "_id": "16583516",
-    "_rev": "1-2982fccb3b0520f47f8af0d20aea2739",
+    "_rev": "1-a3082bd88485dc9b19fb3b52668a5561",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
         "balance": 11136
@@ -250,8 +330,12 @@
   },
   {
     "_id": "16583518",
-    "_rev": "1-44baba64fb2961c21ab5fc9139345d13",
+    "_rev": "1-419d89644312f419c1785e3e5ee20577",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "KRCLMJC5PQO5Z27BDTELZDKIYRM3FD4XI6JNXUW55EGDPJF6KH45OAP6UQ",
         "balance": 1670
@@ -269,8 +353,12 @@
   },
   {
     "_id": "16583520",
-    "_rev": "1-58a57b1eeb7ed2509f437772f9eb1030",
+    "_rev": "1-6be5e5f207ae904a663c5bf2d3599681",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "MK64XZBZUWOPX5HGGAGQO3K45SFWWIAPPP4SJDCSYGHIRGZGNY6TLCLHN4",
         "balance": 2003
@@ -280,8 +368,12 @@
   },
   {
     "_id": "16583521",
-    "_rev": "1-657b7f8af314ae78dd8b9a155667da78",
+    "_rev": "1-fb2b2ad8f87069e2d75700054b162bdb",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "ZC2YNATE75BSGCJRIHNUYSRMIX5WT5RTO5SPLGTT5IFGV2DYVFJMAEGBNM",
         "balance": 19316
@@ -291,11 +383,19 @@
   },
   {
     "_id": "16583522",
-    "_rev": "1-479c60512622f4925aa74a6c816a9c57",
+    "_rev": "1-687577efaef010bfefbf9c9a3fdb4212",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
         "balance": 25019
+      },
+      {
+        "account": "IOQISE7UXHHBFBFT3C4YZB6VH3W4WXJIWEYCH6WYWUZESOZUBLSSW7254Y",
+        "balance": 0
       },
       {
         "account": "WC2EEVUO4HBQBJNCSZ2QK7J3IVZ6GPPOY2U6H7PWZBTZYZFBQNUS4FF2TI",
@@ -306,8 +406,12 @@
   },
   {
     "_id": "16583525",
-    "_rev": "1-f8c214bd5ddf6551cb07b3f6dbe76463",
+    "_rev": "1-383f289012518ddd64de91ed10b7e987",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
         "balance": 26168
@@ -317,8 +421,12 @@
   },
   {
     "_id": "16583526",
-    "_rev": "1-4606082820cf6387cca6cf4bde9b9be8",
+    "_rev": "1-57a36fa654d99f89aa9ec9e06367bde4",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "76FHP33WBBWZ7QWITYOPOCXSOC4CPKNFXQWKNVOS5V6FW45GS6URIBASIU",
         "balance": 3340
@@ -328,8 +436,12 @@
   },
   {
     "_id": "16583538",
-    "_rev": "1-d564cff947f1502510bd6099e7eba5f7",
+    "_rev": "1-f056ecae64329738b9fa391d4671a729",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "5722B36DKBWAH6IGR6KVJMIKV5RUCNP242E2PU5B6ZWPRLGD3U2JNOHDMU",
         "balance": 3340
@@ -358,8 +470,16 @@
   },
   {
     "_id": "16583540",
-    "_rev": "1-09a9cdfb02eaa922cc0ca40cee838410",
+    "_rev": "1-1f2631829a1a9af5ba2201bf9bd79cd7",
     "changes": [
+      {
+        "account": "ZC2YNATE75BSGCJRIHNUYSRMIX5WT5RTO5SPLGTT5IFGV2DYVFJMAEGBNM",
+        "balance": 0
+      },
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
         "balance": 38944
@@ -392,8 +512,12 @@
   },
   {
     "_id": "16583545",
-    "_rev": "1-d1b439f46f53be52faf25745a6172bf5",
+    "_rev": "1-c882fc005b00521e76ed6b5ecc62d331",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "XCYGBCFYSQ6SDTOPOPS3BG66TBUVUDHGHZOZM3YS757ZSCKMPQGMFSVMTM",
         "balance": 3037
@@ -403,19 +527,27 @@
   },
   {
     "_id": "16583547",
-    "_rev": "1-d7e4096001d8e9a522f42a6ce5cd751d",
+    "_rev": "1-ccae5aeb5176878b1b8d64ca45fbb060",
     "changes": [
       {
+        "account": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY",
+        "balance": 0
+      },
+      {
         "account": "ZC2YNATE75BSGCJRIHNUYSRMIX5WT5RTO5SPLGTT5IFGV2DYVFJMAEGBNM",
-        "balance": 2945357
+        "balance": 2941252
       }
     ],
     "unix_time": 1631353005
   },
   {
     "_id": "16583553",
-    "_rev": "1-0be35acc9a3124a9f5d5b15a205c28dc",
+    "_rev": "1-a44f02d9db339f81646b6292ebc7919d",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "6K6BAS3H3FJEFVZ2G4QVPAQIVXVJKVBRGLNUGPXLAUZKB2AARJGJH2IIFI",
         "balance": 3340
@@ -425,8 +557,12 @@
   },
   {
     "_id": "16583556",
-    "_rev": "1-db6ef5310ab4d3da4858d53656885050",
+    "_rev": "1-64af050171ea813515c66c750a29d83f",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "MXYCZM5VFV6SUX7ZSGJSB2VAPA3HOZ2DTOYM2VUWG3QBJLYATGU6UTD25A",
         "balance": 1558
@@ -436,8 +572,12 @@
   },
   {
     "_id": "16583561",
-    "_rev": "1-3861d6517d279d2cb43d5927fc13e73a",
+    "_rev": "1-780a3de2799d5161d39e8e0c571e94f2",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "XGVVFP3LFT5NHAONBDDDDT3ZWL57OIW5R3GT5NYQINEYSUNLI4VHB4HR4A",
         "balance": 6681
@@ -447,8 +587,12 @@
   },
   {
     "_id": "16583563",
-    "_rev": "1-1947632bb7982d8f20b580b0d9666646",
+    "_rev": "1-e0f5a4447a37b0123a48c245739e04c5",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "AAQDIXCQLUMMYOD4UJ52IZB3FOAJEZZIL2U4Z2WXGWB64NLLWYX76I3JFM",
         "balance": 55803
@@ -458,8 +602,12 @@
   },
   {
     "_id": "16583564",
-    "_rev": "1-d177ed8ea8aa20e3b88434d6fc64a869",
+    "_rev": "1-490a05e41a2b695f31e326ebd1856961",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "TLD62VQNSHFKNSVX5DPQ7DGGU2HLGXLYZ53NR3UGV7AUIRCFKYQ5G5BZG4",
         "balance": 3340
@@ -484,8 +632,12 @@
   },
   {
     "_id": "16583568",
-    "_rev": "1-59d3071c2191cbed96930452d98b8212",
+    "_rev": "1-3b8a521dcbdbf2a022a712e2ce942526",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "OZZZ2FCAMSNIAIPOZLH2U4XRSAA73FMRZ6NNJFGJPOZGVTKC45LBLASCBE",
         "balance": 1780
@@ -495,8 +647,12 @@
   },
   {
     "_id": "16583575",
-    "_rev": "1-8d96b2fa381452f8f1d3b0377c8c62d8",
+    "_rev": "1-8059283cb6cf10313a1a4e33f64f6507",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "NVSEUYRGZDR7RQUC5ZXUYABN55T3PTXQO3GXNDP2AXPBAWDF4N6EAUUF4A",
         "balance": 4453
@@ -506,8 +662,16 @@
   },
   {
     "_id": "16583576",
-    "_rev": "1-733ed392d44da9eddcfb339f74e50f61",
+    "_rev": "1-3f06dc3c034e492c00b41154a7816987",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
+      {
+        "account": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ",
+        "balance": 0
+      },
       {
         "account": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
         "balance": 6654
@@ -525,11 +689,15 @@
   },
   {
     "_id": "16583580",
-    "_rev": "1-a8ab95136bd9ddd78c6c708d9d07c40f",
+    "_rev": "1-5f36790a1b576370fa7454d21c147042",
     "changes": [
       {
         "account": "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA",
         "balance": 34394
+      },
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
       },
       {
         "account": "3FRO5IP2R6UAEGXFMJJXHUUMH24MB4RMQKWJ2WPHEOOIM24F2M3IEXGLTU",
@@ -559,8 +727,12 @@
   },
   {
     "_id": "16583582",
-    "_rev": "1-15e8c3fe34e151e824b88f0fc6df27b6",
+    "_rev": "1-763a53b52c6491ef203c4d7744b75479",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "5XJX53OH5QCSNOCZ6WFQJGPE3CSJY22EAVUXSFYAXISDXGERG6Q6X2HVQI",
         "balance": 1825
@@ -570,8 +742,12 @@
   },
   {
     "_id": "16583583",
-    "_rev": "1-cd93a1090850b47e2b2b7caee6247a3a",
+    "_rev": "1-c2a20110e7f980f60005190009f7df30",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "K2HMLHRZSZ3BZONW2KIHCN4HKWWAIEZEQY2FO7SDXWNS47LHWZN4TZK7TQ",
         "balance": 3340
@@ -615,8 +791,12 @@
   },
   {
     "_id": "16583588",
-    "_rev": "1-3efaf73dbffe155b4d5f105876000a29",
+    "_rev": "1-a29773d473a99d48ba4bedcc621eb559",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "OAGVQVBBEQVEHFXWW24PBML6VY4WUUVO4VTBAA4E6B3O22JEUL2AEFXIE4",
         "balance": 2227
@@ -630,8 +810,12 @@
   },
   {
     "_id": "16583592",
-    "_rev": "1-fe4bd425928ff3ba48f8312225dcb590",
+    "_rev": "1-fbaf9a20f8e7ab02df0f7dcf9aadae61",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "K5MKARCHIM4YJXK6HZRSJJV23IDVOIT33J2VZ3X3PEOF3HG27KMFAWAVGI",
         "balance": 3340
@@ -671,8 +855,12 @@
   },
   {
     "_id": "16583596",
-    "_rev": "1-36ead6e7900f8a841c178ce17113f86d",
+    "_rev": "1-5cee09fac4980bfc910aa3f732e68011",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "ZFPVKSD3PK4KMSKO7BW2U4DYOXPHNP6LZ37LSP45JEDUTC73PZ55FKAXIM",
         "balance": 4454
@@ -682,8 +870,12 @@
   },
   {
     "_id": "16583598",
-    "_rev": "1-e8bb296eb82d7e5a9f451de01ef3d473",
+    "_rev": "1-40906e2986c53e8661186252f6f297c0",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "EVJ3CICXS6XXARVVW2SLV4XK57LC6UQHPSM7IEOWIEGHDIBIETDUB2UR6U",
         "balance": 11136
@@ -693,8 +885,16 @@
   },
   {
     "_id": "16583602",
-    "_rev": "1-efa3ac8930814e557f88ddb3b3c6e992",
+    "_rev": "1-343aacae91fb16e28f15c83eb666606d",
     "changes": [
+      {
+        "account": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q",
+        "balance": 0
+      },
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "I3LMETLVXEJRCIWDDMH3P7O6ACYPK5F3PPFCS3SOHWNOGEOCUWHPS3OOC4",
         "balance": 3335
@@ -727,8 +927,12 @@
   },
   {
     "_id": "16583611",
-    "_rev": "1-bd4f0b1447f28f0b3f616a861cbf0b61",
+    "_rev": "1-c9d9a5aea22dd54c48044c2155185fb8",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "H3YR2YJGV5N7Y432DM24CMGI3ZHJ7YOQHQVUV3QNDPAOX7KFG2OG4XWEVE",
         "balance": 144766
@@ -738,8 +942,12 @@
   },
   {
     "_id": "16583623",
-    "_rev": "1-0c0c847ab28c1e2988864218802bb7a0",
+    "_rev": "1-c7a7b01a67745caea6f7475119ff6e7d",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "4XASPZYDMVGHZ26VVXLOGP6O7SHOK74CZWPNANGYNWWMGBNVKO7KRKR7N4",
         "balance": 3340
@@ -749,8 +957,12 @@
   },
   {
     "_id": "16583627",
-    "_rev": "1-628e93859df4840b6b1f8ba4495e0928",
+    "_rev": "1-ba5423500c0cc76dbaaf0c641b1f8d6c",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "XDGYL44LQ4PMPUJHSV776ZLNM2NUPFH2B7LYVXSWVFA66V6LYCR45RIG3E",
         "balance": 3340
@@ -760,7 +972,7 @@
   },
   {
     "_id": "16583628",
-    "_rev": "1-d77d3b8b2a2870fa9cbfd2bedbcba371",
+    "_rev": "1-0b8f0c4afbf6a82b7b2a265cf25924df",
     "changes": [
       {
         "account": "GJEYAP6TEMP55MQ7VUXGR3QNU5E6LGQIGCZ3QQFRDOGDGBIVPMO5242P7M",
@@ -769,6 +981,10 @@
       {
         "account": "UFASEZNXBKKQL5PRC2MZ6VK4H5OY6D3RSODVCH7P6GLLJYWJQ6KM64IB44",
         "balance": 10179
+      },
+      {
+        "account": "SZHAGPYKW763Y7XLWS62FQHCG6IG5567YFFFSIRSYQ6UDONYYJX4NWTU3Y",
+        "balance": 0
       },
       {
         "account": "2M4WWWGXV3YUAH23UGCFGJXAYQ4PL5B5CUDRUR3DOZ22IPVY23GZ7FJJ2A",
@@ -794,8 +1010,12 @@
   },
   {
     "_id": "16583633",
-    "_rev": "1-c5baf23ba56293df3ac996f766af8463",
+    "_rev": "1-5aaf96c6b580c7ba9cbbac4d3b6b4671",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "W6N3N5A6YDKKVUIYV7TRHXRA53PBGFSIUXVWK3KFZ5N2TGIFMFMHSZWUSA",
         "balance": 3340
@@ -820,8 +1040,12 @@
   },
   {
     "_id": "16583644",
-    "_rev": "1-3afdfec88b97b3cf42564f390f0eb076",
+    "_rev": "1-52a571df2b6c3495fd4fd22f4c664413",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "OBMUYBDZILLQVX3E7BKTWX6HLPLFHTXJOD3AM3NFA6HKTJ5AEWFBP5J3LM",
         "balance": 4454
@@ -831,8 +1055,12 @@
   },
   {
     "_id": "16583646",
-    "_rev": "1-4b82b8e07b74b6be31b70de1745b2469",
+    "_rev": "1-8a0263f401d7e0b6f52641805684c8cf",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "SQCVLIFQXXGC7TIHODEASOXKIU57HQTDEUX3GTN2GVYXHNW436DONEMHMY",
         "balance": 3340
@@ -842,8 +1070,12 @@
   },
   {
     "_id": "16583648",
-    "_rev": "1-4d6236dbdaf9f228d58e4690548914d5",
+    "_rev": "1-c5dc69c67d5a5d37b5fcad60b7f24bdf",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "HCAVQOWQCWD435QY7GJMFTNHUKFI5VW5EQTTARPAA7IRWAEKMICYNQXCB4",
         "balance": 6681
@@ -853,8 +1085,12 @@
   },
   {
     "_id": "16583650",
-    "_rev": "1-f1e75a2ee165e79045671b293cd745fb",
+    "_rev": "1-637d709a49afd28ce28ea0c8895d1d84",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "H3YR2YJGV5N7Y432DM24CMGI3ZHJ7YOQHQVUV3QNDPAOX7KFG2OG4XWEVE",
         "balance": 253332
@@ -864,8 +1100,12 @@
   },
   {
     "_id": "16583651",
-    "_rev": "1-e3af3cf4eea5cb13a92e9ccb2a586df5",
+    "_rev": "1-028a5c957c65d6ec9518e09bf00f8e57",
     "changes": [
+      {
+        "account": "DFZF6OGWPLVXMNB6AJY3IZZRJYEUKVYRKFT2UDA4EXAHLCEAPSIKGNMBMQ",
+        "balance": 0
+      },
       {
         "account": "5ZNZMUHRK5V3MTQA2J2GREN75YP6EYPTWMNF6OVSSKVWO465EIIGSDMUEU",
         "balance": 3340
@@ -890,8 +1130,12 @@
   },
   {
     "_id": "16583654",
-    "_rev": "1-65562542afe8d02bba582891e4a8b7e9",
+    "_rev": "1-53e43af464c238cdcc23f8a4db64b698",
     "changes": [
+      {
+        "account": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
+        "balance": 0
+      },
       {
         "account": "IOQISE7UXHHBFBFT3C4YZB6VH3W4WXJIWEYCH6WYWUZESOZUBLSSW7254Y",
         "balance": 6654
