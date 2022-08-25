@@ -1,37 +1,43 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 #[serde(untagged)]
 pub enum CouchDBResultsType<T> {
     Ungrouped(Vec<CouchDBResp<T>>),
     Grouped(Vec<CouchDBGroupedResp<T>>)
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct CouchDBOuterResp<T> {
     pub results: CouchDBResultsType<T>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
+pub struct CouchDBOuterResp2<T> {
+    pub results: Vec<CouchDBResp<T>>,
+}
+
+
+#[derive(Deserialize, Debug, Clone)]
 pub struct CouchDBGroupedResp<T> {
     pub rows: Vec<CouchDBGroupedResult<T>>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct CouchDBResp<T> {
     pub total_rows: u32,
     pub offset: u32,
     pub rows: Vec<CouchDBResult<T>>,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct CouchDBGroupedResult<T> {
     pub key: String,
     pub value: T
 }
 
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct CouchDBResult<T> {
     pub key: String,
     pub value: T,
@@ -46,6 +52,8 @@ pub struct EscrowValue {
     #[serde(rename = "_rev")]
     pub rev: String,
     pub data: Data,
+    #[serde(rename = "type")]
+    pub type_field: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -107,7 +115,7 @@ pub struct IndexerInfo {
     #[serde(rename = "_id")]
     pub id: String,
     #[serde(rename = "_rev")]
-    pub rev: String,
+    pub rev: Option<String>,
     pub address: String,
     #[serde(rename = "algoAmount")]
     pub algo_amount: u64,

@@ -137,9 +137,10 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
         if (*depth < 30.0 && matches!(orderType, Ask)) {
           return false;
         }
-        if (ownerAlgxBalance.val() < 30 * 10u64.pow(6)) { // FIXME change to 3000 
-          return false;
-        }
+        // EPOCH DEPENDANT
+        // if (ownerAlgxBalance.val() < 30 * 10u64.pow(6)) { // FIXME change to 3000 
+        //   return false;
+        // }
         return true;
       };
       let isEligible = isEligibleFn(&percentDistant, &orderType, &depth, &ownerAlgxBalance);

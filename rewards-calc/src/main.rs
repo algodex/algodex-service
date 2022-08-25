@@ -20,6 +20,7 @@ use crate::update_rewards::OwnerRewardsResult;
 use crate::structs::CouchDBResult;
 use crate::update_rewards::OwnerFinalRewardsResult;
 use query_couch::query_couch_db;
+use query_couch::query_couch_db2;
 use crate::get_spreads::Spread;
 use crate::quality_type::Quality;
 use crate::structs::CouchDBGroupedResult;
@@ -36,7 +37,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   });
   // println!("{:?}", result.get("ALGORAND_NETWORK").take());
 
-  let couch_dburl = env.get("COUCHDB_BASE_URL").expect("Missing COUCHDB_BASE_URL");
+  let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL");
   let keys = [String::from("2")].to_vec();
   let accountEpochDataQueryRes = query_couch_db::<String>(&couch_dburl,
       &"formatted_escrow".to_string(),
@@ -47,17 +48,18 @@ async fn main() -> Result<(), Box<dyn Error>> {
       _ => {panic!("Unexpected grouped value for accountEpochDataQueryRes")},
   }.remove(0).rows;
   let escrowAddrs:Vec<String> = accountData.iter().map(|row| String::clone(&row.value)).collect();
-  //println!("{:?}", escrowAddrs);
+  // println!("{:?}", escrowAddrs);
   
-  let formattedEscrowDataQueryRes = query_couch_db::<EscrowValue>(&couch_dburl,
+  let formattedEscrowDataQueryRes = query_couch_db2::<EscrowValue>(&couch_dburl,
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
       &"orderLookup".to_string(), &escrowAddrs, false).await;
 
-  let formattedEscrowData = match formattedEscrowDataQueryRes.unwrap().results {
-    Ungrouped(val) => val,
-    _ => {panic!("Unexpected grouped value for formattedEscrowDataQueryRes")},
-  }.remove(0).rows;
+  if let Err(unwrapped) = formattedEscrowDataQueryRes {
+    panic!("{unwrapped:?}");
+  }
+
+  let formattedEscrowData = &formattedEscrowDataQueryRes.as_ref().unwrap().results[0].rows;
 
   let escrows: Vec<EscrowValue> = formattedEscrowData.iter().map(|row| row.value.clone()).collect();
   let escrowAddrToData:HashMap<String,EscrowValue> = formattedEscrowData.iter().fold(HashMap::new(), |mut map, row| {
@@ -138,6 +140,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let allAssets: Vec<u32> = allAssetsSet.clone().into_iter().collect();
 
   // dbg!(allAssetsSet);
+  let cloned: Vec<CouchDBResult<EscrowValue>> = formattedEscrowDataQueryRes.unwrap().results[0].rows.clone();
 
   let initialState = InitialState {
       algxBalanceData,
@@ -151,7 +154,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       epochLaunchTime,
       escrowTimeToBalance,
       unixTimeToChangedEscrows,
-      formattedEscrowData,
+      formattedEscrowData: cloned,
       escrowAddrs,
       accountData,
       escrows,

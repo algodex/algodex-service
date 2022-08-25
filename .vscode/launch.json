@@ -5,6 +5,29 @@
             "cwd": "${workspaceFolder}/api",
             "type": "lldb",
             "request": "launch",
+            "name": "Rewards Calc (Rust)",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--manifest-path=rewards-calc/Cargo.toml",
+                    "--bin=rewards-calc",
+                    "--package=rewards-calc"
+                ],
+                "filter": {
+                    "name": "rewards-calc",
+                    "kind": "bin"
+                }
+            },
+            "program": "${cargo:program}",
+            "args": [
+                // "user_arg1",
+                // "user_arg2"
+            ]
+        },
+        {
+            "cwd": "${workspaceFolder}/api",
+            "type": "lldb",
+            "request": "launch",
             "name": "Debug API",
             "cargo": {
                 "args": [
@@ -136,7 +159,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "CalculateRewards",
+            "name": "CalculateRewards (DEPRECATED)",
             "skipFiles": [
                 "<node_internals>/**"
             ],
