@@ -3,7 +3,7 @@
 module.exports = function(doc) {
   const unixToEpoch = unixTime => {
     const rounded = Math.floor(unixTime);
-    const start = 1629950400; // start time. change mainnet or testnet
+    const start = 1644501600; // start time. change mainnet or testnet
     const secondsInEpoch = 604800;
     return Math.floor((rounded - start) / secondsInEpoch) + 1;
   };
