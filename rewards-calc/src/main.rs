@@ -24,9 +24,40 @@ use query_couch::{query_couch_db,query_couch_db_with_full_str};
 use crate::get_spreads::Spread;
 use crate::quality_type::Quality;
 use crate::structs::CouchDBGroupedResult;
+use urlencoding::encode;
+use crate::structs::CouchDBResp;
+
 //aaa {"results":[
 //{"total_rows":305541,"offset":71,"rows":[
 //    {"id":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","key":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","value":{
+
+#[derive(Debug, Clone)]
+pub struct PriceData {
+  pub unix_time: u32,
+  pub price: f64
+}
+
+fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec<PriceData> {
+  return tinymanTradesData.rows.iter()
+  .map(|tradeItem| &tradeItem.value)
+  .map(|tradeItem| {
+    let time = tradeItem.unix_time;
+    let assets = (tradeItem.pool_xfer_asset_id, tradeItem.user_xfer_asset_id); 
+    let algoAmount = match assets {
+      (1, _) => tradeItem.pool_xfer_amount,
+      (_, 1) => tradeItem.user_xfer_amount,
+      (_, _) => panic!("Unexpected asset!")
+    };
+    let usdcAmount = match assets {
+      (31566704, _) => tradeItem.pool_xfer_amount,
+      (_, 31566704) => tradeItem.user_xfer_amount,
+      (_, _) => panic!("Unexpected asset!")
+    };
+
+    let price = usdcAmount as f64/algoAmount as f64;
+    PriceData {unix_time: time, price}
+  }).collect();
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -122,18 +153,29 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let epochStart = getEpochStart(2, epochLaunchTime);
   let epochEnd = getEpochEnd(2, epochLaunchTime);
 
-  let tinymanStr = "inclusive_end=true&start_key=%5B1%2C%2031566704%2C%201645106400%5D&end_key=%5B1%2C%2031566704%2C%201645711200%5D&skip=0&limit=21&reduce=false";
+  let encode_price_query = |time| -> String {
+    let vec = vec![1, 31566704, time];
+    let json = serde_json::to_string(&vec).unwrap();
+    let encoded = encode(&json.to_string()).into_owned();
+    encoded
+  };
+
+  let epochStartStr = encode_price_query(epochStart);
+  let epochEndStr = encode_price_query(epochEnd);
+
+  let tinymanStr = format!("inclusive_end=true&start_key={}&end_key={}&reduce=false",
+  epochStartStr, epochEndStr);
   
   let tinymanTrades = query_couch_db_with_full_str::<TinymanTrade>(&couch_dburl,
     &"blocks".to_string(),
     &"blocks".to_string(),
     &"tinymanTrades".to_string(), &tinymanStr.to_string()).await;
-    dbg!(tinymanTrades.as_ref());
+    // dbg!(tinymanTrades.as_ref());
 
   let tinymanTradesData = tinymanTrades.unwrap();
+  let tinymanPrices = getTinymanPricesFromData(tinymanTradesData);
 
-
-  dbg!(tinymanTradesData);
+  // dbg!(tinymanPrices);
   // let formatted_escrow_data = query_couch_db::<EscrowValue>(&couch_dburl,
   //     &"formatted_escrow".to_string(),
   //     &"formatted_escrow".to_string(),
@@ -179,7 +221,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let mut escrowstep = 0;
   let mut ownerstep = 0;
 
-  println!("{} {}", epochStart, epochEnd);
+  // println!("{} {}", epochStart, epochEnd);
 
   //state machine data
 

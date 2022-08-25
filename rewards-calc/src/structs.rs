@@ -160,13 +160,13 @@ pub struct EscrowTimeKey {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TinymanTrade {
-    pub round: i64,
-    pub pool_xfer_asset_id: i64,
-    pub user_xfer_asset_id: i64,
+    pub round: u32,
+    pub pool_xfer_asset_id: u32,
+    pub user_xfer_asset_id: u32,
     #[serde(rename = "unix_time")]
-    pub unix_time: i64,
+    pub unix_time: u32,
     pub pool_xfer_type: String,
-    pub pool_xfer_amount: i64,
-    pub user_xfer_amount: i64,
+    pub pool_xfer_amount: u64,
+    pub user_xfer_amount: u64,
     pub user_xfer_type: String,
 }

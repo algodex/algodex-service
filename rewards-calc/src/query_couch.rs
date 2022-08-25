@@ -174,6 +174,7 @@ pub async fn query_couch_db_with_full_str<T: DeserializeOwned>(couch_url: &Strin
       .await?;
 
   let res = resp.text().await?;
+  // println!("{res}");
 
   if (res.contains("\"error\":\"unauthorized\"")) {
     panic!("{res}");
