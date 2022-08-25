@@ -207,6 +207,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       epochEnd,
       epochLaunchTime,
       escrowTimeToBalance,
+      tinymanPrices,
       unixTimeToChangedEscrows,
       formattedEscrowData,
       escrowAddrs,
@@ -219,7 +220,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   let mut timestep = epochStart;
   let mut escrowstep = 0;
-  let mut ownerstep = 0;
 
   // println!("{} {}", epochStart, epochEnd);
 
@@ -236,12 +236,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
       ownerWalletToALGXBalance,
       ownerWalletAssetToRewards,
       spreads,
+      algoPrice: 0.0,
     };
 
   //dbg!(spreads);
 
   let mut rng = rand::thread_rng();
   let mut owner_wallet_step = 0;
+  let mut algo_price_step = 0;
 
   loop {
     let curMinute = timestep / 60;
@@ -263,6 +265,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
       }
     }
 
+    // Price steps
+    loop {
+      let price_entry = &initialState.tinymanPrices[algo_price_step];
+      if (price_entry.unix_time > timestep) {
+        break;
+      }
+      stateMachine.algoPrice = price_entry.price;
+      algo_price_step += 1;
+    }
+
     while (escrowstep < initialState.changedEscrowSeq.len() &&
       initialState.changedEscrowSeq[escrowstep] <= timestep) {
         let changeTime = &initialState.changedEscrowSeq[escrowstep];
@@ -271,7 +283,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         updateBalances(&changedEscrows, &changeTime,
           &mut stateMachine.escrowToBalance, &initialState.escrowTimeToBalance);
         escrowstep += 1;
-        //updateBalances
     }
 
     if (escrowDidChange) {
@@ -352,7 +363,8 @@ pub struct StateMachine<'a> {
     escrowToBalance: HashMap<String, u64>,
     spreads: HashMap<u32, Spread>,
     ownerWalletAssetToRewards: HashMap<String,HashMap<u32,OwnerRewardsResult>>,
-    ownerWalletToALGXBalance: HashMap<&'a String,u64>
+    ownerWalletToALGXBalance: HashMap<&'a String,u64>,
+    algoPrice: f64
 }
 
 fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<String, u64> {
@@ -386,6 +398,7 @@ pub struct InitialState {
     epochEnd: u32,
     epochLaunchTime: u32,
     escrowTimeToBalance: HashMap<EscrowTimeKey, u64>,
+    tinymanPrices: Vec<PriceData>,
     unixTimeToChangedEscrows: HashMap<u32, Vec<String>>,
     changedEscrowSeq: Vec<u32>,
     formattedEscrowData:Vec<CouchDBResult<EscrowValue>>,

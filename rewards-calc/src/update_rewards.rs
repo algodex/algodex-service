@@ -86,7 +86,7 @@ use OrderType::Ask as Ask;
 
 pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, initialState: &InitialState) {
   let StateMachine { ref escrowToBalance, ref spreads, ref ownerWalletToALGXBalance,
-    ref mut ownerWalletAssetToRewards, .. } = stateMachine;
+    ref mut ownerWalletAssetToRewards, ref algoPrice, .. } = stateMachine;
   let InitialState { ref escrowAddrToData, ref assetIdToEscrows, .. } = initialState;
   let qualityAnalytics: Vec<QualityResult> = assetIdToEscrows.get(inputtedAssetId).unwrap().iter()
     //.map(|escrow| escrow.clone())
@@ -100,7 +100,6 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       return true;
     })
     .map(|escrow| {
-      let exchangeRate = 1; //FIXME
       let assetId = &escrowAddrToData.get(escrow).unwrap().data.escrow_info.asset_id;
       let price = &escrowAddrToData.get(escrow).unwrap().data.escrow_info.price;
       let decimals = &escrowAddrToData.get(escrow).unwrap().data.asset_decimals;
@@ -119,7 +118,7 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       let distanceFromSpread = (price - midMarket).abs();
       let percentDistant = distanceFromSpread / midMarket;
       let depth =
-        (exchangeRate as f64) * (*balance as f64) * price / (10_i64.pow(*decimals as u32) as f64);
+        (*algoPrice) * (*balance as f64) * price / (10_i64.pow(*decimals as u32) as f64);
       let orderType = match escrowAddrToData.get(escrow).unwrap().data.escrow_info.is_algo_buy_escrow {
         true => Bid,
         false => Ask
