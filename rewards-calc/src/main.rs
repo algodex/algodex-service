@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::{fmt, time};
 mod structs;
-use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue};
+use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue, TinymanTrade};
 use crate::structs::History;
 use crate::structs::CouchDBOuterResp;
 use crate::structs::CouchDBResultsType::{Grouped, Ungrouped};
@@ -19,8 +19,8 @@ use rand::Rng;
 use crate::update_rewards::OwnerRewardsResult;
 use crate::structs::CouchDBResult;
 use crate::update_rewards::OwnerFinalRewardsResult;
-use query_couch::query_couch_db;
-use query_couch::query_couch_db2;
+use query_couch::{query_couch_db,query_couch_db_with_full_str};
+// use query_couch::query_couch_db2;
 use crate::get_spreads::Spread;
 use crate::quality_type::Quality;
 use crate::structs::CouchDBGroupedResult;
@@ -109,13 +109,31 @@ async fn main() -> Result<(), Box<dyn Error>> {
     _ => {panic!("Unexpected grouped value for blockTimesDataQueryRes")},
   }.remove(0).rows;
   let blockToUnixTime: HashMap<u32, u32> = blockTimesData.iter().fold(HashMap::new(),|mut map, block| {
-    let key = block.key.parse::<u32>().unwrap();
+    let key = match &block.key {
+      structs::CouchDBKey::StringVal(str) => str,
+        _ => panic!("Invalid key!")
+    }.parse::<u32>().unwrap();
     map.insert(key, block.value);
     map
   });
   // println!("{:?}", blockTimesData);
 
+  let epochLaunchTime = env.get("EPOCH_LAUNCH_UNIX_TIME").unwrap().parse::<u32>().unwrap();
+  let epochStart = getEpochStart(2, epochLaunchTime);
+  let epochEnd = getEpochEnd(2, epochLaunchTime);
 
+  let tinymanStr = "inclusive_end=true&start_key=%5B1%2C%2031566704%2C%201645106400%5D&end_key=%5B1%2C%2031566704%2C%201645711200%5D&skip=0&limit=21&reduce=false";
+  
+  let tinymanTrades = query_couch_db_with_full_str::<TinymanTrade>(&couch_dburl,
+    &"blocks".to_string(),
+    &"blocks".to_string(),
+    &"tinymanTrades".to_string(), &tinymanStr.to_string()).await;
+    dbg!(tinymanTrades.as_ref());
+
+  let tinymanTradesData = tinymanTrades.unwrap();
+
+
+  dbg!(tinymanTradesData);
   // let formatted_escrow_data = query_couch_db::<EscrowValue>(&couch_dburl,
   //     &"formatted_escrow".to_string(),
   //     &"formatted_escrow".to_string(),
@@ -126,11 +144,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let escrowTimeToBalance = getEscrowAndTimeToBalance(&escrows);
 
     //FIXME - change to read args for epoch
-  let epochLaunchTime = env.get("EPOCH_LAUNCH_UNIX_TIME").unwrap().parse::<u32>().unwrap();
-  let epochStart = getEpochStart(2, epochLaunchTime);
-
-  let epochEnd = getEpochEnd(2, epochLaunchTime);
-
   let allAssetsSet: HashSet<u32> = escrowAddrToData.keys().fold(HashSet::new(), |mut set, escrow| {
       let asset = escrowAddrToData.get(escrow).unwrap().data.escrow_info.asset_id;
       set.insert(asset.clone());

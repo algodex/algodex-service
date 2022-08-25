@@ -8,6 +8,13 @@ pub enum CouchDBResultsType<T> {
 }
 
 #[derive(Deserialize, Debug, Clone)]
+#[serde(untagged)]
+pub enum CouchDBKey {
+    StringVal(String),
+    VecU64Val(Vec<u64>)
+}
+
+#[derive(Deserialize, Debug, Clone)]
 pub struct CouchDBOuterResp<T> {
     pub results: CouchDBResultsType<T>,
 }
@@ -39,7 +46,7 @@ pub struct CouchDBGroupedResult<T> {
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct CouchDBResult<T> {
-    pub key: String,
+    pub key: CouchDBKey,
     pub value: T,
     pub id: String
 }
@@ -148,4 +155,18 @@ pub struct Queries {
 pub struct EscrowTimeKey {
     pub escrow: String,
     pub unix_time: u32
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct TinymanTrade {
+    pub round: i64,
+    pub pool_xfer_asset_id: i64,
+    pub user_xfer_asset_id: i64,
+    #[serde(rename = "unix_time")]
+    pub unix_time: i64,
+    pub pool_xfer_type: String,
+    pub pool_xfer_amount: i64,
+    pub user_xfer_amount: i64,
+    pub user_xfer_type: String,
 }

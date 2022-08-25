@@ -10,7 +10,7 @@ use serde_path_to_error;
 use std::error::Error;
 
 use crate::structs::{CouchDBOuterResp, Keys, Queries, EscrowValue};
-
+use crate::structs::CouchDBResp;
 use crate::structs::CouchDBOuterResp2;
 
 // This is used for debugging since optionals dont work with serde json debugger
@@ -156,3 +156,44 @@ pub async fn query_couch_db<T: DeserializeOwned>(couch_url: &String, db_name: &S
   //return Err("Error...".into());
   return Ok(result?);
 }
+
+
+pub async fn query_couch_db_with_full_str<T: DeserializeOwned>(couch_url: &String, db_name: &String, index_name: &String, 
+  view_name: &String, full_query_str: &String)
+  -> Result<(CouchDBResp<T>), Box<dyn Error>> 
+  {
+
+  let client = reqwest::Client::new();
+
+  let full = format!("{}/{}/_design/{}/_view/{}?{}",
+      couch_url, db_name, index_name, view_name, full_query_str);
+
+  let resp = client.get(full)
+      //.header(reqwest::header::CONTENT_TYPE, "application/json")
+      .send()
+      .await?;
+
+  let res = resp.text().await?;
+
+  if (res.contains("\"error\":\"unauthorized\"")) {
+    panic!("{res}");
+  }
+
+  let result: Result<CouchDBResp<T>,_> = serde_json::from_str(&res);
+
+  if let Err(_) = &result {
+    println!("{res}");
+    let jd = &mut serde_json::Deserializer::from_str(&res);
+    let result2: Result<CouchDBResp<T>, _> = serde_path_to_error::deserialize(jd);
+    match &result2 {
+        Ok(_) => {},
+        Err(err) => {
+            let path = err.path().to_string();
+            dbg!(path);
+        }
+    }
+  };
+
+  return Ok(result?);
+}
+
