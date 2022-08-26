@@ -59,6 +59,8 @@ fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec
   }).collect();
 }
 
+const EPOCH:u16=2;
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
   dotenv::from_filename(".env").expect(".env file can't be found!");
@@ -69,7 +71,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   // println!("{:?}", result.get("ALGORAND_NETWORK").take());
 
   let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL");
-  let keys = [String::from("2")].to_vec();
+  let keys = [EPOCH.to_string()].to_vec();
   let accountEpochDataQueryRes = query_couch_db::<String>(&couch_dburl,
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
@@ -150,8 +152,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
   // println!("{:?}", blockTimesData);
 
   let epochLaunchTime = env.get("EPOCH_LAUNCH_UNIX_TIME").unwrap().parse::<u32>().unwrap();
-  let epochStart = getEpochStart(2, epochLaunchTime);
-  let epochEnd = getEpochEnd(2, epochLaunchTime);
+  let epochStart = getEpochStart(EPOCH, epochLaunchTime);
+  let epochEnd = getEpochEnd(EPOCH, epochLaunchTime);
 
   let encode_price_query = |time| -> String {
     let vec = vec![1, 31566704, time];
@@ -203,6 +205,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       assetIdToEscrows,
       blockToUnixTime,
       changedEscrowSeq,
+      epoch: EPOCH,
       epochStart,
       epochEnd,
       epochLaunchTime,
@@ -237,6 +240,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       ownerWalletAssetToRewards,
       spreads,
       algoPrice: 0.0,
+      timestep
     };
 
   //dbg!(spreads);
@@ -246,15 +250,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let mut algo_price_step = 0;
 
   loop {
-    let curMinute = timestep / 60;
-    timestep = ((curMinute + 1) * 60) + rng.gen_range(0..60);
+    let curMinute = stateMachine.timestep / 60;
+    stateMachine.timestep = ((curMinute + 1) * 60) + rng.gen_range(0..60);
     let mut escrowDidChange = false;
     // let ownerWalletsBalanceChangeSet:HashSet<String> = HashSet::new();
     loop {
       let owner_balance_entry = &initialState.algxBalanceData[owner_wallet_step];
       let owner_wallet_time = getTimeFromRound(&initialState.blockToUnixTime,
           &owner_balance_entry.value.round);
-      if (owner_wallet_time > timestep) {
+      if (owner_wallet_time > stateMachine.timestep) {
         break;
       }
       let wallet:&String = &owner_balance_entry.key;
@@ -268,7 +272,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Price steps
     loop {
       let price_entry = &initialState.tinymanPrices[algo_price_step];
-      if (price_entry.unix_time > timestep) {
+      if (price_entry.unix_time > stateMachine.timestep) {
         break;
       }
       stateMachine.algoPrice = price_entry.price;
@@ -276,7 +280,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     while (escrowstep < initialState.changedEscrowSeq.len() &&
-      initialState.changedEscrowSeq[escrowstep] <= timestep) {
+      initialState.changedEscrowSeq[escrowstep] <= stateMachine.timestep) {
         let changeTime = &initialState.changedEscrowSeq[escrowstep];
         let changedEscrows = initialState.unixTimeToChangedEscrows.get(changeTime).unwrap();
         escrowDidChange = true;
@@ -302,13 +306,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Array.from(assetsWithBalances).forEach(assetId => {
     //   updateRewards({assetId, ...stateMachine, ...initialState});
     // });
-    println!("{}", (timestep as f64 - epochStart as f64) / (epochEnd as f64 - epochStart as f64) * 100.0);
+    println!("{}", (stateMachine.timestep as f64 - epochStart as f64) / (epochEnd as f64 - epochStart as f64) * 100.0);
 
-    if (timestep >= epochEnd) {
+    if (stateMachine.timestep >= epochEnd) {
       break;
     }
   }
 
+  // Need to give rewards per asset
+  
   let mut rewardsFinal: Vec<OwnerFinalRewardsResult> = Vec::new();
   
   stateMachine.ownerWalletAssetToRewards.keys().for_each(|ownerWallet| {
@@ -364,7 +370,8 @@ pub struct StateMachine<'a> {
     spreads: HashMap<u32, Spread>,
     ownerWalletAssetToRewards: HashMap<String,HashMap<u32,OwnerRewardsResult>>,
     ownerWalletToALGXBalance: HashMap<&'a String,u64>,
-    algoPrice: f64
+    algoPrice: f64,
+    timestep: u32
 }
 
 fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<String, u64> {
@@ -394,6 +401,7 @@ pub struct InitialState {
     allAssetsSet: HashSet<u32>,
     assetIdToEscrows: HashMap<u32, Vec<String>>,
     blockToUnixTime: HashMap<u32, u32>,
+    epoch: u16,
     epochStart: u32,
     epochEnd: u32,
     epochLaunchTime: u32,
@@ -414,13 +422,13 @@ fn getSecondsInEpoch() -> u32 {
     return 604800;
 }
 
-fn getEpochStart(epoch: u8, epochLaunchTime: u32) -> u32 {
+fn getEpochStart(epoch: u16, epochLaunchTime: u32) -> u32 {
     let start = epochLaunchTime;
     let secondsInEpoch = getSecondsInEpoch();
     return start + (secondsInEpoch * ((epoch as u32) - 1));
 }
 
-fn getEpochEnd(epoch: u8, epochLaunchTime: u32,) -> u32 {
+fn getEpochEnd(epoch: u16, epochLaunchTime: u32,) -> u32 {
     getEpochStart(epoch, epochLaunchTime) + getSecondsInEpoch()
 }
 
