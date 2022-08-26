@@ -21,7 +21,9 @@ pub struct OwnerRewardsResult {
   pub algxBalanceSum: AlgxBalance,
   pub qualitySum: Quality,
   pub uptime: Uptime,
-  pub depth: Depth
+  pub depth: Depth,
+  pub has_bid: bool,
+  pub has_ask: bool
 }
 
 #[derive(Debug)]
@@ -53,7 +55,9 @@ impl Default for OwnerRewardsResult {
         algxBalanceSum: AlgxBalance::from(0), 
         qualitySum: Quality::from(0.0),
         uptime: Uptime::from(0),
-        depth: Depth::from(0.0)
+        depth: Depth::from(0.0),
+        has_bid: false,
+        has_ask: false
       }
   }
 }
@@ -65,14 +69,14 @@ impl QualityResult {
   }
 }
 
-impl OwnerRewardsResult {
-  pub fn new(algxBalanceSum: AlgxBalance, qualitySum: Quality,
-    uptime: Uptime, depth: Depth) -> OwnerRewardsResult {
-    OwnerRewardsResult {
-      algxBalanceSum, qualitySum, uptime, depth
-    }
-  }
-}
+// impl OwnerRewardsResult {
+//   pub fn new(algxBalanceSum: AlgxBalance, qualitySum: Quality,
+//     uptime: Uptime, depth: Depth) -> OwnerRewardsResult {
+//     OwnerRewardsResult {
+//       algxBalanceSum, qualitySum, uptime, depth, has_both_spread_sides: false
+//     }
+//   }
+// }
 
 
 
@@ -84,9 +88,78 @@ enum OrderType {
 use OrderType::Bid as Bid;
 use OrderType::Ask as Ask;
 
-pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, initialState: &InitialState) {
+enum MainnetPeriod {
+  Version1,
+  Version2
+}
+
+/// Get the current mainnet period. Either 1 or 2 based on the timestamp.
+fn check_mainnet_period(unix_time: &u32) -> MainnetPeriod {
+  // Thu Jun 02 2022 23:59:59 GMT-0400 (Eastern Daylight Time)
+  if (*unix_time < 1654228799) {
+    return MainnetPeriod::Version1;
+  } else {
+    return MainnetPeriod::Version2;
+  }
+}
+
+/// https://docs.algodex.com/rewards-program/algx-liquidity-rewards-program#initial-maximum-spreads
+fn get_spread_multiplier(unix_time: &u32, percent_distant: &f64) -> f64 {
+  let mainnet_period = check_mainnet_period(unix_time);
+  if let MainnetPeriod::Version1 = mainnet_period {
+    return 1.0;
+  }
+  let adj_percent = *percent_distant * 100.0;
+  if (adj_percent < 0.5) {
+    return 10.0;
+  } else if (adj_percent < 1.0) {
+    return 2.5;
+  }
+
+  return 1.0;
+}
+
+/// Check if eligible for ALGX rewards
+/// https://docs.algodex.com/rewards-program/algx-liquidity-rewards-program
+fn check_is_eligible(percentDistant: &f64, orderType: &OrderType,
+  depth: &f64, ownerAlgxBalance: &AlgxBalance, unix_time: &u32) -> bool {
+
+  match check_mainnet_period(unix_time) {
+    MainnetPeriod::Version1 => {
+      if (*percentDistant > 0.1) { // 10%
+        return false
+      }
+      if (*depth < 15.0 && matches!(orderType, Bid)) { //FIXME 
+        return false
+      }
+      if (*depth < 30.0 && matches!(orderType, Ask)) {
+        return false;
+      }
+      return true;
+    },
+    MainnetPeriod::Version2 => {
+      if (ownerAlgxBalance.val() < 3000 * 10u64.pow(6)) { // FIXME change to 3000 
+        return false;
+      }
+      if (*percentDistant > 0.05) { // 5%
+        return false;
+      }
+      if (*depth < 50.0 && matches!(orderType, Bid)) { //FIXME 
+        return false;
+      }
+      if (*depth < 100.0 && matches!(orderType, Ask)) {
+        return false;
+      }
+      return true;
+    }
+  };
+}
+
+
+pub fn updateRewards(
+  inputtedAssetId: &u32, stateMachine: &mut StateMachine, initialState: &InitialState) {
   let StateMachine { ref escrowToBalance, ref spreads, ref ownerWalletToALGXBalance,
-    ref mut ownerWalletAssetToRewards, .. } = stateMachine;
+    ref mut ownerWalletAssetToRewards, ref algoPrice, ref timestep, .. } = stateMachine;
   let InitialState { ref escrowAddrToData, ref assetIdToEscrows, .. } = initialState;
   let qualityAnalytics: Vec<QualityResult> = assetIdToEscrows.get(inputtedAssetId).unwrap().iter()
     //.map(|escrow| escrow.clone())
@@ -100,7 +173,6 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       return true;
     })
     .map(|escrow| {
-      let exchangeRate = 1; //FIXME
       let assetId = &escrowAddrToData.get(escrow).unwrap().data.escrow_info.asset_id;
       let price = &escrowAddrToData.get(escrow).unwrap().data.escrow_info.price;
       let decimals = &escrowAddrToData.get(escrow).unwrap().data.asset_decimals;
@@ -119,33 +191,16 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       let distanceFromSpread = (price - midMarket).abs();
       let percentDistant = distanceFromSpread / midMarket;
       let depth =
-        (exchangeRate as f64) * (*balance as f64) * price / (10_i64.pow(*decimals as u32) as f64);
+        (*algoPrice) * (*balance as f64) * price / (10_i64.pow(*decimals as u32) as f64);
       let orderType = match escrowAddrToData.get(escrow).unwrap().data.escrow_info.is_algo_buy_escrow {
         true => Bid,
         false => Ask
       };
 
-      let isEligibleFn = |percentDistant: &f64, orderType: &OrderType,
-        depth: &f64, ownerAlgxBalance: &AlgxBalance| -> bool {
-        //FIXME - move to new function
-        if (*percentDistant > 0.1) {
-          return false;
-        }
-        if (*depth < 15.0 && matches!(orderType, Bid)) { //FIXME 
-          return false;
-        }
-        if (*depth < 30.0 && matches!(orderType, Ask)) {
-          return false;
-        }
-        if (ownerAlgxBalance.val() < 30 * 10u64.pow(6)) { // FIXME change to 3000 
-          return false;
-        }
-        return true;
-      };
-      let isEligible = isEligibleFn(&percentDistant, &orderType, &depth, &ownerAlgxBalance);
-
+      let isEligible = check_is_eligible(&percentDistant, &orderType, &depth, &ownerAlgxBalance, timestep);
+      let spread_multiplier = get_spread_multiplier(timestep, &percentDistant);
       let quality = match isEligible {
-        true => depth / (percentDistant + 0.0001),
+        true => spread_multiplier * depth / (percentDistant + 0.0001),
         false => 0.0
       };
       let bidDepth = match orderType {
@@ -204,6 +259,10 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       let QualityResult { ref quality, ref addr, ref bidDepth,
         ref askDepth, ref algxBalance } = qualityResult;
       
+      if (quality.val() == 0.0) {
+        return;
+      }
+
       if ownerWalletAssetToRewards.get(owner).is_none() {
         ownerWalletAssetToRewards.insert(owner.clone(), HashMap::new());
       }
@@ -212,18 +271,26 @@ pub fn updateRewards(inputtedAssetId: &u32, stateMachine: &mut StateMachine, ini
       if (assetRewardsMap.get(inputtedAssetId).is_none()) {
         assetRewardsMap.insert(*inputtedAssetId, OwnerRewardsResult::default());
       }
-      let entry = assetRewardsMap.get_mut(inputtedAssetId).unwrap();
-      entry.algxBalanceSum += *algxBalance;
-      entry.qualitySum += *quality;
+      let owner_entry = assetRewardsMap.get_mut(inputtedAssetId).unwrap();
+      owner_entry.algxBalanceSum += *algxBalance;
+      owner_entry.qualitySum += *quality;
       if (totalBidDepth.val() > 0.0) {
-        entry.depth += bidDepth.asDepth() / totalBidDepth.asDepth();
+        owner_entry.depth += bidDepth.asDepth() / totalBidDepth.asDepth();
+        owner_entry.has_bid = true;
       }
       if (totalAskDepth.val() > 0.0) {
-        entry.depth += askDepth.asDepth() / totalAskDepth.asDepth();
+        owner_entry.depth += askDepth.asDepth() / totalAskDepth.asDepth();
+        owner_entry.has_ask = true;
       } 
-
-      if (quality.val() > 0.0000001) {
-        entry.uptime += Uptime::from(1);
+      if (quality.val() >= 0.0000001) {
+        match check_mainnet_period(timestep) {
+          MainnetPeriod::Version1 => owner_entry.uptime += Uptime::from(1),
+          MainnetPeriod::Version2 => {
+            if (owner_entry.has_ask && owner_entry.has_bid) {
+              owner_entry.uptime += Uptime::from(1);
+            }
+          }
+        }
       }
     })
 }

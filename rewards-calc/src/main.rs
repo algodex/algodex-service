@@ -3,7 +3,7 @@ use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::{fmt, time};
 mod structs;
-use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue};
+use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue, TinymanTrade};
 use crate::structs::History;
 use crate::structs::CouchDBOuterResp;
 use crate::structs::CouchDBResultsType::{Grouped, Ungrouped};
@@ -19,13 +19,47 @@ use rand::Rng;
 use crate::update_rewards::OwnerRewardsResult;
 use crate::structs::CouchDBResult;
 use crate::update_rewards::OwnerFinalRewardsResult;
-use query_couch::query_couch_db;
+use query_couch::{query_couch_db,query_couch_db_with_full_str};
+// use query_couch::query_couch_db2;
 use crate::get_spreads::Spread;
 use crate::quality_type::Quality;
 use crate::structs::CouchDBGroupedResult;
+use urlencoding::encode;
+use crate::structs::CouchDBResp;
+
 //aaa {"results":[
 //{"total_rows":305541,"offset":71,"rows":[
 //    {"id":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","key":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","value":{
+
+#[derive(Debug, Clone)]
+pub struct PriceData {
+  pub unix_time: u32,
+  pub price: f64
+}
+
+fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec<PriceData> {
+  return tinymanTradesData.rows.iter()
+  .map(|tradeItem| &tradeItem.value)
+  .map(|tradeItem| {
+    let time = tradeItem.unix_time;
+    let assets = (tradeItem.pool_xfer_asset_id, tradeItem.user_xfer_asset_id); 
+    let algoAmount = match assets {
+      (1, _) => tradeItem.pool_xfer_amount,
+      (_, 1) => tradeItem.user_xfer_amount,
+      (_, _) => panic!("Unexpected asset!")
+    };
+    let usdcAmount = match assets {
+      (31566704, _) => tradeItem.pool_xfer_amount,
+      (_, 31566704) => tradeItem.user_xfer_amount,
+      (_, _) => panic!("Unexpected asset!")
+    };
+
+    let price = usdcAmount as f64/algoAmount as f64;
+    PriceData {unix_time: time, price}
+  }).collect();
+}
+
+const EPOCH:u16=2;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
@@ -36,8 +70,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
   });
   // println!("{:?}", result.get("ALGORAND_NETWORK").take());
 
-  let couch_dburl = env.get("COUCHDB_BASE_URL").expect("Missing COUCHDB_BASE_URL");
-  let keys = [String::from("2")].to_vec();
+  let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL");
+  let keys = [EPOCH.to_string()].to_vec();
   let accountEpochDataQueryRes = query_couch_db::<String>(&couch_dburl,
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
@@ -47,7 +81,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       _ => {panic!("Unexpected grouped value for accountEpochDataQueryRes")},
   }.remove(0).rows;
   let escrowAddrs:Vec<String> = accountData.iter().map(|row| String::clone(&row.value)).collect();
-  //println!("{:?}", escrowAddrs);
+  // println!("{:?}", escrowAddrs);
   
   let formattedEscrowDataQueryRes = query_couch_db::<EscrowValue>(&couch_dburl,
       &"formatted_escrow".to_string(),
@@ -108,13 +142,42 @@ async fn main() -> Result<(), Box<dyn Error>> {
     _ => {panic!("Unexpected grouped value for blockTimesDataQueryRes")},
   }.remove(0).rows;
   let blockToUnixTime: HashMap<u32, u32> = blockTimesData.iter().fold(HashMap::new(),|mut map, block| {
-    let key = block.key.parse::<u32>().unwrap();
+    let key = match &block.key {
+      structs::CouchDBKey::StringVal(str) => str,
+        _ => panic!("Invalid key!")
+    }.parse::<u32>().unwrap();
     map.insert(key, block.value);
     map
   });
   // println!("{:?}", blockTimesData);
 
+  let epochLaunchTime = env.get("EPOCH_LAUNCH_UNIX_TIME").unwrap().parse::<u32>().unwrap();
+  let epochStart = getEpochStart(EPOCH, epochLaunchTime);
+  let epochEnd = getEpochEnd(EPOCH, epochLaunchTime);
 
+  let encode_price_query = |time| -> String {
+    let vec = vec![1, 31566704, time];
+    let json = serde_json::to_string(&vec).unwrap();
+    let encoded = encode(&json.to_string()).into_owned();
+    encoded
+  };
+
+  let epochStartStr = encode_price_query(epochStart);
+  let epochEndStr = encode_price_query(epochEnd);
+
+  let tinymanStr = format!("inclusive_end=true&start_key={}&end_key={}&reduce=false",
+  epochStartStr, epochEndStr);
+  
+  let tinymanTrades = query_couch_db_with_full_str::<TinymanTrade>(&couch_dburl,
+    &"blocks".to_string(),
+    &"blocks".to_string(),
+    &"tinymanTrades".to_string(), &tinymanStr.to_string()).await;
+    // dbg!(tinymanTrades.as_ref());
+
+  let tinymanTradesData = tinymanTrades.unwrap();
+  let tinymanPrices = getTinymanPricesFromData(tinymanTradesData);
+
+  // dbg!(tinymanPrices);
   // let formatted_escrow_data = query_couch_db::<EscrowValue>(&couch_dburl,
   //     &"formatted_escrow".to_string(),
   //     &"formatted_escrow".to_string(),
@@ -125,11 +188,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let escrowTimeToBalance = getEscrowAndTimeToBalance(&escrows);
 
     //FIXME - change to read args for epoch
-  let epochLaunchTime = env.get("EPOCH_LAUNCH_UNIX_TIME").unwrap().parse::<u32>().unwrap();
-  let epochStart = getEpochStart(2, epochLaunchTime);
-
-  let epochEnd = getEpochEnd(2, epochLaunchTime);
-
   let allAssetsSet: HashSet<u32> = escrowAddrToData.keys().fold(HashSet::new(), |mut set, escrow| {
       let asset = escrowAddrToData.get(escrow).unwrap().data.escrow_info.asset_id;
       set.insert(asset.clone());
@@ -138,6 +196,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let allAssets: Vec<u32> = allAssetsSet.clone().into_iter().collect();
 
   // dbg!(allAssetsSet);
+  // let cloned: Vec<CouchDBResult<EscrowValue>> = formattedEscrowDataQueryRes.unwrap().results[0].rows.clone();
 
   let initialState = InitialState {
       algxBalanceData,
@@ -146,10 +205,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
       assetIdToEscrows,
       blockToUnixTime,
       changedEscrowSeq,
+      epoch: EPOCH,
       epochStart,
       epochEnd,
       epochLaunchTime,
       escrowTimeToBalance,
+      tinymanPrices,
       unixTimeToChangedEscrows,
       formattedEscrowData,
       escrowAddrs,
@@ -162,9 +223,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   let mut timestep = epochStart;
   let mut escrowstep = 0;
-  let mut ownerstep = 0;
 
-  println!("{} {}", epochStart, epochEnd);
+  // println!("{} {}", epochStart, epochEnd);
 
   //state machine data
 
@@ -179,23 +239,26 @@ async fn main() -> Result<(), Box<dyn Error>> {
       ownerWalletToALGXBalance,
       ownerWalletAssetToRewards,
       spreads,
+      algoPrice: 0.0,
+      timestep
     };
 
   //dbg!(spreads);
 
   let mut rng = rand::thread_rng();
   let mut owner_wallet_step = 0;
+  let mut algo_price_step = 0;
 
   loop {
-    let curMinute = timestep / 60;
-    timestep = ((curMinute + 1) * 60) + rng.gen_range(0..60);
+    let curMinute = stateMachine.timestep / 60;
+    stateMachine.timestep = ((curMinute + 1) * 60) + rng.gen_range(0..60);
     let mut escrowDidChange = false;
     // let ownerWalletsBalanceChangeSet:HashSet<String> = HashSet::new();
     loop {
       let owner_balance_entry = &initialState.algxBalanceData[owner_wallet_step];
       let owner_wallet_time = getTimeFromRound(&initialState.blockToUnixTime,
           &owner_balance_entry.value.round);
-      if (owner_wallet_time > timestep) {
+      if (owner_wallet_time > stateMachine.timestep) {
         break;
       }
       let wallet:&String = &owner_balance_entry.key;
@@ -206,15 +269,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
       }
     }
 
+    // Price steps
+    loop {
+      let price_entry = &initialState.tinymanPrices[algo_price_step];
+      if (price_entry.unix_time > stateMachine.timestep) {
+        break;
+      }
+      stateMachine.algoPrice = price_entry.price;
+      algo_price_step += 1;
+    }
+
     while (escrowstep < initialState.changedEscrowSeq.len() &&
-      initialState.changedEscrowSeq[escrowstep] <= timestep) {
+      initialState.changedEscrowSeq[escrowstep] <= stateMachine.timestep) {
         let changeTime = &initialState.changedEscrowSeq[escrowstep];
         let changedEscrows = initialState.unixTimeToChangedEscrows.get(changeTime).unwrap();
         escrowDidChange = true;
         updateBalances(&changedEscrows, &changeTime,
           &mut stateMachine.escrowToBalance, &initialState.escrowTimeToBalance);
         escrowstep += 1;
-        //updateBalances
     }
 
     if (escrowDidChange) {
@@ -234,13 +306,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // Array.from(assetsWithBalances).forEach(assetId => {
     //   updateRewards({assetId, ...stateMachine, ...initialState});
     // });
-    println!("{}", (timestep as f64 - epochStart as f64) / (epochEnd as f64 - epochStart as f64) * 100.0);
+    println!("{}", (stateMachine.timestep as f64 - epochStart as f64) / (epochEnd as f64 - epochStart as f64) * 100.0);
 
-    if (timestep >= epochEnd) {
+    if (stateMachine.timestep >= epochEnd) {
       break;
     }
   }
 
+  // Need to give rewards per asset
+  
   let mut rewardsFinal: Vec<OwnerFinalRewardsResult> = Vec::new();
   
   stateMachine.ownerWalletAssetToRewards.keys().for_each(|ownerWallet| {
@@ -295,7 +369,9 @@ pub struct StateMachine<'a> {
     escrowToBalance: HashMap<String, u64>,
     spreads: HashMap<u32, Spread>,
     ownerWalletAssetToRewards: HashMap<String,HashMap<u32,OwnerRewardsResult>>,
-    ownerWalletToALGXBalance: HashMap<&'a String,u64>
+    ownerWalletToALGXBalance: HashMap<&'a String,u64>,
+    algoPrice: f64,
+    timestep: u32
 }
 
 fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<String, u64> {
@@ -325,10 +401,12 @@ pub struct InitialState {
     allAssetsSet: HashSet<u32>,
     assetIdToEscrows: HashMap<u32, Vec<String>>,
     blockToUnixTime: HashMap<u32, u32>,
+    epoch: u16,
     epochStart: u32,
     epochEnd: u32,
     epochLaunchTime: u32,
     escrowTimeToBalance: HashMap<EscrowTimeKey, u64>,
+    tinymanPrices: Vec<PriceData>,
     unixTimeToChangedEscrows: HashMap<u32, Vec<String>>,
     changedEscrowSeq: Vec<u32>,
     formattedEscrowData:Vec<CouchDBResult<EscrowValue>>,
@@ -344,13 +422,13 @@ fn getSecondsInEpoch() -> u32 {
     return 604800;
 }
 
-fn getEpochStart(epoch: u8, epochLaunchTime: u32) -> u32 {
+fn getEpochStart(epoch: u16, epochLaunchTime: u32) -> u32 {
     let start = epochLaunchTime;
     let secondsInEpoch = getSecondsInEpoch();
     return start + (secondsInEpoch * ((epoch as u32) - 1));
 }
 
-fn getEpochEnd(epoch: u8, epochLaunchTime: u32,) -> u32 {
+fn getEpochEnd(epoch: u16, epochLaunchTime: u32,) -> u32 {
     getEpochStart(epoch, epochLaunchTime) + getSecondsInEpoch()
 }
 
