@@ -25,7 +25,14 @@ const getChangedAccountValues = (ownerToBalanceWithRounds, block) => {
       amount: 0,
     };
   };
-  const newOwnerToBalance = block.txns.map(txn => txn.txn)
+  const newOwnerToBalance = block.txns
+      .flatMap(txn => {
+        if (txn?.dt?.itx) {
+          return txn.dt.itx;
+        }
+        return txn;
+      })
+      .map(txn => txn.txn)
       .filter(txn => txn.type === 'axfer')
       .filter(txn => txn.xaid === parseInt(algxAssetId))
       .reduce((ownerToBalance, txn) => {
