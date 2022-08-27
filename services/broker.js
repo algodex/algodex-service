@@ -119,9 +119,12 @@ module.exports = ({queues, events, databases}) => {
             // handle success
             if (response.data.length === 0 ||
               response.data.filter(item =>
-                item.type !== 'view_compaction').length === 0) {
+                // Ignore these types of DB operations since data
+                // can still be added and views still work
+                item.type !== 'view_compaction' &&
+                item.type !== 'database_compaction').length === 0) {
               if (!didTrigger) {
-                // Try to get max block
+              // Try to get max block
                 await blocksDB.query('blocks/maxBlock',
                     {reduce: true, group: true});
                 // Wait again
