@@ -7,7 +7,14 @@ const hasAlgxChanges = block => {
     throw new Error('process.env.ALGX_ASSET_ID is not defined!');
   }
 
-  const algxTransfer = block.txns.map(txn => txn.txn)
+  const algxTransfer = block.txns
+      .flatMap(txn => {
+        if (txn?.dt?.itx) {
+          return txn.dt.itx;
+        }
+        return txn;
+      })
+      .map(txn => txn.txn)
       .filter(txn => txn.type === 'axfer')
       .filter(txn => txn.xaid === parseInt(algxAssetId))
       .find(txn => (txn.aamt && txn.aamt > 0) || txn.aclose !== undefined);
