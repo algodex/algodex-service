@@ -8,16 +8,18 @@ const reducer = function(keys, values, rereduce) {
     return min;
   };
   const finalOrder = values.reduce(function(finalOrder, order) {
-    const version = order.version || finalOrder.version;
     const earliestRound = getEarliest([finalOrder.earliestRound,
       finalOrder.round, order.round, order.earliestRound]);
 
     if (order.block > finalOrder.block) {
       finalOrder = order;
     }
-    if (!finalOrder.version) {
-      finalOrder.version = version;
-    }
+    Object.keys(order).forEach(key => {
+      if (!finalOrder.hasOwnProperty(key) || !finalOrder[key] || finalOrder[key] === '') {
+        finalOrder[key] = order[key];
+      }
+    });
+
     finalOrder.earliestRound = earliestRound;
     return finalOrder;
   }, values[0]);
