@@ -36,8 +36,8 @@ module.exports = function(doc) {
     const userXferType = group[2].txn.type;
     const poolXferAssetId = group[3].txn.xaid || 1;
     const userXferAssetId = group[2].txn.xaid || 1;
-    if ((poolXferType === 'pay' && userXferType === 'axfer') ||
-    (poolXferType === 'axfer' && userXferType === 'pay') &&
+    if (((poolXferType === 'pay' && userXferType === 'axfer') ||
+    (poolXferType === 'axfer' && userXferType === 'pay')) &&
     poolXferAmount && userXferAmount) {
       const asset1 = Math.min(poolXferAssetId, userXferAssetId);
       const asset2 = Math.max(poolXferAssetId, userXferAssetId);
