@@ -33,14 +33,14 @@
   },
   {
     "_id": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ-16583486",
-    "_rev": "1-aa31ba125f6cd2399b6e6bab767cccbd",
+    "_rev": "1-d8005a1461af61316c5337b072435cf1",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ-16583486",
         "address": "3UZRRBPLSK3LGRUF6GQFCLOU6QVFV3KMFE5BPKIK7SALY5LZPJGJUAVQFQ",
         "algoAmount": 0,
-        "round": 23276467,
+        "round": 23785493,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -192,14 +192,14 @@
   },
   {
     "_id": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ-16583654",
-    "_rev": "1-7b8bc196ec9b6ab06c2bf60acaacd3f0",
+    "_rev": "1-ccfe4e15191fb858bb956cfb85e8b65d",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ-16583654",
         "address": "6Q7HRVYTOJTRXML55P374VQB74IKANHM6YIFCNRHXEQOSWQFRNSNY7TIEQ",
         "algoAmount": 0,
-        "round": 23276472,
+        "round": 23785500,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -255,14 +255,14 @@
   },
   {
     "_id": "BOS6PHIZPV5FA6S4T4ZY6HSTES7TLEICTIE6MWJFCUKGJAMNXBBKXNIECI-16583646",
-    "_rev": "1-45fbffcce72148136b7a781eeec1d319",
+    "_rev": "1-11e77b814717fc42073461985ff38f8f",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "BOS6PHIZPV5FA6S4T4ZY6HSTES7TLEICTIE6MWJFCUKGJAMNXBBKXNIECI-16583646",
         "address": "BOS6PHIZPV5FA6S4T4ZY6HSTES7TLEICTIE6MWJFCUKGJAMNXBBKXNIECI",
         "algoAmount": 0,
-        "round": 23276472,
+        "round": 23785499,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -286,14 +286,14 @@
   },
   {
     "_id": "CYM7TCEHQAN5X2QAYCG674XR4BA3E3NMSTJTYI5ABFBBNOSDZHTFOY64DE-16583502",
-    "_rev": "1-e28991fa3d36b58cf17a5584d0be9672",
+    "_rev": "1-91087a841738bb83e00bfaf34549b575",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "CYM7TCEHQAN5X2QAYCG674XR4BA3E3NMSTJTYI5ABFBBNOSDZHTFOY64DE-16583502",
         "address": "CYM7TCEHQAN5X2QAYCG674XR4BA3E3NMSTJTYI5ABFBBNOSDZHTFOY64DE",
         "algoAmount": 5993000,
-        "round": 23276468,
+        "round": 23785494,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -349,14 +349,14 @@
   },
   {
     "_id": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY-16583547",
-    "_rev": "1-90eb8a24499c8840ac763e7ace743949",
+    "_rev": "1-d2f91a446b76786d5551ac3d931a962e",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY-16583547",
         "address": "DO3UIWFH5NFX7HYQ3UPSTQADFV2JLH54G3TCJQYWNUR2EBZ7LIDHG7SDLY",
         "algoAmount": 0,
-        "round": 23276469,
+        "round": 23785496,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -380,14 +380,14 @@
   },
   {
     "_id": "E7AAFHYNAEMY3UJHABD465VWQYAGUVKR4FXLJA5YURY4XH6UHYVDKX5W3Q-16583614",
-    "_rev": "1-a44b4a972b7931f74a0a4529fce55a37",
+    "_rev": "1-6e694c67b8954b60fc2e944fec347b13",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "E7AAFHYNAEMY3UJHABD465VWQYAGUVKR4FXLJA5YURY4XH6UHYVDKX5W3Q-16583614",
         "address": "E7AAFHYNAEMY3UJHABD465VWQYAGUVKR4FXLJA5YURY4XH6UHYVDKX5W3Q",
         "algoAmount": 1349000,
-        "round": 23276471,
+        "round": 23785498,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -411,14 +411,14 @@
   },
   {
     "_id": "F2NJDQ2NB3AWIVZBWTM3LUI34ROTQGTTQ4KL6EJIENNUKBLASTA2Y2D2IU-16583524",
-    "_rev": "1-e3b083c8119ccc8a06dd3c551185c42c",
+    "_rev": "1-9cfa13d8314d9d75dd63e5a3429ec065",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "F2NJDQ2NB3AWIVZBWTM3LUI34ROTQGTTQ4KL6EJIENNUKBLASTA2Y2D2IU-16583524",
         "address": "F2NJDQ2NB3AWIVZBWTM3LUI34ROTQGTTQ4KL6EJIENNUKBLASTA2Y2D2IU",
         "algoAmount": 1497000,
-        "round": 23276468,
+        "round": 23785495,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -506,14 +506,14 @@
   },
   {
     "_id": "G4DGEHYTW7P2LXFLYFLTEVTNBOQ4IVXGD644NAV5VNDRLQ7HZPI3D4GY7I-16583609",
-    "_rev": "1-166a04a4d68f03c1a30bbd35816428c4",
+    "_rev": "1-82930c65c11d8398f7e4c3ba6e9482f5",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "G4DGEHYTW7P2LXFLYFLTEVTNBOQ4IVXGD644NAV5VNDRLQ7HZPI3D4GY7I-16583609",
         "address": "G4DGEHYTW7P2LXFLYFLTEVTNBOQ4IVXGD644NAV5VNDRLQ7HZPI3D4GY7I",
         "algoAmount": 0,
-        "round": 23276471,
+        "round": 23785498,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -537,14 +537,14 @@
   },
   {
     "_id": "I6AUNNUWQAV5ETT3NZLZTM2W2DRBR7VBADQHWPY3RQNRFLC6MQ6OOT2NGA-16583595",
-    "_rev": "1-f97b40f90190c19913e2395e1fe5eda2",
+    "_rev": "1-2e5eea23f7602f5a25603ef2a22b4656",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "I6AUNNUWQAV5ETT3NZLZTM2W2DRBR7VBADQHWPY3RQNRFLC6MQ6OOT2NGA-16583595",
         "address": "I6AUNNUWQAV5ETT3NZLZTM2W2DRBR7VBADQHWPY3RQNRFLC6MQ6OOT2NGA",
         "algoAmount": 5079590,
-        "round": 23276470,
+        "round": 23785498,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -568,14 +568,14 @@
   },
   {
     "_id": "J5OTFGIJOBRAYK2ZXIEM35H7OVUDS45FTUFJSMEBQZ4VUW33UERUU6TZNE-16583626",
-    "_rev": "1-09c48ce8578f9820a6f0f1869d12d1dc",
+    "_rev": "1-d0b687304b6e8d733aaeb8137a4d88ad",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "J5OTFGIJOBRAYK2ZXIEM35H7OVUDS45FTUFJSMEBQZ4VUW33UERUU6TZNE-16583626",
         "address": "J5OTFGIJOBRAYK2ZXIEM35H7OVUDS45FTUFJSMEBQZ4VUW33UERUU6TZNE",
         "algoAmount": 5000408,
-        "round": 23276471,
+        "round": 23785499,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -727,14 +727,14 @@
   },
   {
     "_id": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q-16583602",
-    "_rev": "1-e0b900597101859b250547de6415e777",
+    "_rev": "1-5010a64e1ddae85e0b8bb818a13e4978",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q-16583602",
         "address": "OAUOYEQ62G63GHANT4H6RESF7XZ2DJS64IT53OSEGU5UYOKDGNEUZSWR2Q",
         "algoAmount": 0,
-        "round": 23276470,
+        "round": 23785498,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -794,14 +794,14 @@
   },
   {
     "_id": "ORCGPGK7HJTBMLFAPOWHDD3CWX4JHWNTFSXTPER5PWRWDFNBMLDJVLMTVY-16583634",
-    "_rev": "1-5af81028ab393f9094d5825397a66345",
+    "_rev": "1-70560de0bb6ed33ab9b084f6ea2a3590",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "ORCGPGK7HJTBMLFAPOWHDD3CWX4JHWNTFSXTPER5PWRWDFNBMLDJVLMTVY-16583634",
         "address": "ORCGPGK7HJTBMLFAPOWHDD3CWX4JHWNTFSXTPER5PWRWDFNBMLDJVLMTVY",
         "algoAmount": 8741270,
-        "round": 23276471,
+        "round": 23785499,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -857,14 +857,14 @@
   },
   {
     "_id": "OZIL44HEQGLMJYIQRIK6BRYLAYXD6QVR2PT6EU4QICPV3NHAEYLVRROHH4-16583572",
-    "_rev": "1-bc8def2585303c29756a0a41e3470790",
+    "_rev": "1-a2f2f85dea7ef84da692f87e140a4263",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "OZIL44HEQGLMJYIQRIK6BRYLAYXD6QVR2PT6EU4QICPV3NHAEYLVRROHH4-16583572",
         "address": "OZIL44HEQGLMJYIQRIK6BRYLAYXD6QVR2PT6EU4QICPV3NHAEYLVRROHH4",
         "algoAmount": 0,
-        "round": 23276470,
+        "round": 23785496,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -1084,7 +1084,7 @@
   },
   {
     "_id": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4-16583591",
-    "_rev": "1-5af820895faec7866a5c22c77f8a8beb",
+    "_rev": "1-d2a7ba4dacf784ea4a652fda8c0ce556",
     "type": "block",
     "data": {
       "indexerInfo": {
@@ -1108,6 +1108,10 @@
         "block": "16583591",
         "ts": 1631353192,
         "version": "\u0003",
+        "apat": [
+          "3FRO5IP2R6UAEGXFMJJXHUUMH24MB4RMQKWJ2WPHEOOIM24F2M3IEXGLTU",
+          "T5YBWTD2P7ZDZH2ZCV5IP4OT6XIAR2NO3FM2IJVSKW5A5E4D2DRSCECFQA"
+        ],
         "status": "open"
       },
       "lastUpdateUnixTime": 1631353192,
@@ -1116,14 +1120,14 @@
   },
   {
     "_id": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4-16583609",
-    "_rev": "1-6540cc04cb9c977b92029df5ff1d0215",
+    "_rev": "1-a1c45028cd4b293bfe427521146a236e",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4-16583609",
         "address": "PW5QBZEFB6IAYTNKCGRC2ZEWY33RJOHZUQWG4URJEXLB5R3TMDOEBKDWL4",
         "algoAmount": 0,
-        "round": 23276471,
+        "round": 23785498,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -1183,14 +1187,14 @@
   },
   {
     "_id": "PYXYEKP5QEBAYAJMKIYL3SEEI2JUXHZ7CJWFYGDAF4HC64PSR33YMLLEIQ-16583642",
-    "_rev": "1-dc1e7fc79fd050932b52f01ad6e155c0",
+    "_rev": "1-8a4722ca5217598516cb5874f36b441a",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "PYXYEKP5QEBAYAJMKIYL3SEEI2JUXHZ7CJWFYGDAF4HC64PSR33YMLLEIQ-16583642",
         "address": "PYXYEKP5QEBAYAJMKIYL3SEEI2JUXHZ7CJWFYGDAF4HC64PSR33YMLLEIQ",
         "algoAmount": 0,
-        "round": 23276471,
+        "round": 23785499,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -1342,14 +1346,14 @@
   },
   {
     "_id": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ-16583576",
-    "_rev": "1-61d74d0ddf6bbbb1d06fcfe7607f65d3",
+    "_rev": "1-0c482b5d644e26966585367d050f8bda",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ-16583576",
         "address": "UVK7AKMZT3G54I7DEYRV65UUQ5VZPEXMJFHT3DNMDCF3WPDPSXDJ43BMWQ",
         "algoAmount": 0,
-        "round": 23276470,
+        "round": 23785497,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -1409,14 +1413,14 @@
   },
   {
     "_id": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU-16583550",
-    "_rev": "1-2d92fd6ddf0c5e84d6f281e8566023ca",
+    "_rev": "1-98e06a09dd5c9eda32a7994976757178",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU-16583550",
         "address": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU",
         "algoAmount": 3481026,
-        "round": 23276469,
+        "round": 23785496,
         "asaAmount": 0
       },
       "escrowInfo": {
@@ -1440,14 +1444,14 @@
   },
   {
     "_id": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU-16583573",
-    "_rev": "1-007c8d98193ea388f61dae38ba7eedec",
+    "_rev": "1-67d26164634b6d1266c675b91f66f75a",
     "type": "block",
     "data": {
       "indexerInfo": {
         "_id": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU-16583573",
         "address": "VUXMXMWDHZBMFF4RUIJJUG55I2ABIYCPHX6VCYKPTEZTW546YJKW4FH6NU",
         "algoAmount": 6457968,
-        "round": 23276470,
+        "round": 23785496,
         "asaAmount": 0
       },
       "escrowInfo": {

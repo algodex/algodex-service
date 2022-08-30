@@ -4,7 +4,7 @@
     {
       "type": "shell",
       "label": "compose-up-localhost",
-      "command": "cp .testnet.localhost.env .env; docker-compose -f docker-compose.localhost.yml up -d --build",
+      "command": "cp .testnet.localhost.env .env; docker compose -f docker-compose.localhost.yml up -d --build",
       "presentation": {
         "reveal": "always",
         "panel": "new"
