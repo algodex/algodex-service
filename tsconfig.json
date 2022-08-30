@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "./built",
+    "allowJs": true,
+    "target": "esnext",
+    "module": "commonjs",
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules/**", "built/**"]
+}

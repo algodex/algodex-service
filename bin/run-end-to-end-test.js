@@ -163,7 +163,7 @@ const getActiveCounts = async () => {
 };
 
 const initEnv = async () => {
-  config = await getConfig();
+  const config = await getConfig();
   Object.keys(config).forEach(configKey => {
     process.env[configKey] = config[configKey];
   });
@@ -186,7 +186,7 @@ const runScripts = async () => {
     getLightModeRemovalString(databases) : '--removeAll';
   console.log({removeArg});
 
-  await runScript('./bin/remove-and-create-databases', 'remove-and-create-databases',
+  await runScript('./bin/remove-and-create-databases.js', 'remove-and-create-databases',
       [removeArg]).then(err => {
     if (err && !isGloballyShuttingDown) {
       throw err;
@@ -194,7 +194,7 @@ const runScripts = async () => {
     console.log('Finished remove-and-create-databases');
   });
 
-  await runScript('./bin/add-views', 'add-views').then(err => {
+  await runScript('./bin/add-views.js', 'add-views').then(err => {
     if (err && !isGloballyShuttingDown) {
       throw err;
     }

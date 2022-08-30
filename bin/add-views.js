@@ -50,7 +50,7 @@ databaseConfigs.forEach(database => {
     if (excludeDBsSet.size > 0 && !excludeDBsSet.has(database.dbName)) {
       console.log('Redoing index for: ' +
         database.dbName + '/' + database.design._id);
-      initializedDB.put({...database.design, _rev: res._rev}).catch((e)=>{
+      initializedDB.put({...database.design, _rev: res._rev}).catch(e=>{
         console.log('Update error', e);
         throw e;
       });
@@ -61,7 +61,7 @@ databaseConfigs.forEach(database => {
     console.log('Error Fetching Index', e.error);
     if (e.error === 'not_found') {
       console.log('Adding index');
-      initializedDB.put({...database.design}).catch((e)=>{
+      initializedDB.put({...database.design}).catch(e=>{
         console.log('Create Error', e);
       });
     } else {
