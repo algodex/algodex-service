@@ -73,17 +73,18 @@ async function run() {
       return map;
     }, {});
 
-  const assetIdToEscrow = Object.keys(escrowAddrToData).reduce((assetIdToEscrow, escrow) => {
-    const assetId = escrowAddrToData[escrow].data.escrowInfo.assetId;
-    if (!assetIdToEscrow.has(assetId)) {
-      assetIdToEscrow.set(assetId, []);
-    }
+  const assetIdToEscrow = Object.keys(escrowAddrToData)
+      .reduce((assetIdToEscrow, escrow) => {
+        const assetId = escrowAddrToData[escrow].data.escrowInfo.assetId;
+        if (!assetIdToEscrow.has(assetId)) {
+          assetIdToEscrow.set(assetId, []);
+        }
 
-    const arr = assetIdToEscrow.get(assetId);
-    arr.push(escrow);
+        const arr = assetIdToEscrow.get(assetId);
+        arr.push(escrow);
 
-    return assetIdToEscrow;
-  }, new Map());
+        return assetIdToEscrow;
+      }, new Map());
   const ownerWallets =
     escrows.map( escrow => escrow.data.escrowInfo.ownerAddr);
   const ownerBalanceData =

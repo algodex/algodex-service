@@ -29,7 +29,7 @@ const removeAll = args.removeAll ? true : false;
 async function runScript() {
   const databases = await getDatabases();
   const deletePromises = [];
-  Object.values(databases).forEach( (db) => {
+  Object.values(databases).forEach( db => {
     if (!removeAll && db.appendOnly && !extraDBsToRemoveSet.has(db.dbName) ) {
       // Do not delete appendOnly databases
       return;
@@ -46,7 +46,7 @@ async function runScript() {
     );
   });
 
-  Promise.all(deletePromises).then( async (res) => {
+  Promise.all(deletePromises).then( async res => {
     console.log('starting creation');
     await getDatabases();
   });

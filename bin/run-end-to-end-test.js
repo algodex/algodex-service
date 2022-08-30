@@ -163,7 +163,7 @@ const getActiveCounts = async () => {
 };
 
 const initEnv = async () => {
-  config = await getConfig();
+  const config = await getConfig();
   Object.keys(config).forEach(configKey => {
     process.env[configKey] = config[configKey];
   });

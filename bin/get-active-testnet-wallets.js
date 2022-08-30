@@ -2,7 +2,6 @@
 /* eslint-disable require-jsdoc */
 require('dotenv').config();
 const getDatabases = require('../src/db/get-databases');
-const map = require('../views/chart/map');
 const databases = getDatabases('testnet_');
 const fs = require('fs');
 
@@ -59,7 +58,7 @@ async function run() {
   const walletToMonths = getWalletToDates(accountData.rows, 'month');
   const walletToDates = getWalletToDates(accountData.rows, 'date');
   const walletToInfo = {};
-  
+
   // Object.keys(walletToDates).reduce( (map, wallet) => {
   //   const dateCount = walletToDates[wallet].size;
   //   const info = { dateCount };
@@ -80,7 +79,7 @@ async function run() {
   setData(walletToDates, walletToInfo, 'dateCount');
   setData(walletToTradeData, walletToInfo, 'tradeCount');
   setData(walletToOrderCount, walletToInfo, 'orderCount');
-  
+
   // Object.keys(walletToMonths).forEach(wallet => {
   //   const monthCount = walletToMonths[wallet].size;
   //   if (walletToInfo[wallet] === undefined) {
@@ -110,13 +109,13 @@ async function run() {
     const orderCount = entry.orderCount || 0;
     const dateCount = entry.dateCount || 0;
     const monthCount = entry.monthCount || 0;
-    return orderCount >= 5 && tradeCount >=10
-      && monthCount >= 2 && dateCount >= 5;
+    return orderCount >= 5 && tradeCount >=10 &&
+      monthCount >= 2 && dateCount >= 5;
   });
 
-  const stream = fs.createWriteStream("12000_algx_rewards_testnet_wallets.txt");
+  const stream = fs.createWriteStream('12000_algx_rewards_testnet_wallets.txt');
   stream.once('open', function(fd) {
-    wallets.forEach(wallet => stream.write(wallet+"\n"));
+    wallets.forEach(wallet => stream.write(wallet+'\n'));
     stream.end();
   });
 
@@ -124,7 +123,6 @@ async function run() {
     set.add(wallet);
     return set;
   }, new Set());
-
 
 
   // walletsLowerElig.forEach(wallet => {
@@ -146,9 +144,9 @@ async function run() {
     goodWalletSet.add(wallet);
   });
 
-  const stream3 = fs.createWriteStream("8500_algx_rewards_testnet_wallets.txt");
+  const stream3 = fs.createWriteStream('8500_algx_rewards_testnet_wallets.txt');
   stream3.once('open', function(fd) {
-    walletsThirdElig.forEach(wallet => stream3.write(wallet+"\n"));
+    walletsThirdElig.forEach(wallet => stream3.write(wallet+'\n'));
     stream3.end();
   });
 
@@ -163,12 +161,11 @@ async function run() {
     return orderCount >= 5 && tradeCount >=10 && dateCount >= 2;
   });
 
-  const stream2 = fs.createWriteStream("3000_algx_rewards_testnet_wallets.txt");
+  const stream2 = fs.createWriteStream('3000_algx_rewards_testnet_wallets.txt');
   stream2.once('open', function(fd) {
-    walletsLowerElig.forEach(wallet => stream2.write(wallet+"\n"));
+    walletsLowerElig.forEach(wallet => stream2.write(wallet+'\n'));
     stream2.end();
   });
-
 }
 
 run();

@@ -6,7 +6,7 @@ const db = [];
 
 module.exports = function(dbUrl) {
   const url = convertURL(dbUrl);
-  console.log({url});
+  // console.log({url});
   if (
     typeof url === 'undefined'
   ) {
