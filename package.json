@@ -19,7 +19,8 @@
     "dev-test": "jest --watch",
     "lint": "eslint src/*.js services/*.js bin/*.js views/**/*.js server.js",
     "prepare": "husky install",
-    "check-types": "tsc --project jsconfig.json --maxNodeModuleJsDepth 0"
+    "check-types": "tsc --project jsconfig.json --maxNodeModuleJsDepth 0",
+    "run-end-to-end": "node built/bin/run-end-to-end-test.js --mode=heavy && jest -- built/src/__tests__/verify-end"
   },
   "author": "Michael Feher",
   "license": "UNLICENSED",
