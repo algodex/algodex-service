@@ -6,6 +6,7 @@ mod structs;
 use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue, TinymanTrade};
 use crate::structs::History;
 use crate::structs::CouchDBOuterResp;
+use crate::update_rewards::{check_mainnet_period, MainnetPeriod};
 use crate::structs::CouchDBResultsType::{Grouped, Ungrouped};
 mod query_couch;
 mod get_spreads;
@@ -26,6 +27,18 @@ use crate::quality_type::Quality;
 use crate::structs::CouchDBGroupedResult;
 use urlencoding::encode;
 use crate::structs::CouchDBResp;
+
+use std::path::PathBuf;
+
+use clap::{Parser, Subcommand};
+
+#[derive(Parser)]
+#[clap(author, version, about, long_about = None)]
+struct Cli {
+    #[clap(short, long)]
+    epoch: u16,
+}
+
 
 //aaa {"results":[
 //{"total_rows":305541,"offset":71,"rows":[
@@ -59,10 +72,18 @@ fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec
   }).collect();
 }
 
-const EPOCH:u16=2;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
+  let cli = Cli::parse();
+
+  // You can check the value provided by positional arguments, or option arguments
+  let EPOCH = cli.epoch;
+  println!("Epoch is {EPOCH}");
+  if (EPOCH < 1) {
+    panic!("Epoch cannot be less than 1!");
+  }
+
   dotenv::from_filename(".env").expect(".env file can't be found!");
   let env = dotenv::vars().fold(HashMap::new(), |mut map, val| {
       map.insert(val.0, val.1);
@@ -70,7 +91,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   });
   // println!("{:?}", result.get("ALGORAND_NETWORK").take());
 
-  let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL");
+  let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL_RUST");
   let keys = [EPOCH.to_string()].to_vec();
   let accountEpochDataQueryRes = query_couch_db::<String>(&couch_dburl,
       &"formatted_escrow".to_string(),
@@ -254,7 +275,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     stateMachine.timestep = ((curMinute + 1) * 60) + rng.gen_range(0..60);
     let mut escrowDidChange = false;
     // let ownerWalletsBalanceChangeSet:HashSet<String> = HashSet::new();
-    loop {
+    while (owner_wallet_step < initialState.algxBalanceData.len()) {
       let owner_balance_entry = &initialState.algxBalanceData[owner_wallet_step];
       let owner_wallet_time = getTimeFromRound(&initialState.blockToUnixTime,
           &owner_balance_entry.value.round);
@@ -264,13 +285,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
       let wallet:&String = &owner_balance_entry.key;
       stateMachine.ownerWalletToALGXBalance.insert(wallet, owner_balance_entry.value.balance);
       owner_wallet_step += 1;
-      if (owner_wallet_step >= initialState.algxBalanceData.len()) {
-        break;
-      }
     }
 
     // Price steps
-    loop {
+    while (algo_price_step < initialState.tinymanPrices.len()) {
       let price_entry = &initialState.tinymanPrices[algo_price_step];
       if (price_entry.unix_time > stateMachine.timestep) {
         break;
@@ -316,7 +334,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
   // Need to give rewards per asset
   
   let mut rewardsFinal: Vec<OwnerFinalRewardsResult> = Vec::new();
-  
+  let mainnet_period = check_mainnet_period(&epochEnd);
+
+  // FIXME: rewards should be weighted per asset according to an equation instead of treating all equally
   stateMachine.ownerWalletAssetToRewards.keys().for_each(|ownerWallet| {
     let mut finalEntry = stateMachine.ownerWalletAssetToRewards.get(ownerWallet).unwrap().values()
       .fold(OwnerFinalRewardsResult::default(), |mut qualityEntry, assetQualityEntry| {
@@ -325,7 +345,12 @@ async fn main() -> Result<(), Box<dyn Error>> {
         let uptimeStr = format!("{}", uptime.val());
         let uptimef64 = uptimeStr.parse::<f64>().unwrap();
         let qualityFinal = Quality::from(
-          qualitySum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3) * algxAvg.powf(0.2)
+          match mainnet_period {
+            MainnetPeriod::Version1 =>
+              qualitySum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3),
+            MainnetPeriod::Version2 =>
+              qualitySum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3) * algxAvg.powf(0.2)
+          }
         );
 
         qualityEntry.uptime += *uptime;

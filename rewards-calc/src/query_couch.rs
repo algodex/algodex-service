@@ -168,6 +168,7 @@ pub async fn query_couch_db_with_full_str<T: DeserializeOwned>(couch_url: &Strin
   let full = format!("{}/{}/_design/{}/_view/{}?{}",
       couch_url, db_name, index_name, view_name, full_query_str);
 
+  println!("{}", full);
   let resp = client.get(full)
       //.header(reqwest::header::CONTENT_TYPE, "application/json")
       .send()

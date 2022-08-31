@@ -88,13 +88,13 @@ enum OrderType {
 use OrderType::Bid as Bid;
 use OrderType::Ask as Ask;
 
-enum MainnetPeriod {
+pub enum MainnetPeriod {
   Version1,
   Version2
 }
 
 /// Get the current mainnet period. Either 1 or 2 based on the timestamp.
-fn check_mainnet_period(unix_time: &u32) -> MainnetPeriod {
+pub fn check_mainnet_period(unix_time: &u32) -> MainnetPeriod {
   // Thu Jun 02 2022 23:59:59 GMT-0400 (Eastern Daylight Time)
   if (*unix_time < 1654228799) {
     return MainnetPeriod::Version1;
