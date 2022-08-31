@@ -20,10 +20,11 @@ struct SaveRewardsEntry {
   #[serde(with = "any_key_map")]
   owner_rewards: HashMap<String,HashMap<u32,OwnerRewardsResult>>,
   #[serde(with = "any_key_map")]
-  ownerRewardsResToFinalRewardsEntry: HashMap<OwnerRewardsKey,EarnedAlgxEntry>
+  ownerRewardsResToFinalRewardsEntry: HashMap<OwnerRewardsKey,EarnedAlgxEntry>,
+  epoch: u16
 }
 
-pub async fn save_rewards(owner_rewards: &HashMap<String,HashMap<u32,OwnerRewardsResult>>,
+pub async fn save_rewards(epoch: u16, owner_rewards: &HashMap<String,HashMap<u32,OwnerRewardsResult>>,
   ownerRewardsResToFinalRewardsEntry: &HashMap<OwnerRewardsKey,EarnedAlgxEntry>)
 -> Result<Response, Box<dyn Error>> {
   let client = reqwest::Client::new();
@@ -37,7 +38,8 @@ pub async fn save_rewards(owner_rewards: &HashMap<String,HashMap<u32,OwnerReward
 
   let save_entry = SaveRewardsEntry{
     owner_rewards: owner_copy,
-    ownerRewardsResToFinalRewardsEntry: ownerRewardsResToFinalRewardsEntry_copy
+    ownerRewardsResToFinalRewardsEntry: ownerRewardsResToFinalRewardsEntry_copy,
+    epoch
   };
 
   let json = serde_json::to_string(&save_entry).unwrap();

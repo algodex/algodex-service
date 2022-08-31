@@ -387,7 +387,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   // rewardsFinal.sort_by(|a, b| a.qualityFinal.val().partial_cmp(&b.qualityFinal.val()).unwrap());
 
   println!("saving rewards in DB!");
-  save_rewards(&stateMachine.ownerWalletAssetToRewards, &ownerRewardsResToFinalRewardsEntry).await;
+  save_rewards(EPOCH, &stateMachine.ownerWalletAssetToRewards, &ownerRewardsResToFinalRewardsEntry).await;
 
   // dbg!(rewardsFinal);
   Ok(())
