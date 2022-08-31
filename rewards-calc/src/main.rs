@@ -379,8 +379,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
           wallet: ownerWallet.clone(), assetId: *assetId
         }).unwrap();
 
+        // FIXME - 18k depends on epoch
         final_rewards_entry.earned_algx =
-          EarnedAlgx::from((final_rewards_entry.quality.val() / total_quality).round() as u64);
+          EarnedAlgx::from((18000000.0 * final_rewards_entry.quality.val() / total_quality).round() as u64);
       });
     });
   // rewardsFinal.sort_by(|a, b| a.qualityFinal.val().partial_cmp(&b.qualityFinal.val()).unwrap());
