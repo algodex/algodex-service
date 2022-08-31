@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use crate::structs::{EscrowValue};
 use std::ops::{Add,Sub,Div,Mul,AddAssign};
 use crate::quality_type::{*};
+use serde::Serialize;
 
 #[derive(Debug)]
 pub struct QualityResult {
@@ -16,7 +17,19 @@ pub struct QualityResult {
   algxBalance: AlgxBalance
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Hash, Eq, PartialEq, Clone)]
+pub struct OwnerRewardsKey {
+  pub wallet: String,
+  pub assetId: u32
+}
+
+#[derive(Debug, Serialize, Clone)]
+pub struct EarnedAlgxEntry {
+  pub quality: Quality,
+  pub earned_algx: EarnedAlgx
+}
+
+#[derive(Debug, Serialize, Clone)]
 pub struct OwnerRewardsResult {
   pub algxBalanceSum: AlgxBalance,
   pub qualitySum: Quality,
@@ -26,28 +39,28 @@ pub struct OwnerRewardsResult {
   pub has_ask: bool
 }
 
-#[derive(Debug)]
-pub struct OwnerFinalRewardsResult {
-  pub ownerWallet: String,
-  pub algxBalanceSum: AlgxBalance,
-  pub qualitySum: Quality,
-  pub qualityFinal: Quality,
-  pub uptime: Uptime,
-  pub depthSum: Depth
-}
+// #[derive(Debug, Serialize)]
+// pub struct OwnerFinalRewardsResult {
+//   pub ownerWallet: String,
+//   pub algxBalanceSum: AlgxBalance,
+//   pub qualitySum: Quality,
+//   pub qualityFinal: Quality,
+//   pub uptime: Uptime,
+//   pub depthSum: Depth
+// }
 
-impl Default for OwnerFinalRewardsResult {
-  fn default() -> Self {
-      Self {
-        ownerWallet: String::from("NOWALLET"),
-        algxBalanceSum: AlgxBalance::from(0), 
-        qualitySum: Quality::from(0.0),
-        qualityFinal: Quality::from(0.0),
-        uptime: Uptime::from(0),
-        depthSum: Depth::from(0.0)
-      }
-  }
-}
+// impl Default for OwnerFinalRewardsResult {
+//   fn default() -> Self {
+//       Self {
+//         ownerWallet: String::from("NOWALLET"),
+//         algxBalanceSum: AlgxBalance::from(0), 
+//         qualitySum: Quality::from(0.0),
+//         qualityFinal: Quality::from(0.0),
+//         uptime: Uptime::from(0),
+//         depthSum: Depth::from(0.0)
+//       }
+//   }
+// }
 
 impl Default for OwnerRewardsResult {
   fn default() -> Self {
@@ -57,7 +70,7 @@ impl Default for OwnerRewardsResult {
         uptime: Uptime::from(0),
         depth: Depth::from(0.0),
         has_bid: false,
-        has_ask: false
+        has_ask: false,
       }
   }
 }

@@ -4,8 +4,10 @@ use std::error::Error;
 use std::{fmt, time};
 mod structs;
 use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue, TinymanTrade};
+use crate::quality_type::EarnedAlgx;
 use crate::structs::History;
 use crate::structs::CouchDBOuterResp;
+use crate::update_rewards::OwnerRewardsKey;
 use crate::update_rewards::{check_mainnet_period, MainnetPeriod};
 use crate::structs::CouchDBResultsType::{Grouped, Ungrouped};
 mod query_couch;
@@ -14,12 +16,13 @@ mod update_spreads;
 mod update_rewards;
 mod quality_type;
 use update_spreads::updateSpreads;
-use update_rewards::updateRewards;
+use update_rewards::{updateRewards, EarnedAlgxEntry};
 use get_spreads::getSpreads;
 use rand::Rng;
+mod save_rewards;
+use crate::save_rewards::save_rewards;
 use crate::update_rewards::OwnerRewardsResult;
 use crate::structs::CouchDBResult;
-use crate::update_rewards::OwnerFinalRewardsResult;
 use query_couch::{query_couch_db,query_couch_db_with_full_str};
 // use query_couch::query_couch_db2;
 use crate::get_spreads::Spread;
@@ -333,13 +336,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   // Need to give rewards per asset
   
-  let mut rewardsFinal: Vec<OwnerFinalRewardsResult> = Vec::new();
   let mainnet_period = check_mainnet_period(&epochEnd);
 
-  // FIXME: rewards should be weighted per asset according to an equation instead of treating all equally
-  stateMachine.ownerWalletAssetToRewards.keys().for_each(|ownerWallet| {
-    let mut finalEntry = stateMachine.ownerWalletAssetToRewards.get(ownerWallet).unwrap().values()
-      .fold(OwnerFinalRewardsResult::default(), |mut qualityEntry, assetQualityEntry| {
+  let mut ownerRewardsResToFinalRewardsEntry:HashMap<OwnerRewardsKey,EarnedAlgxEntry> = HashMap::new();
+  let total_quality:f64 = 
+  stateMachine.ownerWalletAssetToRewards.keys().fold(0f64, |total_quality, ownerWallet| {
+    let ownerAssetEntries = stateMachine.ownerWalletAssetToRewards.get(ownerWallet).unwrap();
+    let quality = ownerAssetEntries.keys()
+      .fold(0f64, |total_quality, assetId| {
+        let assetQualityEntry = ownerAssetEntries.get(assetId).unwrap();
         let OwnerRewardsResult {ref algxBalanceSum, ref qualitySum, ref depth, ref uptime, ..} = assetQualityEntry;
         let algxAvg = (algxBalanceSum.val() as f64) / (getSecondsInEpoch() as f64);
         let uptimeStr = format!("{}", uptime.val());
@@ -352,21 +357,38 @@ async fn main() -> Result<(), Box<dyn Error>> {
               qualitySum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3) * algxAvg.powf(0.2)
           }
         );
+        let owner_rewards_key = OwnerRewardsKey{
+          wallet: ownerWallet.clone(), assetId: *assetId
+        };
+        let earned_algx_entry = EarnedAlgxEntry {
+          quality: qualityFinal, earned_algx: EarnedAlgx::from(0)
+        };
 
-        qualityEntry.uptime += *uptime;
-        qualityEntry.qualitySum += *qualitySum;
-        qualityEntry.depthSum += *depth;
-        qualityEntry.algxBalanceSum += *algxBalanceSum;
-        qualityEntry.qualityFinal += qualityFinal;
-        qualityEntry
-
+        ownerRewardsResToFinalRewardsEntry.insert(owner_rewards_key, earned_algx_entry);
+        return total_quality + qualityFinal.val();
       });
-    finalEntry.ownerWallet = ownerWallet.clone();
-    rewardsFinal.push(finalEntry);
+    return total_quality + quality;
   });
-  rewardsFinal.sort_by(|a, b| a.qualityFinal.val().partial_cmp(&b.qualityFinal.val()).unwrap());
-  dbg!(rewardsFinal);
 
+  stateMachine.ownerWalletAssetToRewards.keys().for_each(|ownerWallet| {
+    let ownerAssetEntries = stateMachine.ownerWalletAssetToRewards.get(ownerWallet).unwrap();
+    ownerAssetEntries.keys()
+      .for_each(|assetId| {
+        let assetQualityEntry = ownerAssetEntries.get(assetId).unwrap();
+        let final_rewards_entry = ownerRewardsResToFinalRewardsEntry.get_mut(&OwnerRewardsKey{
+          wallet: ownerWallet.clone(), assetId: *assetId
+        }).unwrap();
+
+        final_rewards_entry.earned_algx =
+          EarnedAlgx::from((final_rewards_entry.quality.val() / total_quality).round() as u64);
+      });
+    });
+  // rewardsFinal.sort_by(|a, b| a.qualityFinal.val().partial_cmp(&b.qualityFinal.val()).unwrap());
+
+  println!("saving rewards in DB!");
+  save_rewards(&stateMachine.ownerWalletAssetToRewards, &ownerRewardsResToFinalRewardsEntry).await;
+
+  // dbg!(rewardsFinal);
   Ok(())
 }
 

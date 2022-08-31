@@ -9,44 +9,50 @@
 }*/
 
 use duplicate::duplicate_item;
-
+use serde::Serialize;
 
 use std::ops::{Add,Sub,Div,Mul,AddAssign};
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct BidDepth {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct AskDepth {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct Depth {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct Quality {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct Price {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct Uptime {
   val: u64
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Serialize)]
 pub struct AlgxBalance {
   val: u64
 }
+
+#[derive(Debug, Copy, Clone, Serialize)]
+pub struct EarnedAlgx {
+  val: u64
+}
+
 
 #[duplicate_item(name; [BidDepth]; [AskDepth]; [Depth];
   [Quality]; [Price])]
@@ -58,7 +64,7 @@ impl name {
     self.val
   }
 }
-#[duplicate_item(name; [Uptime]; [AlgxBalance])]
+#[duplicate_item(name; [Uptime]; [AlgxBalance]; [EarnedAlgx])]
 impl name {
   pub fn from(val: u64) -> Self {
     Self{val: val}
