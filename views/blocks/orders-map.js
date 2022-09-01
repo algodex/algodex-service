@@ -142,7 +142,7 @@ module.exports = function(doc, emitCallback=null) {
                     numerator: parseInt(parts[1]),
                     assetId: parseInt(parts[4]),
                     denominator: parseInt(parts[2]),
-                    minimum: parseInt(parts[3]),
+                    minimum: 0,
                     round: doc.rnd,
                     price: parseFloat(parseInt(parts[2]))/parseInt(parts[1]),
                     ownerAddr: getOwner(group, appCallType, isAlgoBuyEscrow),
