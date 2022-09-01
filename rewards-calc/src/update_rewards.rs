@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use crate::structs::{EscrowValue};
 use std::ops::{Add,Sub,Div,Mul,AddAssign};
 use crate::quality_type::{*};
+use serde::Deserialize;
 use serde::Serialize;
 
 #[derive(Debug)]
@@ -17,19 +18,19 @@ pub struct QualityResult {
   algxBalance: AlgxBalance
 }
 
-#[derive(Debug, Serialize, Hash, Eq, PartialEq, Clone)]
+#[derive(Debug, Serialize, Deserialize, Hash, Eq, PartialEq, Clone)]
 pub struct OwnerRewardsKey {
   pub wallet: String,
   pub assetId: u32
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct EarnedAlgxEntry {
   pub quality: Quality,
   pub earned_algx: EarnedAlgx
 }
 
-#[derive(Debug, Serialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct OwnerRewardsResult {
   pub algxBalanceSum: AlgxBalance,
   pub qualitySum: Quality,

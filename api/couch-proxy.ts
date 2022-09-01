@@ -185,6 +185,19 @@ app.post('/save_rewards', async (req, res) => {
   res.sendStatus(200);
 });
 
+app.get('/wallets/leaderboard', async (req, res) => {
+  const db = getDatabase('rewards');
+  const topWallets = await db.query('rewards/topWallets', {
+    reduce: true,
+    group: true
+  })
+  topWallets.rows.sort((a, b) => (a.value > b.value ? -1 : 1));
+
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(topWallets.rows));
+});
+
+
 app.get('/rewards_distribution', async (req, res) => {
   const db = getDatabase('rewards_distribution');
   const statusData = await db.query('rewards_distribution/rewards_distribution', {

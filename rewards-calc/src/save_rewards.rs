@@ -14,8 +14,12 @@ use crate::update_rewards::{OwnerRewardsKey, EarnedAlgxEntry};
 use serde_json::json;
 use serde_with::serde_as; // 1.5.1
 use serde_json_any_key::*;
+use std::fs::File;
+use std::io::prelude::*;
+use crate::{quality_type::{AlgxBalance, Quality, Uptime, Depth, EarnedAlgx}};
 
-#[derive(Serialize, Debug)]
+
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 struct SaveRewardsEntry {
   #[serde(with = "any_key_map")]
   owner_rewards: HashMap<String,HashMap<u32,OwnerRewardsResult>>,
@@ -42,7 +46,15 @@ pub async fn save_rewards(epoch: u16, owner_rewards: &HashMap<String,HashMap<u32
     epoch
   };
 
+
   let json = serde_json::to_string(&save_entry).unwrap();
+
+  if (epoch == 2) {
+    let filename = format!("integration_test/epoch_{}.txt", epoch);
+    println!("filename is: {}", filename);
+    let mut file = File::create(filename).expect("Unable to create file");
+    file.write_all(json.as_bytes()).expect("Unable to write to file");
+  }
   // dbg!(json2);
 
   // let json = json!(save_entry);
@@ -58,6 +70,70 @@ pub async fn save_rewards(epoch: u16, owner_rewards: &HashMap<String,HashMap<u32
     .await?;
 
   Ok(resp)
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct FlattenedFinalRewardsEntry {
+  asset_id: u32,
+  owner_wallet: String,
+  final_quality: Quality,
+  earned_algx: EarnedAlgx,
+  algxBalanceSum: AlgxBalance,
+  qualitySum: Quality,
+  uptime: Uptime,
+  depth: Depth,
+  has_bid: bool,
+  has_ask: bool
+}
+fn get_flattened_data(final_entry: &SaveRewardsEntry) -> Vec<FlattenedFinalRewardsEntry> {
+  let mut final_rewards_entries:Vec<FlattenedFinalRewardsEntry> = final_entry.ownerRewardsResToFinalRewardsEntry.keys().map(|owner_rewards_key| {
+    let asset_id = owner_rewards_key.assetId;
+    let wallet = &owner_rewards_key.wallet;
+    let final_rewards = final_entry.ownerRewardsResToFinalRewardsEntry.get(owner_rewards_key).unwrap();
+    let owner_rewards_entry = final_entry.owner_rewards.get(wallet).unwrap().get(&asset_id).unwrap();
+
+    let OwnerRewardsResult { algxBalanceSum, qualitySum, uptime,
+      depth, has_bid, has_ask, .. } = *owner_rewards_entry;
+
+    return FlattenedFinalRewardsEntry {
+      asset_id, owner_wallet: wallet.clone(), 
+      final_quality: final_rewards.quality,
+      earned_algx: final_rewards.earned_algx,
+      algxBalanceSum, qualitySum, uptime,
+      depth, has_bid, has_ask
+    } 
+  }).collect();
+
+  final_rewards_entries.sort_unstable_by_key(|item| (item.owner_wallet.clone(), item.asset_id));
+  final_rewards_entries
+}
+
+fn get_compare_data_from_file(filename: &str) -> Vec<FlattenedFinalRewardsEntry> {
+  let mut test_data = String::new();
+  let mut test_file = File::open(filename).expect("Unable to open file");
+  test_file.read_to_string(&mut test_data).expect("Unable to read string");
+
+  let test_data_entry: SaveRewardsEntry = serde_json::from_str(&test_data).unwrap();
+
+  return get_flattened_data(&test_data_entry);
+}
+
+
+#[cfg(test)]
+mod tests {
+    use std::{fs::File, io::Read};
+
+    use crate::{save_rewards::{SaveRewardsEntry, get_compare_data_from_file}, quality_type::{AlgxBalance, Quality, Uptime, Depth, EarnedAlgx}, update_rewards::OwnerRewardsResult};
+    use pretty_assertions::{assert_eq, assert_ne};
+
+    #[test]
+
+    fn validate_epoch_2() {
+      let flattened_test_data = get_compare_data_from_file("integration_test/epoch_2.txt");
+      let flattened_validate_data = get_compare_data_from_file("integration_test/epoch_2_validate.txt");
+      
+      assert_eq!(flattened_test_data, flattened_validate_data);
+    }
 }
 
 
