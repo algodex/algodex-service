@@ -19,4 +19,4 @@ duplicate = "0.4.1"
 clap = { version="3.2.19", features = ["derive"] }
 serde_with = "2.0.0"
 serde_json_any_key = "2.0.0"
-
+pretty_assertions = "1.3.0"

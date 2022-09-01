@@ -9,46 +9,46 @@
 }*/
 
 use duplicate::duplicate_item;
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use std::ops::{Add,Sub,Div,Mul,AddAssign};
 
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct BidDepth {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct AskDepth {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct Depth {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct Quality {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct Price {
   val: f64
 }
 
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Uptime {
   val: u64
 }
 
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct AlgxBalance {
   val: u64
 }
 
-#[derive(Debug, Copy, Clone, Serialize)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct EarnedAlgx {
   val: u64
 }
@@ -80,6 +80,17 @@ impl name {
     Depth{val: self.val}
   }
 }
+
+#[duplicate_item(name; [BidDepth]; [AskDepth]; [Price];
+  [Quality]; [Depth];)]
+impl PartialEq  for name {
+  fn eq(&self, other: &Self) -> bool {
+      self.val == other.val
+  }
+}
+#[duplicate_item(name; [BidDepth]; [AskDepth]; [Price];
+  [Quality]; [Depth];)]
+impl Eq for name {}
 
 #[duplicate_item(name; [BidDepth]; [AskDepth]; [Depth];
   [Quality]; [Price]; [Uptime]; [AlgxBalance])]
