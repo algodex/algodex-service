@@ -76,8 +76,7 @@ fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec
 }
 
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   let cli = Cli::parse();
 
   // You can check the value provided by positional arguments, or option arguments
@@ -243,9 +242,23 @@ async fn main() -> Result<(), Box<dyn Error>> {
       escrowAddrToData,
   };
 
+  return Ok(initialState);
+}
+
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+
+
+  let initialState = get_initial_state().await.unwrap();
+  let epochStart = initialState.epochStart;
+  let epochEnd = initialState.epochEnd;
+  let epoch = initialState.epoch;
+
   //dbg!(initialState);
 
   let mut timestep = epochStart;
+
   let mut escrowstep = 0;
 
   // println!("{} {}", epochStart, epochEnd);
@@ -387,7 +400,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   // rewardsFinal.sort_by(|a, b| a.qualityFinal.val().partial_cmp(&b.qualityFinal.val()).unwrap());
 
   println!("saving rewards in DB!");
-  save_rewards(EPOCH, &stateMachine.ownerWalletAssetToRewards, &ownerRewardsResToFinalRewardsEntry).await;
+  save_rewards(epoch, &stateMachine.ownerWalletAssetToRewards, &ownerRewardsResToFinalRewardsEntry).await;
 
   // dbg!(rewardsFinal);
   Ok(())
