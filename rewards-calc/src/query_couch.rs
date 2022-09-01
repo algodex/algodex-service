@@ -1,6 +1,8 @@
 use dotenv;
 use core::panic;
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::Write;
 use urlencoding::encode;
 use reqwest;
 use serde::{Serialize, Deserialize};
@@ -9,6 +11,7 @@ use serde_json;
 use serde_path_to_error;
 use std::error::Error;
 
+use crate::DEBUG;
 use crate::structs::{CouchDBOuterResp, Keys, Queries, EscrowValue};
 use crate::structs::CouchDBResp;
 use crate::structs::CouchDBOuterResp2;
@@ -48,6 +51,15 @@ pub async fn query_couch_db<T: DeserializeOwned>(couch_url: &String, db_name: &S
       .await?;
 
   let res = resp.text().await?;
+
+  if (DEBUG) {
+    let short_name = format!("{}_{}_view/{}/queries", db_name, index_name, view_name);
+    let filename = format!("result_data/{}.txt", short_name.replace("/","_"));
+    println!("filename is: {}", filename);
+    let mut file = File::create(filename).expect("Unable to create file");
+    file.write_all(res.as_bytes()).expect("Unable to write to file");
+  }
+
   //let owned = res.to_owned();
   //let text: &'a String = &owned;
 //   println!("aaa {}",&res[0..1000]);

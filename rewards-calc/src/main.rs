@@ -55,7 +55,7 @@ struct Cli {
 //{"total_rows":305541,"offset":71,"rows":[
 //    {"id":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","key":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","value":{
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PriceData {
   pub unix_time: u32,
   pub price: f64
@@ -257,7 +257,7 @@ static DEBUG:bool = true;
 
 fn save_initial_state(state: &InitialState) {
   println!("Saving initial state...");
-  let filename = format!("integration_test/test_data/initial_state_epoch_{}.txt", state.epoch);
+  let filename = format!("integration_test/test_data/initial_state_epoch_{}.json", state.epoch);
   println!("filename is: {}", filename);
   let mut file = File::create(filename).expect("Unable to create file");
   let json = serde_json::to_string(&state).unwrap();
@@ -481,7 +481,7 @@ fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<Stri
     });
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct InitialState {
     algxBalanceData: Vec<CouchDBGroupedResult<AlgxBalanceValue>>,
     allAssets: Vec<u32>,
