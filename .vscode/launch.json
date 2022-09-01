@@ -20,6 +20,8 @@
             },
             "program": "${cargo:program}",
             "args": [
+                "--epoch",
+                "2"
                 // "user_arg1",
                 // "user_arg2"
             ]
@@ -174,6 +176,13 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/bin/run-end-to-end-test",
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Start API",
+            "program": "${workspaceFolder}/built/api/couch-proxy.js",
+            "preLaunchTask": "npm: build",
         },
         {
             "type": "node",
