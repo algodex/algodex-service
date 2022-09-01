@@ -9,7 +9,7 @@ use serde_json;
 use serde_path_to_error;
 use std::error::Error;
 use reqwest::Response;
-use crate::OwnerRewardsResult;
+use crate::{OwnerRewardsResult, DEBUG};
 use crate::update_rewards::{OwnerRewardsKey, EarnedAlgxEntry};
 use serde_json::json;
 use serde_with::serde_as; // 1.5.1
@@ -49,7 +49,7 @@ pub async fn save_rewards(epoch: u16, owner_rewards: &HashMap<String,HashMap<u32
 
   let json = serde_json::to_string(&save_entry).unwrap();
 
-  if (epoch == 2) {
+  if (epoch == 2 && DEBUG) {
     let filename = format!("integration_test/epoch_{}.txt", epoch);
     println!("filename is: {}", filename);
     let mut file = File::create(filename).expect("Unable to create file");

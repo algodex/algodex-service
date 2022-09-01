@@ -1,7 +1,15 @@
 use dotenv;
+use serde::{Serialize, Deserialize};
+use serde_json::json;
+use std::io::Read;
+use serde_json_any_key::*;
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
+use std::fs::File;
+use std::io::Write;
 use std::{fmt, time};
+use std::hash::Hash;
+
 mod structs;
 use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue, TinymanTrade};
 use crate::quality_type::EarnedAlgx;
@@ -47,7 +55,7 @@ struct Cli {
 //{"total_rows":305541,"offset":71,"rows":[
 //    {"id":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","key":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","value":{
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct PriceData {
   pub unix_time: u32,
   pub price: f64
@@ -245,12 +253,30 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   return Ok(initialState);
 }
 
+static DEBUG:bool = true;
+
+fn save_initial_state(state: &InitialState) {
+  println!("Saving initial state...");
+  let filename = format!("integration_test/test_data/initial_state_epoch_{}.txt", state.epoch);
+  println!("filename is: {}", filename);
+  let mut file = File::create(filename).expect("Unable to create file");
+  let json = serde_json::to_string(&state).unwrap();
+  file.write_all(json.as_bytes()).expect("Unable to write to file");
+  println!("Initial state saved.");
+}
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
 
 
   let initialState = get_initial_state().await.unwrap();
+
+  if (DEBUG) {
+    save_initial_state(&initialState);
+  }
+  // IF SAVE DEBUG
+
+
   let epochStart = initialState.epochStart;
   let epochEnd = initialState.epochEnd;
   let epoch = initialState.epoch;
@@ -455,19 +481,23 @@ fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<Stri
     });
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct InitialState {
     algxBalanceData: Vec<CouchDBGroupedResult<AlgxBalanceValue>>,
     allAssets: Vec<u32>,
     allAssetsSet: HashSet<u32>,
+    #[serde(with = "any_key_map")]
     assetIdToEscrows: HashMap<u32, Vec<String>>,
+    #[serde(with = "any_key_map")]
     blockToUnixTime: HashMap<u32, u32>,
     epoch: u16,
     epochStart: u32,
     epochEnd: u32,
     epochLaunchTime: u32,
+    #[serde(with = "any_key_map")]
     escrowTimeToBalance: HashMap<EscrowTimeKey, u64>,
     tinymanPrices: Vec<PriceData>,
+    #[serde(with = "any_key_map")]
     unixTimeToChangedEscrows: HashMap<u32, Vec<String>>,
     changedEscrowSeq: Vec<u32>,
     formattedEscrowData:Vec<CouchDBResult<EscrowValue>>,
@@ -533,3 +563,66 @@ fn getSequenceInfo(escrows: &Vec<EscrowValue>) -> (HashMap<u32, Vec<String>>,Vec
 
     return (unixTimeToChangedEscrows, unixTimes);
 }
+
+fn get_initial_state_from_file(filename: &str) -> InitialState {
+  let mut test_data = String::new();
+  let mut test_file = File::open(filename).expect("Unable to open file");
+  test_file.read_to_string(&mut test_data).expect("Unable to read string");
+
+  let test_data_entry = serde_json::from_str(&test_data).unwrap();
+
+  return test_data_entry;
+}
+
+
+// #[cfg(test)]
+// mod tests {
+//   use std::collections::HashMap;
+//   use std::{fs::File, io::Read};
+//   use std::hash::Hash;
+//   use pretty_assertions::{assert_eq};
+
+//   use crate::{get_initial_state_from_file};
+//   fn my_eq<T>(a: &[T], b: &[T]) -> bool
+//   where
+//       T: Eq + Hash,
+//   {
+//       fn count<T>(items: &[T]) -> HashMap<&T, usize>
+//       where
+//           T: Eq + Hash,
+//       {
+//           let mut cnt = HashMap::new();
+//           for i in items {
+//               *cnt.entry(i).or_insert(0) += 1
+//           }
+//           cnt
+//       }
+
+//       count(a) == count(b)
+//   }
+
+
+//   #[test]
+//   fn check_initial_state() {
+//     let mut test_data = get_initial_state_from_file("integration_test/test_data/initial_state_epoch_2.txt");
+//     let mut validation_data = get_initial_state_from_file("integration_test/validation_data/initial_state_epoch_2.txt");
+//     assert_eq!(test_data.accountData, validation_data.accountData);
+//     assert_eq!(test_data.algxBalanceData.sort(), validation_data.algxBalanceData.sort());
+//     assert_eq!(test_data.allAssets.sort(), validation_data.allAssets.sort());
+//     assert_eq!(test_data.assetIdToEscrows.keys().cloned().collect().sort(), validation_data.assetIdToEscrows);
+//     assert_eq!(test_data.blockToUnixTime, validation_data.blockToUnixTime);
+//     assert_eq!(test_data.changedEscrowSeq, validation_data.changedEscrowSeq);
+//     assert_eq!(test_data.epoch, validation_data.epoch);
+//     assert_eq!(test_data.epochStart, validation_data.epochStart);
+//     assert_eq!(test_data.epochEnd, validation_data.epochEnd);
+//     assert_eq!(test_data.epochLaunchTime, validation_data.epochLaunchTime);
+//     assert_eq!(test_data.escrowTimeToBalance, validation_data.escrowTimeToBalance);
+//     assert_eq!(test_data.tinymanPrices, validation_data.tinymanPrices);
+//     assert_eq!(test_data.unixTimeToChangedEscrows, validation_data.unixTimeToChangedEscrows);
+//     assert_eq!(test_data.formattedEscrowData, validation_data.formattedEscrowData);
+//     assert_eq!(test_data.escrowAddrs, validation_data.escrowAddrs);
+//     assert_eq!(test_data.accountData, validation_data.accountData);
+//     assert_eq!(test_data.escrows, validation_data.escrows);
+//     assert_eq!(test_data.escrowAddrToData, validation_data.escrowAddrToData);
+//   }
+// }

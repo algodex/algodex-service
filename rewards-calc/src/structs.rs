@@ -1,50 +1,50 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
 #[serde(untagged)]
 pub enum CouchDBResultsType<T> {
     Ungrouped(Vec<CouchDBResp<T>>),
     Grouped(Vec<CouchDBGroupedResp<T>>)
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
 #[serde(untagged)]
 pub enum CouchDBKey {
     StringVal(String),
     VecU64Val(Vec<u64>)
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
 pub struct CouchDBOuterResp<T> {
     pub results: CouchDBResultsType<T>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
 pub struct CouchDBOuterResp2<T> {
     pub results: Vec<CouchDBResp<T>>,
 }
 
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
 pub struct CouchDBGroupedResp<T> {
     pub rows: Vec<CouchDBGroupedResult<T>>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
 pub struct CouchDBResp<T> {
     pub total_rows: u32,
     pub offset: u32,
     pub rows: Vec<CouchDBResult<T>>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Ord, PartialOrd)]
 pub struct CouchDBGroupedResult<T> {
     pub key: String,
     pub value: T
 }
 
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, PartialOrd)]
 pub struct CouchDBResult<T> {
     pub key: CouchDBKey,
     pub value: T,
@@ -52,7 +52,7 @@ pub struct CouchDBResult<T> {
 }
 
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd)]
 pub struct EscrowValue {
     #[serde(rename = "_id")]
     pub id: String,
@@ -63,13 +63,13 @@ pub struct EscrowValue {
     pub type_field: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct AlgxBalanceValue {
     pub balance: u64,
     pub round: u32,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd)]
 pub struct Data {
     #[serde(rename = "indexerInfo")]
     pub indexer_info: IndexerInfo,
@@ -84,7 +84,7 @@ pub struct Data {
     pub history: Vec<History>,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, PartialOrd)]
 pub struct EscrowInfo {
     #[serde(rename = "isAlgoBuyEscrow")]
     pub is_algo_buy_escrow: bool,
@@ -107,7 +107,7 @@ pub struct EscrowInfo {
     pub status: String,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd)]
 pub struct History {
     #[serde(rename = "algoAmount")]
     pub algo_amount: Option<u64>,
@@ -117,7 +117,7 @@ pub struct History {
     pub time: u32,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, PartialOrd)]
 pub struct IndexerInfo {
     #[serde(rename = "_id")]
     pub id: String,
@@ -131,7 +131,7 @@ pub struct IndexerInfo {
     pub asa_amount: u64,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd)]
 pub struct BlockTime {
     pub id: String,
     pub key: String,
@@ -139,25 +139,25 @@ pub struct BlockTime {
 }
 
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd)]
 pub struct Keys {
     pub keys: Vec<String>,
     pub group: bool
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, PartialEq, Eq, PartialOrd)]
 pub struct Queries {
     pub queries: Vec<Keys>
 }
 
 
-#[derive(Eq, Hash, PartialEq, Debug)]
+#[derive(Eq, Hash, PartialEq, Debug, Serialize, Deserialize, PartialOrd)]
 pub struct EscrowTimeKey {
     pub escrow: String,
     pub unix_time: u32
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize, PartialOrd)]
 #[serde(rename_all = "camelCase")]
 pub struct TinymanTrade {
     pub round: u32,
