@@ -49,7 +49,7 @@ pub async fn save_rewards(epoch: u16, owner_rewards: &HashMap<String,HashMap<u32
 
   let json = serde_json::to_string(&save_entry).unwrap();
 
-  if (epoch == 2 && DEBUG) {
+  if (epoch == 2 && *DEBUG) {
     let filename = format!("integration_test/epoch_{}.json", epoch);
     println!("filename is: {}", filename);
     let mut file = File::create(filename).expect("Unable to create file");

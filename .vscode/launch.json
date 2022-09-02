@@ -21,9 +21,9 @@
             "program": "${cargo:program}",
             "args": [
                 "--epoch",
-                "2"
-                // "user_arg1",
-                // "user_arg2"
+                "2",
+                "--debug",
+                "1"
             ]
         },
         {
