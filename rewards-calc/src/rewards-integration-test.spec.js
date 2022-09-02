@@ -43,7 +43,7 @@ test('initial state matches', () => {
   });
 });
 
-test('initial state times match', () => {
+test('initial state matches in order', () => {
   const initialStateValidateEpoch2 = require('../integration_test/validation_data/initial_state_epoch_2.json');
   const initialStateTestEpoch2 = require('../integration_test/test_data/initial_state_epoch_2.json');
 
@@ -57,7 +57,7 @@ test('initial state times match', () => {
 
 const readFileAsJson = filename => {
   const data = fs.readFileSync(filename, {encoding: 'ascii'});
-  const json = data ? JSON.parse(data) : {};
+  const json = JSON.parse(data);
   return json;
 };
 

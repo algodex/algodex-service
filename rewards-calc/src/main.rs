@@ -8,7 +8,8 @@ use std::error::Error;
 use std::fs::File;
 use std::io::Write;
 use std::{fmt, time};
-use std::hash::Hash;
+use std::hash::{Hash, Hasher};
+use std::collections::hash_map::DefaultHasher;
 
 mod structs;
 use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue, TinymanTrade};
@@ -38,8 +39,10 @@ use crate::quality_type::Quality;
 use crate::structs::CouchDBGroupedResult;
 use urlencoding::encode;
 use crate::structs::CouchDBResp;
-
+use rand_pcg::Pcg32;
+use rand::{SeedableRng, rngs::StdRng};
 use std::path::PathBuf;
+
 
 use clap::{Parser, Subcommand};
 
@@ -60,6 +63,7 @@ pub struct PriceData {
   pub unix_time: u32,
   pub price: f64
 }
+
 
 fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec<PriceData> {
   let mut prices:Vec<PriceData> = tinymanTradesData.rows.iter()
@@ -86,6 +90,11 @@ fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec
   return prices;
 }
 
+fn calculate_hash<T: Hash>(t: &T) -> u64 {
+  let mut s = DefaultHasher::new();
+  t.hash(&mut s);
+  s.finish()
+}
 
 async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   let cli = Cli::parse();
@@ -227,6 +236,7 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
       assetIdToEscrows,
       blockToUnixTime,
       changedEscrowSeq,
+      env,
       epoch: EPOCH,
       epochStart,
       epochEnd,
@@ -257,13 +267,13 @@ fn save_initial_state(state: &InitialState) {
 }
 
 fn save_state_machine(state: &StateMachine) {
-  println!("Saving state machine...");
+  //println!("Saving state machine...");
   let filename = format!("integration_test/test_data/state_machine_{}.json", state.timestep);
-  println!("filename is: {}", filename);
+  //println!("filename is: {}", filename);
   let mut file = File::create(filename).expect("Unable to create file");
   let json = serde_json::to_string(&state).unwrap();
   file.write_all(json.as_bytes()).expect("Unable to write to file");
-  println!("State machine saved.");
+  //println!("State machine saved.");
 }
 
 
@@ -310,7 +320,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   //dbg!(spreads);
 
-  let mut rng = rand::thread_rng();
+  // Use the couchdb url to seed the random number generator, since it contains a password
+  let seed = calculate_hash(initialState.env.get("COUCHDB_BASE_URL").unwrap());
+  let mut rng = Pcg32::seed_from_u64(seed);
+
   let mut owner_wallet_step = 0;
   let mut algo_price_step = 0;
 
@@ -373,6 +386,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     if (stateMachine.timestep >= epochEnd) {
       break;
     }
+    println!("saving state at: {}", stateMachine.timestep);
     save_state_machine(&stateMachine);
   }
 
@@ -493,6 +507,7 @@ pub struct InitialState {
     assetIdToEscrows: HashMap<u32, Vec<String>>,
     #[serde(with = "any_key_map")]
     blockToUnixTime: HashMap<u32, u32>,
+    env: HashMap<String, String>,
     epoch: u16,
     epochStart: u32,
     epochEnd: u32,
