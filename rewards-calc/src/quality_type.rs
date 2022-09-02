@@ -8,6 +8,7 @@
   AlgxBalance(T), //u64
 }*/
 
+
 use duplicate::duplicate_item;
 use serde::{Serialize, Deserialize};
 
@@ -85,7 +86,11 @@ impl name {
   [Quality]; [Depth];)]
 impl PartialEq  for name {
   fn eq(&self, other: &Self) -> bool {
-      self.val == other.val
+      let res = ulps_eq!(self.val, other.val, max_ulps=8);
+      if (res == false) {
+        println!("not partial eq! {} {}", self.val, other.val);
+      }
+      res
   }
 }
 #[duplicate_item(name; [BidDepth]; [AskDepth]; [Price];
