@@ -86,7 +86,7 @@ impl name {
   [Quality]; [Depth];)]
 impl PartialEq  for name {
   fn eq(&self, other: &Self) -> bool {
-      let res = ulps_eq!(self.val, other.val, max_ulps=8);
+      let res = ulps_eq!(self.val, other.val, max_ulps=15);
       if (res == false) {
         println!("not partial eq! {} {}", self.val, other.val);
       }

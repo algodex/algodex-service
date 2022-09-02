@@ -398,7 +398,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       break;
     }
 
-    if (*DEBUG) {
+    if (*DEBUG && epoch==2) {
       println!("saving state at: {}", stateMachine.timestep);
       save_state_machine(&stateMachine);
     }
