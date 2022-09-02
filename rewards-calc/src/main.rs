@@ -1,7 +1,21 @@
+
+
+#[macro_use]
+extern crate approx;
+
 use dotenv;
+use serde::{Serialize, Deserialize};
+use serde_json::json;
+use std::io::Read;
+use serde_json_any_key::*;
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
+use std::fs::File;
+use std::io::Write;
 use std::{fmt, time};
+use std::hash::{Hash, Hasher};
+use std::collections::hash_map::DefaultHasher;
+
 mod structs;
 use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue, TinymanTrade};
 use crate::quality_type::EarnedAlgx;
@@ -30,8 +44,10 @@ use crate::quality_type::Quality;
 use crate::structs::CouchDBGroupedResult;
 use urlencoding::encode;
 use crate::structs::CouchDBResp;
-
+use rand_pcg::Pcg32;
+use rand::{SeedableRng, rngs::StdRng};
 use std::path::PathBuf;
+
 
 use clap::{Parser, Subcommand};
 
@@ -47,14 +63,15 @@ struct Cli {
 //{"total_rows":305541,"offset":71,"rows":[
 //    {"id":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","key":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","value":{
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct PriceData {
   pub unix_time: u32,
   pub price: f64
 }
 
+
 fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec<PriceData> {
-  return tinymanTradesData.rows.iter()
+  let mut prices:Vec<PriceData> = tinymanTradesData.rows.iter()
   .map(|tradeItem| &tradeItem.value)
   .map(|tradeItem| {
     let time = tradeItem.unix_time;
@@ -73,11 +90,18 @@ fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec
     let price = usdcAmount as f64/algoAmount as f64;
     PriceData {unix_time: time, price}
   }).collect();
+
+  prices.sort_by(|a,b| a.unix_time.cmp(&b.unix_time));
+  return prices;
 }
 
+fn calculate_hash<T: Hash>(t: &T) -> u64 {
+  let mut s = DefaultHasher::new();
+  t.hash(&mut s);
+  s.finish()
+}
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   let cli = Cli::parse();
 
   // You can check the value provided by positional arguments, or option arguments
@@ -100,10 +124,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
       &"epochs".to_string(), &keys, false).await;
-  let accountData = match accountEpochDataQueryRes.unwrap().results {
-      Ungrouped(val) => val,
-      _ => {panic!("Unexpected grouped value for accountEpochDataQueryRes")},
-  }.remove(0).rows;
+  let accountData = accountEpochDataQueryRes.unwrap().rows;
   let escrowAddrs:Vec<String> = accountData.iter().map(|row| String::clone(&row.value)).collect();
   // println!("{:?}", escrowAddrs);
   
@@ -112,10 +133,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       &"formatted_escrow".to_string(),
       &"orderLookup".to_string(), &escrowAddrs, false).await;
 
-  let formattedEscrowData = match formattedEscrowDataQueryRes.unwrap().results {
-    Ungrouped(val) => val,
-    _ => {panic!("Unexpected grouped value for formattedEscrowDataQueryRes")},
-  }.remove(0).rows;
+  let formattedEscrowData = formattedEscrowDataQueryRes?.rows;
 
   let escrows: Vec<EscrowValue> = formattedEscrowData.iter().map(|row| row.value.clone()).collect();
   let escrowAddrToData:HashMap<String,EscrowValue> = formattedEscrowData.iter().fold(HashMap::new(), |mut map, row| {
@@ -140,11 +158,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
   let algxBalanceDataQueryRes = query_couch_db::<AlgxBalanceValue>(&couch_dburl,
     &"algx_balance".to_string(),
     &"algx_balance".to_string(),
-    &"algx_balance".to_string(), &ownerWallets, true).await;
-  let mut algxBalanceData = match algxBalanceDataQueryRes.unwrap().results {
-    Grouped(val) => val,
-    _ => {panic!("Unexpected ungrouped value for formattedEscrowDataQueryRes")},
-  }.remove(0).rows;
+    &"algx_balance2".to_string(), &ownerWallets, false).await;
+  let mut algxBalanceData = algxBalanceDataQueryRes.unwrap().rows;
 
   algxBalanceData.sort_by(|a, b| a.value.round.partial_cmp(&b.value.round).unwrap());
 
@@ -161,10 +176,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     &"blocks".to_string(),
     &"blocks".to_string(),
     &"blockToTime".to_string(), &blocks_vec, false).await;
-  let blockTimesData = match blockTimesDataQueryRes.unwrap().results {
-    Ungrouped(val) => val,
-    _ => {panic!("Unexpected grouped value for blockTimesDataQueryRes")},
-  }.remove(0).rows;
+  let blockTimesData = blockTimesDataQueryRes?.rows;
   let blockToUnixTime: HashMap<u32, u32> = blockTimesData.iter().fold(HashMap::new(),|mut map, block| {
     let key = match &block.key {
       structs::CouchDBKey::StringVal(str) => str,
@@ -229,6 +241,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       assetIdToEscrows,
       blockToUnixTime,
       changedEscrowSeq,
+      env,
       epoch: EPOCH,
       epochStart,
       epochEnd,
@@ -243,9 +256,52 @@ async fn main() -> Result<(), Box<dyn Error>> {
       escrowAddrToData,
   };
 
+  return Ok(initialState);
+}
+
+static DEBUG:bool = true;
+
+fn save_initial_state(state: &InitialState) {
+  println!("Saving initial state...");
+  let filename = format!("integration_test/test_data/initial_state_epoch_{}.json", state.epoch);
+  println!("filename is: {}", filename);
+  let mut file = File::create(filename).expect("Unable to create file");
+  let json = serde_json::to_string(&state).unwrap();
+  file.write_all(json.as_bytes()).expect("Unable to write to file");
+  println!("Initial state saved.");
+}
+
+fn save_state_machine(state: &StateMachine) {
+  //println!("Saving state machine...");
+  let filename = format!("integration_test/test_data/state_machine_{}.json", state.timestep);
+  //println!("filename is: {}", filename);
+  let mut file = File::create(filename).expect("Unable to create file");
+  let json = serde_json::to_string(&state).unwrap();
+  file.write_all(json.as_bytes()).expect("Unable to write to file");
+  //println!("State machine saved.");
+}
+
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn Error>> {
+
+
+  let initialState = get_initial_state().await.unwrap();
+
+  if (DEBUG) {
+    save_initial_state(&initialState);
+  }
+  // IF SAVE DEBUG
+
+
+  let epochStart = initialState.epochStart;
+  let epochEnd = initialState.epochEnd;
+  let epoch = initialState.epoch;
+
   //dbg!(initialState);
 
-  let mut timestep = epochStart;
+  let timestep = epochStart;
+
   let mut escrowstep = 0;
 
   // println!("{} {}", epochStart, epochEnd);
@@ -269,7 +325,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   //dbg!(spreads);
 
-  let mut rng = rand::thread_rng();
+  // Use the couchdb url to seed the random number generator, since it contains a password
+  let seed = calculate_hash(initialState.env.get("COUCHDB_BASE_URL").unwrap());
+  let mut rng = Pcg32::seed_from_u64(seed);
+
   let mut owner_wallet_step = 0;
   let mut algo_price_step = 0;
 
@@ -285,7 +344,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       if (owner_wallet_time > stateMachine.timestep) {
         break;
       }
-      let wallet:&String = &owner_balance_entry.key;
+      let wallet:&String = owner_balance_entry.key.strval();
       stateMachine.ownerWalletToALGXBalance.insert(wallet, owner_balance_entry.value.balance);
       owner_wallet_step += 1;
     }
@@ -332,6 +391,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
     if (stateMachine.timestep >= epochEnd) {
       break;
     }
+    println!("saving state at: {}", stateMachine.timestep);
+    save_state_machine(&stateMachine);
   }
 
   // Need to give rewards per asset
@@ -387,7 +448,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   // rewardsFinal.sort_by(|a, b| a.qualityFinal.val().partial_cmp(&b.qualityFinal.val()).unwrap());
 
   println!("saving rewards in DB!");
-  save_rewards(EPOCH, &stateMachine.ownerWalletAssetToRewards, &ownerRewardsResToFinalRewardsEntry).await;
+  save_rewards(epoch, &stateMachine.ownerWalletAssetToRewards, &ownerRewardsResToFinalRewardsEntry).await;
 
   // dbg!(rewardsFinal);
   Ok(())
@@ -412,7 +473,7 @@ fn updateBalances (changedEscrows: &Vec<String>, changeTime: &u32, escrowToBalan
 //   });
 // };
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct StateMachine<'a> {
     escrowToBalance: HashMap<String, u64>,
     spreads: HashMap<u32, Spread>,
@@ -442,19 +503,24 @@ fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<Stri
     });
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct InitialState {
-    algxBalanceData: Vec<CouchDBGroupedResult<AlgxBalanceValue>>,
+    algxBalanceData: Vec<CouchDBResult<AlgxBalanceValue>>,
     allAssets: Vec<u32>,
     allAssetsSet: HashSet<u32>,
+    #[serde(with = "any_key_map")]
     assetIdToEscrows: HashMap<u32, Vec<String>>,
+    #[serde(with = "any_key_map")]
     blockToUnixTime: HashMap<u32, u32>,
+    env: HashMap<String, String>,
     epoch: u16,
     epochStart: u32,
     epochEnd: u32,
     epochLaunchTime: u32,
+    #[serde(with = "any_key_map")]
     escrowTimeToBalance: HashMap<EscrowTimeKey, u64>,
     tinymanPrices: Vec<PriceData>,
+    #[serde(with = "any_key_map")]
     unixTimeToChangedEscrows: HashMap<u32, Vec<String>>,
     changedEscrowSeq: Vec<u32>,
     formattedEscrowData:Vec<CouchDBResult<EscrowValue>>,
@@ -516,7 +582,70 @@ fn getSequenceInfo(escrows: &Vec<EscrowValue>) -> (HashMap<u32, Vec<String>>,Vec
             timeline
         });
 
-    let unixTimes = unixTimeToChangedEscrows.keys().cloned().collect();
-
+    let mut unixTimes: Vec<u32> = unixTimeToChangedEscrows.keys().cloned().collect();
+    unixTimes.sort();
     return (unixTimeToChangedEscrows, unixTimes);
 }
+
+fn get_initial_state_from_file(filename: &str) -> InitialState {
+  let mut test_data = String::new();
+  let mut test_file = File::open(filename).expect("Unable to open file");
+  test_file.read_to_string(&mut test_data).expect("Unable to read string");
+
+  let test_data_entry = serde_json::from_str(&test_data).unwrap();
+
+  return test_data_entry;
+}
+
+
+// #[cfg(test)]
+// mod tests {
+//   use std::collections::HashMap;
+//   use std::{fs::File, io::Read};
+//   use std::hash::Hash;
+//   use pretty_assertions::{assert_eq};
+
+//   use crate::{get_initial_state_from_file};
+//   fn my_eq<T>(a: &[T], b: &[T]) -> bool
+//   where
+//       T: Eq + Hash,
+//   {
+//       fn count<T>(items: &[T]) -> HashMap<&T, usize>
+//       where
+//           T: Eq + Hash,
+//       {
+//           let mut cnt = HashMap::new();
+//           for i in items {
+//               *cnt.entry(i).or_insert(0) += 1
+//           }
+//           cnt
+//       }
+
+//       count(a) == count(b)
+//   }
+
+
+//   #[test]
+//   fn check_initial_state() {
+//     let mut test_data = get_initial_state_from_file("integration_test/test_data/initial_state_epoch_2.txt");
+//     let mut validation_data = get_initial_state_from_file("integration_test/validation_data/initial_state_epoch_2.txt");
+//     assert_eq!(test_data.accountData, validation_data.accountData);
+//     assert_eq!(test_data.algxBalanceData.sort(), validation_data.algxBalanceData.sort());
+//     assert_eq!(test_data.allAssets.sort(), validation_data.allAssets.sort());
+//     assert_eq!(test_data.assetIdToEscrows.keys().cloned().collect().sort(), validation_data.assetIdToEscrows);
+//     assert_eq!(test_data.blockToUnixTime, validation_data.blockToUnixTime);
+//     assert_eq!(test_data.changedEscrowSeq, validation_data.changedEscrowSeq);
+//     assert_eq!(test_data.epoch, validation_data.epoch);
+//     assert_eq!(test_data.epochStart, validation_data.epochStart);
+//     assert_eq!(test_data.epochEnd, validation_data.epochEnd);
+//     assert_eq!(test_data.epochLaunchTime, validation_data.epochLaunchTime);
+//     assert_eq!(test_data.escrowTimeToBalance, validation_data.escrowTimeToBalance);
+//     assert_eq!(test_data.tinymanPrices, validation_data.tinymanPrices);
+//     assert_eq!(test_data.unixTimeToChangedEscrows, validation_data.unixTimeToChangedEscrows);
+//     assert_eq!(test_data.formattedEscrowData, validation_data.formattedEscrowData);
+//     assert_eq!(test_data.escrowAddrs, validation_data.escrowAddrs);
+//     assert_eq!(test_data.accountData, validation_data.accountData);
+//     assert_eq!(test_data.escrows, validation_data.escrows);
+//     assert_eq!(test_data.escrowAddrToData, validation_data.escrowAddrToData);
+//   }
+// }

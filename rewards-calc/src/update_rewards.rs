@@ -205,7 +205,7 @@ pub fn updateRewards(
       let distanceFromSpread = (price - midMarket).abs();
       let percentDistant = distanceFromSpread / midMarket;
       let depth =
-        (*algoPrice) * (*balance as f64) * price / (10_i64.pow(*decimals as u32) as f64);
+        (*algoPrice) * (*balance as f64) * *price / (10_f64.powf(*decimals as f64) as f64);
       let orderType = match escrowAddrToData.get(escrow).unwrap().data.escrow_info.is_algo_buy_escrow {
         true => Bid,
         false => Ask

@@ -1,6 +1,8 @@
 use dotenv;
 use core::panic;
 use std::collections::HashMap;
+use std::fs::File;
+use std::io::Write;
 use urlencoding::encode;
 use reqwest;
 use serde::{Serialize, Deserialize};
@@ -8,12 +10,108 @@ use serde::de::DeserializeOwned;
 use serde_json;
 use serde_path_to_error;
 use std::error::Error;
+use std::{fs, env};
+use std::path::PathBuf;
 
-use crate::structs::{CouchDBOuterResp, Keys, Queries, EscrowValue};
+use crate::DEBUG;
+use crate::structs::{CouchDBOuterResp, Keys, Queries, EscrowValue, CouchDBGroupedResp, CouchDBGroupedResult, CouchDBResult, CouchDBKey};
 use crate::structs::CouchDBResp;
 use crate::structs::CouchDBOuterResp2;
 
+
 pub async fn query_couch_db<T: DeserializeOwned>(couch_url: &String, db_name: &String, index_name: &String, 
+  view_name: &String, keys: &Vec<String>, group: bool)
+  -> Result<(CouchDBResp<T>), Box<dyn Error>> 
+  {
+
+  let client = reqwest::Client::new();
+
+  let keys = Keys {
+      keys: keys.clone(),
+      group
+  };
+  let mut keysVec: Vec<Keys> = Vec::new();
+  keysVec.push(keys);
+
+  let queries = Queries {
+      queries: keysVec,
+  };
+
+//   let keysStr = serde_json::to_string(&queries).unwrap();
+  //println!("bbb {}",keysStr);
+  // let jsonObj = serde_json::from_str(json).unwrap();
+  //let query = serde_json::to
+  //let query_encoded = encode(query.as_str());
+
+//   println!("{}", keysStr);
+  let full = format!("{}/query/{}/_design/{}/_view/{}",
+  "http://localhost:3006", db_name, index_name, view_name);
+
+  let resp = client.post(full)
+      //.header(reqwest::header::CONTENT_TYPE, "application/json")
+      .json(&queries)
+      .send()
+      .await?;
+
+  let res = resp.text().await?;
+
+  if (DEBUG) {
+    let short_name = format!("{}_{}_view/{}/queries", db_name, index_name, view_name);
+    let filename = format!("result_data/{}.txt", short_name.replace("/","_"));
+    println!("filename is: {}", filename.clone());
+
+    let full_path = env::current_dir()?.join(filename);
+
+    // println!("file is: {}", env::current_dir()?.join(filename).display());
+    
+
+    // let srcdir = PathBuf::from("./src");
+    let full_canon = fs::canonicalize(&full_path);
+    println!("full path {:?}", full_canon);
+
+  
+
+    let mut file = File::create(full_canon?).expect("Unable to create file");
+    file.write_all(res.as_bytes()).expect("Unable to write to file");
+  }
+
+  //let owned = res.to_owned();
+  //let text: &'a String = &owned;
+//   println!("aaa {}",&res[0..1000]);
+  if (res.contains("\"error\":\"unauthorized\"")) {
+    panic!("{res}");
+  }
+
+  let result:Result<CouchDBResp<T>,_> = match group {
+    false => serde_json::from_str(&res),
+    true => {
+      let grouped_resp:Result<CouchDBGroupedResp<T>,_> = serde_json::from_str(&res);
+      let converted_rows:Vec<CouchDBResult<T>> = grouped_resp.unwrap().rows.into_iter().map(|row| {
+        CouchDBResult{key: CouchDBKey::StringVal(row.key), value: row.value, id:"".to_string()}
+      }).collect();
+      let ungrouped:Result<CouchDBResp<T>, serde_json::Error> = Ok(CouchDBResp{rows: converted_rows, total_rows: 0, offset: 0});
+      ungrouped
+    }
+  };
+
+  if let Err(_) = &result {
+    println!("{res}");
+    let jd = &mut serde_json::Deserializer::from_str(&res);
+    let result2: Result<CouchDBResp<T>, _> = serde_path_to_error::deserialize(jd);
+    match &result2 {
+        Ok(_) => {},
+        Err(err) => {
+            let path = err.path().to_string();
+            dbg!(path);
+        }
+    }
+  };
+  //return Err("Error...".into());
+  return Ok(result?);
+}
+
+
+pub async fn query_couch_db_no_proxy<T: DeserializeOwned>(couch_url: &String, db_name: &String, index_name: &String, 
   view_name: &String, keys: &Vec<String>, group: bool)
   -> Result<(CouchDBOuterResp<T>), Box<dyn Error>> 
   {
@@ -48,6 +146,15 @@ pub async fn query_couch_db<T: DeserializeOwned>(couch_url: &String, db_name: &S
       .await?;
 
   let res = resp.text().await?;
+
+  if (DEBUG) {
+    let short_name = format!("{}_{}_view/{}/queries", db_name, index_name, view_name);
+    let filename = format!("result_data/{}.txt", short_name.replace("/","_"));
+    println!("filename is: {}", filename);
+    let mut file = File::create(filename).expect("Unable to create file");
+    file.write_all(res.as_bytes()).expect("Unable to write to file");
+  }
+
   //let owned = res.to_owned();
   //let text: &'a String = &owned;
 //   println!("aaa {}",&res[0..1000]);

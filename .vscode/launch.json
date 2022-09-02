@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "cwd": "${workspaceFolder}/api",
+            "cwd": "${workspaceFolder}/rewards-calc",
             "type": "lldb",
             "request": "launch",
             "name": "Rewards Calc (Rust)",

@@ -9,7 +9,7 @@ use serde_json;
 use serde_path_to_error;
 use std::error::Error;
 use reqwest::Response;
-use crate::OwnerRewardsResult;
+use crate::{OwnerRewardsResult, DEBUG};
 use crate::update_rewards::{OwnerRewardsKey, EarnedAlgxEntry};
 use serde_json::json;
 use serde_with::serde_as; // 1.5.1
@@ -49,8 +49,8 @@ pub async fn save_rewards(epoch: u16, owner_rewards: &HashMap<String,HashMap<u32
 
   let json = serde_json::to_string(&save_entry).unwrap();
 
-  if (epoch == 2) {
-    let filename = format!("integration_test/epoch_{}.txt", epoch);
+  if (epoch == 2 && DEBUG) {
+    let filename = format!("integration_test/epoch_{}.json", epoch);
     println!("filename is: {}", filename);
     let mut file = File::create(filename).expect("Unable to create file");
     file.write_all(json.as_bytes()).expect("Unable to write to file");
@@ -129,8 +129,8 @@ mod tests {
     #[test]
 
     fn validate_epoch_2() {
-      let flattened_test_data = get_compare_data_from_file("integration_test/epoch_2.txt");
-      let flattened_validate_data = get_compare_data_from_file("integration_test/epoch_2_validate.txt");
+      let flattened_test_data = get_compare_data_from_file("integration_test/epoch_2.json");
+      let flattened_validate_data = get_compare_data_from_file("integration_test/epoch_2_validate.json");
       
       assert_eq!(flattened_test_data, flattened_validate_data);
     }

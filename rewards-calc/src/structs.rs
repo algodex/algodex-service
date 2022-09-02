@@ -1,50 +1,56 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CouchDBResultsType<T> {
     Ungrouped(Vec<CouchDBResp<T>>),
     Grouped(Vec<CouchDBGroupedResp<T>>)
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CouchDBKey {
     StringVal(String),
     VecU64Val(Vec<u64>)
 }
+impl CouchDBKey {
+    pub fn strval(&self) -> &String {
+        if let CouchDBKey::StringVal(c) = self { c } else { panic!("Not a String inside CouchDBKey") }
+    }
+}
 
-#[derive(Deserialize, Debug, Clone)]
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBOuterResp<T> {
     pub results: CouchDBResultsType<T>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBOuterResp2<T> {
     pub results: Vec<CouchDBResp<T>>,
 }
 
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBGroupedResp<T> {
     pub rows: Vec<CouchDBGroupedResult<T>>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBResp<T> {
     pub total_rows: u32,
     pub offset: u32,
     pub rows: Vec<CouchDBResult<T>>,
 }
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBGroupedResult<T> {
     pub key: String,
     pub value: T
 }
 
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBResult<T> {
     pub key: CouchDBKey,
     pub value: T,
@@ -151,7 +157,7 @@ pub struct Queries {
 }
 
 
-#[derive(Eq, Hash, PartialEq, Debug)]
+#[derive(Eq, Hash, PartialEq, Debug, Serialize, Deserialize)]
 pub struct EscrowTimeKey {
     pub escrow: String,
     pub unix_time: u32
