@@ -48,6 +48,9 @@ const databases = [
           map: require('../../views/algx_balance/algx_balance-map').toString(),
           reduce: require('../../views/algx_balance/algx_balance-reduce').toString(),
         },
+        algx_balance2: {
+          map: require('../../views/algx_balance/algx_balance2-map').toString(),
+        },
       },
     },
   },
