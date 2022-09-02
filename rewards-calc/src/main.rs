@@ -62,7 +62,7 @@ pub struct PriceData {
 }
 
 fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec<PriceData> {
-  return tinymanTradesData.rows.iter()
+  let mut prices:Vec<PriceData> = tinymanTradesData.rows.iter()
   .map(|tradeItem| &tradeItem.value)
   .map(|tradeItem| {
     let time = tradeItem.unix_time;
@@ -81,6 +81,9 @@ fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec
     let price = usdcAmount as f64/algoAmount as f64;
     PriceData {unix_time: time, price}
   }).collect();
+
+  prices.sort_by(|a,b| a.unix_time.cmp(&b.unix_time));
+  return prices;
 }
 
 
@@ -253,6 +256,17 @@ fn save_initial_state(state: &InitialState) {
   println!("Initial state saved.");
 }
 
+fn save_state_machine(state: &StateMachine) {
+  println!("Saving state machine...");
+  let filename = format!("integration_test/test_data/state_machine_{}.json", state.timestep);
+  println!("filename is: {}", filename);
+  let mut file = File::create(filename).expect("Unable to create file");
+  let json = serde_json::to_string(&state).unwrap();
+  file.write_all(json.as_bytes()).expect("Unable to write to file");
+  println!("State machine saved.");
+}
+
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
 
@@ -271,7 +285,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   //dbg!(initialState);
 
-  let mut timestep = epochStart;
+  let timestep = epochStart;
 
   let mut escrowstep = 0;
 
@@ -359,6 +373,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     if (stateMachine.timestep >= epochEnd) {
       break;
     }
+    save_state_machine(&stateMachine);
   }
 
   // Need to give rewards per asset
@@ -439,7 +454,7 @@ fn updateBalances (changedEscrows: &Vec<String>, changeTime: &u32, escrowToBalan
 //   });
 // };
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct StateMachine<'a> {
     escrowToBalance: HashMap<String, u64>,
     spreads: HashMap<u32, Spread>,
@@ -547,8 +562,8 @@ fn getSequenceInfo(escrows: &Vec<EscrowValue>) -> (HashMap<u32, Vec<String>>,Vec
             timeline
         });
 
-    let unixTimes = unixTimeToChangedEscrows.keys().cloned().collect();
-
+    let mut unixTimes: Vec<u32> = unixTimeToChangedEscrows.keys().cloned().collect();
+    unixTimes.sort();
     return (unixTimeToChangedEscrows, unixTimes);
 }
 

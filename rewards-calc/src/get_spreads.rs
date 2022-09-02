@@ -1,7 +1,9 @@
+use serde::Serialize;
+
 use crate::HashMap;
 use crate::EscrowValue;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub struct Spread {
   pub ask: Option<f64>,
   pub bid: Option<f64>
