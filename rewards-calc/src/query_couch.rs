@@ -115,76 +115,77 @@ pub async fn query_couch_db<T: DeserializeOwned>(proxy_url: &String, db_name: &S
 }
 
 
-pub async fn query_couch_db_no_proxy<T: DeserializeOwned>(couch_url: &String, db_name: &String, index_name: &String, 
-  view_name: &String, keys: &Vec<String>, group: bool)
-  -> Result<(CouchDBOuterResp<T>), Box<dyn Error>> 
-  {
+// This function works but is unused - delete?
+// pub async fn query_couch_db_no_proxy<T: DeserializeOwned>(couch_url: &String, db_name: &String, index_name: &String, 
+//   view_name: &String, keys: &Vec<String>, group: bool)
+//   -> Result<(CouchDBOuterResp<T>), Box<dyn Error>> 
+//   {
 
-  let client = reqwest::Client::new();
+//   let client = reqwest::Client::new();
 
-  let keys = Keys {
-      keys: keys.clone(),
-      group
-  };
-  let mut keysVec: Vec<Keys> = Vec::new();
-  keysVec.push(keys);
+//   let keys = Keys {
+//       keys: keys.clone(),
+//       group
+//   };
+//   let mut keysVec: Vec<Keys> = Vec::new();
+//   keysVec.push(keys);
 
-  let queries = Queries {
-      queries: keysVec,
-  };
+//   let queries = Queries {
+//       queries: keysVec,
+//   };
 
-//   let keysStr = serde_json::to_string(&queries).unwrap();
-  //println!("bbb {}",keysStr);
-  // let jsonObj = serde_json::from_str(json).unwrap();
-  //let query = serde_json::to
-  //let query_encoded = encode(query.as_str());
+// //   let keysStr = serde_json::to_string(&queries).unwrap();
+//   //println!("bbb {}",keysStr);
+//   // let jsonObj = serde_json::from_str(json).unwrap();
+//   //let query = serde_json::to
+//   //let query_encoded = encode(query.as_str());
 
-//   println!("{}", keysStr);
-  let full = format!("{}/{}/_design/{}/_view/{}/queries",
-      couch_url, db_name, index_name, view_name);
+// //   println!("{}", keysStr);
+//   let full = format!("{}/{}/_design/{}/_view/{}/queries",
+//       couch_url, db_name, index_name, view_name);
 
-  let resp = client.post(full)
-      //.header(reqwest::header::CONTENT_TYPE, "application/json")
-      .json(&queries)
-      .send()
-      .await?;
+//   let resp = client.post(full)
+//       //.header(reqwest::header::CONTENT_TYPE, "application/json")
+//       .json(&queries)
+//       .send()
+//       .await?;
 
-  let res = resp.text().await?;
+//   let res = resp.text().await?;
 
-  if (DEBUG) {
-    let short_name = format!("{}_{}_view/{}/queries", db_name, index_name, view_name);
-    let filename = format!("result_data/{}.txt", short_name.replace("/","_"));
-    println!("filename is: {}", filename);
-    let mut file = File::create(filename).expect("Unable to create file");
-    file.write_all(res.as_bytes()).expect("Unable to write to file");
-  }
+//   if (DEBUG) {
+//     let short_name = format!("{}_{}_view/{}/queries", db_name, index_name, view_name);
+//     let filename = format!("result_data/{}.txt", short_name.replace("/","_"));
+//     println!("filename is: {}", filename);
+//     let mut file = File::create(filename).expect("Unable to create file");
+//     file.write_all(res.as_bytes()).expect("Unable to write to file");
+//   }
 
-  //let owned = res.to_owned();
-  //let text: &'a String = &owned;
-//   println!("aaa {}",&res[0..1000]);
-  if (res.contains("\"error\":\"unauthorized\"")) {
-    panic!("{res}");
-  }
+//   //let owned = res.to_owned();
+//   //let text: &'a String = &owned;
+// //   println!("aaa {}",&res[0..1000]);
+//   if (res.contains("\"error\":\"unauthorized\"")) {
+//     panic!("{res}");
+//   }
 
-  let result: Result<CouchDBOuterResp<T>,_> = serde_json::from_str(&res);
+//   let result: Result<CouchDBOuterResp<T>,_> = serde_json::from_str(&res);
 
-  if let Err(_) = &result {
-    println!("{res}");
-    let jd = &mut serde_json::Deserializer::from_str(&res);
-    let result2: Result<CouchDBOuterResp<T>, _> = serde_path_to_error::deserialize(jd);
-    match &result2 {
-        Ok(_) => {},
-        Err(err) => {
-            let path = err.path().to_string();
-            dbg!(path);
-        }
-    }
-  };
+//   if let Err(_) = &result {
+//     println!("{res}");
+//     let jd = &mut serde_json::Deserializer::from_str(&res);
+//     let result2: Result<CouchDBOuterResp<T>, _> = serde_path_to_error::deserialize(jd);
+//     match &result2 {
+//         Ok(_) => {},
+//         Err(err) => {
+//             let path = err.path().to_string();
+//             dbg!(path);
+//         }
+//     }
+//   };
 
 
-  //return Err("Error...".into());
-  return Ok(result?);
-}
+//   //return Err("Error...".into());
+//   return Ok(result?);
+// }
 
 
 pub async fn query_couch_db_with_full_str<T: DeserializeOwned>(couch_url: &String, db_name: &String, index_name: &String, 
