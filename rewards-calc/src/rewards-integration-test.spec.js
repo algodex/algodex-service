@@ -36,6 +36,7 @@ test('initial state matches', () => {
 
   initialStateValidateEpoch2 = recursiveSortKeys(initialStateValidateEpoch2);
   initialStateTestEpoch2 = recursiveSortKeys(initialStateTestEpoch2);
+  initialStateValidateEpoch2.env = initialStateTestEpoch2.env;
 
   Object.keys(initialStateValidateEpoch2).forEach(key => {
     console.log('key is: ' + key);

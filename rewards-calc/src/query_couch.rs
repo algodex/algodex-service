@@ -55,7 +55,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(proxy_url: &String, db_name: &S
 
   let res = resp.text().await?;
 
-  if (DEBUG) {
+  if (*DEBUG) {
     let short_name = format!("{}_{}_view/{}/queries", db_name, index_name, view_name);
     let filename = format!("result_data/{}.txt", short_name.replace("/","_"));
     println!("filename is: {}", filename.clone());

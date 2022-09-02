@@ -4,6 +4,8 @@
 
 #[macro_use]
 extern crate approx;
+#[macro_use]
+extern crate lazy_static;
 
 use dotenv;
 use serde::{Serialize, Deserialize};
@@ -58,6 +60,8 @@ use clap::{Parser, Subcommand};
 struct Cli {
     #[clap(short, long)]
     epoch: u16,
+    #[clap(short, long)]
+    debug: u8,
 }
 
 
@@ -71,6 +75,9 @@ pub struct PriceData {
   pub price: f64
 }
 
+lazy_static! {
+  static ref DEBUG:bool = Cli::parse().debug == 1;
+}
 
 fn getTinymanPricesFromData(tinymanTradesData: CouchDBResp<TinymanTrade>) -> Vec<PriceData> {
   let mut prices:Vec<PriceData> = tinymanTradesData.rows.iter()
@@ -262,8 +269,6 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   return Ok(initialState);
 }
 
-static DEBUG:bool = true;
-
 fn save_initial_state(state: &InitialState) {
   println!("Saving initial state...");
   let filename = format!("integration_test/test_data/initial_state_epoch_{}.json", state.epoch);
@@ -291,7 +296,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   let initialState = get_initial_state().await.unwrap();
 
-  if (DEBUG) {
+  if (*DEBUG) {
     save_initial_state(&initialState);
   }
   // IF SAVE DEBUG
@@ -393,7 +398,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       break;
     }
 
-    if (DEBUG) {
+    if (*DEBUG) {
       println!("saving state at: {}", stateMachine.timestep);
       save_state_machine(&stateMachine);
     }
