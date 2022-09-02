@@ -1,4 +1,6 @@
-
+// Calculate Algodex Rewards
+// Example:
+//   cargo run --release -- --epoch=2
 
 #[macro_use]
 extern crate approx;
@@ -119,8 +121,9 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   // println!("{:?}", result.get("ALGORAND_NETWORK").take());
 
   let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL_RUST");
+  let api_url = env.get("API_PROXY_URL").expect("Missing API_PROXY_URL");
   let keys = [EPOCH.to_string()].to_vec();
-  let accountEpochDataQueryRes = query_couch_db::<String>(&couch_dburl,
+  let accountEpochDataQueryRes = query_couch_db::<String>(&api_url,
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
       &"epochs".to_string(), &keys, false).await;
@@ -128,7 +131,7 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   let escrowAddrs:Vec<String> = accountData.iter().map(|row| String::clone(&row.value)).collect();
   // println!("{:?}", escrowAddrs);
   
-  let formattedEscrowDataQueryRes = query_couch_db::<EscrowValue>(&couch_dburl,
+  let formattedEscrowDataQueryRes = query_couch_db::<EscrowValue>(&api_url,
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
       &"orderLookup".to_string(), &escrowAddrs, false).await;
@@ -155,7 +158,7 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
 
   let ownerWallets: Vec<String> = escrows.iter().map(|escrow| &escrow.data.escrow_info.owner_addr).cloned().collect();
 
-  let algxBalanceDataQueryRes = query_couch_db::<AlgxBalanceValue>(&couch_dburl,
+  let algxBalanceDataQueryRes = query_couch_db::<AlgxBalanceValue>(&api_url,
     &"algx_balance".to_string(),
     &"algx_balance".to_string(),
     &"algx_balance2".to_string(), &ownerWallets, false).await;
@@ -172,7 +175,7 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   let blocks_vec:Vec<String> = algx_change_rounds_set.iter()
     .map(|round|round.to_string()).collect();
 
-  let blockTimesDataQueryRes = query_couch_db::<u32>(&couch_dburl,
+  let blockTimesDataQueryRes = query_couch_db::<u32>(&api_url,
     &"blocks".to_string(),
     &"blocks".to_string(),
     &"blockToTime".to_string(), &blocks_vec, false).await;
@@ -259,7 +262,7 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   return Ok(initialState);
 }
 
-static DEBUG:bool = true;
+static DEBUG:bool = false;
 
 fn save_initial_state(state: &InitialState) {
   println!("Saving initial state...");
@@ -323,10 +326,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
       timestep
     };
 
-  //dbg!(spreads);
-
   // Use the couchdb url to seed the random number generator, since it contains a password
-  let seed = calculate_hash(initialState.env.get("COUCHDB_BASE_URL").unwrap());
+  let seed = calculate_hash(initialState.env.get("REWARDS_RANDOM_SEED").unwrap());
   let mut rng = Pcg32::seed_from_u64(seed);
 
   let mut owner_wallet_step = 0;
@@ -391,8 +392,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
     if (stateMachine.timestep >= epochEnd) {
       break;
     }
-    println!("saving state at: {}", stateMachine.timestep);
-    save_state_machine(&stateMachine);
+
+    if (DEBUG) {
+      println!("saving state at: {}", stateMachine.timestep);
+      save_state_machine(&stateMachine);
+    }
   }
 
   // Need to give rewards per asset

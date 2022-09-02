@@ -19,7 +19,7 @@ use crate::structs::CouchDBResp;
 use crate::structs::CouchDBOuterResp2;
 
 
-pub async fn query_couch_db<T: DeserializeOwned>(couch_url: &String, db_name: &String, index_name: &String, 
+pub async fn query_couch_db<T: DeserializeOwned>(proxy_url: &String, db_name: &String, index_name: &String, 
   view_name: &String, keys: &Vec<String>, group: bool)
   -> Result<(CouchDBResp<T>), Box<dyn Error>> 
   {
@@ -45,7 +45,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(couch_url: &String, db_name: &S
 
 //   println!("{}", keysStr);
   let full = format!("{}/query/{}/_design/{}/_view/{}",
-  "http://localhost:3006", db_name, index_name, view_name);
+  proxy_url, db_name, index_name, view_name);
 
   let resp = client.post(full)
       //.header(reqwest::header::CONTENT_TYPE, "application/json")
