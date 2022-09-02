@@ -136,7 +136,8 @@ interface CouchRewardsData {
   qualityFinal: number,
   earnedRewards: number,
   epoch: number,
-  assetId: number
+  assetId: number,
+  updatedAt: string
 }
 
 interface OwnerRewardsKey {
@@ -184,6 +185,8 @@ app.post('/save_rewards', async (req, res) => {
     const rewardsResult = saveRewardsReqData.owner_rewards[walletAssetKey.wallet][walletAssetKey.assetId.toString()];
 
     const rewardsSaveKey = generateRewardsSaveKey(wallet, assetId, saveRewardsReqData.epoch);
+    var date = new Date();
+    const utc = date.toUTCString()
     const dataForSaving:CouchRewardsData = {
       _id: rewardsSaveKey,
       ownerWallet: wallet,
@@ -194,16 +197,32 @@ app.post('/save_rewards', async (req, res) => {
       qualityFinal: earnedAlgxEntry.quality.val,
       earnedRewards: earnedAlgxEntry.earned_algx.val,
       epoch: saveRewardsReqData.epoch,
-      assetId
+      assetId,
+      updatedAt: utc
     }
     return dataForSaving;
+  });
+
+  // FIXME - reset old rewards to 0
+
+
+  const allDocs = await db.allDocs();
+  const idToRev = allDocs.rows.reduce((map, row) => {
+    map.set(row.id,row.value.rev);
+    return map
+  }, new Map<String, String>);
+
+  rewardsDataDocs.forEach(doc => {
+    doc._rev = idToRev.get(doc._id);
   });
 
   try {
     await db.bulkDocs(rewardsDataDocs);
   } catch (e) {
-    //FIXME: send error response!
-      console.log(e);
+    console.log(e);
+    res.sendStatus(500);
+    res.send(e);
+    return;
   }
   res.sendStatus(200);
 });
