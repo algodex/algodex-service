@@ -13,6 +13,12 @@ pub enum CouchDBKey {
     StringVal(String),
     VecU64Val(Vec<u64>)
 }
+impl CouchDBKey {
+    pub fn strval(&self) -> &String {
+        if let CouchDBKey::StringVal(c) = self { c } else { panic!("Not a String inside CouchDBKey") }
+    }
+}
+
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBOuterResp<T> {

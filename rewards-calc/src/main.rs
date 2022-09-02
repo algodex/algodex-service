@@ -107,10 +107,7 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
       &"formatted_escrow".to_string(),
       &"formatted_escrow".to_string(),
       &"epochs".to_string(), &keys, false).await;
-  let accountData = match accountEpochDataQueryRes.unwrap().results {
-      Ungrouped(val) => val,
-      _ => {panic!("Unexpected grouped value for accountEpochDataQueryRes")},
-  }.remove(0).rows;
+  let accountData = accountEpochDataQueryRes.unwrap().rows;
   let escrowAddrs:Vec<String> = accountData.iter().map(|row| String::clone(&row.value)).collect();
   // println!("{:?}", escrowAddrs);
   
@@ -119,10 +116,7 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
       &"formatted_escrow".to_string(),
       &"orderLookup".to_string(), &escrowAddrs, false).await;
 
-  let formattedEscrowData = match formattedEscrowDataQueryRes.unwrap().results {
-    Ungrouped(val) => val,
-    _ => {panic!("Unexpected grouped value for formattedEscrowDataQueryRes")},
-  }.remove(0).rows;
+  let formattedEscrowData = formattedEscrowDataQueryRes?.rows;
 
   let escrows: Vec<EscrowValue> = formattedEscrowData.iter().map(|row| row.value.clone()).collect();
   let escrowAddrToData:HashMap<String,EscrowValue> = formattedEscrowData.iter().fold(HashMap::new(), |mut map, row| {
@@ -147,11 +141,8 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   let algxBalanceDataQueryRes = query_couch_db::<AlgxBalanceValue>(&couch_dburl,
     &"algx_balance".to_string(),
     &"algx_balance".to_string(),
-    &"algx_balance".to_string(), &ownerWallets, true).await;
-  let mut algxBalanceData = match algxBalanceDataQueryRes.unwrap().results {
-    Grouped(val) => val,
-    _ => {panic!("Unexpected ungrouped value for formattedEscrowDataQueryRes")},
-  }.remove(0).rows;
+    &"algx_balance2".to_string(), &ownerWallets, false).await;
+  let mut algxBalanceData = algxBalanceDataQueryRes.unwrap().rows;
 
   algxBalanceData.sort_by(|a, b| a.value.round.partial_cmp(&b.value.round).unwrap());
 
@@ -168,10 +159,7 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
     &"blocks".to_string(),
     &"blocks".to_string(),
     &"blockToTime".to_string(), &blocks_vec, false).await;
-  let blockTimesData = match blockTimesDataQueryRes.unwrap().results {
-    Ungrouped(val) => val,
-    _ => {panic!("Unexpected grouped value for blockTimesDataQueryRes")},
-  }.remove(0).rows;
+  let blockTimesData = blockTimesDataQueryRes?.rows;
   let blockToUnixTime: HashMap<u32, u32> = blockTimesData.iter().fold(HashMap::new(),|mut map, block| {
     let key = match &block.key {
       structs::CouchDBKey::StringVal(str) => str,
@@ -324,7 +312,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
       if (owner_wallet_time > stateMachine.timestep) {
         break;
       }
-      let wallet:&String = &owner_balance_entry.key;
+      let wallet:&String = owner_balance_entry.key.strval();
       stateMachine.ownerWalletToALGXBalance.insert(wallet, owner_balance_entry.value.balance);
       owner_wallet_step += 1;
     }
@@ -483,7 +471,7 @@ fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<Stri
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InitialState {
-    algxBalanceData: Vec<CouchDBGroupedResult<AlgxBalanceValue>>,
+    algxBalanceData: Vec<CouchDBResult<AlgxBalanceValue>>,
     allAssets: Vec<u32>,
     allAssetsSet: HashSet<u32>,
     #[serde(with = "any_key_map")]

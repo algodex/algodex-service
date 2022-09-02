@@ -1,4 +1,5 @@
 import internal = require("stream");
+import { resetAllMocks } from "../src/__mocks__/Redis";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config();
@@ -12,8 +13,8 @@ const PouchMapReduce = require('pouchdb-mapreduce');
 PouchDB.plugin(PouchMapReduce)
 
 const app = express()
-app.use(express.json());       // to support JSON-encoded bodies
-app.use(express.urlencoded()); // to support URL-encoded bodies 
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb'}));
 const port = 3006
 
 const getDatabase = (dbname:string) => {
@@ -146,6 +147,28 @@ interface OwnerRewardsKey {
 const generateRewardsSaveKey = (wallet:string, assetId:number, epoch:number) => {
   return `${epoch}:${wallet}:${assetId}`;
 }
+
+app.post('/query/:database/_design/:index/_view/:view', async (req, res) => {
+
+  const {database, index, view} = req.params;
+  const {keys, group} = req.body.queries[0]
+
+  console.log( {database, index, view, keys, group}); 
+
+  const db = getDatabase(database);
+  try {
+    const dbResult = await db.query(`${index}/${view}`,
+    {
+      group, keys
+    });
+    res.setHeader('Content-Type', 'application/json');
+    res.send(dbResult);
+  } catch (e) {
+    res.send(e);
+    return;
+  }
+
+})
 
 app.post('/save_rewards', async (req, res) => {
   console.log('Got body:', req.body);
