@@ -60,18 +60,22 @@ pub async fn query_couch_db<T: DeserializeOwned>(proxy_url: &String, db_name: &S
     let filename = format!("result_data/{}.txt", short_name.replace("/","_"));
     println!("filename is: {}", filename.clone());
 
+
     let full_path = env::current_dir()?.join(filename);
 
+    let dir = "result_data";
+    let full_dir = env::current_dir()?.join(dir);
     // println!("file is: {}", env::current_dir()?.join(filename).display());
     
+    fs::create_dir_all(full_dir)?;
 
     // let srcdir = PathBuf::from("./src");
-    let full_canon = fs::canonicalize(&full_path);
-    println!("full path {:?}", full_canon);
+    // let full_canon = fs::canonicalize(&full_path);
+    let os_path = full_path.into_os_string().into_string().unwrap();
 
-  
+    println!("full path {:?}", os_path);
 
-    let mut file = File::create(full_canon?).expect("Unable to create file");
+    let mut file = File::create(os_path).expect("Unable to create file");
     file.write_all(res.as_bytes()).expect("Unable to write to file");
   }
 

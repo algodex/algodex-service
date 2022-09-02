@@ -262,7 +262,7 @@ async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
   return Ok(initialState);
 }
 
-static DEBUG:bool = false;
+static DEBUG:bool = true;
 
 fn save_initial_state(state: &InitialState) {
   println!("Saving initial state...");
