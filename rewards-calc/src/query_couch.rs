@@ -44,6 +44,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(proxy_url: &String, db_name: &S
   //let query_encoded = encode(query.as_str());
 
 //   println!("{}", keysStr);
+  println!("proxy url: {}", proxy_url);
   let full = format!("{}/query/{}/_design/{}/_view/{}",
   proxy_url, db_name, index_name, view_name);
 

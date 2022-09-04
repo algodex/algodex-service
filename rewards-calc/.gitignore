@@ -1,3 +1,4 @@
 target
 integration_test/test_data
+integration_test/epoch_2.json
 result_data
