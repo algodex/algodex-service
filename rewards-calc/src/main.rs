@@ -14,7 +14,7 @@ use std::io::Read;
 use serde_json_any_key::*;
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
-use std::fs::File;
+use std::fs::{File, self};
 use std::io::Write;
 use std::{fmt, time};
 use std::hash::{Hash, Hasher};
@@ -273,6 +273,9 @@ fn save_initial_state(state: &InitialState) {
   println!("Saving initial state...");
   let filename = format!("integration_test/test_data/initial_state_epoch_{}.json", state.epoch);
   println!("filename is: {}", filename);
+
+  // create directory if not exists
+  fs::create_dir_all("integration_test/test_data").unwrap();
   let mut file = File::create(filename).expect("Unable to create file");
   let json = serde_json::to_string(&state).unwrap();
   file.write_all(json.as_bytes()).expect("Unable to write to file");
