@@ -1,27 +1,27 @@
-use dotenv;
+
 use core::panic;
-use std::collections::HashMap;
+
 use std::fs::File;
 use std::io::Write;
-use urlencoding::encode;
+
 use reqwest;
-use serde::{Serialize, Deserialize};
+
 use serde::de::DeserializeOwned;
 use serde_json;
 use serde_path_to_error;
 use std::error::Error;
 use std::{fs, env};
-use std::path::PathBuf;
+
 
 use crate::DEBUG;
-use crate::structs::{CouchDBOuterResp, Keys, Queries, EscrowValue, CouchDBGroupedResp, CouchDBGroupedResult, CouchDBResult, CouchDBKey};
+use crate::structs::{Keys, Queries, CouchDBGroupedResp, CouchDBResult, CouchDBKey};
 use crate::structs::CouchDBResp;
-use crate::structs::CouchDBOuterResp2;
+
 
 
 pub async fn query_couch_db<T: DeserializeOwned>(proxy_url: &String, db_name: &String, index_name: &String, 
   view_name: &String, keys: &Vec<String>, group: bool)
-  -> Result<(CouchDBResp<T>), Box<dyn Error>> 
+  -> Result<CouchDBResp<T>, Box<dyn Error>> 
   {
 
   let client = reqwest::Client::new();
@@ -56,7 +56,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(proxy_url: &String, db_name: &S
 
   let res = resp.text().await?;
 
-  if (*DEBUG) {
+  if *DEBUG {
     let short_name = format!("{}_{}_view/{}/queries", db_name, index_name, view_name);
     let filename = format!("result_data/{}.txt", short_name.replace("/","_"));
     println!("filename is: {}", filename.clone());
@@ -83,7 +83,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(proxy_url: &String, db_name: &S
   //let owned = res.to_owned();
   //let text: &'a String = &owned;
 //   println!("aaa {}",&res[0..1000]);
-  if (res.contains("\"error\":\"unauthorized\"")) {
+  if res.contains("\"error\":\"unauthorized\"") {
     panic!("{res}");
   }
 
@@ -191,7 +191,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(proxy_url: &String, db_name: &S
 
 pub async fn query_couch_db_with_full_str<T: DeserializeOwned>(couch_url: &String, db_name: &String, index_name: &String, 
   view_name: &String, full_query_str: &String)
-  -> Result<(CouchDBResp<T>), Box<dyn Error>> 
+  -> Result<CouchDBResp<T>, Box<dyn Error>> 
   {
 
   let client = reqwest::Client::new();
@@ -208,7 +208,7 @@ pub async fn query_couch_db_with_full_str<T: DeserializeOwned>(couch_url: &Strin
   let res = resp.text().await?;
   // println!("{res}");
 
-  if (res.contains("\"error\":\"unauthorized\"")) {
+  if res.contains("\"error\":\"unauthorized\"") {
     panic!("{res}");
   }
 

@@ -1,10 +1,10 @@
 use crate::StateMachine;
 use crate::InitialState;
-use crate::get_spreads;
+
 use core::panic;
 use std::collections::HashMap;
-use crate::structs::{EscrowValue};
-use std::ops::{Add,Sub,Div,Mul,AddAssign};
+
+
 use crate::quality_type::{*};
 use serde::Deserialize;
 use serde::Serialize;
@@ -110,7 +110,7 @@ pub enum MainnetPeriod {
 /// Get the current mainnet period. Either 1 or 2 based on the timestamp.
 pub fn check_mainnet_period(unix_time: &u32) -> MainnetPeriod {
   // Thu Jun 02 2022 23:59:59 GMT-0400 (Eastern Daylight Time)
-  if (*unix_time < 1654228799) {
+  if *unix_time < 1654228799 {
     return MainnetPeriod::Version1;
   } else {
     return MainnetPeriod::Version2;
@@ -124,9 +124,9 @@ fn get_spread_multiplier(unix_time: &u32, percent_distant: &f64) -> f64 {
     return 1.0;
   }
   let adj_percent = *percent_distant * 100.0;
-  if (adj_percent < 0.5) {
+  if adj_percent < 0.5 {
     return 10.0;
-  } else if (adj_percent < 1.0) {
+  } else if adj_percent < 1.0 {
     return 2.5;
   }
 
@@ -140,28 +140,28 @@ fn check_is_eligible(percentDistant: &f64, orderType: &OrderType,
 
   match check_mainnet_period(unix_time) {
     MainnetPeriod::Version1 => {
-      if (*percentDistant > 0.1) { // 10%
+      if *percentDistant > 0.1 { // 10%
         return false
       }
-      if (*depth < 15.0 && matches!(orderType, Bid)) { //FIXME 
+      if *depth < 15.0 && matches!(orderType, Bid) { //FIXME 
         return false
       }
-      if (*depth < 30.0 && matches!(orderType, Ask)) {
+      if *depth < 30.0 && matches!(orderType, Ask) {
         return false;
       }
       return true;
     },
     MainnetPeriod::Version2 => {
-      if (ownerAlgxBalance.val() < 3000 * 10u64.pow(6)) { // FIXME change to 3000 
+      if ownerAlgxBalance.val() < 3000 * 10u64.pow(6) { // FIXME change to 3000 
         return false;
       }
-      if (*percentDistant > 0.05) { // 5%
+      if *percentDistant > 0.05 { // 5%
         return false;
       }
-      if (*depth < 50.0 && matches!(orderType, Bid)) { //FIXME 
+      if *depth < 50.0 && matches!(orderType, Bid) { //FIXME 
         return false;
       }
-      if (*depth < 100.0 && matches!(orderType, Ask)) {
+      if *depth < 100.0 && matches!(orderType, Ask) {
         return false;
       }
       return true;
@@ -181,7 +181,7 @@ pub fn updateRewards(
     .filter(|escrow| {
       let assetId = &escrowAddrToData.get(*escrow).unwrap().data.escrow_info.asset_id;
       let spread = spreads.get(assetId);
-      if (spread.is_none() || spread.unwrap().ask.is_none() || spread.unwrap().bid.is_none()) {
+      if spread.is_none() || spread.unwrap().ask.is_none() || spread.unwrap().bid.is_none() {
         return false;
       }
       return true;
@@ -194,7 +194,7 @@ pub fn updateRewards(
       let ownerAddr = &escrowAddrToData.get(escrow).unwrap().data.escrow_info.owner_addr;
       let ownerAlgxBalance = AlgxBalance::from(*ownerWalletToALGXBalance.get(ownerAddr).unwrap_or(&0u64));
       let spread = spreads.get(assetId);
-      if (spread.is_none() || spread.unwrap().ask.is_none() || spread.unwrap().bid.is_none()) {
+      if spread.is_none() || spread.unwrap().ask.is_none() || spread.unwrap().bid.is_none() {
         dbg!("{spread} {assetId}");
         panic!("Invalid spread!");
       }
@@ -270,10 +270,10 @@ pub fn updateRewards(
           &res
         }
       };
-      let QualityResult { ref quality, ref addr, ref bidDepth,
+      let QualityResult { ref quality, addr: _, ref bidDepth,
         ref askDepth, ref algxBalance } = qualityResult;
       
-      if (quality.val() == 0.0) {
+      if quality.val() == 0.0 {
         return;
       }
 
@@ -282,25 +282,25 @@ pub fn updateRewards(
       }
 
       let assetRewardsMap = ownerWalletAssetToRewards.get_mut(owner).unwrap();
-      if (assetRewardsMap.get(inputtedAssetId).is_none()) {
+      if assetRewardsMap.get(inputtedAssetId).is_none() {
         assetRewardsMap.insert(*inputtedAssetId, OwnerRewardsResult::default());
       }
       let owner_entry = assetRewardsMap.get_mut(inputtedAssetId).unwrap();
       owner_entry.algxBalanceSum += *algxBalance;
       owner_entry.qualitySum += *quality;
-      if (totalBidDepth.val() > 0.0) {
+      if totalBidDepth.val() > 0.0 {
         owner_entry.depth += bidDepth.asDepth() / totalBidDepth.asDepth();
         owner_entry.has_bid = true;
       }
-      if (totalAskDepth.val() > 0.0) {
+      if totalAskDepth.val() > 0.0 {
         owner_entry.depth += askDepth.asDepth() / totalAskDepth.asDepth();
         owner_entry.has_ask = true;
       } 
-      if (quality.val() >= 0.0000001) {
+      if quality.val() >= 0.0000001 {
         match check_mainnet_period(timestep) {
           MainnetPeriod::Version1 => owner_entry.uptime += Uptime::from(1),
           MainnetPeriod::Version2 => {
-            if (owner_entry.has_ask && owner_entry.has_bid) {
+            if owner_entry.has_ask && owner_entry.has_bid {
               owner_entry.uptime += Uptime::from(1);
             }
           }

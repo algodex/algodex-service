@@ -42,11 +42,11 @@ use crate::quality_type::Quality;
 use urlencoding::encode;
 use crate::structs::CouchDBResp;
 use rand_pcg::Pcg32;
-use rand::{SeedableRng, rngs::StdRng};
-use std::path::PathBuf;
+use rand::{SeedableRng};
 
 
-use clap::{Parser, Subcommand};
+
+use clap::{Parser};
 
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
@@ -103,13 +103,13 @@ fn calculate_hash<T: Hash>(t: &T) -> u64 {
   s.finish()
 }
 
-async fn get_initial_state() -> Result<(InitialState), Box<dyn Error>> {
+async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
   let cli = Cli::parse();
 
   // You can check the value provided by positional arguments, or option arguments
   let EPOCH = cli.epoch;
   println!("Epoch is {EPOCH}");
-  if (EPOCH < 1) {
+  if EPOCH < 1 {
     panic!("Epoch cannot be less than 1!");
   }
 
@@ -292,7 +292,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
   let initialState = get_initial_state().await.unwrap();
 
-  if (*DEBUG) {
+  if *DEBUG {
     save_initial_state(&initialState);
   }
   // IF SAVE DEBUG
@@ -339,11 +339,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
     stateMachine.timestep = ((curMinute + 1) * 60) + rng.gen_range(0..60);
     let mut escrowDidChange = false;
     // let ownerWalletsBalanceChangeSet:HashSet<String> = HashSet::new();
-    while (owner_wallet_step < initialState.algxBalanceData.len()) {
+    while owner_wallet_step < initialState.algxBalanceData.len() {
       let owner_balance_entry = &initialState.algxBalanceData[owner_wallet_step];
       let owner_wallet_time = getTimeFromRound(&initialState.blockToUnixTime,
           &owner_balance_entry.value.round);
-      if (owner_wallet_time > stateMachine.timestep) {
+      if owner_wallet_time > stateMachine.timestep {
         break;
       }
       let wallet:&String = owner_balance_entry.key.strval();
@@ -352,17 +352,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     // Price steps
-    while (algo_price_step < initialState.tinymanPrices.len()) {
+    while algo_price_step < initialState.tinymanPrices.len() {
       let price_entry = &initialState.tinymanPrices[algo_price_step];
-      if (price_entry.unix_time > stateMachine.timestep) {
+      if price_entry.unix_time > stateMachine.timestep {
         break;
       }
       stateMachine.algoPrice = price_entry.price;
       algo_price_step += 1;
     }
 
-    while (escrowstep < initialState.changedEscrowSeq.len() &&
-      initialState.changedEscrowSeq[escrowstep] <= stateMachine.timestep) {
+    while escrowstep < initialState.changedEscrowSeq.len() &&
+      initialState.changedEscrowSeq[escrowstep] <= stateMachine.timestep {
         let changeTime = &initialState.changedEscrowSeq[escrowstep];
         let changedEscrows = initialState.unixTimeToChangedEscrows.get(changeTime).unwrap();
         escrowDidChange = true;
@@ -371,7 +371,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         escrowstep += 1;
     }
 
-    if (escrowDidChange) {
+    if escrowDidChange {
       update_spreads(&initialState, &mut stateMachine);
     }
 
@@ -390,11 +390,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // });
     println!("{}", (stateMachine.timestep as f64 - epochStart as f64) / (epochEnd as f64 - epochStart as f64) * 100.0);
 
-    if (stateMachine.timestep >= epochEnd) {
+    if stateMachine.timestep >= epochEnd {
       break;
     }
 
-    if (*DEBUG && epoch==2) {
+    if *DEBUG && epoch==2 {
       println!("saving state at: {}", stateMachine.timestep);
       save_state_machine(&stateMachine);
     }
@@ -440,7 +440,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let ownerAssetEntries = stateMachine.ownerWalletAssetToRewards.get(ownerWallet).unwrap();
     ownerAssetEntries.keys()
       .for_each(|assetId| {
-        let assetQualityEntry = ownerAssetEntries.get(assetId).unwrap();
+        let _assetQualityEntry = ownerAssetEntries.get(assetId).unwrap();
         let final_rewards_entry = ownerRewardsResToFinalRewardsEntry.get_mut(&OwnerRewardsKey{
           wallet: ownerWallet.clone(), assetId: *assetId
         }).unwrap();
@@ -494,7 +494,7 @@ fn getInitialBalances(unixTime: u32, escrows: &Vec<EscrowValue>) -> HashMap<Stri
         let history = &escrow.data.history;
         let mut balance = 0; //FIXME?
         for historyItem in history {
-            if (historyItem.time <= unixTime) {
+            if historyItem.time <= unixTime {
                 balance = match escrow.data.escrow_info.is_algo_buy_escrow {
                     true => historyItem.algo_amount.clone().unwrap(),
                     false => historyItem.asa_amount.clone().unwrap()
@@ -578,10 +578,10 @@ fn getSequenceInfo(escrows: &Vec<EscrowValue>) -> (HashMap<u32, Vec<String>>,Vec
         escrows.iter().fold(HashMap::new(), |mut timeline, escrow| {
             let times: Vec<u32> = escrow.data.history.iter().map(|historyItem| historyItem.time).collect();
             times.iter().for_each(|time| {
-                if (!timeline.contains_key(time)) {
+                if !timeline.contains_key(time) {
                     timeline.insert(time.clone(), Vec::new());
                 }
-                let mut addrArr = timeline.get_mut(time).unwrap();
+                let addrArr = timeline.get_mut(time).unwrap();
                 addrArr.push(escrow.id.clone());
             });
             timeline

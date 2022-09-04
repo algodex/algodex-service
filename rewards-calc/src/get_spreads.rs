@@ -43,12 +43,12 @@ pub fn get_spreads(escrow_to_balance: &HashMap<String, u64>, escrow_addr_to_data
         let mut spread = spreads.get(asset_id).unwrap().clone();
 
         if let PriceType::Bid(p) = price {
-          if (spread.bid.is_none() || spread.bid.unwrap() < p) {
+          if spread.bid.is_none() || spread.bid.unwrap() < p {
             spread.bid = Some(p);
             spreads.insert(*asset_id, spread);
           }
         } else if let PriceType::Ask(p) = price {
-          if (spread.ask.is_none() || spread.ask.unwrap() > p) {
+          if spread.ask.is_none() || spread.ask.unwrap() > p {
             spread.ask = Some(p);
             spreads.insert(*asset_id, spread);
           }

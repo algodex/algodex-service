@@ -1,18 +1,18 @@
-use dotenv;
-use core::panic;
+
+
 use std::collections::HashMap;
-use urlencoding::encode;
+
 use reqwest;
 use serde::{Serialize, Deserialize};
-use serde::de::DeserializeOwned;
+
 use serde_json;
-use serde_path_to_error;
+
 use std::error::Error;
 use reqwest::Response;
 use crate::{OwnerRewardsResult, DEBUG};
 use crate::update_rewards::{OwnerRewardsKey, EarnedAlgxEntry};
-use serde_json::json;
-use serde_with::serde_as; // 1.5.1
+
+ // 1.5.1
 use serde_json_any_key::*;
 use std::fs::File;
 use std::io::prelude::*;
@@ -49,7 +49,7 @@ pub async fn save_rewards(epoch: u16, owner_rewards: &HashMap<String,HashMap<u32
 
   let json = serde_json::to_string(&save_entry).unwrap();
 
-  if (epoch == 2 && *DEBUG) {
+  if epoch == 2 && *DEBUG {
     let filename = format!("integration_test/epoch_{}.json", epoch);
     println!("filename is: {}", filename);
     let mut file = File::create(filename).expect("Unable to create file");
@@ -121,10 +121,10 @@ fn get_compare_data_from_file(filename: &str) -> Vec<FlattenedFinalRewardsEntry>
 
 #[cfg(test)]
 mod tests {
-    use std::{fs::File, io::Read};
+    
 
-    use crate::{save_rewards::{SaveRewardsEntry, get_compare_data_from_file}, quality_type::{AlgxBalance, Quality, Uptime, Depth, EarnedAlgx}, update_rewards::OwnerRewardsResult};
-    use pretty_assertions::{assert_eq, assert_ne};
+    use crate::{save_rewards::{get_compare_data_from_file}};
+    use pretty_assertions::{assert_eq};
 
     #[test]
 
