@@ -7,35 +7,29 @@ extern crate approx;
 #[macro_use]
 extern crate lazy_static;
 
-use dotenv;
 use serde::{Serialize, Deserialize};
-use serde_json::json;
 use std::io::Read;
 use serde_json_any_key::*;
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::fs::{File, self};
 use std::io::Write;
-use std::{fmt, time};
 use std::hash::{Hash, Hasher};
 use std::collections::hash_map::DefaultHasher;
 
 mod structs;
 use structs::{EscrowValue, EscrowTimeKey, AlgxBalanceValue, TinymanTrade};
 use crate::quality_type::EarnedAlgx;
-use crate::structs::History;
-use crate::structs::CouchDBOuterResp;
 use crate::update_rewards::OwnerRewardsKey;
 use crate::update_rewards::{check_mainnet_period, MainnetPeriod};
-use crate::structs::CouchDBResultsType::{Grouped, Ungrouped};
 mod query_couch;
 mod get_spreads;
 mod update_spreads;
 mod update_rewards;
 mod quality_type;
-use update_spreads::updateSpreads;
+use update_spreads::update_spreads;
 use update_rewards::{updateRewards, EarnedAlgxEntry};
-use get_spreads::getSpreads;
+use get_spreads::get_spreads;
 use rand::Rng;
 mod save_rewards;
 use crate::save_rewards::save_rewards;
@@ -45,7 +39,6 @@ use query_couch::{query_couch_db,query_couch_db_with_full_str};
 // use query_couch::query_couch_db2;
 use crate::get_spreads::Spread;
 use crate::quality_type::Quality;
-use crate::structs::CouchDBGroupedResult;
 use urlencoding::encode;
 use crate::structs::CouchDBResp;
 use rand_pcg::Pcg32;
@@ -320,7 +313,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
   //state machine data
 
   let escrowToBalance = getInitialBalances(timestep, &initialState.escrows);
-  let spreads = getSpreads(&escrowToBalance, &initialState.escrowAddrToData);
+  let spreads = get_spreads(&escrowToBalance, &initialState.escrowAddrToData);
 
   let ownerWalletAssetToRewards: HashMap<String,HashMap<u32,OwnerRewardsResult>> = HashMap::new();
   let ownerWalletToALGXBalance: HashMap<&String,u64> = HashMap::new();
@@ -379,7 +372,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     }
 
     if (escrowDidChange) {
-      updateSpreads(&initialState, &mut stateMachine);
+      update_spreads(&initialState, &mut stateMachine);
     }
 
     let assetsWithBalances: HashSet<&u32> =

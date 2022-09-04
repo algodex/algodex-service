@@ -23,38 +23,37 @@ enum PriceType {
   Ask(f64)
 }
 
-pub fn getSpreads(escrowToBalance: &HashMap<String, u64>, escrowAddrToData: &HashMap<String,EscrowValue>) -> 
+pub fn get_spreads(escrow_to_balance: &HashMap<String, u64>, escrow_addr_to_data: &HashMap<String,EscrowValue>) -> 
   HashMap<u32, Spread> {
-    let spreads:HashMap<u32, Spread> = escrowToBalance.keys()
-      .filter(|&escrow| *(escrowToBalance.get(escrow).unwrap()) > 0u64)
+    let spreads:HashMap<u32, Spread> = escrow_to_balance.keys()
+      .filter(|&escrow| *(escrow_to_balance.get(escrow).unwrap()) > 0u64)
       .fold(HashMap::new(), |mut spreads, escrow| {
-        let escrowData = &escrowAddrToData.get(escrow).unwrap().data;
-        let assetId = &escrowData.escrow_info.asset_id;
-        let isAlgoBuyEscrow = &escrowData.escrow_info.is_algo_buy_escrow;
+        let escrow_data = &escrow_addr_to_data.get(escrow).unwrap().data;
+        let asset_id = &escrow_data.escrow_info.asset_id;
+        let is_algo_buy_escrow = &escrow_data.escrow_info.is_algo_buy_escrow;
 
-        let price = match isAlgoBuyEscrow {
-          true => PriceType::Bid(escrowData.escrow_info.price),
-          false => PriceType::Ask(escrowData.escrow_info.price)
+        let price = match is_algo_buy_escrow {
+          true => PriceType::Bid(escrow_data.escrow_info.price),
+          false => PriceType::Ask(escrow_data.escrow_info.price)
         };
 
-        if let None = spreads.get(assetId) {
-          spreads.insert(*assetId, Spread::new(None, None));
+        if spreads.get(asset_id).is_none() {
+          spreads.insert(*asset_id, Spread::new(None, None));
         }
-        let mut spread = spreads.get(assetId).unwrap().clone();
+        let mut spread = spreads.get(asset_id).unwrap().clone();
 
         if let PriceType::Bid(p) = price {
           if (spread.bid.is_none() || spread.bid.unwrap() < p) {
             spread.bid = Some(p);
-            spreads.insert(*assetId, spread);
+            spreads.insert(*asset_id, spread);
           }
         } else if let PriceType::Ask(p) = price {
           if (spread.ask.is_none() || spread.ask.unwrap() > p) {
             spread.ask = Some(p);
-            spreads.insert(*assetId, spread);
+            spreads.insert(*asset_id, spread);
           }
         }
-
-        return spreads;
+        spreads
       });
     spreads
   }
