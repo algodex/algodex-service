@@ -1,63 +1,63 @@
 use serde::Serialize;
 
-use crate::HashMap;
 use crate::EscrowValue;
+use crate::HashMap;
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Spread {
-  pub ask: Option<f64>,
-  pub bid: Option<f64>
+    pub ask: Option<f64>,
+    pub bid: Option<f64>,
 }
 
 impl Spread {
-  pub fn new(ask: Option<f64>, bid: Option<f64>) -> Spread {
-    Spread {
-      ask, bid
+    pub fn new(ask: Option<f64>, bid: Option<f64>) -> Spread {
+        Spread { ask, bid }
     }
-  }
 }
 
 #[derive(Debug)]
 enum PriceType {
-  Bid(f64),
-  Ask(f64)
+    Bid(f64),
+    Ask(f64),
 }
 
-pub fn get_spreads(escrow_to_balance: &HashMap<String, u64>, escrow_addr_to_data: &HashMap<String,EscrowValue>) -> 
-  HashMap<u32, Spread> {
-    let spreads:HashMap<u32, Spread> = escrow_to_balance.keys()
-      .filter(|&escrow| *(escrow_to_balance.get(escrow).unwrap()) > 0u64)
-      .fold(HashMap::new(), |mut spreads, escrow| {
-        let escrow_data = &escrow_addr_to_data.get(escrow).unwrap().data;
-        let asset_id = &escrow_data.escrow_info.asset_id;
-        let is_algo_buy_escrow = &escrow_data.escrow_info.is_algo_buy_escrow;
+pub fn get_spreads(
+    escrow_to_balance: &HashMap<String, u64>,
+    escrow_addr_to_data: &HashMap<String, EscrowValue>,
+) -> HashMap<u32, Spread> {
+    let spreads: HashMap<u32, Spread> = escrow_to_balance
+        .keys()
+        .filter(|&escrow| *(escrow_to_balance.get(escrow).unwrap()) > 0u64)
+        .fold(HashMap::new(), |mut spreads, escrow| {
+            let escrow_data = &escrow_addr_to_data.get(escrow).unwrap().data;
+            let asset_id = &escrow_data.escrow_info.asset_id;
+            let is_algo_buy_escrow = &escrow_data.escrow_info.is_algo_buy_escrow;
 
-        let price = match is_algo_buy_escrow {
-          true => PriceType::Bid(escrow_data.escrow_info.price),
-          false => PriceType::Ask(escrow_data.escrow_info.price)
-        };
+            let price = match is_algo_buy_escrow {
+                true => PriceType::Bid(escrow_data.escrow_info.price),
+                false => PriceType::Ask(escrow_data.escrow_info.price),
+            };
 
-        if spreads.get(asset_id).is_none() {
-          spreads.insert(*asset_id, Spread::new(None, None));
-        }
-        let mut spread = spreads.get(asset_id).unwrap().clone();
+            if spreads.get(asset_id).is_none() {
+                spreads.insert(*asset_id, Spread::new(None, None));
+            }
+            let mut spread = spreads.get(asset_id).unwrap().clone();
 
-        if let PriceType::Bid(p) = price {
-          if spread.bid.is_none() || spread.bid.unwrap() < p {
-            spread.bid = Some(p);
-            spreads.insert(*asset_id, spread);
-          }
-        } else if let PriceType::Ask(p) = price {
-          if spread.ask.is_none() || spread.ask.unwrap() > p {
-            spread.ask = Some(p);
-            spreads.insert(*asset_id, spread);
-          }
-        }
-        spreads
-      });
+            if let PriceType::Bid(p) = price {
+                if spread.bid.is_none() || spread.bid.unwrap() < p {
+                    spread.bid = Some(p);
+                    spreads.insert(*asset_id, spread);
+                }
+            } else if let PriceType::Ask(p) = price {
+                if spread.ask.is_none() || spread.ask.unwrap() > p {
+                    spread.ask = Some(p);
+                    spreads.insert(*asset_id, spread);
+                }
+            }
+            spreads
+        });
     spreads
-  }
-
+}
 
 // const getSpreads = ({escrowToBalance, escrowAddrToData}) => {
 //   const spreads = Object.keys(escrowToBalance)

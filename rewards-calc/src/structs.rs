@@ -1,24 +1,27 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CouchDBResultsType<T> {
     Ungrouped(Vec<CouchDBResp<T>>),
-    Grouped(Vec<CouchDBGroupedResp<T>>)
+    Grouped(Vec<CouchDBGroupedResp<T>>),
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CouchDBKey {
     StringVal(String),
-    VecU64Val(Vec<u64>)
+    VecU64Val(Vec<u64>),
 }
 impl CouchDBKey {
     pub fn strval(&self) -> &String {
-        if let CouchDBKey::StringVal(c) = self { c } else { panic!("Not a String inside CouchDBKey") }
+        if let CouchDBKey::StringVal(c) = self {
+            c
+        } else {
+            panic!("Not a String inside CouchDBKey")
+        }
     }
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBOuterResp<T> {
@@ -29,7 +32,6 @@ pub struct CouchDBOuterResp<T> {
 pub struct CouchDBOuterResp2<T> {
     pub results: Vec<CouchDBResp<T>>,
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBGroupedResp<T> {
@@ -46,17 +48,15 @@ pub struct CouchDBResp<T> {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBGroupedResult<T> {
     pub key: String,
-    pub value: T
+    pub value: T,
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CouchDBResult<T> {
     pub key: CouchDBKey,
     pub value: T,
-    pub id: String
+    pub id: String,
 }
-
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct EscrowValue {
@@ -144,23 +144,21 @@ pub struct BlockTime {
     pub value: u32,
 }
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Keys {
     pub keys: Vec<String>,
-    pub group: bool
+    pub group: bool,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Queries {
-    pub queries: Vec<Keys>
+    pub queries: Vec<Keys>,
 }
-
 
 #[derive(Eq, Hash, PartialEq, Debug, Serialize, Deserialize)]
 pub struct EscrowTimeKey {
     pub escrow: String,
-    pub unix_time: u32
+    pub unix_time: u32,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
