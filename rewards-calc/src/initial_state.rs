@@ -9,7 +9,7 @@ use std::fs::{self, File};
 use std::hash::Hasher;
 use std::io::Write;
 
-use crate::epoch::{get_epoch_start, get_epoch_end};
+use crate::epoch::{get_epoch_end, get_epoch_start};
 use crate::{structs, Cli};
 
 use crate::query_couch::{query_couch_db, query_couch_db_with_full_str};
