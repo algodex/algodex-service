@@ -33,7 +33,7 @@ pub struct EarnedAlgxEntry {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct OwnerRewardsResult {
+pub struct OwnerWalletAssetQualityResult {
     pub algx_balance_sum: AlgxBalance,
     pub quality_sum: Quality,
     pub uptime: Uptime,
@@ -42,7 +42,7 @@ pub struct OwnerRewardsResult {
     pub has_ask: bool,
 }
 
-impl Default for OwnerRewardsResult {
+impl Default for OwnerWalletAssetQualityResult {
     fn default() -> Self {
         Self {
             algx_balance_sum: AlgxBalance::from(0),
@@ -281,7 +281,10 @@ fn get_owner_wallet_to_quality<'a>(
 }
 
 fn update_owner_wallet_quality(
-    owner_wallet_asset_to_rewards: &mut HashMap<String, HashMap<u32, OwnerRewardsResult>>,
+    owner_wallet_asset_to_rewards: &mut HashMap<
+        String,
+        HashMap<u32, OwnerWalletAssetQualityResult>,
+    >,
     owner_wallet_to_quality: &HashMap<&String, QualityResult>,
     asset_id: &u32,
     unix_time: &u32,
@@ -316,7 +319,7 @@ fn update_owner_wallet_quality(
 
         let asset_rewards_map = owner_wallet_asset_to_rewards.get_mut(*owner).unwrap();
         if asset_rewards_map.get(asset_id).is_none() {
-            asset_rewards_map.insert(*asset_id, OwnerRewardsResult::default());
+            asset_rewards_map.insert(*asset_id, OwnerWalletAssetQualityResult::default());
         }
         let owner_entry = asset_rewards_map.get_mut(asset_id).unwrap();
         owner_entry.algx_balance_sum += *algx_balance;
@@ -343,7 +346,7 @@ fn update_owner_wallet_quality(
 }
 
 /// Update the quality for each wallet for a given asset ID. This is calculated for each minute
-pub fn update_rewards(
+pub fn update_owner_wallet_quality_per_asset(
     inputted_asset_id: &u32,
     state_machine: &mut StateMachine,
     initial_state: &InitialState,
@@ -351,7 +354,8 @@ pub fn update_rewards(
     let quality_analytics =
         get_analytics_per_escrow(inputted_asset_id, state_machine, initial_state);
 
-    let StateMachine { ref mut owner_wallet_asset_to_rewards, ref timestep, .. } = state_machine;
+    let StateMachine { ref mut owner_wallet_asset_to_quality_result, ref timestep, .. } =
+        state_machine;
 
     let owner_wallet_to_quality = get_owner_wallet_to_quality(initial_state, &quality_analytics);
 
@@ -361,7 +365,7 @@ pub fn update_rewards(
         quality_analytics.iter().fold(AskDepth::from(0.0), |sum, entry| sum + entry.ask_depth);
 
     update_owner_wallet_quality(
-        owner_wallet_asset_to_rewards,
+        owner_wallet_asset_to_quality_result,
         &owner_wallet_to_quality,
         inputted_asset_id,
         timestep,
