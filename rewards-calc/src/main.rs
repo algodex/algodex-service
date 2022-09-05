@@ -84,15 +84,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
     if *DEBUG {
         save_initial_state(&initial_state);
     }
-    // IF SAVE DEBUG
-
-    // let epoch_start = initial_state.epoch_start;
-    // let epoch_end = initial_state.epoch_end;
-    // let epoch = initial_state.epoch;
-
-    let seed = calculate_hash(initial_state.env.get("REWARDS_RANDOM_SEED").unwrap());
 
     // Use the couchdb url to seed the random number generator, since it contains a password
+    // FIXME - include epoch in seed
+    let seed = calculate_hash(initial_state.env.get("REWARDS_RANDOM_SEED").unwrap());
+
 
     let mut state_machine = StateMachine::new(&initial_state);
 
@@ -116,6 +112,5 @@ async fn main() -> Result<(), Box<dyn Error>> {
     )
     .await?;
 
-    // dbg!(rewardsFinal);
     Ok(())
 }
