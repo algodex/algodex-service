@@ -48,8 +48,7 @@ pub async fn save_rewards(
         let filename = format!("integration_test/epoch_{}.json", epoch);
         println!("filename is: {}", filename);
         let mut file = File::create(filename).expect("Unable to create file");
-        file.write_all(json.as_bytes())
-            .expect("Unable to write to file");
+        file.write_all(json.as_bytes()).expect("Unable to write to file");
     }
     // dbg!(json2);
 
@@ -68,7 +67,6 @@ pub async fn save_rewards(
 
     Ok(resp)
 }
-
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
@@ -99,9 +97,7 @@ mod tests {
     fn get_compare_data_from_file(filename: &str) -> Vec<FlattenedFinalRewardsEntry> {
         let mut test_data = String::new();
         let mut test_file = File::open(filename).expect("Unable to open file");
-        test_file
-            .read_to_string(&mut test_data)
-            .expect("Unable to read string");
+        test_file.read_to_string(&mut test_data).expect("Unable to read string");
 
         let test_data_entry: SaveRewardsEntry = serde_json::from_str(&test_data).unwrap();
 
@@ -128,13 +124,9 @@ mod tests {
                     .owner_rewards_res_to_final_rewards_entry
                     .get(owner_rewards_key)
                     .unwrap();
-                let owner_rewards_entry = final_entry
-                    .owner_rewards
-                    .get(wallet)
-                    .unwrap()
-                    .get(&asset_id)
-                    .unwrap();
-    
+                let owner_rewards_entry =
+                    final_entry.owner_rewards.get(wallet).unwrap().get(&asset_id).unwrap();
+
                 let OwnerRewardsResult {
                     algx_balance_sum,
                     quality_sum,
@@ -144,7 +136,7 @@ mod tests {
                     has_ask,
                     ..
                 } = *owner_rewards_entry;
-    
+
                 FlattenedFinalRewardsEntry {
                     asset_id,
                     owner_wallet: wallet.clone(),
@@ -159,8 +151,9 @@ mod tests {
                 }
             })
             .collect();
-    
-        final_rewards_entries.sort_unstable_by_key(|item| (item.owner_wallet.clone(), item.asset_id));
+
+        final_rewards_entries
+            .sort_unstable_by_key(|item| (item.owner_wallet.clone(), item.asset_id));
         final_rewards_entries
     }
 }
