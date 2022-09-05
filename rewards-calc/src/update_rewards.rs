@@ -275,13 +275,13 @@ pub fn update_rewards(
     let total_ask_depth =
         quality_analytics.iter().fold(AskDepth::from(0.0), |sum, entry| sum + entry.ask_depth);
 
-    owner_wallet_to_quality.keys().copied().for_each(|owner| {
+    owner_wallet_to_quality.keys().for_each(|owner| {
         let res: QualityResult;
         let quality_result = match owner_wallet_to_quality.get(owner) {
             Some(q) => q,
             None => {
                 res = QualityResult::new(
-                    owner.clone(),
+                    (*owner).clone(),
                     Quality::from(0.0),
                     BidDepth::from(0.0),
                     AskDepth::from(0.0),
@@ -297,11 +297,11 @@ pub fn update_rewards(
             return;
         }
 
-        if owner_wallet_asset_to_rewards.get(owner).is_none() {
-            owner_wallet_asset_to_rewards.insert(owner.clone(), HashMap::new());
+        if owner_wallet_asset_to_rewards.get(*owner).is_none() {
+            owner_wallet_asset_to_rewards.insert((*owner).clone(), HashMap::new());
         }
 
-        let asset_rewards_map = owner_wallet_asset_to_rewards.get_mut(owner).unwrap();
+        let asset_rewards_map = owner_wallet_asset_to_rewards.get_mut(*owner).unwrap();
         if asset_rewards_map.get(inputted_asset_id).is_none() {
             asset_rewards_map.insert(*inputted_asset_id, OwnerRewardsResult::default());
         }
