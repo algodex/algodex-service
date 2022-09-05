@@ -16,8 +16,10 @@ use std::fs::{self, File};
 use std::hash::{Hash, Hasher};
 use std::io::Write;
 
+mod state_machine;
 mod structs;
 use crate::quality_type::EarnedAlgx;
+use crate::state_machine::StateMachine;
 use crate::update_owner_liquidity_quality::OwnerRewardsKey;
 use crate::update_owner_liquidity_quality::{check_mainnet_period, MainnetPeriod};
 use structs::{AlgxBalanceValue, EscrowTimeKey, EscrowValue, TinymanTrade};
@@ -27,8 +29,8 @@ mod query_couch;
 mod update_owner_liquidity_quality;
 mod update_spreads;
 use get_spreads::get_spreads;
-use rand::Rng;
-use update_owner_liquidity_quality::{update_owner_wallet_quality_per_asset, EarnedAlgxEntry};
+
+use update_owner_liquidity_quality::EarnedAlgxEntry;
 use update_spreads::update_spreads;
 mod save_rewards;
 use crate::save_rewards::save_rewards;
@@ -36,7 +38,7 @@ use crate::structs::CouchDBResult;
 use crate::update_owner_liquidity_quality::OwnerWalletAssetQualityResult;
 use query_couch::{query_couch_db, query_couch_db_with_full_str};
 // use query_couch::query_couch_db2;
-use crate::get_spreads::Spread;
+
 use crate::quality_type::Quality;
 use crate::structs::CouchDBResp;
 use rand::SeedableRng;
@@ -333,126 +335,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let epoch_end = initial_state.epoch_end;
     let epoch = initial_state.epoch;
 
-    //dbg!(initialState);
-
-    let timestep = epoch_start;
-
-    let mut escrowstep = 0;
-
-    // println!("{} {}", epochStart, epochEnd);
-
-    //state machine data
-
-    let escrow_to_balance = get_initial_balances(timestep, &initial_state.escrows);
-    let spreads = get_spreads(&escrow_to_balance, &initial_state.escrow_addr_to_data);
-
-    let owner_wallet_asset_to_quality_result: HashMap<
-        String,
-        HashMap<u32, OwnerWalletAssetQualityResult>,
-    > = HashMap::new();
-    let owner_wallet_to_algx_balance: HashMap<&String, u64> = HashMap::new();
-
-    let mut state_machine = StateMachine {
-        escrow_to_balance,
-        owner_wallet_to_algx_balance,
-        owner_wallet_asset_to_quality_result,
-        spreads,
-        algo_price: 0.0,
-        timestep,
-    };
+    let seed = calculate_hash(initial_state.env.get("REWARDS_RANDOM_SEED").unwrap());
 
     // Use the couchdb url to seed the random number generator, since it contains a password
-    let seed = calculate_hash(initial_state.env.get("REWARDS_RANDOM_SEED").unwrap());
+
+    let mut state_machine = StateMachine::new(&initial_state);
+
     let mut rng = Pcg32::seed_from_u64(seed);
 
-    let mut owner_wallet_step = 0;
-    let mut algo_price_step = 0;
-
-    loop {
-        let cur_minute = state_machine.timestep / 60;
-        state_machine.timestep = ((cur_minute + 1) * 60) + rng.gen_range(0..60);
-        let mut escrow_did_change = false;
-        // let ownerWalletsBalanceChangeSet:HashSet<String> = HashSet::new();
-        while owner_wallet_step < initial_state.algx_balance_data.len() {
-            let owner_balance_entry = &initial_state.algx_balance_data[owner_wallet_step];
-            let owner_wallet_time = get_time_from_round(
-                &initial_state.block_to_unix_time,
-                &owner_balance_entry.value.round,
-            );
-            if owner_wallet_time > state_machine.timestep {
-                break;
-            }
-            let wallet: &String = owner_balance_entry.key.strval();
-            state_machine
-                .owner_wallet_to_algx_balance
-                .insert(wallet, owner_balance_entry.value.balance);
-            owner_wallet_step += 1;
-        }
-
-        // Price steps
-        while algo_price_step < initial_state.tinyman_prices.len() {
-            let price_entry = &initial_state.tinyman_prices[algo_price_step];
-            if price_entry.unix_time > state_machine.timestep {
-                break;
-            }
-            state_machine.algo_price = price_entry.price;
-            algo_price_step += 1;
-        }
-
-        while escrowstep < initial_state.changed_escrow_seq.len()
-            && initial_state.changed_escrow_seq[escrowstep] <= state_machine.timestep
-        {
-            let change_time = &initial_state.changed_escrow_seq[escrowstep];
-            let changed_escrows =
-                initial_state.unix_time_to_changed_escrows.get(change_time).unwrap();
-            escrow_did_change = true;
-            update_balances(
-                changed_escrows,
-                change_time,
-                &mut state_machine.escrow_to_balance,
-                &initial_state.escrow_time_to_balance,
-            );
-            escrowstep += 1;
-        }
-
-        if escrow_did_change {
-            update_spreads(&initial_state, &mut state_machine);
-        }
-
-        let assets_with_balances: HashSet<&u32> =
-            state_machine.escrow_to_balance.keys().fold(HashSet::new(), |mut set, escrow| {
-                let asset_id = &initial_state
-                    .escrow_addr_to_data
-                    .get(escrow)
-                    .unwrap()
-                    .data
-                    .escrow_info
-                    .asset_id;
-                set.insert(asset_id);
-                set
-            });
-
-        assets_with_balances.into_iter().for_each(|asset_id| {
-            update_owner_wallet_quality_per_asset(asset_id, &mut state_machine, &initial_state);
-        });
-        println!(
-            "{}",
-            (state_machine.timestep as f64 - epoch_start as f64)
-                / (epoch_end as f64 - epoch_start as f64)
-                * 100.0
-        );
-
-        if state_machine.timestep >= epoch_end {
-            break;
-        }
-
-        if *DEBUG && epoch == 2 {
-            println!("saving state at: {}", state_machine.timestep);
-            save_state_machine(&state_machine);
-        }
+    while state_machine.run_step(&initial_state, &mut rng) {
+        // This will break automatically at the end by returning false
     }
-
-    // Need to give rewards per asset
 
     let mainnet_period = check_mainnet_period(&epoch_end);
 
@@ -542,17 +435,6 @@ fn update_balances(
         let balance = escrow_time_to_balance.get(&key);
         escrow_to_balance.insert(String::from(escrow), *balance.unwrap());
     });
-}
-
-#[derive(Debug, Serialize)]
-pub struct StateMachine<'a> {
-    escrow_to_balance: HashMap<String, u64>,
-    spreads: HashMap<u32, Spread>,
-    owner_wallet_asset_to_quality_result:
-        HashMap<String, HashMap<u32, OwnerWalletAssetQualityResult>>,
-    owner_wallet_to_algx_balance: HashMap<&'a String, u64>,
-    algo_price: f64,
-    timestep: u32,
 }
 
 fn get_initial_balances(unix_time: u32, escrows: &[EscrowValue]) -> HashMap<String, u64> {
