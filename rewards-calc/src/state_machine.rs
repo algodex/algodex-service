@@ -5,12 +5,12 @@ use rand_pcg::Lcg64Xsh32;
 use serde::Serialize;
 
 use crate::{
-    get_spreads::Spread,
+    get_spreads::{Spread, get_spreads},
     get_time_from_round, save_state_machine, update_balances,
     update_owner_liquidity_quality::{
         update_owner_wallet_quality_per_asset, OwnerWalletAssetQualityResult,
     },
-    update_spreads, InitialState, DEBUG,
+    update_spreads, InitialState, DEBUG, get_initial_balances, calculate_hash,
 };
 
 #[derive(Debug, Serialize)]
@@ -28,6 +28,23 @@ pub struct StateMachine {
 }
 
 impl StateMachine {
+    pub fn new(initial_state: &InitialState) -> StateMachine {
+        let timestep = initial_state.epoch_start;
+        let escrow_to_balance = get_initial_balances(timestep, &initial_state.escrows);
+        let spreads = get_spreads(&escrow_to_balance, &initial_state.escrow_addr_to_data);
+        
+        StateMachine {
+            escrow_to_balance,
+            owner_wallet_to_algx_balance: HashMap::new(),
+            owner_wallet_asset_to_quality_result: HashMap::new(),
+            spreads,
+            algo_price: 0.0,
+            timestep,
+            owner_wallet_step: 0,
+            algo_price_step: 0,
+            escrow_step: 0,
+        }
+    }
     fn update_owner_wallet_algx_balances(&mut self, initial_state: &InitialState) {
         while self.owner_wallet_step < initial_state.algx_balance_data.len() {
             let owner_balance_entry = &initial_state.algx_balance_data[self.owner_wallet_step];

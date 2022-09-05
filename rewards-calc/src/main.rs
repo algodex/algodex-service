@@ -335,31 +335,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let epoch_end = initial_state.epoch_end;
     let epoch = initial_state.epoch;
 
-    //dbg!(initialState);
-
-    let timestep = epoch_start;
-
-    //state machine data
-
-    let escrow_to_balance = get_initial_balances(timestep, &initial_state.escrows);
-    let spreads = get_spreads(&escrow_to_balance, &initial_state.escrow_addr_to_data);
-
     let seed = calculate_hash(initial_state.env.get("REWARDS_RANDOM_SEED").unwrap());
 
     // Use the couchdb url to seed the random number generator, since it contains a password
-    let mut rng = Pcg32::seed_from_u64(seed);
 
-    let mut state_machine = StateMachine {
-        escrow_to_balance,
-        owner_wallet_to_algx_balance: HashMap::new(),
-        owner_wallet_asset_to_quality_result: HashMap::new(),
-        spreads,
-        algo_price: 0.0,
-        timestep,
-        owner_wallet_step: 0,
-        algo_price_step: 0,
-        escrow_step: 0,
-    };
+    let mut state_machine = StateMachine::new(&initial_state);
+
+    let mut rng = Pcg32::seed_from_u64(seed);
 
     while state_machine.run_step(&initial_state, &mut rng) {
         // This will break automatically at the end by returning false
