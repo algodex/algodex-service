@@ -8,12 +8,11 @@ extern crate approx;
 extern crate lazy_static;
 
 use initial_state::InitialState;
-use serde::{Deserialize, Serialize};
-use serde_json_any_key::*;
+
 use std::collections::hash_map::DefaultHasher;
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::error::Error;
-use std::fs::{self, File};
+use std::fs::File;
 use std::hash::{Hash, Hasher};
 use std::io::Write;
 
@@ -21,34 +20,30 @@ mod state_machine;
 mod structs;
 use crate::calc_final_rewards::get_owner_rewards_res_to_final_rewards_entry;
 use crate::initial_state::{get_initial_state, save_initial_state};
-use crate::quality_type::EarnedAlgx;
+
 use crate::state_machine::StateMachine;
-use crate::update_owner_liquidity_quality::OwnerRewardsKey;
-use crate::update_owner_liquidity_quality::{check_mainnet_period, MainnetPeriod};
-use structs::{AlgxBalanceValue, EscrowTimeKey, EscrowValue, TinymanTrade};
-mod get_spreads;
-mod quality_type;
+
+use crate::update_owner_liquidity_quality::check_mainnet_period;
+use structs::EscrowValue;
 mod calc_final_rewards;
+mod get_spreads;
+mod initial_state;
+mod quality_type;
 mod query_couch;
 mod update_owner_liquidity_quality;
 mod update_spreads;
-mod initial_state;
 use get_spreads::get_spreads;
 
-use update_owner_liquidity_quality::EarnedAlgxEntry;
 use update_spreads::update_spreads;
 mod save_rewards;
 use crate::save_rewards::save_rewards;
-use crate::structs::CouchDBResult;
+
 use crate::update_owner_liquidity_quality::OwnerWalletAssetQualityResult;
-use query_couch::{query_couch_db, query_couch_db_with_full_str};
+
 // use query_couch::query_couch_db2;
 
-use crate::quality_type::Quality;
-use crate::structs::CouchDBResp;
 use rand::SeedableRng;
 use rand_pcg::Pcg32;
-use urlencoding::encode;
 
 use clap::Parser;
 
@@ -65,7 +60,6 @@ struct Cli {
 //{"total_rows":305541,"offset":71,"rows":[
 //    {"id":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","key":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","value":{
 
-
 lazy_static! {
     static ref DEBUG: bool = Cli::parse().debug == 1;
 }
@@ -80,13 +74,12 @@ fn save_state_machine(state: &StateMachine) {
     //println!("State machine saved.");
 }
 
-
 fn calculate_hash<T: Hash>(t: &T) -> u64 {
     let mut s = DefaultHasher::new();
     t.hash(&mut s);
     s.finish()
-  }
-  
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     let initial_state: InitialState = get_initial_state().await.unwrap();

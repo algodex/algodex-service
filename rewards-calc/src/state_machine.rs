@@ -5,12 +5,14 @@ use rand_pcg::Lcg64Xsh32;
 use serde::Serialize;
 
 use crate::{
-    get_spreads::{Spread, get_spreads},
-     save_state_machine,
+    get_spreads::{get_spreads, Spread},
+    initial_state::{get_initial_balances, get_time_from_round},
+    save_state_machine,
+    structs::EscrowTimeKey,
     update_owner_liquidity_quality::{
         update_owner_wallet_quality_per_asset, OwnerWalletAssetQualityResult,
     },
-    update_spreads, InitialState, DEBUG, structs::EscrowTimeKey, initial_state::{get_initial_balances, get_time_from_round},
+    update_spreads, InitialState, DEBUG,
 };
 
 #[derive(Debug, Serialize)]
@@ -32,7 +34,7 @@ impl StateMachine {
         let timestep = initial_state.epoch_start;
         let escrow_to_balance = get_initial_balances(timestep, &initial_state.escrows);
         let spreads = get_spreads(&escrow_to_balance, &initial_state.escrow_addr_to_data);
-        
+
         StateMachine {
             escrow_to_balance,
             owner_wallet_to_algx_balance: HashMap::new(),
@@ -84,7 +86,7 @@ impl StateMachine {
             escrow_to_balance.insert(String::from(escrow), *balance.unwrap());
         });
     }
-    
+
     fn update_escrow_balances(&mut self, initial_state: &InitialState) -> bool {
         let mut escrow_did_change = false;
         while self.escrow_step < initial_state.changed_escrow_seq.len()
