@@ -544,13 +544,7 @@ fn update_balances(
         escrow_to_balance.insert(String::from(escrow), *balance.unwrap());
     });
 }
-// const updateBalances = ({changedEscrows, changeTime, escrowToBalance,
-//   escrowTimeToBalance}) => {
-//   changedEscrows.forEach(escrow => {
-//     const balance = escrowTimeToBalance[`${escrow}:${changeTime}`];
-//     escrowToBalance[escrow] = balance;
-//   });
-// };
+
 
 #[derive(Debug, Serialize)]
 pub struct StateMachine<'a> {
