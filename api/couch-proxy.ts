@@ -104,7 +104,7 @@ interface OwnerRewardsResult {
 
 interface EarnedAlgxEntry {
   quality: WrappedNumber,
-  earned_algx: WrappedNumber
+  earnedAlgx: WrappedNumber
 }
 
 // These should be simple maps, but no easy way to do this
@@ -120,7 +120,7 @@ interface OwnerWalletAssetToFinalRewardsMapObj {
 }
 
 interface SaveRewardsRequest {
-  owner_rewards: OwnerRewardsWalletToAssetMapObj,
+  ownerRewards: OwnerRewardsWalletToAssetMapObj,
   ownerRewardsResToFinalRewardsEntry: OwnerWalletAssetToFinalRewardsMapObj,
   epoch: number
 }
@@ -182,7 +182,7 @@ app.post('/save_rewards', async (req, res) => {
     const earnedAlgxEntry = saveRewardsReqData.ownerRewardsResToFinalRewardsEntry[data];
     const wallet = walletAssetKey.wallet;
     const assetId = walletAssetKey.assetId;
-    const rewardsResult = saveRewardsReqData.owner_rewards[walletAssetKey.wallet][walletAssetKey.assetId.toString()];
+    const rewardsResult = saveRewardsReqData.ownerRewards[walletAssetKey.wallet][walletAssetKey.assetId.toString()];
 
     const rewardsSaveKey = generateRewardsSaveKey(wallet, assetId, saveRewardsReqData.epoch);
     var date = new Date();
@@ -195,7 +195,7 @@ app.post('/save_rewards', async (req, res) => {
       qualitySum: rewardsResult.qualitySum.val,
       algxAvg: rewardsResult.algxBalanceSum.val,
       qualityFinal: earnedAlgxEntry.quality.val,
-      earnedRewards: earnedAlgxEntry.earned_algx.val,
+      earnedRewards: earnedAlgxEntry.earnedAlgx.val,
       epoch: saveRewardsReqData.epoch,
       assetId,
       updatedAt: utc

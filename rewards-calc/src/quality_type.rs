@@ -57,16 +57,17 @@ pub struct EarnedAlgx {
   [Quality]; [Price])]
 impl name {
     pub fn from(val: f64) -> Self {
-        Self { val: val }
+        Self { val }
     }
     pub fn val(&self) -> f64 {
         self.val
     }
 }
+
 #[duplicate_item(name; [Uptime]; [AlgxBalance]; [EarnedAlgx])]
 impl name {
     pub fn from(val: u64) -> Self {
-        Self { val: val }
+        Self { val }
     }
     pub fn val(&self) -> u64 {
         self.val
@@ -75,7 +76,7 @@ impl name {
 
 #[duplicate_item(name; [BidDepth]; [AskDepth])]
 impl name {
-    pub fn asDepth(&self) -> Depth {
+    pub fn as_depth(&self) -> Depth {
         Depth { val: self.val }
     }
 }
@@ -85,7 +86,7 @@ impl name {
 impl PartialEq for name {
     fn eq(&self, other: &Self) -> bool {
         let res = ulps_eq!(self.val, other.val, max_ulps = 15);
-        if res == false {
+        if !res {
             println!("not partial eq! {} {}", self.val, other.val);
         }
         res
@@ -102,7 +103,7 @@ impl Add for name {
 
     fn add(self, _rhs: Self) -> Self {
         let res = self.val + _rhs.val;
-        return Self { val: res };
+        Self { val: res }
     }
 }
 
@@ -122,7 +123,7 @@ impl Sub for name {
 
     fn sub(self, _rhs: Self) -> Self {
         let res = self.val - _rhs.val;
-        return Self { val: res };
+        Self { val: res }
     }
 }
 
@@ -133,7 +134,7 @@ impl Mul for name {
 
     fn mul(self, _rhs: Self) -> Self {
         let res = self.val * _rhs.val;
-        return Self { val: res };
+        Self { val: res }
     }
 }
 
@@ -144,6 +145,6 @@ impl Div for name {
 
     fn div(self, _rhs: Self) -> Self {
         let res = self.val / _rhs.val;
-        return Self { val: res };
+        Self { val: res }
     }
 }

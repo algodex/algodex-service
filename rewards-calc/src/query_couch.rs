@@ -3,11 +3,8 @@ use core::panic;
 use std::fs::File;
 use std::io::Write;
 
-use reqwest;
-
 use serde::de::DeserializeOwned;
-use serde_json;
-use serde_path_to_error;
+
 use std::error::Error;
 use std::{env, fs};
 
@@ -20,19 +17,18 @@ pub async fn query_couch_db<T: DeserializeOwned>(
     db_name: &String,
     index_name: &String,
     view_name: &String,
-    keys: &Vec<String>,
+    keys: &[String],
     group: bool,
 ) -> Result<CouchDBResp<T>, Box<dyn Error>> {
     let client = reqwest::Client::new();
 
     let keys = Keys {
-        keys: keys.clone(),
+        keys: keys.to_vec(),
         group,
     };
-    let mut keysVec: Vec<Keys> = Vec::new();
-    keysVec.push(keys);
+    let keys_vec: Vec<Keys> = vec![keys];
 
-    let queries = Queries { queries: keysVec };
+    let queries = Queries { queries: keys_vec };
 
     //   let keysStr = serde_json::to_string(&queries).unwrap();
     //println!("bbb {}",keysStr);
@@ -58,8 +54,8 @@ pub async fn query_couch_db<T: DeserializeOwned>(
 
     if *DEBUG {
         let short_name = format!("{}_{}_view/{}/queries", db_name, index_name, view_name);
-        let filename = format!("result_data/{}.txt", short_name.replace("/", "_"));
-        println!("filename is: {}", filename.clone());
+        let filename = format!("result_data/{}.txt", short_name.replace('/', "_"));
+        println!("filename is: {}", filename);
 
         let full_path = env::current_dir()?.join(filename);
 
@@ -110,7 +106,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(
         }
     };
 
-    if let Err(_) = &result {
+    if result.is_err() {
         println!("{res}");
         let jd = &mut serde_json::Deserializer::from_str(&res);
         let result2: Result<CouchDBResp<T>, _> = serde_path_to_error::deserialize(jd);
@@ -123,7 +119,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(
         }
     };
     //return Err("Error...".into());
-    return Ok(result?);
+    Ok(result?)
 }
 
 // This function works but is unused - delete?
@@ -227,7 +223,7 @@ pub async fn query_couch_db_with_full_str<T: DeserializeOwned>(
 
     let result: Result<CouchDBResp<T>, _> = serde_json::from_str(&res);
 
-    if let Err(_) = &result {
+    if result.is_err() {
         println!("{res}");
         let jd = &mut serde_json::Deserializer::from_str(&res);
         let result2: Result<CouchDBResp<T>, _> = serde_path_to_error::deserialize(jd);
@@ -240,7 +236,7 @@ pub async fn query_couch_db_with_full_str<T: DeserializeOwned>(
         }
     };
 
-    return Ok(result?);
+    Ok(result?)
 }
 
 // This is used for debugging since optionals dont work with serde json debugger
