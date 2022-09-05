@@ -28,16 +28,7 @@ pub struct StateMachine {
 }
 
 impl StateMachine {
-    pub fn run_step(
-        &mut self,
-        initial_state: &InitialState,
-        rng: &mut Lcg64Xsh32,
-    ) -> bool {
-        let cur_minute = self.timestep / 60;
-        self.timestep = ((cur_minute + 1) * 60) + rng.gen_range(0..60);
-        let mut escrow_did_change = false;
-        // let ownerWalletsBalanceChangeSet:HashSet<String> = HashSet::new();
-
+    fn update_owner_wallet_algx_balances(&mut self, initial_state: &InitialState) {
         while self.owner_wallet_step < initial_state.algx_balance_data.len() {
             let owner_balance_entry =
                 &initial_state.algx_balance_data[self.owner_wallet_step];
@@ -54,8 +45,9 @@ impl StateMachine {
                 .insert(wallet, owner_balance_entry.value.balance);
             self.owner_wallet_step += 1;
         }
+    }
 
-        // Price steps
+    fn update_algx_price(&mut self, initial_state: &InitialState) {
         while self.algo_price_step < initial_state.tinyman_prices.len() {
             let price_entry = &initial_state.tinyman_prices[self.algo_price_step];
             if price_entry.unix_time > self.timestep {
@@ -64,7 +56,10 @@ impl StateMachine {
             self.algo_price = price_entry.price;
             self.algo_price_step += 1;
         }
+    }
 
+    fn update_escrow_balances(&mut self, initial_state: &InitialState) -> bool {
+        let mut escrow_did_change = false;
         while self.escrow_step < initial_state.changed_escrow_seq.len()
             && initial_state.changed_escrow_seq[self.escrow_step] <= self.timestep
         {
@@ -80,7 +75,23 @@ impl StateMachine {
             );
             self.escrow_step += 1;
         }
+        escrow_did_change
+    }
 
+    pub fn run_step(
+        &mut self,
+        initial_state: &InitialState,
+        rng: &mut Lcg64Xsh32,
+    ) -> bool {
+        let cur_minute = self.timestep / 60;
+        self.timestep = ((cur_minute + 1) * 60) + rng.gen_range(0..60);
+        // let mut escrow_did_change = false;
+        // let ownerWalletsBalanceChangeSet:HashSet<String> = HashSet::new();
+
+        self.update_owner_wallet_algx_balances(initial_state);
+        self.update_algx_price(initial_state);
+        let escrow_did_change = self.update_escrow_balances(initial_state);
+        
         if escrow_did_change {
             update_spreads(&initial_state, self);
         }
