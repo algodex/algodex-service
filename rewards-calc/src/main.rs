@@ -89,7 +89,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // FIXME - include epoch in seed
     let seed = calculate_hash(initial_state.env.get("REWARDS_RANDOM_SEED").unwrap());
 
-
     let mut state_machine = StateMachine::new(&initial_state);
 
     let mut rng = Pcg32::seed_from_u64(seed);
