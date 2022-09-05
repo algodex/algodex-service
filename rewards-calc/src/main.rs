@@ -361,7 +361,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         escrow_step: 0,
     };
 
-    while StateMachine::loop_state_machine(&mut state_machine, &initial_state, &mut rng) {
+    while state_machine.run_step(&initial_state, &mut rng) {
         // This will break automatically at the end by returning false
     }
 
