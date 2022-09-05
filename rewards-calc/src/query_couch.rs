@@ -22,10 +22,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(
 ) -> Result<CouchDBResp<T>, Box<dyn Error>> {
     let client = reqwest::Client::new();
 
-    let keys = Keys {
-        keys: keys.to_vec(),
-        group,
-    };
+    let keys = Keys { keys: keys.to_vec(), group };
     let keys_vec: Vec<Keys> = vec![keys];
 
     let queries = Queries { queries: keys_vec };
@@ -38,10 +35,8 @@ pub async fn query_couch_db<T: DeserializeOwned>(
 
     //   println!("{}", keysStr);
     println!("proxy url: {}", proxy_url);
-    let full = format!(
-        "{}/query/{}/_design/{}/_view/{}",
-        proxy_url, db_name, index_name, view_name
-    );
+    let full =
+        format!("{}/query/{}/_design/{}/_view/{}", proxy_url, db_name, index_name, view_name);
 
     let resp = client
         .post(full)
@@ -72,8 +67,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(
         println!("full path {:?}", os_path);
 
         let mut file = File::create(os_path).expect("Unable to create file");
-        file.write_all(res.as_bytes())
-            .expect("Unable to write to file");
+        file.write_all(res.as_bytes()).expect("Unable to write to file");
     }
 
     //let owned = res.to_owned();
@@ -97,11 +91,8 @@ pub async fn query_couch_db<T: DeserializeOwned>(
                     id: "".to_string(),
                 })
                 .collect();
-            let ungrouped: Result<CouchDBResp<T>, serde_json::Error> = Ok(CouchDBResp {
-                rows: converted_rows,
-                total_rows: 0,
-                offset: 0,
-            });
+            let ungrouped: Result<CouchDBResp<T>, serde_json::Error> =
+                Ok(CouchDBResp { rows: converted_rows, total_rows: 0, offset: 0 });
             ungrouped
         }
     };

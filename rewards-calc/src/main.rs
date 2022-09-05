@@ -88,10 +88,7 @@ fn get_tinyman_prices_from_data(tinyman_trades_data: CouchDBResp<TinymanTrade>) 
             };
 
             let price = usdc_amount as f64 / algo_amount as f64;
-            PriceData {
-                unix_time: time,
-                price,
-            }
+            PriceData { unix_time: time, price }
         })
         .collect();
 
@@ -122,9 +119,7 @@ async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
     });
     // println!("{:?}", result.get("ALGORAND_NETWORK").take());
 
-    let couch_dburl = env
-        .get("COUCHDB_BASE_URL_RUST")
-        .expect("Missing COUCHDB_BASE_URL_RUST");
+    let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL_RUST");
     let api_url = env.get("API_PROXY_URL").expect("Missing API_PROXY_URL");
     let keys = [epoch.to_string()].to_vec();
     let account_epoch_data_query_res = query_couch_db::<String>(
@@ -137,10 +132,8 @@ async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
     )
     .await;
     let account_data = account_epoch_data_query_res.unwrap().rows;
-    let escrow_addrs: Vec<String> = account_data
-        .iter()
-        .map(|row| String::clone(&row.value))
-        .collect();
+    let escrow_addrs: Vec<String> =
+        account_data.iter().map(|row| String::clone(&row.value)).collect();
     // println!("{:?}", escrowAddrs);
 
     let formatted_escrow_data_query_res = query_couch_db::<EscrowValue>(
@@ -155,43 +148,29 @@ async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
 
     let formatted_escrow_data = formatted_escrow_data_query_res?.rows;
 
-    let escrows: Vec<EscrowValue> = formatted_escrow_data
-        .iter()
-        .map(|row| row.value.clone())
-        .collect();
+    let escrows: Vec<EscrowValue> =
+        formatted_escrow_data.iter().map(|row| row.value.clone()).collect();
     let escrow_addr_to_data: HashMap<String, EscrowValue> =
-        formatted_escrow_data
-            .iter()
-            .fold(HashMap::new(), |mut map, row| {
-                map.insert(row.id.clone(), row.value.clone());
-                map
-            });
+        formatted_escrow_data.iter().fold(HashMap::new(), |mut map, row| {
+            map.insert(row.id.clone(), row.value.clone());
+            map
+        });
 
     let asset_id_to_escrows: HashMap<u32, Vec<String>> =
-        escrow_addr_to_data
-            .keys()
-            .fold(HashMap::new(), |mut map, escrow| {
-                let asset_id = &escrow_addr_to_data
-                    .get(escrow)
-                    .unwrap()
-                    .data
-                    .escrow_info
-                    .asset_id;
-                if !map.contains_key(asset_id) {
-                    map.insert(*asset_id, Vec::new());
-                }
-                let vec = map.get_mut(asset_id).unwrap();
-                vec.push(escrow.clone());
-                map
-            });
+        escrow_addr_to_data.keys().fold(HashMap::new(), |mut map, escrow| {
+            let asset_id = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.asset_id;
+            if !map.contains_key(asset_id) {
+                map.insert(*asset_id, Vec::new());
+            }
+            let vec = map.get_mut(asset_id).unwrap();
+            vec.push(escrow.clone());
+            map
+        });
 
     //println!("{:?}", escrowAddrToData);
 
-    let owner_wallets: Vec<String> = escrows
-        .iter()
-        .map(|escrow| &escrow.data.escrow_info.owner_addr)
-        .cloned()
-        .collect();
+    let owner_wallets: Vec<String> =
+        escrows.iter().map(|escrow| &escrow.data.escrow_info.owner_addr).cloned().collect();
 
     let algx_balance_data_query_res = query_couch_db::<AlgxBalanceValue>(
         api_url,
@@ -213,10 +192,8 @@ async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
             set.insert(item);
             set
         });
-    let blocks_vec: Vec<String> = algx_change_rounds_set
-        .iter()
-        .map(|round| round.to_string())
-        .collect();
+    let blocks_vec: Vec<String> =
+        algx_change_rounds_set.iter().map(|round| round.to_string()).collect();
 
     let block_times_data_query_res = query_couch_db::<u32>(
         api_url,
@@ -229,25 +206,19 @@ async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
     .await;
     let block_times_data = block_times_data_query_res?.rows;
     let block_to_unix_time: HashMap<u32, u32> =
-        block_times_data
-            .iter()
-            .fold(HashMap::new(), |mut map, block| {
-                let key = match &block.key {
-                    structs::CouchDBKey::StringVal(str) => str,
-                    _ => panic!("Invalid key!"),
-                }
-                .parse::<u32>()
-                .unwrap();
-                map.insert(key, block.value);
-                map
-            });
+        block_times_data.iter().fold(HashMap::new(), |mut map, block| {
+            let key = match &block.key {
+                structs::CouchDBKey::StringVal(str) => str,
+                _ => panic!("Invalid key!"),
+            }
+            .parse::<u32>()
+            .unwrap();
+            map.insert(key, block.value);
+            map
+        });
     // println!("{:?}", blockTimesData);
 
-    let epoch_launch_time = env
-        .get("EPOCH_LAUNCH_UNIX_TIME")
-        .unwrap()
-        .parse::<u32>()
-        .unwrap();
+    let epoch_launch_time = env.get("EPOCH_LAUNCH_UNIX_TIME").unwrap().parse::<u32>().unwrap();
     let epoch_start = get_epoch_start(epoch, epoch_launch_time);
     let epoch_end = get_epoch_end(epoch, epoch_launch_time);
 
@@ -291,18 +262,11 @@ async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
 
     //FIXME - change to read args for epoch
     let all_assets_set: HashSet<u32> =
-        escrow_addr_to_data
-            .keys()
-            .fold(HashSet::new(), |mut set, escrow| {
-                let asset = escrow_addr_to_data
-                    .get(escrow)
-                    .unwrap()
-                    .data
-                    .escrow_info
-                    .asset_id;
-                set.insert(asset);
-                set
-            });
+        escrow_addr_to_data.keys().fold(HashSet::new(), |mut set, escrow| {
+            let asset = escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.asset_id;
+            set.insert(asset);
+            set
+        });
     let all_assets: Vec<u32> = all_assets_set.clone().into_iter().collect();
 
     // dbg!(allAssetsSet);
@@ -335,32 +299,24 @@ async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
 
 fn save_initial_state(state: &InitialState) {
     println!("Saving initial state...");
-    let filename = format!(
-        "integration_test/test_data/initial_state_epoch_{}.json",
-        state.epoch
-    );
+    let filename = format!("integration_test/test_data/initial_state_epoch_{}.json", state.epoch);
     println!("filename is: {}", filename);
 
     // create directory if not exists
     fs::create_dir_all("integration_test/test_data").unwrap();
     let mut file = File::create(filename).expect("Unable to create file");
     let json = serde_json::to_string(&state).unwrap();
-    file.write_all(json.as_bytes())
-        .expect("Unable to write to file");
+    file.write_all(json.as_bytes()).expect("Unable to write to file");
     println!("Initial state saved.");
 }
 
 fn save_state_machine(state: &StateMachine) {
     //println!("Saving state machine...");
-    let filename = format!(
-        "integration_test/test_data/state_machine_{}.json",
-        state.timestep
-    );
+    let filename = format!("integration_test/test_data/state_machine_{}.json", state.timestep);
     //println!("filename is: {}", filename);
     let mut file = File::create(filename).expect("Unable to create file");
     let json = serde_json::to_string(&state).unwrap();
-    file.write_all(json.as_bytes())
-        .expect("Unable to write to file");
+    file.write_all(json.as_bytes()).expect("Unable to write to file");
     //println!("State machine saved.");
 }
 
@@ -445,10 +401,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
             && initial_state.changed_escrow_seq[escrowstep] <= state_machine.timestep
         {
             let change_time = &initial_state.changed_escrow_seq[escrowstep];
-            let changed_escrows = initial_state
-                .unix_time_to_changed_escrows
-                .get(change_time)
-                .unwrap();
+            let changed_escrows =
+                initial_state.unix_time_to_changed_escrows.get(change_time).unwrap();
             escrow_did_change = true;
             update_balances(
                 changed_escrows,
@@ -464,20 +418,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
 
         let assets_with_balances: HashSet<&u32> =
-            state_machine
-                .escrow_to_balance
-                .keys()
-                .fold(HashSet::new(), |mut set, escrow| {
-                    let asset_id = &initial_state
-                        .escrow_addr_to_data
-                        .get(escrow)
-                        .unwrap()
-                        .data
-                        .escrow_info
-                        .asset_id;
-                    set.insert(asset_id);
-                    set
-                });
+            state_machine.escrow_to_balance.keys().fold(HashSet::new(), |mut set, escrow| {
+                let asset_id = &initial_state
+                    .escrow_addr_to_data
+                    .get(escrow)
+                    .unwrap()
+                    .data
+                    .escrow_info
+                    .asset_id;
+                set.insert(asset_id);
+                set
+            });
 
         assets_with_balances.into_iter().for_each(|asset_id| {
             update_rewards(asset_id, &mut state_machine, &initial_state);
@@ -511,74 +462,59 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let total_quality: f64 = state_machine.owner_wallet_asset_to_rewards.keys().fold(
         0f64,
         |total_quality, owner_wallet| {
-            let owner_asset_entries = state_machine
-                .owner_wallet_asset_to_rewards
-                .get(owner_wallet)
-                .unwrap();
-            let quality = owner_asset_entries
-                .keys()
-                .fold(0f64, |total_quality, asset_id| {
-                    let asset_quality_entry = owner_asset_entries.get(asset_id).unwrap();
-                    let OwnerRewardsResult {
-                        ref algx_balance_sum,
-                        ref quality_sum,
-                        ref depth,
-                        ref uptime,
-                        ..
-                    } = asset_quality_entry;
-                    let algx_avg = (algx_balance_sum.val() as f64) / (get_seconds_in_epoch() as f64);
-                    let uptime_str = format!("{}", uptime.val());
-                    let uptimef64 = uptime_str.parse::<f64>().unwrap();
-                    let quality_final = Quality::from(match mainnet_period {
-                        MainnetPeriod::Version1 => {
-                            quality_sum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3)
-                        }
-                        MainnetPeriod::Version2 => {
-                            quality_sum.val().powf(0.5)
-                                * uptimef64.powi(5)
-                                * depth.val().powf(0.3)
-                                * algx_avg.powf(0.2)
-                        }
-                    });
-                    let owner_rewards_key = OwnerRewardsKey {
-                        wallet: owner_wallet.clone(),
-                        asset_id: *asset_id,
-                    };
-                    let earned_algx_entry = EarnedAlgxEntry {
-                        quality: quality_final,
-                        earned_algx: EarnedAlgx::from(0),
-                    };
-
-                    owner_rewards_res_to_final_rewards_entry.insert(owner_rewards_key, earned_algx_entry);
-                    total_quality + quality_final.val()
+            let owner_asset_entries =
+                state_machine.owner_wallet_asset_to_rewards.get(owner_wallet).unwrap();
+            let quality = owner_asset_entries.keys().fold(0f64, |total_quality, asset_id| {
+                let asset_quality_entry = owner_asset_entries.get(asset_id).unwrap();
+                let OwnerRewardsResult {
+                    ref algx_balance_sum,
+                    ref quality_sum,
+                    ref depth,
+                    ref uptime,
+                    ..
+                } = asset_quality_entry;
+                let algx_avg = (algx_balance_sum.val() as f64) / (get_seconds_in_epoch() as f64);
+                let uptime_str = format!("{}", uptime.val());
+                let uptimef64 = uptime_str.parse::<f64>().unwrap();
+                let quality_final = Quality::from(match mainnet_period {
+                    MainnetPeriod::Version1 => {
+                        quality_sum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3)
+                    }
+                    MainnetPeriod::Version2 => {
+                        quality_sum.val().powf(0.5)
+                            * uptimef64.powi(5)
+                            * depth.val().powf(0.3)
+                            * algx_avg.powf(0.2)
+                    }
                 });
+                let owner_rewards_key =
+                    OwnerRewardsKey { wallet: owner_wallet.clone(), asset_id: *asset_id };
+                let earned_algx_entry =
+                    EarnedAlgxEntry { quality: quality_final, earned_algx: EarnedAlgx::from(0) };
+
+                owner_rewards_res_to_final_rewards_entry
+                    .insert(owner_rewards_key, earned_algx_entry);
+                total_quality + quality_final.val()
+            });
             total_quality + quality
         },
     );
 
-    state_machine
-        .owner_wallet_asset_to_rewards
-        .keys()
-        .for_each(|owner_wallet| {
-            let owner_asset_entries = state_machine
-                .owner_wallet_asset_to_rewards
-                .get(owner_wallet)
+    state_machine.owner_wallet_asset_to_rewards.keys().for_each(|owner_wallet| {
+        let owner_asset_entries =
+            state_machine.owner_wallet_asset_to_rewards.get(owner_wallet).unwrap();
+        owner_asset_entries.keys().for_each(|asset_id| {
+            let _asset_quality_entry = owner_asset_entries.get(asset_id).unwrap();
+            let final_rewards_entry = owner_rewards_res_to_final_rewards_entry
+                .get_mut(&OwnerRewardsKey { wallet: owner_wallet.clone(), asset_id: *asset_id })
                 .unwrap();
-            owner_asset_entries.keys().for_each(|asset_id| {
-                let _asset_quality_entry = owner_asset_entries.get(asset_id).unwrap();
-                let final_rewards_entry = owner_rewards_res_to_final_rewards_entry
-                    .get_mut(&OwnerRewardsKey {
-                        wallet: owner_wallet.clone(),
-                        asset_id: *asset_id,
-                    })
-                    .unwrap();
 
-                // FIXME - 18k depends on epoch
-                final_rewards_entry.earned_algx = EarnedAlgx::from(
-                    (18000000.0 * final_rewards_entry.quality.val() / total_quality).round() as u64,
-                );
-            });
+            // FIXME - 18k depends on epoch
+            final_rewards_entry.earned_algx = EarnedAlgx::from(
+                (18000000.0 * final_rewards_entry.quality.val() / total_quality).round() as u64,
+            );
         });
+    });
     // rewardsFinal.sort_by(|a, b| a.qualityFinal.val().partial_cmp(&b.qualityFinal.val()).unwrap());
 
     println!("saving rewards in DB!");
@@ -603,10 +539,7 @@ fn update_balances(
     escrow_time_to_balance: &HashMap<EscrowTimeKey, u64>,
 ) {
     changed_escrows.iter().for_each(|escrow| {
-        let key = EscrowTimeKey {
-            escrow: String::from(escrow),
-            unix_time: *change_time,
-        };
+        let key = EscrowTimeKey { escrow: String::from(escrow), unix_time: *change_time };
         let balance = escrow_time_to_balance.get(&key);
         escrow_to_balance.insert(String::from(escrow), *balance.unwrap());
     });
@@ -630,25 +563,23 @@ pub struct StateMachine<'a> {
 }
 
 fn get_initial_balances(unix_time: u32, escrows: &[EscrowValue]) -> HashMap<String, u64> {
-    return escrows
-        .iter()
-        .fold(HashMap::new(), |mut escrow_to_balance, escrow| {
-            let addr = &escrow.id;
-            let history = &escrow.data.history;
-            let mut balance = 0; //FIXME?
-            for history_item in history {
-                if history_item.time <= unix_time {
-                    balance = match escrow.data.escrow_info.is_algo_buy_escrow {
-                        true => history_item.algo_amount.unwrap(),
-                        false => history_item.asa_amount.unwrap(),
-                    }
-                } else {
-                    break;
+    return escrows.iter().fold(HashMap::new(), |mut escrow_to_balance, escrow| {
+        let addr = &escrow.id;
+        let history = &escrow.data.history;
+        let mut balance = 0; //FIXME?
+        for history_item in history {
+            if history_item.time <= unix_time {
+                balance = match escrow.data.escrow_info.is_algo_buy_escrow {
+                    true => history_item.algo_amount.unwrap(),
+                    false => history_item.asa_amount.unwrap(),
                 }
+            } else {
+                break;
             }
-            escrow_to_balance.insert(String::from(addr), balance);
-            escrow_to_balance
-        });
+        }
+        escrow_to_balance.insert(String::from(addr), balance);
+        escrow_to_balance
+    });
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -698,35 +629,26 @@ fn get_epoch_end(epoch: u16, epoch_launch_time: u32) -> u32 {
 
 fn get_escrow_and_time_to_balance(escrows: &[EscrowValue]) -> HashMap<EscrowTimeKey, u64> {
     let escrow_time_map: HashMap<EscrowTimeKey, u64> =
-        escrows
-            .iter()
-            .fold(HashMap::new(), |mut escrow_time_map, escrow| {
-                escrow.data.history.iter().for_each(|history_item| {
-                    let time = history_item.time;
-                    let balance = match escrow.data.escrow_info.is_algo_buy_escrow {
-                        true => history_item.algo_amount,
-                        false => history_item.asa_amount,
-                    };
-                    let key = EscrowTimeKey {
-                        escrow: escrow.id.clone(),
-                        unix_time: time,
-                    };
-                    escrow_time_map.insert(key, balance.unwrap());
-                });
-                escrow_time_map
+        escrows.iter().fold(HashMap::new(), |mut escrow_time_map, escrow| {
+            escrow.data.history.iter().for_each(|history_item| {
+                let time = history_item.time;
+                let balance = match escrow.data.escrow_info.is_algo_buy_escrow {
+                    true => history_item.algo_amount,
+                    false => history_item.asa_amount,
+                };
+                let key = EscrowTimeKey { escrow: escrow.id.clone(), unix_time: time };
+                escrow_time_map.insert(key, balance.unwrap());
             });
+            escrow_time_map
+        });
 
     escrow_time_map
 }
 fn get_sequence_info(escrows: &[EscrowValue]) -> (HashMap<u32, Vec<String>>, Vec<u32>) {
     let unix_time_to_changed_escrows: HashMap<u32, Vec<String>> =
         escrows.iter().fold(HashMap::new(), |mut timeline, escrow| {
-            let times: Vec<u32> = escrow
-                .data
-                .history
-                .iter()
-                .map(|history_item| history_item.time)
-                .collect();
+            let times: Vec<u32> =
+                escrow.data.history.iter().map(|history_item| history_item.time).collect();
             times.iter().for_each(|time| {
                 if !timeline.contains_key(time) {
                     timeline.insert(*time, Vec::new());
@@ -741,5 +663,3 @@ fn get_sequence_info(escrows: &[EscrowValue]) -> (HashMap<u32, Vec<String>>, Vec
     unix_times.sort();
     (unix_time_to_changed_escrows, unix_times)
 }
-
-

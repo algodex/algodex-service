@@ -62,13 +62,7 @@ impl QualityResult {
         ask_depth: AskDepth,
         algx_balance: AlgxBalance,
     ) -> QualityResult {
-        QualityResult {
-            addr,
-            quality,
-            bid_depth,
-            ask_depth,
-            algx_balance,
-        }
+        QualityResult { addr, quality, bid_depth, ask_depth, algx_balance }
     }
 }
 
@@ -170,11 +164,7 @@ pub fn update_rewards(
         ref timestep,
         ..
     } = state_machine;
-    let InitialState {
-        ref escrow_addr_to_data,
-        ref asset_id_to_escrows,
-        ..
-    } = initial_state;
+    let InitialState { ref escrow_addr_to_data, ref asset_id_to_escrows, .. } = initial_state;
     let quality_analytics: Vec<QualityResult> = asset_id_to_escrows
         .get(inputted_asset_id)
         .unwrap()
@@ -182,12 +172,7 @@ pub fn update_rewards(
         //.map(|escrow| escrow.clone())
         .filter(|escrow| escrow_to_balance.get(*escrow).unwrap() > &0u64)
         .filter(|escrow| {
-            let asset_id = &escrow_addr_to_data
-                .get(*escrow)
-                .unwrap()
-                .data
-                .escrow_info
-                .asset_id;
+            let asset_id = &escrow_addr_to_data.get(*escrow).unwrap().data.escrow_info.asset_id;
             let spread = spreads.get(asset_id);
             if spread.is_none() || spread.unwrap().ask.is_none() || spread.unwrap().bid.is_none() {
                 return false;
@@ -195,31 +180,13 @@ pub fn update_rewards(
             true
         })
         .map(|escrow| {
-            let asset_id = &escrow_addr_to_data
-                .get(escrow)
-                .unwrap()
-                .data
-                .escrow_info
-                .asset_id;
-            let price = &escrow_addr_to_data
-                .get(escrow)
-                .unwrap()
-                .data
-                .escrow_info
-                .price;
+            let asset_id = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.asset_id;
+            let price = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.price;
             let decimals = &escrow_addr_to_data.get(escrow).unwrap().data.asset_decimals;
             let balance = escrow_to_balance.get(escrow).unwrap();
-            let owner_addr = &escrow_addr_to_data
-                .get(escrow)
-                .unwrap()
-                .data
-                .escrow_info
-                .owner_addr;
-            let owner_algx_balance = AlgxBalance::from(
-                *owner_wallet_to_algx_balance
-                    .get(owner_addr)
-                    .unwrap_or(&0u64),
-            );
+            let owner_addr = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.owner_addr;
+            let owner_algx_balance =
+                AlgxBalance::from(*owner_wallet_to_algx_balance.get(owner_addr).unwrap_or(&0u64));
             let spread = spreads.get(asset_id);
             if spread.is_none() || spread.unwrap().ask.is_none() || spread.unwrap().bid.is_none() {
                 dbg!("{spread} {assetId}");
@@ -278,12 +245,8 @@ pub fn update_rewards(
         .iter()
         .filter(|entry| entry.quality.val() > 0.0)
         .fold(HashMap::new(), |mut owner_wallet_to_quality, entry| {
-            let owner_addr = &escrow_addr_to_data
-                .get(&entry.addr)
-                .unwrap()
-                .data
-                .escrow_info
-                .owner_addr;
+            let owner_addr =
+                &escrow_addr_to_data.get(&entry.addr).unwrap().data.escrow_info.owner_addr;
 
             let quality_data_opt = owner_wallet_to_quality.get(owner_addr);
             if quality_data_opt.is_none() {
@@ -307,12 +270,10 @@ pub fn update_rewards(
             owner_wallet_to_quality
         });
 
-    let total_bid_depth = quality_analytics
-        .iter()
-        .fold(BidDepth::from(0.0), |sum, entry| sum + entry.bid_depth);
-    let total_ask_depth = quality_analytics
-        .iter()
-        .fold(AskDepth::from(0.0), |sum, entry| sum + entry.ask_depth);
+    let total_bid_depth =
+        quality_analytics.iter().fold(BidDepth::from(0.0), |sum, entry| sum + entry.bid_depth);
+    let total_ask_depth =
+        quality_analytics.iter().fold(AskDepth::from(0.0), |sum, entry| sum + entry.ask_depth);
 
     owner_wallet_to_quality.keys().copied().for_each(|owner| {
         let res: QualityResult;
@@ -329,13 +290,8 @@ pub fn update_rewards(
                 &res
             }
         };
-        let QualityResult {
-            ref quality,
-            addr: _,
-            bid_depth,
-            ask_depth,
-            algx_balance,
-        } = quality_result;
+        let QualityResult { ref quality, addr: _, bid_depth, ask_depth, algx_balance } =
+            quality_result;
 
         if quality.val() == 0.0 {
             return;
