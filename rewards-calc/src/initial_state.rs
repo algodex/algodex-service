@@ -252,7 +252,6 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
             map.insert(key, block.value);
             map
         });
-    // println!("{:?}", blockTimesData);
 
     let epoch_launch_time = env.get("EPOCH_LAUNCH_UNIX_TIME").unwrap().parse::<u32>().unwrap();
     let epoch_start = get_epoch_start(epoch, epoch_launch_time);
@@ -281,22 +280,14 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         &tinyman_str.to_string(),
     )
     .await;
-    // dbg!(tinymanTrades.as_ref());
 
     let tinyman_trades_data = tinyman_trades.unwrap();
     let tinyman_prices = get_tinyman_prices_from_data(tinyman_trades_data);
-
-    // dbg!(tinymanPrices);
-    // let formatted_escrow_data = query_couch_db::<EscrowValue>(&couch_dburl,
-    //     &"formatted_escrow".to_string(),
-    //     &"formatted_escrow".to_string(),
-    //     &"orderLookup".to_string(), &escrowAddrs).await;
 
     let (unix_time_to_changed_escrows, changed_escrow_seq) = get_sequence_info(&escrows);
 
     let escrow_time_to_balance = get_escrow_and_time_to_balance(&escrows);
 
-    //FIXME - change to read args for epoch
     let all_assets_set: HashSet<u32> =
         escrow_addr_to_data.keys().fold(HashSet::new(), |mut set, escrow| {
             let asset = escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.asset_id;
@@ -304,9 +295,6 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
             set
         });
     let all_assets: Vec<u32> = all_assets_set.clone().into_iter().collect();
-
-    // dbg!(allAssetsSet);
-    // let cloned: Vec<CouchDBResult<EscrowValue>> = formattedEscrowDataQueryRes.unwrap().results[0].rows.clone();
 
     let initial_state = InitialState {
         algx_balance_data,
