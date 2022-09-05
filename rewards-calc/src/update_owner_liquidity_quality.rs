@@ -33,7 +33,7 @@ pub struct EarnedAlgxEntry {
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct OwnerRewardsResult {
+pub struct OwnerWalletAssetQualityResult {
     pub algx_balance_sum: AlgxBalance,
     pub quality_sum: Quality,
     pub uptime: Uptime,
@@ -42,7 +42,7 @@ pub struct OwnerRewardsResult {
     pub has_ask: bool,
 }
 
-impl Default for OwnerRewardsResult {
+impl Default for OwnerWalletAssetQualityResult {
     fn default() -> Self {
         Self {
             algx_balance_sum: AlgxBalance::from(0),
@@ -150,21 +150,22 @@ fn check_is_eligible(
     };
 }
 
-pub fn update_rewards(
+/// Get the quality analytics for each escrow
+fn get_analytics_per_escrow(
     inputted_asset_id: &u32,
-    state_machine: &mut StateMachine,
+    state_machine: &StateMachine,
     initial_state: &InitialState,
-) {
+) -> Vec<QualityResult> {
     let StateMachine {
-        ref escrow_to_balance,
-        ref spreads,
-        ref owner_wallet_to_algx_balance,
-        ref mut owner_wallet_asset_to_rewards,
-        ref algo_price,
-        ref timestep,
+        escrow_to_balance,
+        spreads,
+        owner_wallet_to_algx_balance,
+        algo_price,
+        timestep,
         ..
     } = state_machine;
-    let InitialState { ref escrow_addr_to_data, ref asset_id_to_escrows, .. } = initial_state;
+    let InitialState { escrow_addr_to_data, asset_id_to_escrows, .. } = initial_state;
+
     let quality_analytics: Vec<QualityResult> = asset_id_to_escrows
         .get(inputted_asset_id)
         .unwrap()
@@ -240,6 +241,15 @@ pub fn update_rewards(
             }
         })
         .collect();
+    quality_analytics
+}
+
+/// Calculate the quality of each owner wallet from the per escrow quality entries
+fn get_owner_wallet_to_quality<'a>(
+    initial_state: &'a InitialState,
+    quality_analytics: &'a [QualityResult],
+) -> HashMap<&'a String, QualityResult> {
+    let InitialState { ref escrow_addr_to_data, .. } = initial_state;
 
     let owner_wallet_to_quality: HashMap<&String, QualityResult> = quality_analytics
         .iter()
@@ -269,19 +279,29 @@ pub fn update_rewards(
             quality_entry.algx_balance += entry.algx_balance;
             owner_wallet_to_quality
         });
+    owner_wallet_to_quality
+}
 
-    let total_bid_depth =
-        quality_analytics.iter().fold(BidDepth::from(0.0), |sum, entry| sum + entry.bid_depth);
-    let total_ask_depth =
-        quality_analytics.iter().fold(AskDepth::from(0.0), |sum, entry| sum + entry.ask_depth);
-
-    owner_wallet_to_quality.keys().copied().for_each(|owner| {
+/// For this unix time step, update the owner wallet quality which will later
+/// be used to calculate the ALGX rewards
+fn update_owner_wallet_quality(
+    owner_wallet_asset_to_rewards: &mut HashMap<
+        String,
+        HashMap<u32, OwnerWalletAssetQualityResult>,
+    >,
+    owner_wallet_to_quality: &HashMap<&String, QualityResult>,
+    asset_id: &u32,
+    unix_time: &u32,
+    total_bid_depth: &BidDepth,
+    total_ask_depth: &AskDepth,
+) {
+    owner_wallet_to_quality.keys().for_each(|owner| {
         let res: QualityResult;
         let quality_result = match owner_wallet_to_quality.get(owner) {
             Some(q) => q,
             None => {
                 res = QualityResult::new(
-                    owner.clone(),
+                    (*owner).clone(),
                     Quality::from(0.0),
                     BidDepth::from(0.0),
                     AskDepth::from(0.0),
@@ -297,15 +317,15 @@ pub fn update_rewards(
             return;
         }
 
-        if owner_wallet_asset_to_rewards.get(owner).is_none() {
-            owner_wallet_asset_to_rewards.insert(owner.clone(), HashMap::new());
+        if owner_wallet_asset_to_rewards.get(*owner).is_none() {
+            owner_wallet_asset_to_rewards.insert((*owner).clone(), HashMap::new());
         }
 
-        let asset_rewards_map = owner_wallet_asset_to_rewards.get_mut(owner).unwrap();
-        if asset_rewards_map.get(inputted_asset_id).is_none() {
-            asset_rewards_map.insert(*inputted_asset_id, OwnerRewardsResult::default());
+        let asset_rewards_map = owner_wallet_asset_to_rewards.get_mut(*owner).unwrap();
+        if asset_rewards_map.get(asset_id).is_none() {
+            asset_rewards_map.insert(*asset_id, OwnerWalletAssetQualityResult::default());
         }
-        let owner_entry = asset_rewards_map.get_mut(inputted_asset_id).unwrap();
+        let owner_entry = asset_rewards_map.get_mut(asset_id).unwrap();
         owner_entry.algx_balance_sum += *algx_balance;
         owner_entry.quality_sum += *quality;
         if total_bid_depth.val() > 0.0 {
@@ -317,7 +337,7 @@ pub fn update_rewards(
             owner_entry.has_ask = true;
         }
         if quality.val() >= 0.0000001 {
-            match check_mainnet_period(timestep) {
+            match check_mainnet_period(unix_time) {
                 MainnetPeriod::Version1 => owner_entry.uptime += Uptime::from(1),
                 MainnetPeriod::Version2 => {
                     if owner_entry.has_ask && owner_entry.has_bid {
@@ -327,4 +347,33 @@ pub fn update_rewards(
             }
         }
     })
+}
+
+/// Update the quality for each wallet for a given asset ID. This is calculated for each minute
+pub fn update_owner_wallet_quality_per_asset(
+    inputted_asset_id: &u32,
+    state_machine: &mut StateMachine,
+    initial_state: &InitialState,
+) {
+    let quality_analytics =
+        get_analytics_per_escrow(inputted_asset_id, state_machine, initial_state);
+
+    let StateMachine { ref mut owner_wallet_asset_to_quality_result, ref timestep, .. } =
+        state_machine;
+
+    let owner_wallet_to_quality = get_owner_wallet_to_quality(initial_state, &quality_analytics);
+
+    let total_bid_depth =
+        quality_analytics.iter().fold(BidDepth::from(0.0), |sum, entry| sum + entry.bid_depth);
+    let total_ask_depth =
+        quality_analytics.iter().fold(AskDepth::from(0.0), |sum, entry| sum + entry.ask_depth);
+
+    update_owner_wallet_quality(
+        owner_wallet_asset_to_quality_result,
+        &owner_wallet_to_quality,
+        inputted_asset_id,
+        timestep,
+        &total_bid_depth,
+        &total_ask_depth,
+    );
 }

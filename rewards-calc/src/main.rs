@@ -18,22 +18,22 @@ use std::io::Write;
 
 mod structs;
 use crate::quality_type::EarnedAlgx;
-use crate::update_rewards::OwnerRewardsKey;
-use crate::update_rewards::{check_mainnet_period, MainnetPeriod};
+use crate::update_owner_liquidity_quality::OwnerRewardsKey;
+use crate::update_owner_liquidity_quality::{check_mainnet_period, MainnetPeriod};
 use structs::{AlgxBalanceValue, EscrowTimeKey, EscrowValue, TinymanTrade};
 mod get_spreads;
 mod quality_type;
 mod query_couch;
-mod update_rewards;
+mod update_owner_liquidity_quality;
 mod update_spreads;
 use get_spreads::get_spreads;
 use rand::Rng;
-use update_rewards::{update_rewards, EarnedAlgxEntry};
+use update_owner_liquidity_quality::{update_owner_wallet_quality_per_asset, EarnedAlgxEntry};
 use update_spreads::update_spreads;
 mod save_rewards;
 use crate::save_rewards::save_rewards;
 use crate::structs::CouchDBResult;
-use crate::update_rewards::OwnerRewardsResult;
+use crate::update_owner_liquidity_quality::OwnerWalletAssetQualityResult;
 use query_couch::{query_couch_db, query_couch_db_with_full_str};
 // use query_couch::query_couch_db2;
 use crate::get_spreads::Spread;
@@ -346,14 +346,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let escrow_to_balance = get_initial_balances(timestep, &initial_state.escrows);
     let spreads = get_spreads(&escrow_to_balance, &initial_state.escrow_addr_to_data);
 
-    let owner_wallet_asset_to_rewards: HashMap<String, HashMap<u32, OwnerRewardsResult>> =
-        HashMap::new();
+    let owner_wallet_asset_to_quality_result: HashMap<
+        String,
+        HashMap<u32, OwnerWalletAssetQualityResult>,
+    > = HashMap::new();
     let owner_wallet_to_algx_balance: HashMap<&String, u64> = HashMap::new();
 
     let mut state_machine = StateMachine {
         escrow_to_balance,
         owner_wallet_to_algx_balance,
-        owner_wallet_asset_to_rewards,
+        owner_wallet_asset_to_quality_result,
         spreads,
         algo_price: 0.0,
         timestep,
@@ -431,7 +433,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             });
 
         assets_with_balances.into_iter().for_each(|asset_id| {
-            update_rewards(asset_id, &mut state_machine, &initial_state);
+            update_owner_wallet_quality_per_asset(asset_id, &mut state_machine, &initial_state);
         });
         println!(
             "{}",
@@ -456,14 +458,14 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let mut owner_rewards_res_to_final_rewards_entry: HashMap<OwnerRewardsKey, EarnedAlgxEntry> =
         HashMap::new();
-    let total_quality: f64 = state_machine.owner_wallet_asset_to_rewards.keys().fold(
+    let total_quality: f64 = state_machine.owner_wallet_asset_to_quality_result.keys().fold(
         0f64,
         |total_quality, owner_wallet| {
             let owner_asset_entries =
-                state_machine.owner_wallet_asset_to_rewards.get(owner_wallet).unwrap();
+                state_machine.owner_wallet_asset_to_quality_result.get(owner_wallet).unwrap();
             let quality = owner_asset_entries.keys().fold(0f64, |total_quality, asset_id| {
                 let asset_quality_entry = owner_asset_entries.get(asset_id).unwrap();
-                let OwnerRewardsResult {
+                let OwnerWalletAssetQualityResult {
                     ref algx_balance_sum,
                     ref quality_sum,
                     ref depth,
@@ -497,9 +499,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
         },
     );
 
-    state_machine.owner_wallet_asset_to_rewards.keys().for_each(|owner_wallet| {
+    state_machine.owner_wallet_asset_to_quality_result.keys().for_each(|owner_wallet| {
         let owner_asset_entries =
-            state_machine.owner_wallet_asset_to_rewards.get(owner_wallet).unwrap();
+            state_machine.owner_wallet_asset_to_quality_result.get(owner_wallet).unwrap();
         owner_asset_entries.keys().for_each(|asset_id| {
             let _asset_quality_entry = owner_asset_entries.get(asset_id).unwrap();
             let final_rewards_entry = owner_rewards_res_to_final_rewards_entry
@@ -517,7 +519,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     println!("saving rewards in DB!");
     save_rewards(
         epoch,
-        &state_machine.owner_wallet_asset_to_rewards,
+        &state_machine.owner_wallet_asset_to_quality_result,
         &owner_rewards_res_to_final_rewards_entry,
     )
     .await?;
@@ -542,12 +544,12 @@ fn update_balances(
     });
 }
 
-
 #[derive(Debug, Serialize)]
 pub struct StateMachine<'a> {
     escrow_to_balance: HashMap<String, u64>,
     spreads: HashMap<u32, Spread>,
-    owner_wallet_asset_to_rewards: HashMap<String, HashMap<u32, OwnerRewardsResult>>,
+    owner_wallet_asset_to_quality_result:
+        HashMap<String, HashMap<u32, OwnerWalletAssetQualityResult>>,
     owner_wallet_to_algx_balance: HashMap<&'a String, u64>,
     algo_price: f64,
     timestep: u32,

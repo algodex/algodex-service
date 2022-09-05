@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::update_rewards::{EarnedAlgxEntry, OwnerRewardsKey};
-use crate::{OwnerRewardsResult, DEBUG};
+use crate::update_owner_liquidity_quality::{EarnedAlgxEntry, OwnerRewardsKey};
+use crate::{OwnerWalletAssetQualityResult, DEBUG};
 use reqwest::Response;
 use std::error::Error;
 
@@ -17,7 +17,7 @@ use std::io::prelude::*;
 #[serde(rename_all = "camelCase")]
 struct SaveRewardsEntry {
     #[serde(with = "any_key_map")]
-    owner_rewards: HashMap<String, HashMap<u32, OwnerRewardsResult>>,
+    owner_rewards: HashMap<String, HashMap<u32, OwnerWalletAssetQualityResult>>,
     #[serde(with = "any_key_map")]
     owner_rewards_res_to_final_rewards_entry: HashMap<OwnerRewardsKey, EarnedAlgxEntry>,
     epoch: u16,
@@ -25,14 +25,15 @@ struct SaveRewardsEntry {
 
 pub async fn save_rewards(
     epoch: u16,
-    owner_rewards: &HashMap<String, HashMap<u32, OwnerRewardsResult>>,
+    owner_rewards: &HashMap<String, HashMap<u32, OwnerWalletAssetQualityResult>>,
     owner_rewards_res_to_final_rewards_entry: &HashMap<OwnerRewardsKey, EarnedAlgxEntry>,
 ) -> Result<Response, Box<dyn Error>> {
     let client = reqwest::Client::new();
     let full_url = format!("{}/save_rewards", "http://localhost:3006");
 
     // This cloning is ugly, so refactor in future
-    let owner_copy: HashMap<String, HashMap<u32, OwnerRewardsResult>> = owner_rewards.clone();
+    let owner_copy: HashMap<String, HashMap<u32, OwnerWalletAssetQualityResult>> =
+        owner_rewards.clone();
     let owner_rewards_res_to_final_rewards_entry_copy: HashMap<OwnerRewardsKey, EarnedAlgxEntry> =
         owner_rewards_res_to_final_rewards_entry.clone();
 
@@ -90,7 +91,7 @@ mod tests {
 
     use pretty_assertions::assert_eq;
 
-    use crate::update_rewards::OwnerRewardsResult;
+    use crate::update_owner_liquidity_quality::OwnerWalletAssetQualityResult;
 
     use super::{FlattenedFinalRewardsEntry, SaveRewardsEntry};
 
@@ -127,7 +128,7 @@ mod tests {
                 let owner_rewards_entry =
                     final_entry.owner_rewards.get(wallet).unwrap().get(&asset_id).unwrap();
 
-                let OwnerRewardsResult {
+                let OwnerWalletAssetQualityResult {
                     algx_balance_sum,
                     quality_sum,
                     uptime,
