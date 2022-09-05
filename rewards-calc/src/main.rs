@@ -19,7 +19,7 @@ use std::io::Write;
 mod state_machine;
 mod structs;
 use crate::quality_type::EarnedAlgx;
-use crate::state_machine::{loop_state_machine, StateMachine};
+use crate::state_machine::{StateMachine};
 use crate::update_owner_liquidity_quality::OwnerRewardsKey;
 use crate::update_owner_liquidity_quality::{check_mainnet_period, MainnetPeriod};
 use structs::{AlgxBalanceValue, EscrowTimeKey, EscrowValue, TinymanTrade};
@@ -361,7 +361,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         escrow_step: 0,
     };
 
-    while loop_state_machine(&mut state_machine, &initial_state, &mut rng) {
+    while StateMachine::loop_state_machine(&mut state_machine, &initial_state, &mut rng) {
         // This will break automatically at the end by returning false
     }
 
