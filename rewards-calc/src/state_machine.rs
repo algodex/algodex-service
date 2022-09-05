@@ -6,11 +6,11 @@ use serde::Serialize;
 
 use crate::{
     get_spreads::{Spread, get_spreads},
-    get_time_from_round, save_state_machine, update_balances,
+     save_state_machine,
     update_owner_liquidity_quality::{
         update_owner_wallet_quality_per_asset, OwnerWalletAssetQualityResult,
     },
-    update_spreads, InitialState, DEBUG, get_initial_balances, calculate_hash,
+    update_spreads, InitialState, DEBUG, structs::EscrowTimeKey, initial_state::{get_initial_balances, get_time_from_round},
 };
 
 #[derive(Debug, Serialize)]
@@ -72,6 +72,19 @@ impl StateMachine {
         }
     }
 
+    fn update_balances(
+        changed_escrows: &[String],
+        change_time: &u32,
+        escrow_to_balance: &mut HashMap<String, u64>,
+        escrow_time_to_balance: &HashMap<EscrowTimeKey, u64>,
+    ) {
+        changed_escrows.iter().for_each(|escrow| {
+            let key = EscrowTimeKey { escrow: String::from(escrow), unix_time: *change_time };
+            let balance = escrow_time_to_balance.get(&key);
+            escrow_to_balance.insert(String::from(escrow), *balance.unwrap());
+        });
+    }
+    
     fn update_escrow_balances(&mut self, initial_state: &InitialState) -> bool {
         let mut escrow_did_change = false;
         while self.escrow_step < initial_state.changed_escrow_seq.len()
@@ -81,7 +94,7 @@ impl StateMachine {
             let changed_escrows =
                 initial_state.unix_time_to_changed_escrows.get(change_time).unwrap();
             escrow_did_change = true;
-            update_balances(
+            Self::update_balances(
                 changed_escrows,
                 change_time,
                 &mut self.escrow_to_balance,
