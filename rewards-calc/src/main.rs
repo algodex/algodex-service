@@ -16,8 +16,8 @@ use std::fs::{self, File};
 use std::hash::{Hash, Hasher};
 use std::io::Write;
 
-mod structs;
 mod state_machine;
+mod structs;
 use crate::quality_type::EarnedAlgx;
 use crate::state_machine::{loop_state_machine, StateMachine};
 use crate::update_owner_liquidity_quality::OwnerRewardsKey;
@@ -29,8 +29,8 @@ mod query_couch;
 mod update_owner_liquidity_quality;
 mod update_spreads;
 use get_spreads::get_spreads;
-use rand::Rng;
-use update_owner_liquidity_quality::{update_owner_wallet_quality_per_asset, EarnedAlgxEntry};
+
+use update_owner_liquidity_quality::EarnedAlgxEntry;
 use update_spreads::update_spreads;
 mod save_rewards;
 use crate::save_rewards::save_rewards;
@@ -38,11 +38,11 @@ use crate::structs::CouchDBResult;
 use crate::update_owner_liquidity_quality::OwnerWalletAssetQualityResult;
 use query_couch::{query_couch_db, query_couch_db_with_full_str};
 // use query_couch::query_couch_db2;
-use crate::get_spreads::Spread;
+
 use crate::quality_type::Quality;
 use crate::structs::CouchDBResp;
 use rand::SeedableRng;
-use rand_pcg::{Pcg32, Lcg64Xsh32};
+use rand_pcg::Pcg32;
 use urlencoding::encode;
 
 use clap::Parser;
@@ -356,10 +356,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         spreads,
         algo_price: 0.0,
         timestep,
-        owner_wallet_step: 0, algo_price_step: 0,
+        owner_wallet_step: 0,
+        algo_price_step: 0,
         escrow_step: 0,
     };
-
 
     while loop_state_machine(&mut state_machine, &initial_state, &mut rng) {
         // This will break automatically at the end by returning false
