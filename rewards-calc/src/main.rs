@@ -542,7 +542,6 @@ fn update_balances(
     });
 }
 
-
 #[derive(Debug, Serialize)]
 pub struct StateMachine<'a> {
     escrow_to_balance: HashMap<String, u64>,
