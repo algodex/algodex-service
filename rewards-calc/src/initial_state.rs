@@ -6,7 +6,6 @@ use serde_json_any_key::*;
 use std::collections::HashSet;
 use std::error::Error;
 use std::fs::{self, File};
-use std::hash::Hasher;
 use std::io::Write;
 
 use crate::epoch::{get_epoch_end, get_epoch_start};
@@ -15,8 +14,6 @@ use crate::{structs, Cli};
 use crate::query_couch::{query_couch_db, query_couch_db_with_full_str};
 
 use crate::structs::{AlgxBalanceValue, CouchDBResult, EscrowTimeKey, EscrowValue, TinymanTrade};
-
-// use query_couch::query_couch_db2;
 
 use crate::structs::CouchDBResp;
 
@@ -149,7 +146,6 @@ fn get_tinyman_prices_from_data(tinyman_trades_data: CouchDBResp<TinymanTrade>) 
 pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
     let cli = Cli::parse();
 
-    // You can check the value provided by positional arguments, or option arguments
     let epoch = cli.epoch;
     println!("Epoch is {epoch}");
     if epoch < 1 {
@@ -161,7 +157,6 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         map.insert(val.0, val.1);
         map
     });
-    // println!("{:?}", result.get("ALGORAND_NETWORK").take());
 
     let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL_RUST");
     let api_url = env.get("API_PROXY_URL").expect("Missing API_PROXY_URL");
@@ -178,7 +173,6 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
     let account_data = account_epoch_data_query_res.unwrap().rows;
     let escrow_addrs: Vec<String> =
         account_data.iter().map(|row| String::clone(&row.value)).collect();
-    // println!("{:?}", escrowAddrs);
 
     let formatted_escrow_data_query_res = query_couch_db::<EscrowValue>(
         api_url,
@@ -210,8 +204,6 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
             vec.push(escrow.clone());
             map
         });
-
-    //println!("{:?}", escrowAddrToData);
 
     let owner_wallets: Vec<String> =
         escrows.iter().map(|escrow| &escrow.data.escrow_info.owner_addr).cloned().collect();

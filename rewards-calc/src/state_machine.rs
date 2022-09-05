@@ -160,7 +160,7 @@ impl StateMachine {
 
         if *DEBUG && initial_state.epoch == 2 {
             println!("saving state at: {}", self.timestep);
-            save_state_machine(&self);
+            save_state_machine(self);
         }
         true
     }
