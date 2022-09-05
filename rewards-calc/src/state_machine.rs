@@ -78,6 +78,31 @@ impl StateMachine {
         escrow_did_change
     }
 
+    fn get_assets_with_balances(&mut self, initial_state: &InitialState) -> HashSet<u32> {
+        let assets_with_balances: HashSet<u32> =
+            self.escrow_to_balance.keys().fold(HashSet::new(), |mut set, escrow| {
+                let asset_id = initial_state
+                    .escrow_addr_to_data
+                    .get(escrow)
+                    .unwrap()
+                    .data
+                    .escrow_info
+                    .asset_id;
+                set.insert(asset_id);
+                set
+            });
+        assets_with_balances
+    }
+
+    fn print_progress(&self, initial_state: &InitialState) {
+        println!(
+            "{}",
+            (self.timestep as f64 - initial_state.epoch_start as f64)
+                / (initial_state.epoch_end as f64 - initial_state.epoch_start as f64)
+                * 100.0
+        );
+    }
+
     pub fn run_step(
         &mut self,
         initial_state: &InitialState,
@@ -93,31 +118,16 @@ impl StateMachine {
         let escrow_did_change = self.update_escrow_balances(initial_state);
         
         if escrow_did_change {
-            update_spreads(&initial_state, self);
+            update_spreads(initial_state, self);
         }
 
-        let assets_with_balances: HashSet<&u32> =
-            self.escrow_to_balance.keys().fold(HashSet::new(), |mut set, escrow| {
-                let asset_id = &initial_state
-                    .escrow_addr_to_data
-                    .get(escrow)
-                    .unwrap()
-                    .data
-                    .escrow_info
-                    .asset_id;
-                set.insert(asset_id);
-                set
-            });
+        let assets_with_balances = self.get_assets_with_balances(initial_state);
 
         assets_with_balances.into_iter().for_each(|asset_id| {
-            update_owner_wallet_quality_per_asset(asset_id, self, initial_state);
+            update_owner_wallet_quality_per_asset(&asset_id, self, initial_state);
         });
-        println!(
-            "{}",
-            (self.timestep as f64 - initial_state.epoch_start as f64)
-                / (initial_state.epoch_end as f64 - initial_state.epoch_start as f64)
-                * 100.0
-        );
+
+        self.print_progress(initial_state);
 
         if self.timestep >= initial_state.epoch_end {
             return false;
