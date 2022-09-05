@@ -433,9 +433,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
         assets_with_balances.into_iter().for_each(|asset_id| {
             update_rewards(asset_id, &mut state_machine, &initial_state);
         });
-        // Array.from(assetsWithBalances).forEach(assetId => {
-        //   updateRewards({assetId, ...stateMachine, ...initialState});
-        // });
         println!(
             "{}",
             (state_machine.timestep as f64 - epoch_start as f64)
@@ -616,10 +613,6 @@ fn get_epoch_start(epoch: u16, epoch_launch_time: u32) -> u32 {
 fn get_epoch_end(epoch: u16, epoch_launch_time: u32) -> u32 {
     get_epoch_start(epoch, epoch_launch_time) + get_seconds_in_epoch()
 }
-
-// const getEpochEnd = epoch => {
-//     return getEpochStart(epoch) + getSecondsInEpoch();
-//   };
 
 fn get_escrow_and_time_to_balance(escrows: &[EscrowValue]) -> HashMap<EscrowTimeKey, u64> {
     let escrow_time_map: HashMap<EscrowTimeKey, u64> =
