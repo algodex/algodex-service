@@ -150,6 +150,7 @@ fn check_is_eligible(
     };
 }
 
+/// Get the quality analytics for each escrow
 fn get_analytics_per_escrow(
     inputted_asset_id: &u32,
     state_machine: &StateMachine,
@@ -243,6 +244,7 @@ fn get_analytics_per_escrow(
     quality_analytics
 }
 
+/// Calculate the quality of each owner wallet from the per escrow quality entries
 fn get_owner_wallet_to_quality<'a>(
     initial_state: &'a InitialState,
     quality_analytics: &'a [QualityResult],
@@ -280,6 +282,8 @@ fn get_owner_wallet_to_quality<'a>(
     owner_wallet_to_quality
 }
 
+/// For this unix time step, update the owner wallet quality which will later
+/// be used to calculate the ALGX rewards
 fn update_owner_wallet_quality(
     owner_wallet_asset_to_rewards: &mut HashMap<
         String,
