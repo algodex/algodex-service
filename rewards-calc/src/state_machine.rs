@@ -1,9 +1,24 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 use rand::Rng;
 use rand_pcg::Lcg64Xsh32;
+use serde::Serialize;
 
-use crate::{InitialState, StateMachine, get_time_from_round, update_balances, update_spreads, update_owner_liquidity_quality::update_owner_wallet_quality_per_asset, save_state_machine, DEBUG};
+use crate::{InitialState, get_time_from_round, update_balances, update_spreads, update_owner_liquidity_quality::{update_owner_wallet_quality_per_asset, OwnerWalletAssetQualityResult}, save_state_machine, DEBUG, get_spreads::Spread};
+
+#[derive(Debug, Serialize)]
+pub struct StateMachine {
+    pub escrow_to_balance: HashMap<String, u64>,
+    pub spreads: HashMap<u32, Spread>,
+    pub owner_wallet_asset_to_quality_result:
+        HashMap<String, HashMap<u32, OwnerWalletAssetQualityResult>>,
+    pub owner_wallet_to_algx_balance: HashMap<String, u64>,
+    pub algo_price: f64,
+    pub timestep: u32,
+    pub owner_wallet_step: usize,
+    pub algo_price_step: usize,
+    pub escrow_step: usize
+}
 
 pub fn loop_state_machine(state_machine: &mut StateMachine, initial_state: &InitialState,
     rng: &mut Lcg64Xsh32) -> bool {

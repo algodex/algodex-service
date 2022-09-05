@@ -19,7 +19,7 @@ use std::io::Write;
 mod structs;
 mod state_machine;
 use crate::quality_type::EarnedAlgx;
-use crate::state_machine::loop_state_machine;
+use crate::state_machine::{loop_state_machine, StateMachine};
 use crate::update_owner_liquidity_quality::OwnerRewardsKey;
 use crate::update_owner_liquidity_quality::{check_mainnet_period, MainnetPeriod};
 use structs::{AlgxBalanceValue, EscrowTimeKey, EscrowValue, TinymanTrade};
@@ -339,10 +339,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let timestep = epoch_start;
 
-    let mut escrowstep = 0;
-
-    // println!("{} {}", epochStart, epochEnd);
-
     //state machine data
 
     let escrow_to_balance = get_initial_balances(timestep, &initial_state.escrows);
@@ -350,6 +346,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let seed = calculate_hash(initial_state.env.get("REWARDS_RANDOM_SEED").unwrap());
 
+    // Use the couchdb url to seed the random number generator, since it contains a password
     let mut rng = Pcg32::seed_from_u64(seed);
 
     let mut state_machine = StateMachine {
@@ -363,12 +360,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
         escrow_step: 0,
     };
 
-    // Use the couchdb url to seed the random number generator, since it contains a password
 
     while loop_state_machine(&mut state_machine, &initial_state, &mut rng) {
+        // This will break automatically at the end by returning false
     }
-
-    // Need to give rewards per asset
 
     let mainnet_period = check_mainnet_period(&epoch_end);
 
@@ -458,20 +453,6 @@ fn update_balances(
         let balance = escrow_time_to_balance.get(&key);
         escrow_to_balance.insert(String::from(escrow), *balance.unwrap());
     });
-}
-
-#[derive(Debug, Serialize)]
-pub struct StateMachine {
-    pub escrow_to_balance: HashMap<String, u64>,
-    pub spreads: HashMap<u32, Spread>,
-    pub owner_wallet_asset_to_quality_result:
-        HashMap<String, HashMap<u32, OwnerWalletAssetQualityResult>>,
-    pub owner_wallet_to_algx_balance: HashMap<String, u64>,
-    pub algo_price: f64,
-    pub timestep: u32,
-    pub owner_wallet_step: usize,
-    pub algo_price_step: usize,
-    pub escrow_step: usize
 }
 
 fn get_initial_balances(unix_time: u32, escrows: &[EscrowValue]) -> HashMap<String, u64> {
