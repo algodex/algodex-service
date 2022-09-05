@@ -18,6 +18,7 @@ use std::io::Write;
 
 mod state_machine;
 mod structs;
+mod epoch;
 use crate::calc_final_rewards::get_owner_rewards_res_to_final_rewards_entry;
 use crate::initial_state::{get_initial_state, save_initial_state};
 
@@ -55,10 +56,6 @@ struct Cli {
     #[clap(short, long)]
     debug: u8,
 }
-
-//aaa {"results":[
-//{"total_rows":305541,"offset":71,"rows":[
-//    {"id":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","key":"223ET2ZAGP4OGOGBSIJL7EF5QTVZ2TRP2D4KMGZ27DBFTIJHHXJH44R5OE","value":{
 
 lazy_static! {
     static ref DEBUG: bool = Cli::parse().debug == 1;

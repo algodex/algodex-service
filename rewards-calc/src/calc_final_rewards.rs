@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    initial_state::get_seconds_in_epoch,
+    epoch::get_seconds_in_epoch,
     quality_type::{EarnedAlgx, Quality},
     state_machine::StateMachine,
     update_owner_liquidity_quality::{

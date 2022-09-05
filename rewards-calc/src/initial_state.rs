@@ -9,6 +9,7 @@ use std::fs::{self, File};
 use std::hash::Hasher;
 use std::io::Write;
 
+use crate::epoch::{get_epoch_start, get_epoch_end};
 use crate::{structs, Cli};
 
 use crate::query_couch::{query_couch_db, query_couch_db_with_full_str};
@@ -54,20 +55,6 @@ pub struct InitialState {
 pub struct PriceData {
     pub unix_time: u32,
     pub price: f64,
-}
-
-pub fn get_seconds_in_epoch() -> u32 {
-    604800
-}
-
-fn get_epoch_start(epoch: u16, epoch_launch_time: u32) -> u32 {
-    let start = epoch_launch_time;
-    let seconds_in_epoch = get_seconds_in_epoch();
-    start + (seconds_in_epoch * ((epoch as u32) - 1))
-}
-
-fn get_epoch_end(epoch: u16, epoch_launch_time: u32) -> u32 {
-    get_epoch_start(epoch, epoch_launch_time) + get_seconds_in_epoch()
 }
 
 fn get_escrow_and_time_to_balance(escrows: &[EscrowValue]) -> HashMap<EscrowTimeKey, u64> {
