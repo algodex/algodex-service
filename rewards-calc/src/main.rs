@@ -19,7 +19,7 @@ use std::io::Write;
 mod state_machine;
 mod structs;
 use crate::quality_type::EarnedAlgx;
-use crate::state_machine::{StateMachine};
+use crate::state_machine::StateMachine;
 use crate::update_owner_liquidity_quality::OwnerRewardsKey;
 use crate::update_owner_liquidity_quality::{check_mainnet_period, MainnetPeriod};
 use structs::{AlgxBalanceValue, EscrowTimeKey, EscrowValue, TinymanTrade};

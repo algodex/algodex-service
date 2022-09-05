@@ -6,11 +6,11 @@ use serde::Serialize;
 
 use crate::{
     get_spreads::Spread,
-    get_time_from_round, update_balances,
+    get_time_from_round, save_state_machine, update_balances,
     update_owner_liquidity_quality::{
         update_owner_wallet_quality_per_asset, OwnerWalletAssetQualityResult,
     },
-    update_spreads, InitialState, DEBUG, save_state_machine,
+    update_spreads, InitialState, DEBUG,
 };
 
 #[derive(Debug, Serialize)]
@@ -30,8 +30,7 @@ pub struct StateMachine {
 impl StateMachine {
     fn update_owner_wallet_algx_balances(&mut self, initial_state: &InitialState) {
         while self.owner_wallet_step < initial_state.algx_balance_data.len() {
-            let owner_balance_entry =
-                &initial_state.algx_balance_data[self.owner_wallet_step];
+            let owner_balance_entry = &initial_state.algx_balance_data[self.owner_wallet_step];
             let owner_wallet_time = get_time_from_round(
                 &initial_state.block_to_unix_time,
                 &owner_balance_entry.value.round,
@@ -40,9 +39,7 @@ impl StateMachine {
                 break;
             }
             let wallet = owner_balance_entry.key.strval().clone();
-            self
-                .owner_wallet_to_algx_balance
-                .insert(wallet, owner_balance_entry.value.balance);
+            self.owner_wallet_to_algx_balance.insert(wallet, owner_balance_entry.value.balance);
             self.owner_wallet_step += 1;
         }
     }
@@ -103,11 +100,7 @@ impl StateMachine {
         );
     }
 
-    pub fn run_step(
-        &mut self,
-        initial_state: &InitialState,
-        rng: &mut Lcg64Xsh32,
-    ) -> bool {
+    pub fn run_step(&mut self, initial_state: &InitialState, rng: &mut Lcg64Xsh32) -> bool {
         let cur_minute = self.timestep / 60;
         self.timestep = ((cur_minute + 1) * 60) + rng.gen_range(0..60);
         // let mut escrow_did_change = false;
@@ -116,7 +109,7 @@ impl StateMachine {
         self.update_owner_wallet_algx_balances(initial_state);
         self.update_algx_price(initial_state);
         let escrow_did_change = self.update_escrow_balances(initial_state);
-        
+
         if escrow_did_change {
             update_spreads(initial_state, self);
         }
