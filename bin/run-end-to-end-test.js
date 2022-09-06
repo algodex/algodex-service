@@ -9,40 +9,47 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
-const childProcess = require('child_process');
-let isGloballyShuttingDown = false;
-
-const dotenv = require('dotenv');
 const fs = require('fs');
-const sleep = require('../src/sleep');
-const getQueues = require('../src/queues');
-const getDatabases = require('../src/db/get-databases');
-const args = require('minimist')(process.argv.slice(2));
+const dotenv = require('dotenv');
 
 process.env.INTEGRATION_TEST_MODE = '1';
 
-
-const getFile = async file => {
-  return await new Promise( resolve => {
-    fs.readFile(file, 'utf8', (err, data) => {
-      console.log(data);
-      resolve(data);
-    });
-  });
+const getFile = file => {
+  const data = fs.readFileSync(file, 'utf8');
+  console.log({file, data});
+  return data;
 };
 
-const getConfig = async () => {
-  const envContents = await getFile('./.testnet.localhost.env');
+const getConfig = () => {
+  const envContents = getFile('./.testnet.localhost.env');
   const buf = Buffer.from(envContents);
   const config = dotenv.parse(buf);
   return config;
 };
 
+const initEnv = () => {
+  const config = getConfig();
+  Object.keys(config).forEach(configKey => {
+    process.env[configKey] = config[configKey];
+  });
+};
+
+
+initEnv();
+
+const childProcess = require('child_process');
+let isGloballyShuttingDown = false;
+
+const sleep = require('../src/sleep');
+const getQueues = require('../src/queues');
+const getDatabases = require('../src/db/get-databases');
+const args = require('minimist')(process.argv.slice(2));
+
 const processToAppContext = new Map();
 
 async function runScript(scriptPath, appContext='', args=null) {
   // keep track of whether callback has been invoked to prevent multiple invocations
-  const envConfig = await getConfig();
+  const envConfig = getConfig();
   // const out = fs.openSync(`./integration_test/log/${appContext}_out.log`, 'a');
   // const err = fs.openSync(`./integration_test/log/${appContext}_out.log`, 'a');
 
@@ -162,13 +169,6 @@ const getActiveCounts = async () => {
   return counts;
 };
 
-const initEnv = async () => {
-  const config = await getConfig();
-  Object.keys(config).forEach(configKey => {
-    process.env[configKey] = config[configKey];
-  });
-};
-
 const getLightModeRemovalString = databases => {
   const preserveDBs = new Set(['blocks', 'assets', 'indexed_escrow']);
   const removeStr = Object.keys(databases).filter(name => !preserveDBs.has(name)).join(',');
@@ -178,7 +178,6 @@ const getLightModeRemovalString = databases => {
 const runScripts = async () => {
   console.log('here51');
 
-  await initEnv();
   await clearQueues();
   const databases = await getDatabases();
 

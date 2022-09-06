@@ -18,6 +18,9 @@ const databases = [
         tradeHistory: {
           map: require('../../views/blocks/tradeHistory-map').toString(),
         },
+        algxRewardsOptin: {
+          map: require('../../views/blocks/algxRewardsOptin-map').toString(),
+        },
         approxBalance: {
           map: require('../../views/blocks/approxBalance-map').toString(),
         },
