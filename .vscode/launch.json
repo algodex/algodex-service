@@ -175,7 +175,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/bin/run-end-to-end-test",
+            "program": "${workspaceFolder}/built/bin/run-end-to-end-test",
         },
         {
             "type": "node",
