@@ -128,6 +128,10 @@ const databases = [
     appendOnly: true,
   },
   {
+    dbName: 'block_custom_metadata',
+    appendOnly: true,
+  },
+  {
     dbName: 'formatted_history',
     appendOnly: true,
     design: {
