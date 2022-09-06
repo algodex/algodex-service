@@ -2,8 +2,6 @@ const dbConfig = require('./db-config.js')();
 const getDatabase = require('./db');
 const convertURL = require('./convert-db-url');
 
-require('dotenv').config();
-
 const couchBaseURL = process.env['COUCHDB_BASE_URL'] ||
     'http://admin:dex@localhost:5984';
 
