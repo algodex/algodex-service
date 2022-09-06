@@ -175,7 +175,7 @@ const getActiveCounts = async () => {
 };
 
 const getLightModeRemovalString = databases => {
-  const preserveDBs = new Set(['blocks', 'assets', 'indexed_escrow']);
+  const preserveDBs = new Set(['blocks', 'assets', 'indexed_escrow', 'block_custom_metadata']);
   const removeStr = Object.keys(databases).filter(name => !preserveDBs.has(name)).join(',');
   return '--removeExtra='+removeStr;
 };
@@ -226,10 +226,10 @@ const runScripts = async () => {
   // });
   // const lastSyncedRound = 16583454 - 1;
   const maxSyncedRoundInTestMode = 16583654;
-  const blocksDB = databases.blocks;
+  const syncedBlocksDB = databases.synced_blocks;
   do {
     try {
-      await blocksDB.get(maxSyncedRoundInTestMode);
+      await syncedBlocksDB.get(maxSyncedRoundInTestMode);
       break;
     } catch (e) {
       console.log(`${maxSyncedRoundInTestMode} block not yet stored in DB!`, e);

@@ -9,22 +9,38 @@ const throttle = require('lodash.throttle');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
 
-const setAssetHistory = data => {
-  if (!data.escrowInfo.isAlgoBuyEscrow) {
-    const historyEntry = {
-      asaAmount: data.indexerInfo.asaAmount,
-      round: data.lastUpdateRound,
-      time: data.lastUpdateUnixTime,
-    };
-    pushHistory(data, historyEntry);
+/*
+
+-const setAssetHistory = data => {
+-  if (!data.escrowInfo.isAlgoBuyEscrow) {
+-    const historyEntry = {
+-      asaAmount: data.indexerInfo.asaAmount,
+-      round: data.lastUpdateRound,
+-      time: data.lastUpdateUnixTime,
+-    };
+-    pushHistory(data, historyEntry);
+-  } else {
+-    const historyEntry = {
+-      algoAmount: data.indexerInfo.algoAmount,
+-      round: data.lastUpdateRound,
+-      time: data.lastUpdateUnixTime,
+-    };
+-    pushHistory(data, historyEntry);
+
+*/
+
+const createHistoryEntry = jobData => {
+  const historyEntry = {
+    round: jobData.lastUpdateRound,
+    time: jobData.lastUpdateUnixTime,
+  };
+
+  if (!jobData.escrowInfo.isAlgoBuyEscrow) {
+    historyEntry.asaAmount = jobData.indexerInfo.asaAmount;
   } else {
-    const historyEntry = {
-      algoAmount: data.indexerInfo.algoAmount,
-      round: data.lastUpdateRound,
-      time: data.lastUpdateUnixTime,
-    };
-    pushHistory(data, historyEntry);
+    historyEntry.algoAmount = jobData.indexerInfo.algoAmount;
   }
+  return historyEntry;
 };
 
 const activelyUpdatingOrderSet = new Set();
@@ -62,6 +78,9 @@ module.exports = ({queues, databases}) =>{
               activelyUpdatingOrderSet.add(addr);
               const formattedOrderGet = formattedEscrowDB.get(addr).then(
                   async function(res) {
+                    const historyEntry = createHistoryEntry(data);
+                    pushHistory(res.data, historyEntry);
+
                     data.history = res.data.history;
                     if (!data.escrowInfo.version) {
                       const verifiedAccount = await verifiedDB.get(addr);
@@ -78,7 +97,6 @@ module.exports = ({queues, databases}) =>{
                   data.indexerInfo.round < res.data.indexerInfo.round) {
                       data.indexerInfo = res.data.indexerInfo;
                     }
-                    setAssetHistory(data);
                     // eslint-disable-next-line max-len
                     return formattedEscrowDB.put(withSchemaCheck('formatted_escrow', {
                       _id: res._id,
@@ -94,7 +112,8 @@ module.exports = ({queues, databases}) =>{
                     });
                   }).catch(function(err) {
                 if (err.error === 'not_found') {
-                  setAssetHistory(data);
+                  const historyEntry = createHistoryEntry(data);
+                  pushHistory(data, historyEntry);
                   return formattedEscrowDB.post(
                       withSchemaCheck('formatted_escrow', {_id: `${addr}`,
                         type: 'formatted_escrow', data: data}))

@@ -42,6 +42,23 @@ test('verify end to end test', async () => {
     if (entry.data?.indexerInfo?.round) {
       entry.data.indexerInfo.round = 12345;
     }
+    if (entry.data?.indexerInfo?._rev) {
+      delete entry.data.indexerInfo._rev;
+    }
+    if (entry.data?.lastUpdateRound) {
+      delete entry.data.lastUpdateRound;
+      delete entry.data.lastUpdateUnixTime;
+    }
+
+    if (entry.data?.escrowInfo) {
+      // This can vary based on heavy vs light mode
+      delete entry.data.escrowInfo.apat;
+      delete entry.data.escrowInfo.block;
+      delete entry.data.escrowInfo.status;
+      delete entry.data.escrowInfo.ts;
+      delete entry.data.escrowInfo.type;
+    }
+
     if ('current-round' in entry) {
       entry['current-round'] = 12345;
     }

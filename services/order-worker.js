@@ -132,9 +132,8 @@ module.exports = ({queues, databases}) =>{
   console.log('in order-worker.js');
   const indexedOrders = new Worker(convertQueueURL('orders'), async job=>{
     console.debug({
-      msg: 'Received order job',
-      round: job.data.blockData.rnd,
-      account: job.data.account,
+      // eslint-disable-next-line max-len
+      msg: `Received order job round: ${job.data.blockData.rnd} account: ${job.data.account}`,
     });
     withQueueSchemaCheck('escrow', job.data);
     await sleepWhileWaitingForQueues(['formattedEscrows', 'ownerBalance']);

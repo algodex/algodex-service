@@ -24,4 +24,15 @@ const addOrderMetadata = async (round:number, has_order_changes: boolean) => {
   }
 }
 
-module.exports = {addOrderMetadata}
+const getRoundsWithNoOrderDataSet = async (minRound: number, maxRound: number): Promise<Set<number>> => {
+  const metadataDB = databases.block_custom_metadata;
+
+  const roundsWithNoOrderData =
+  await metadataDB.query('block_custom_metadata/blocks_without_order_changes',
+      {startKey: minRound, endKey: maxRound} );
+
+  const set:Set<number> = new Set(roundsWithNoOrderData.rows.map(row => row.key));
+
+  return set;
+}
+module.exports = {addOrderMetadata, getRoundsWithNoOrderDataSet}
