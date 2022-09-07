@@ -244,6 +244,17 @@ module.exports = ({queues, events, databases}) => {
       const shouldSkipForOrderData = noOrderDataSet.has(lastSyncedRound);
       if (shouldSkipForOrderData) {
         console.log(`Skipping processing orders for ${lastSyncedRound}!`);
+        if (process.env.INTEGRATION_TEST_MODE) {
+          // In INTEGRATION_TEST_MODE, because we don't have
+          // all the blocks, and don't know all accounts that are orders,
+          // we need to create a trade history job so that it wont be missed.
+          queues.tradeHistory.add('tradeHistory', {block: `${lastSyncedRound}`},
+              {removeOnComplete: true}).then(function() {
+          }).catch(function(err) {
+            console.error('error adding to trade history queue:', {err} );
+            throw err;
+          });
+        }
       }
       await Promise.all(getBlockPromises(queues, block,
           shouldSkipForOrderData, syncedBlocksDB));
