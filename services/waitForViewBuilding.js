@@ -3,7 +3,7 @@ const axios = require('axios').default;
 const sleep = require('../src/sleep');
 
 const waitForViewBuildingSimple = async () => {
-  await waitForViewBuilding(null, true, 100);
+  await waitForViewBuilding(null, true, 10);
 };
 
 const waitForViewBuilding = async (blocksDB, skipCheckAgain = false, pauseMS=500) => {
