@@ -129,7 +129,12 @@ async function runScript(scriptPath, appContext='', args=null) {
 
 const startServices = async services => {
   services.forEach(service => {
-    runScript('./server.js', service);
+    try {
+      runScript(process.cwd() + '/built/server.js', service);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
     // runScript('./bin/mytest', service);
   });
   await sleep(1000);
@@ -170,7 +175,7 @@ const getActiveCounts = async () => {
 };
 
 const getLightModeRemovalString = databases => {
-  const preserveDBs = new Set(['blocks', 'assets', 'indexed_escrow']);
+  const preserveDBs = new Set(['blocks', 'assets', 'indexed_escrow', 'block_custom_metadata']);
   const removeStr = Object.keys(databases).filter(name => !preserveDBs.has(name)).join(',');
   return '--removeExtra='+removeStr;
 };
@@ -221,10 +226,10 @@ const runScripts = async () => {
   // });
   // const lastSyncedRound = 16583454 - 1;
   const maxSyncedRoundInTestMode = 16583654;
-  const blocksDB = databases.blocks;
+  const syncedBlocksDB = databases.synced_blocks;
   do {
     try {
-      await blocksDB.get(maxSyncedRoundInTestMode);
+      await syncedBlocksDB.get(maxSyncedRoundInTestMode);
       break;
     } catch (e) {
       console.log(`${maxSyncedRoundInTestMode} block not yet stored in DB!`, e);
@@ -247,13 +252,13 @@ const runScripts = async () => {
           },
           )));
 
-  const testDataDir = './integration_test/test_data';
-  if (!fs.existsSync('./integration_test/test_data')) {
+  const testDataDir = './built/integration_test/test_data';
+  if (!fs.existsSync('./built/integration_test/test_data')) {
     fs.mkdirSync(testDataDir, {recursive: true});
   }
   docs.forEach(doc => {
     const json = JSON.stringify(doc.result.rows.map(row => row.doc), null, 2);
-    const filename = `./integration_test/test_data/${doc.name}.txt`;
+    const filename = `./built/integration_test/test_data/${doc.name}.txt`;
     fs.writeFile(filename, json, err => {
       if (err) {
         console.error(err);

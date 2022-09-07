@@ -128,6 +128,18 @@ const databases = [
     appendOnly: true,
   },
   {
+    dbName: 'block_custom_metadata',
+    appendOnly: true,
+    design: {
+      _id: '_design/block_custom_metadata',
+      views: {
+        blocks_without_changes: {
+          map: require('../../views/block_custom_metadata/blocks_without_changes-map').toString(),
+        },
+      },
+    },
+  },
+  {
     dbName: 'formatted_history',
     appendOnly: true,
     design: {
