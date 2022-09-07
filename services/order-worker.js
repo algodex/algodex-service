@@ -9,6 +9,7 @@ const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
 const convertQueueURL = require('../src/convert-queue-url');
+const {waitForViewBuildingSimple} = require('./waitForViewBuilding');
 
 const getFormattedOrderQueuePromise = (formattedEscrowsQueue, order) => {
   const promise = formattedEscrowsQueue.add('formattedEscrows', order,
@@ -136,6 +137,7 @@ module.exports = ({queues, databases}) =>{
       msg: `Received order job round: ${job.data.blockData.rnd} account: ${job.data.account}`,
     });
     withQueueSchemaCheck('escrow', job.data);
+    await waitForViewBuildingSimple();
     await sleepWhileWaitingForQueues(['formattedEscrows', 'ownerBalance']);
 
     const blockData = job.data.blockData;

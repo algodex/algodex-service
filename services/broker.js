@@ -4,9 +4,7 @@ const {getBlock, waitForBlock} = require('../src/explorer');
 const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
 const hasAlgxChanges = require('./algx-balance-worker/hasAlgxChanges');
 const {syncParallel} = require('../src/sync-parallel/sync-parallel');
-const throttle = require('lodash.throttle');
 
-const axios = require('axios').default;
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 const {getRoundsWithNoDataSets, addMetadata} =
@@ -15,6 +13,7 @@ const {getRoundsWithNoDataSets, addMetadata} =
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
 const sleep = require('../src/sleep');
+const {waitForViewBuilding, waitForViewBuildingSimple} = require('./waitForViewBuilding');
 
 const getBlockPromises = (queues, block, skipOrderPromises=false,
     syncedBlocksDB=null) => {
@@ -126,43 +125,6 @@ module.exports = ({queues, events, databases}) => {
     runWaitBlockSync();
   }
 
-  const waitForViewBuilding = async (blocksDB, didTrigger = false) => {
-    const couchUrl = process.env.COUCHDB_BASE_URL;
-    let loop = true;
-
-    const waitLogThrottle = throttle(() => {
-      console.log('Waiting for DB indexes to rebuild...');
-    }, 5000);
-
-    while (loop) {
-      await sleep(500);
-      await axios.get(couchUrl + '/_active_tasks')
-          .then(async function(response) {
-            // handle success
-            if (response.data.length === 0 ||
-              response.data.filter(item =>
-                // Ignore these types of DB operations since data
-                // can still be added and views still work
-                item.type !== 'view_compaction' &&
-                item.type !== 'database_compaction').length === 0) {
-              if (!didTrigger) {
-              // Try to get max block
-                await blocksDB.query('blocks/maxBlock',
-                    {reduce: true, group: true});
-                // Wait again
-                await waitForViewBuilding(blocksDB, true);
-              }
-              loop = false;
-              return;
-            } else {
-              waitLogThrottle();
-            }
-          }).catch(function(error) {
-            console.error('Unexpected error when fetching active tasks! ',
-                error);
-          });
-    }
-  };
 
   const queueTradeHistoryInTestMode = async round => {
     if (process.env.INTEGRATION_TEST_MODE) {
@@ -268,6 +230,7 @@ module.exports = ({queues, events, databases}) => {
         continue;
       }
       console.log('In catchup mode, getting block: ' + lastSyncedRound);
+      await waitForViewBuildingSimple();
 
       const block = await getBlockFromDBOrNode(blocksDB, lastSyncedRound);
       if (block.rnd === undefined) {
