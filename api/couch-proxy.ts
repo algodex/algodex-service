@@ -239,6 +239,24 @@ app.get('/wallets/leaderboard', async (req, res) => {
   res.end(JSON.stringify(topWallets.rows));
 });
 
+app.get('/rewards/optin/:wallet', async (req, res) => {
+  const {wallet} = req.params;
+
+  const db = getDatabase('blocks');
+  const data = await db.query('blocks/algxRewardsOptin', {
+    key: wallet,
+    limit: 1,
+  });
+
+  const optedIn = data.rows.length > 0 && data.rows[0].key === wallet && data.rows[0].value === 1;
+
+  res.setHeader('Content-Type', 'application/json');
+  const retdata = {
+    wallet, optedIn
+  }
+  res.end(JSON.stringify(retdata));
+});
+
 
 app.get('/rewards_distribution', async (req, res) => {
   const db = getDatabase('rewards_distribution');
