@@ -57,7 +57,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/built/server.js",
             "env": {
                 "APP_CONTEXT": "broker"
             }
@@ -69,7 +69,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/built/server.js",
             "env": {
                 "APP_CONTEXT": "block-worker"
             }
@@ -81,7 +81,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/built/server.js",
             "env": {
                 "APP_CONTEXT": "order-worker"
             }
@@ -93,7 +93,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/built/server.js",
             "env": {
                 "APP_CONTEXT": "owner-balance-worker"
             }
@@ -105,7 +105,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/built/server.js",
             "env": {
                 "APP_CONTEXT": "trade-history-worker"
             }
@@ -117,7 +117,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/built/server.js",
             "env": {
                 "APP_CONTEXT": "algx-balance-worker"
             }
@@ -129,7 +129,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/built/server.js",
             "env": {
                 "APP_CONTEXT": "formatted-order-worker"
             }
@@ -141,7 +141,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/built/server.js",
             "env": {
                 "APP_CONTEXT": "asset-worker"
             }
@@ -153,7 +153,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/server.js",
+            "program": "${workspaceFolder}/built/server.js",
             "env": {
                 "APP_CONTEXT": "socket"
             }
@@ -175,7 +175,7 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}/bin/run-end-to-end-test",
+            "program": "${workspaceFolder}/built/bin/run-end-to-end-test",
         },
         {
             "type": "node",

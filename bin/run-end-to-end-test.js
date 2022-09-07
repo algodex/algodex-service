@@ -9,40 +9,47 @@
 /* eslint-disable max-len */
 /* eslint-disable require-jsdoc */
 
-const childProcess = require('child_process');
-let isGloballyShuttingDown = false;
-
-const dotenv = require('dotenv');
 const fs = require('fs');
-const sleep = require('../src/sleep');
-const getQueues = require('../src/queues');
-const getDatabases = require('../src/db/get-databases');
-const args = require('minimist')(process.argv.slice(2));
+const dotenv = require('dotenv');
 
 process.env.INTEGRATION_TEST_MODE = '1';
 
-
-const getFile = async file => {
-  return await new Promise( resolve => {
-    fs.readFile(file, 'utf8', (err, data) => {
-      console.log(data);
-      resolve(data);
-    });
-  });
+const getFile = file => {
+  const data = fs.readFileSync(file, 'utf8');
+  console.log({file, data});
+  return data;
 };
 
-const getConfig = async () => {
-  const envContents = await getFile('./.testnet.localhost.env');
+const getConfig = () => {
+  const envContents = getFile('./.testnet.localhost.env');
   const buf = Buffer.from(envContents);
   const config = dotenv.parse(buf);
   return config;
 };
 
+const initEnv = () => {
+  const config = getConfig();
+  Object.keys(config).forEach(configKey => {
+    process.env[configKey] = config[configKey];
+  });
+};
+
+
+initEnv();
+
+const childProcess = require('child_process');
+let isGloballyShuttingDown = false;
+
+const sleep = require('../src/sleep');
+const getQueues = require('../src/queues');
+const getDatabases = require('../src/db/get-databases');
+const args = require('minimist')(process.argv.slice(2));
+
 const processToAppContext = new Map();
 
 async function runScript(scriptPath, appContext='', args=null) {
   // keep track of whether callback has been invoked to prevent multiple invocations
-  const envConfig = await getConfig();
+  const envConfig = getConfig();
   // const out = fs.openSync(`./integration_test/log/${appContext}_out.log`, 'a');
   // const err = fs.openSync(`./integration_test/log/${appContext}_out.log`, 'a');
 
@@ -122,7 +129,12 @@ async function runScript(scriptPath, appContext='', args=null) {
 
 const startServices = async services => {
   services.forEach(service => {
-    runScript('./server.js', service);
+    try {
+      runScript(process.cwd() + '/built/server.js', service);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
     // runScript('./bin/mytest', service);
   });
   await sleep(1000);
@@ -162,15 +174,8 @@ const getActiveCounts = async () => {
   return counts;
 };
 
-const initEnv = async () => {
-  const config = await getConfig();
-  Object.keys(config).forEach(configKey => {
-    process.env[configKey] = config[configKey];
-  });
-};
-
 const getLightModeRemovalString = databases => {
-  const preserveDBs = new Set(['blocks', 'assets', 'indexed_escrow']);
+  const preserveDBs = new Set(['blocks', 'assets', 'indexed_escrow', 'block_custom_metadata']);
   const removeStr = Object.keys(databases).filter(name => !preserveDBs.has(name)).join(',');
   return '--removeExtra='+removeStr;
 };
@@ -178,7 +183,6 @@ const getLightModeRemovalString = databases => {
 const runScripts = async () => {
   console.log('here51');
 
-  await initEnv();
   await clearQueues();
   const databases = await getDatabases();
 
@@ -222,10 +226,10 @@ const runScripts = async () => {
   // });
   // const lastSyncedRound = 16583454 - 1;
   const maxSyncedRoundInTestMode = 16583654;
-  const blocksDB = databases.blocks;
+  const syncedBlocksDB = databases.synced_blocks;
   do {
     try {
-      await blocksDB.get(maxSyncedRoundInTestMode);
+      await syncedBlocksDB.get(maxSyncedRoundInTestMode);
       break;
     } catch (e) {
       console.log(`${maxSyncedRoundInTestMode} block not yet stored in DB!`, e);
@@ -248,13 +252,13 @@ const runScripts = async () => {
           },
           )));
 
-  const testDataDir = './integration_test/test_data';
-  if (!fs.existsSync('./integration_test/test_data')) {
+  const testDataDir = './built/integration_test/test_data';
+  if (!fs.existsSync('./built/integration_test/test_data')) {
     fs.mkdirSync(testDataDir, {recursive: true});
   }
   docs.forEach(doc => {
     const json = JSON.stringify(doc.result.rows.map(row => row.doc), null, 2);
-    const filename = `./integration_test/test_data/${doc.name}.txt`;
+    const filename = `./built/integration_test/test_data/${doc.name}.txt`;
     fs.writeFile(filename, json, err => {
       if (err) {
         console.error(err);

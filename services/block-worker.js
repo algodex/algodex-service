@@ -13,7 +13,7 @@ const getOrdersPromise = require('./block-worker/getOrdersPromise');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 // eslint-disable-next-line no-unused-vars
 const ALGX = require('../src/algx-types');
-
+const {waitForViewBuildingSimple} = require('./waitForViewBuilding');
 
 const state = {};
 
@@ -32,6 +32,7 @@ const performJob = async job=>{
     msg: 'Received block',
     round: job.data.rnd,
   });
+  await waitForViewBuildingSimple();
 
   await sleepWhileWaitingForQueues(['tradeHistory', 'assets',
     'orders', 'algxBalance']);

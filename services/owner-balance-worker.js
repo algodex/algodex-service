@@ -5,6 +5,7 @@ const initOrGetIndexer = require('../src/get-indexer');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 const convertQueueURL = require('../src/convert-queue-url');
 const getAlgxBalance = require('./owner-balance-worker/getAlgxBalance');
+const {waitForViewBuildingSimple} = require('./waitForViewBuilding');
 
 const checkInDB = async (ownerBalanceDB, ownerAddr, round) => {
   try {
@@ -45,6 +46,8 @@ module.exports = ({queues, databases}) =>{
     const ownerAddr = job.data.ownerAddr;
     const round = job.data.roundStr;
     console.log(`Got job! Round: ${round} OwnerAddr: ${ownerAddr}`);
+    await waitForViewBuildingSimple();
+
     const isInDB = await checkInDB(ownerBalanceDB, ownerAddr, round);
     if (isInDB) {
       // Nothing to do

@@ -37,6 +37,8 @@ async function runScript() {
     // if (db.appendOnly && removeAllExcept.has(db.dbName)) {
     //   return;
     // }
+    console.log('REMOVING DB: ' + db.dbName);
+
     deletePromises.push(
         db.destroy().then(function(res) {
           console.log('destroyed');

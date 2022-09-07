@@ -18,6 +18,9 @@ const databases = [
         tradeHistory: {
           map: require('../../views/blocks/tradeHistory-map').toString(),
         },
+        algxRewardsOptin: {
+          map: require('../../views/blocks/algxRewardsOptin-map').toString(),
+        },
         approxBalance: {
           map: require('../../views/blocks/approxBalance-map').toString(),
         },
@@ -123,6 +126,18 @@ const databases = [
   {
     dbName: 'indexed_escrow',
     appendOnly: true,
+  },
+  {
+    dbName: 'block_custom_metadata',
+    appendOnly: true,
+    design: {
+      _id: '_design/block_custom_metadata',
+      views: {
+        blocks_without_changes: {
+          map: require('../../views/block_custom_metadata/blocks_without_changes-map').toString(),
+        },
+      },
+    },
   },
   {
     dbName: 'formatted_history',

@@ -1,25 +1,46 @@
+/* eslint-disable require-jsdoc */
 const {getBlock, waitForBlock} = require('../src/explorer');
 
 const getBlockFromDBOrNode = require('../src/get-block-from-db-or-node');
 const hasAlgxChanges = require('./algx-balance-worker/hasAlgxChanges');
 const {syncParallel} = require('../src/sync-parallel/sync-parallel');
-const throttle = require('lodash.throttle');
 
-const axios = require('axios').default;
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
+
+const {getRoundsWithNoDataSets, addMetadata} =
+  require('../services/block-worker/orderMetadata');
 
 const sleepWhileWaitingForQueues =
   require('../src/sleep-while-waiting-for-queues');
 const sleep = require('../src/sleep');
+const {waitForViewBuilding, waitForViewBuildingSimple} = require('./waitForViewBuilding');
 
-const getBlockPromises = (queues, block) => {
+const getBlockPromises = (queues, block, skipOrderPromises=false,
+    syncedBlocksDB=null) => {
   const hasAlgxTransactions = hasAlgxChanges(block);
-  const retarr = [
-    queues.blocks.add('blocks', block, {removeOnComplete: true}),
-  ];
+  const retarr = [];
+
+  if (!skipOrderPromises) {
+    retarr.push(queues.blocks.add('blocks', block, {removeOnComplete: true}));
+  } else {
+    const syncedBlockPromise =
+      syncedBlocksDB.post(withSchemaCheck('synced_blocks', {_id: `${block.rnd}`}))
+          .then(function() { }).catch(function(err) {
+            if (err.error === 'conflict') {
+              console.error('Block was already synced! Not supposed to happen');
+            } else {
+              throw err;
+            }
+          });
+    retarr.push(syncedBlockPromise);
+  }
+
   if (hasAlgxTransactions) {
     retarr.push(
         queues.algxBalance.add('algxBalance', block, {removeOnComplete: true}));
   }
+  addMetadata(block.rnd, 'algx_balance', hasAlgxTransactions);
+
   return retarr;
 };
 
@@ -31,7 +52,7 @@ const waitForBlockToBeStored = async (blocksDB, blockNum) => {
       await blocksDB.get(blockStr);
       foundPrevBlock = true;
     } catch (e) {
-      console.log(`${blockStr} block not yet stored in DB!`);
+      // console.log(`${blockStr} block not yet stored in DB!`);
       await sleep(10);
     }
   } while (!foundPrevBlock);
@@ -104,48 +125,25 @@ module.exports = ({queues, events, databases}) => {
     runWaitBlockSync();
   }
 
-  const waitForViewBuilding = async (blocksDB, didTrigger = false) => {
-    const couchUrl = process.env.COUCHDB_BASE_URL;
-    let loop = true;
 
-    const waitLogThrottle = throttle(() => {
-      console.log('Waiting for DB indexes to rebuild...');
-    }, 5000);
-
-    while (loop) {
-      await sleep(500);
-      await axios.get(couchUrl + '/_active_tasks')
-          .then(async function(response) {
-            // handle success
-            if (response.data.length === 0 ||
-              response.data.filter(item =>
-                // Ignore these types of DB operations since data
-                // can still be added and views still work
-                item.type !== 'view_compaction' &&
-                item.type !== 'database_compaction').length === 0) {
-              if (!didTrigger) {
-              // Try to get max block
-                await blocksDB.query('blocks/maxBlock',
-                    {reduce: true, group: true});
-                // Wait again
-                await waitForViewBuilding(blocksDB, true);
-              }
-              loop = false;
-              return;
-            } else {
-              waitLogThrottle();
-            }
-          }).catch(function(error) {
-            console.error('Unexpected error when fetching active tasks! ',
-                error);
-          });
+  const queueTradeHistoryInTestMode = async round => {
+    if (process.env.INTEGRATION_TEST_MODE) {
+      // In INTEGRATION_TEST_MODE, because we don't have
+      // all the blocks, and don't know all accounts that are orders,
+      // we need to create a trade history job so that it wont be missed.
+      await queues.tradeHistory.add('tradeHistory', {block: `${round}`},
+          {removeOnComplete: true}).then(function() {
+      }).catch(function(err) {
+        console.error('error adding to trade history queue:', {err} );
+        throw err;
+      });
     }
   };
-
   /**
      * Run the Broker
      * @return {Promise<void>}
      */
+
   async function runCatchUp() {
     const syncedBlocksDB = databases.synced_blocks;
     const blocksDB = databases.blocks;
@@ -166,7 +164,6 @@ module.exports = ({queues, events, databases}) => {
       lastSyncedRound = parseInt(process.env.GENESIS_LAUNCH_BLOCK);
     }
 
-
     if (lastSyncedRound > 0 &&
       lastSyncedRound < latestBlock['last-round'] - 10 &&
       !process.env.INTEGRATION_TEST_MODE) {
@@ -186,14 +183,25 @@ module.exports = ({queues, events, databases}) => {
     }
 
     let hadFirstRound = false;
+    let noOrderDataMap = new Map();
+    let maxMetadataBlock = lastSyncedRound;
+
     do {
+      if (maxMetadataBlock <= lastSyncedRound) {
+        // This is an optimization to improve resync speed
+        console.log('getting noOrderDataSet between ' + maxMetadataBlock +
+         ' and ' + (maxMetadataBlock + 5000));
+        noOrderDataMap =
+          await getRoundsWithNoDataSets(maxMetadataBlock, maxMetadataBlock + 5000);
+        maxMetadataBlock += 5000;
+      }
       await sleepWhileWaitingForQueues(['blocks']);
       if (hadFirstRound) {
         // Get block before this round and make sure it exists in the DB
         // Probably unnecessary now since concurrency is 1? FIXME
         await waitForBlockToBeStored(databases.blocks, lastSyncedRound);
       }
-      events.publish(`blocks`, JSON.stringify(lastSyncedRound));
+      // events.publish(`blocks`, JSON.stringify(lastSyncedRound));
 
       if (process.env.INTEGRATION_TEST_MODE && maxSyncedRoundInTestMode &&
         lastSyncedRound >= maxSyncedRoundInTestMode) {
@@ -202,14 +210,41 @@ module.exports = ({queues, events, databases}) => {
         process.exit(0);
       }
       lastSyncedRound++;
+
+      const shouldSkipForOrderData = noOrderDataMap.has(lastSyncedRound) &&
+        noOrderDataMap.get(lastSyncedRound).has('order');
+      const shouldSkipForAlgxData = noOrderDataMap.has(lastSyncedRound) &&
+        noOrderDataMap.get(lastSyncedRound).has('algx_balance');
+      if (shouldSkipForOrderData && shouldSkipForAlgxData) {
+        console.log('Skipping block entirely due to no order and algx data!');
+        queueTradeHistoryInTestMode(lastSyncedRound);
+        syncedBlocksDB.post(withSchemaCheck('synced_blocks',
+            {_id: `${lastSyncedRound}`}))
+            .then(function() { }).catch(function(err) {
+              if (err.error === 'conflict') {
+                console.error('Block was already synced! Not supposed to happen');
+              } else {
+                throw err;
+              }
+            });
+        continue;
+      }
       console.log('In catchup mode, getting block: ' + lastSyncedRound);
+      await waitForViewBuildingSimple();
+
       const block = await getBlockFromDBOrNode(blocksDB, lastSyncedRound);
       if (block.rnd === undefined) {
         // retry
         lastSyncedRound--;
         continue;
       }
-      await Promise.all(getBlockPromises(queues, block));
+
+      if (shouldSkipForOrderData) {
+        console.log(`Skipping processing orders for ${lastSyncedRound}!`);
+        await queueTradeHistoryInTestMode(lastSyncedRound);
+      }
+      await Promise.all(getBlockPromises(queues, block,
+          shouldSkipForOrderData, syncedBlocksDB));
 
       console.log({
         msg: 'Published and Queued',
