@@ -3,9 +3,10 @@ const schema = {
   properties: {
     _id: {type: 'string'},
     _rev: {type: 'string'},
-    has_order_changes: {type: 'boolean'},
+    hasChanges: {type: 'boolean'},
+    changesType: {type: 'string'},
   },
-  required: ['_id', 'has_order_changes'],
+  required: ['_id', 'hasChanges', 'changesType'],
   additionalProperties: false,
 };
 

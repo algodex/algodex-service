@@ -9,7 +9,7 @@ const throttle = require('lodash.throttle');
 const axios = require('axios').default;
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
-const {getRoundsWithNoOrderDataSet} =
+const {getRoundsWithNoDataSets} =
   require('../services/block-worker/orderMetadata');
 
 const sleepWhileWaitingForQueues =
@@ -206,7 +206,7 @@ module.exports = ({queues, events, databases}) => {
     }
 
     let hadFirstRound = false;
-    let noOrderDataSet = new Set();
+    let noOrderDataMap = new Map();
     let maxMetadataBlock = lastSyncedRound;
 
     do {
@@ -214,8 +214,8 @@ module.exports = ({queues, events, databases}) => {
         // This is an optimization to improve resync speed
         console.log('getting noOrderDataSet between ' + maxMetadataBlock +
          ' and ' + (maxMetadataBlock + 5000));
-        noOrderDataSet =
-          await getRoundsWithNoOrderDataSet(maxMetadataBlock, maxMetadataBlock + 5000);
+        noOrderDataMap =
+          await getRoundsWithNoDataSets(maxMetadataBlock, maxMetadataBlock + 5000);
         maxMetadataBlock += 5000;
       }
       await sleepWhileWaitingForQueues(['blocks']);
@@ -241,7 +241,8 @@ module.exports = ({queues, events, databases}) => {
         lastSyncedRound--;
         continue;
       }
-      const shouldSkipForOrderData = noOrderDataSet.has(lastSyncedRound);
+      const shouldSkipForOrderData = noOrderDataMap.has(lastSyncedRound) &&
+        noOrderDataMap.get(lastSyncedRound).has('order');
       if (shouldSkipForOrderData) {
         console.log(`Skipping processing orders for ${lastSyncedRound}!`);
         if (process.env.INTEGRATION_TEST_MODE) {

@@ -1,5 +1,5 @@
 const verifyContracts = require('../../src/verify-contracts');
-const {addOrderMetadata} = require('./orderMetadata');
+const {addMetadata} = require('./orderMetadata');
 
 const getAssetsAndOrdersPromises =
   require('./getOrdersPromise/getAssetsAndOrdersPromises');
@@ -15,7 +15,7 @@ const getOrdersPromise = ({databases, queues, dirtyAccounts, blockData}) => {
         // wasn't yet in the database. So, filter any unknown orders
 
         res.rows = removeEarliestRound(res.rows, blockData.rnd);
-        await addOrderMetadata(blockData.rnd, res.rows.length > 0);
+        await addMetadata(blockData.rnd, 'order', res.rows.length > 0);
 
         if (!res.rows.length) {
           return;

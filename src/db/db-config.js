@@ -133,8 +133,8 @@ const databases = [
     design: {
       _id: '_design/block_custom_metadata',
       views: {
-        blocks_without_order_changes: {
-          map: require('../../views/block_custom_metadata/blocks_without_order_changes-map').toString(),
+        blocks_without_changes: {
+          map: require('../../views/block_custom_metadata/blocks_without_changes-map').toString(),
         },
       },
     },
