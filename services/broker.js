@@ -9,7 +9,7 @@ const throttle = require('lodash.throttle');
 const axios = require('axios').default;
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
-const {getRoundsWithNoDataSets} =
+const {getRoundsWithNoDataSets, addMetadata} =
   require('../services/block-worker/orderMetadata');
 
 const sleepWhileWaitingForQueues =
@@ -40,6 +40,8 @@ const getBlockPromises = (queues, block, skipOrderPromises=false,
     retarr.push(
         queues.algxBalance.add('algxBalance', block, {removeOnComplete: true}));
   }
+  addMetadata(block.rnd, 'algx_balance', hasAlgxTransactions);
+
   return retarr;
 };
 
@@ -162,6 +164,19 @@ module.exports = ({queues, events, databases}) => {
     }
   };
 
+  const queueTradeHistoryInTestMode = async round => {
+    if (process.env.INTEGRATION_TEST_MODE) {
+      // In INTEGRATION_TEST_MODE, because we don't have
+      // all the blocks, and don't know all accounts that are orders,
+      // we need to create a trade history job so that it wont be missed.
+      await queues.tradeHistory.add('tradeHistory', {block: `${round}`},
+          {removeOnComplete: true}).then(function() {
+      }).catch(function(err) {
+        console.error('error adding to trade history queue:', {err} );
+        throw err;
+      });
+    }
+  };
   /**
      * Run the Broker
      * @return {Promise<void>}
@@ -224,7 +239,7 @@ module.exports = ({queues, events, databases}) => {
         // Probably unnecessary now since concurrency is 1? FIXME
         await waitForBlockToBeStored(databases.blocks, lastSyncedRound);
       }
-      events.publish(`blocks`, JSON.stringify(lastSyncedRound));
+      // events.publish(`blocks`, JSON.stringify(lastSyncedRound));
 
       if (process.env.INTEGRATION_TEST_MODE && maxSyncedRoundInTestMode &&
         lastSyncedRound >= maxSyncedRoundInTestMode) {
@@ -233,6 +248,25 @@ module.exports = ({queues, events, databases}) => {
         process.exit(0);
       }
       lastSyncedRound++;
+
+      const shouldSkipForOrderData = noOrderDataMap.has(lastSyncedRound) &&
+        noOrderDataMap.get(lastSyncedRound).has('order');
+      const shouldSkipForAlgxData = noOrderDataMap.has(lastSyncedRound) &&
+        noOrderDataMap.get(lastSyncedRound).has('algx_balance');
+      if (shouldSkipForOrderData && shouldSkipForAlgxData) {
+        console.log('Skipping block entirely due to no order and algx data!');
+        queueTradeHistoryInTestMode(lastSyncedRound);
+        syncedBlocksDB.post(withSchemaCheck('synced_blocks',
+            {_id: `${lastSyncedRound}`}))
+            .then(function() { }).catch(function(err) {
+              if (err.error === 'conflict') {
+                console.error('Block was already synced! Not supposed to happen');
+              } else {
+                throw err;
+              }
+            });
+        continue;
+      }
       console.log('In catchup mode, getting block: ' + lastSyncedRound);
 
       const block = await getBlockFromDBOrNode(blocksDB, lastSyncedRound);
@@ -241,21 +275,10 @@ module.exports = ({queues, events, databases}) => {
         lastSyncedRound--;
         continue;
       }
-      const shouldSkipForOrderData = noOrderDataMap.has(lastSyncedRound) &&
-        noOrderDataMap.get(lastSyncedRound).has('order');
+
       if (shouldSkipForOrderData) {
         console.log(`Skipping processing orders for ${lastSyncedRound}!`);
-        if (process.env.INTEGRATION_TEST_MODE) {
-          // In INTEGRATION_TEST_MODE, because we don't have
-          // all the blocks, and don't know all accounts that are orders,
-          // we need to create a trade history job so that it wont be missed.
-          queues.tradeHistory.add('tradeHistory', {block: `${lastSyncedRound}`},
-              {removeOnComplete: true}).then(function() {
-          }).catch(function(err) {
-            console.error('error adding to trade history queue:', {err} );
-            throw err;
-          });
-        }
+        await queueTradeHistoryInTestMode(lastSyncedRound);
       }
       await Promise.all(getBlockPromises(queues, block,
           shouldSkipForOrderData, syncedBlocksDB));

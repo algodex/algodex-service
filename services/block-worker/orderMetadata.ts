@@ -1,4 +1,6 @@
 const getDatabases = require('../../src/db/get-databases');
+const withSchemaCheck = require('../../src/schema/with-db-schema-check');
+
 const databases = getDatabases();
 
 type ChangesType = 'order' | 'algx_balance';
@@ -24,7 +26,7 @@ const addMetadata = async (round:number, changesType: ChangesType, hasChanges: b
 
   const metadataDB = databases.block_custom_metadata;
   try {
-    await metadataDB.put(metadata);
+    await metadataDB.put(withSchemaCheck('block_custom_metadata', metadata));
   } catch (e) {
     if (e.error !== 'conflict') {
       console.error(e);

@@ -1,12 +1,1218 @@
 [
   {
     "_id": "_design/block_custom_metadata",
-    "_rev": "5-fadea67b1842c213a694c92c4b46a463",
+    "_rev": "1-ad9a8edf97885bac68468b254aa48f12",
     "views": {
       "blocks_without_changes": {
         "map": "function(doc) {\n  const hasChanges = doc.hasChanges;\n\n  if (hasChanges === false) {\n    const changesType = doc.changesType;\n    const round = parseInt(doc._id.split(':')[1]);\n    emit(round, {\n      changesType,\n    });\n  }\n}"
       }
     }
+  },
+  {
+    "_id": "algx_balance:16583454",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583455",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583456",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583457",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583458",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583459",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583460",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583461",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583462",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583463",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583464",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583465",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583466",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583467",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583468",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583469",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583470",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583471",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583472",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583473",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583474",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583475",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583476",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583477",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583478",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583479",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583480",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583481",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583482",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583483",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583484",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583485",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583486",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583487",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583488",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583489",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583490",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583491",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583492",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583493",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583494",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583495",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583496",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583497",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583498",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583499",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583500",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583501",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583502",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583503",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583504",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583505",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583506",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583507",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583508",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583509",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583510",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583511",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583512",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583513",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583514",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583515",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583516",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583517",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583518",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583519",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583520",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583521",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583522",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583523",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583524",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583525",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583526",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583527",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583528",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583529",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583530",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583531",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583532",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583533",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583534",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583535",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583536",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583537",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583538",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583539",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583540",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583541",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583542",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583543",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583544",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583545",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583546",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583547",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583548",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583549",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583550",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583551",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583552",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583553",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583554",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583555",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583556",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583557",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583558",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583559",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583560",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583561",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583562",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583563",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583564",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583565",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583566",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583567",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583568",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583569",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583570",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583571",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583572",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583573",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583574",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583575",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583576",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583577",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583578",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583579",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583580",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583581",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583582",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583583",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583584",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583585",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583586",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583587",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583588",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583589",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583590",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583591",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583592",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583593",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583594",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583595",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583596",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583597",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583598",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583599",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583600",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583601",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583602",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583603",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583604",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583605",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583606",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583607",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583608",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583609",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583610",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583611",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583612",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583613",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583614",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583615",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583616",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583617",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583618",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583619",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583620",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583621",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583622",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583623",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583624",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583625",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583626",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583627",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583628",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583629",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583630",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583631",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583632",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583633",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583634",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583635",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583636",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583637",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583638",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583639",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583640",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583641",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583642",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583643",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583644",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583645",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583646",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583647",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583648",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583649",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583650",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583651",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583652",
+    "_rev": "1-b5e5578f511fc1c5674a3ee502f34892",
+    "changesType": "algx_balance",
+    "hasChanges": false
+  },
+  {
+    "_id": "algx_balance:16583653",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
+  },
+  {
+    "_id": "algx_balance:16583654",
+    "_rev": "1-6717033f43d189d554e09c0cd3132c79",
+    "changesType": "algx_balance",
+    "hasChanges": true
   },
   {
     "_id": "order:16583454",
