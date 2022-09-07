@@ -15,7 +15,6 @@ const waitForViewBuilding = async (blocksDB, skipCheckAgain = false, pauseMS=500
   }, 5000);
 
   while (loop) {
-    await sleep(pauseMS);
     await axios.get(couchUrl + '/_active_tasks')
         .then(async function(response) {
           // handle success
@@ -41,6 +40,10 @@ const waitForViewBuilding = async (blocksDB, skipCheckAgain = false, pauseMS=500
           console.error('Unexpected error when fetching active tasks! ',
               error);
         });
+    if (!loop) {
+      break;
+    }
+    await sleep(pauseMS);
   }
 };
 
