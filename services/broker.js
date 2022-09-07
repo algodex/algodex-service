@@ -216,6 +216,7 @@ module.exports = ({queues, events, databases}) => {
       const shouldSkipForAlgxData = noOrderDataMap.has(lastSyncedRound) &&
         noOrderDataMap.get(lastSyncedRound).has('algx_balance');
       if (shouldSkipForOrderData && shouldSkipForAlgxData) {
+        // eslint-disable-next-line max-len
         console.log(`Skipping block ${lastSyncedRound} entirely due to no order and algx data!`);
         queueTradeHistoryInTestMode(lastSyncedRound);
         syncedBlocksDB.post(withSchemaCheck('synced_blocks',
