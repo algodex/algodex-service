@@ -5,6 +5,7 @@ const convertQueueURL = require('../src/convert-queue-url');
 const withQueueSchemaCheck = require('../src/schema/with-queue-schema-check');
 const sleep = require('../src/sleep');
 const throttle = require('lodash.throttle');
+const {waitForViewBuildingSimple} = require('./waitForViewBuilding');
 
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
@@ -58,6 +59,8 @@ module.exports = ({queues, databases}) =>{
       async job=>{
         console.log('got formatted escrows job ', {data: job.data});
         withQueueSchemaCheck('formattedEscrows', job.data);
+        await waitForViewBuildingSimple();
+
         const assetId = job.data.escrowInfo.assetId;
         const addr = job.data.indexerInfo.address;
         const data = job.data;
