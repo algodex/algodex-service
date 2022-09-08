@@ -4,7 +4,10 @@
     "allowJs": true,
     "target": "esnext",
     "module": "commonjs",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node"],
+    "allowSyntheticDefaultImports": true
   },
   "exclude": ["node_modules/**", "built/**"]
 }
+

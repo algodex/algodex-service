@@ -1,5 +1,3 @@
-import internal = require("stream");
-import { resetAllMocks } from "../src/__mocks__/Redis";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config();

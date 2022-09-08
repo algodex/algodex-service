@@ -1,9 +1,13 @@
 {
   "_id": "a73c6696ac4a6e897daa3f101a02c3cf",
-  "_rev": "2-1175a83b81ec74ebf467652df953e087",
+  "_rev": "4-632a92d94cf8faf207453c01efce7f58",
   "ownerWallet": "NN3BAWDPHEJAPIGO3IDB6I4ITGUMYG3QMN26ZYICXEZM3QRWISGXUK6J4Y",
-  "vestedRewards": 3500,
+  "vestedRewards": 3500000000,
+  "formattedVestedRewards": 3500,
   "epoch": 1,
   "vestedUnixTime": 1658439940,
-  "assetId": 386192725
+  "assetId": 386192725,
+  "result": "success",
+  "transactionId": "GHJHTR573AMXXJGJYW77XU5W2V32AJUHGGRBB6B7XOAQ2VZQE4LQ",
+  "fromWallet": "WNGN7TJ5EWR6Q25FMSJCHRJBB5PLBH7U7LK6XEAP3BBPFNZR6WJR3NHBLE"
 }
