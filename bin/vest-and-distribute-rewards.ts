@@ -11,18 +11,15 @@ import {DistributeRewardsInput} from '../src/rewards/distribute/vest-distribute-
 
 /* Usage
  *
- * ./vest-and-distribute-rewards --inputFile=<file> --amount=<amount of ALGX>
+ * ./vest-and-distribute-rewards --inputFile=<file>
  *                      --epoch=<epoch> --accrualNetwork=<testnet|mainnet>
  */
 
 const initAndDistribute = async () => {
   const algodClient = getAlgod();
-  const databases = getDatabases();
   const inputFile = args.inputFile;
-  const amount = parseFloat(args.amount);
   const distributeNetwork = process.env.ALGORAND_NETWORK;
   const mnemonic = process.env.REWARDS_WALLET_MNEMONIC;
-  const accrualNetwork = args.accrualNetwork;
   const assetId = process.env.ALGX_ASSET_ID;
   const epoch = args.epoch;
   const dryRunWithDBSave = args.dryRunWithDBSave;
@@ -30,20 +27,14 @@ const initAndDistribute = async () => {
   if (!inputFile) {
     throw new Error('No input file defined!');
   }
-  if (!amount) {
-    throw new Error('No amount defined!');
-  }
-  if (!accrualNetwork) {
-    throw new Error('no network defined');
+  if (!distributeNetwork) {
+    throw new Error('No distribute network defined!');
   }
   if (!epoch) {
     throw new Error('no epoch defined');
   }
   if (!mnemonic) {
     throw new Error('no mnemonic defined');
-  }
-  if (!accrualNetwork) {
-    throw new Error('no accrualNetwork defined');
   }
   if (!assetId) {
     throw new Error('no assetId defined');
@@ -53,7 +44,7 @@ const initAndDistribute = async () => {
 
   const config:DistributeRewardsInput = {epoch, algodClient,
     distributeNetwork, indexer,
-    accrualNetwork, dryRunWithDBSave,
+    dryRunWithDBSave,
     fromAccount: account, sendAssetId: parseInt(assetId)};
 
   printIntro(config);
