@@ -25,7 +25,7 @@ const schema = {
     algxAvg: {type: 'number', minimum: 0},
     qualityFinal: {type: 'number', minimum: 0},
     earnedRewards: {type: 'integer', minimum: 0}, // FIXME - update the script that stores this!
-    earnedRewardsFormatted: {type: 'float', minimum: 0},
+    earnedRewardsFormatted: {type: 'number', minimum: 0},
     epoch: {type: 'integer', minimum: 0},
     assetId: {type: 'integer', minimum: 0},
   },

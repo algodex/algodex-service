@@ -16,11 +16,6 @@ const getIndexer = require('../../get-indexer');
 // const distributeRewards =
 //   require('../src/rewards/distribute/vest-distribute-rewards');
 
-
-test('adds 1 + 2 to equal 3', () => {
-  expect(1+2).toBe(3);
-});
-
 test('gets planned distributions', async () => {
   const algodClient = getAlgod();
   const indexer = getIndexer();
@@ -34,22 +29,11 @@ test('gets planned distributions', async () => {
   const epoch = 2;
   const account = algosdk.mnemonicToSecretKey(mnemonic);
 
-  // export interface DistributeRewardsInput {
-  //   algodClient: algosdk.Algod,
-  //   wallets: Array<string>,
-  //   epoch: number,
-  //   distributeNetwork: string,
-  //   accrualNetwork: string,
-  //   fromAccount: algosdk.Account,
-  //   sendAssetId: number,
-  //   indexer: algosdk.Indexer,
-  // }
-
   const input = {
     algodClient, distributeNetwork, indexer,
     fromAccount: account, accrualNetwork, sendAssetId: assetId, epoch,
   };
   const plannedDists = await getPlannedDistributions(input);
-  console.log({plannedDists});
+  // console.log({plannedDists});
   expect(plannedDists.length > 0);
 });

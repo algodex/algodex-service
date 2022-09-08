@@ -20,7 +20,7 @@ export const schema = {
     _rev: {type: 'string'},
     ownerWallet: {type: 'string', pattern: '^[A-Z2-7]{58}$'},
     vestedRewards: {type: 'integer', minimum: 0},
-    formattedVestedRewards: {type: 'float', minimum: 0},
+    formattedVestedRewards: {type: 'number', minimum: 0},
     epoch: {type: 'integer', minimum: 1},
     vestedUnixTime: {type: 'integer', minimum: 0},
     assetId: {type: 'number', minimum: 0},
@@ -32,4 +32,5 @@ export const schema = {
   required: ['_id', 'ownerWallet', 'vestedRewards', 'formattedVestedRewards', 'epoch',
     'vestedUnixTime', 'assetId', 'result', 'transactionId', 'fromWallet'],
 };
+
 

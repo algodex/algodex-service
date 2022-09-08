@@ -7,7 +7,8 @@ module.exports = (schemaName, obj) => {
   if (schemaName in nameToSchema) {
     schema = nameToSchema[schemaName];
   } else {
-    schema = require(`./db/${schemaName}`)();
+    const schemaReq = require(`./db/${schemaName}`);
+    schema = typeof schemaReq === 'function' ? schemaReq() : schemaReq.schema;
     nameToSchema[schemaName] = schema;
   }
   schemaCheck(schema, obj);
