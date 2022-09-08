@@ -9,12 +9,14 @@ export interface DistributeRewardsInput {
   fromAccount: algosdk.Account,
   sendAssetId: number,
   indexer: algosdk.Indexer,
+  dryRunWithDBSave?: boolean
 }
 
 export const schema = {
   type: 'object',
   properties: {
     algodClient: {type: 'object'},
+    dryRunWithDBSave: {type: 'boolean'},
     amount: {type: 'integer', minimum: 1},
     epoch: {type: 'integer'},
     accrualNetwork: {type: 'string', pattern: '^(mainnet|testnet)$'},

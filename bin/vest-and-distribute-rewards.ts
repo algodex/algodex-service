@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-const fs = require('fs');
 const args = require('minimist')(process.argv.slice(2));
 const getAlgod = require('../src/algod');
 const getDatabases = require('../src/db/get-databases');
@@ -26,6 +25,7 @@ const initAndDistribute = async () => {
   const accrualNetwork = args.accrualNetwork;
   const assetId = process.env.ALGX_ASSET_ID;
   const epoch = args.epoch;
+  const dryRunWithDBSave = args.dryRunWithDBSave;
 
   if (!inputFile) {
     throw new Error('No input file defined!');
@@ -49,13 +49,11 @@ const initAndDistribute = async () => {
     throw new Error('no assetId defined');
   }
   const account = algosdk.mnemonicToSecretKey(mnemonic);
-  const data = fs.readFileSync(inputFile, 'utf8');
-  const wallets = data.split('\n').filter(line => line.length > 0);
   const indexer = getIndexer();
 
   const config:DistributeRewardsInput = {epoch, algodClient,
     distributeNetwork, indexer,
-    accrualNetwork,
+    accrualNetwork, dryRunWithDBSave,
     fromAccount: account, sendAssetId: parseInt(assetId)};
 
   printIntro(config);

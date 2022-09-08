@@ -27,6 +27,29 @@ interface RewardsKey {
   epoch: number
 }
 
+
+interface SendRewardsObject {
+  algodClient: algosdk.Algod,
+  toWalletAddr: string,
+  amount: number,
+  epoch: number,
+  accrualNetwork: string,
+  fromAccount: algosdk.Account,
+  assetId: number,
+}
+
+type PlannedDistribution = SendRewardsObject; 
+
+type SendSuccessOrFail = 'success' | 'failure';
+
+interface SendRewardsResult {
+  result:SendSuccessOrFail,
+  distribution:SendRewardsObject,
+  error?:string,
+  transactionId?:string
+}
+
+
 const addDistributionToDB = async(result:string, distribution: SendRewardsObject, transactionId: string, error?: string) => {
   const vestedUnixTime = Math.round((new Date()).getTime() / 1000);
 
@@ -63,10 +86,20 @@ const addDistributionToDB = async(result:string, distribution: SendRewardsObject
 
 const distributeRewards = async (input:DistributeRewardsInput) => {
   const plannedDistributions = await getPlannedDistributions(input);
-  await checkHasNeededAlgx(input.fromAccount, input.indexer, plannedDistributions);
+
+  const isDryRun = input.dryRunWithDBSave === true;
+  console.log({isDryRun});
   
+  if (isDryRun) {
+    await checkHasNeededAlgx(input.fromAccount, input.indexer, plannedDistributions);
+  }
+
   const sendPromises = plannedDistributions.map(distribution => {
-    sendRewards(distribution).then(res => addDistributionToDB(res.result, res.distribution, res.error));
+    if (!isDryRun) {
+      sendRewards(distribution).then(res => addDistributionToDB(res.result, res.distribution, res.error));
+    } else {
+      fakeSendRewards(distribution).then(res => addDistributionToDB(res.result, res.distribution, res.error));
+    }
   });
 
   await Promise.all(sendPromises);
@@ -127,25 +160,6 @@ const getPlannedDistributions = async (input:DistributeRewardsInput): Promise<Ar
   });
 }
 
-interface SendRewardsObject {
-  algodClient: algosdk.Algod,
-  toWalletAddr: string,
-  amount: number,
-  epoch: number,
-  accrualNetwork: string,
-  fromAccount: algosdk.Account,
-  assetId: number,
-}
-
-type PlannedDistribution = SendRewardsObject; 
-
-type SendSuccessOrFail = 'success' | 'failure';
-interface SendRewardsResult {
-  result:SendSuccessOrFail,
-  distribution:SendRewardsObject,
-  error?:string,
-  transactionId?:string
-}
 
 const sendRewards = async (input: SendRewardsObject):Promise<SendRewardsResult> => {
   const {fromAccount, toWalletAddr, amount,
@@ -172,5 +186,27 @@ const sendRewards = async (input: SendRewardsObject):Promise<SendRewardsResult> 
     return {result: 'failure', distribution: input, error: e.response.text};
   }
 };
+
+const fakeSendRewards = async (input: SendRewardsObject):Promise<SendRewardsResult> => {
+  const {fromAccount, toWalletAddr, amount,
+    algodClient, accrualNetwork, epoch, assetId} = input;
+  const params:SuggestedParams = await ((algodClient.getTransactionParams()) as unknown as JSONRequest).do() as SuggestedParams;
+  const epochKey = getEpochKey(accrualNetwork, epoch);
+  const enc = new TextEncoder();
+  const note = enc.encode('ALGX Rewards Distribution:' + epochKey);
+  const xtxn = algosdk.makeAssetTransferTxnWithSuggestedParams(
+      fromAccount.addr,
+      toWalletAddr,
+      undefined,
+      undefined,
+      amount,
+      note,
+      assetId,
+      params);
+    // Must be signed by the account sending the asset
+  const rawSignedTxn = xtxn.signTxn(fromAccount.sk);
+  return {result: 'success', distribution: input, transactionId: '52HZEYOBLKYT6C3IA35TVRVZL4H562JTYPLNTVRD6CTTRNRUXR6A'};
+};
+
 
 export { distributeRewards, getPlannedDistributions };
