@@ -161,16 +161,6 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "CalculateRewards (DEPRECATED)",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${workspaceFolder}/bin/calculate-rewards",
-            "args": ["--epoch=2"]
-        },
-        {
-            "type": "node",
-            "request": "launch",
             "name": "Run End To End Test",
             "skipFiles": [
                 "<node_internals>/**"
