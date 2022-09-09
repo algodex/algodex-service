@@ -2,6 +2,7 @@ use crate::InitialState;
 use crate::StateMachine;
 
 use core::panic;
+use std::cmp;
 use std::collections::HashMap;
 
 use crate::quality_type::*;
@@ -198,7 +199,8 @@ fn get_analytics_per_escrow(
 
             let mid_market = (ask + bid) / 2.0;
             let distance_from_spread = (price - mid_market).abs();
-            let percent_distant = distance_from_spread / mid_market;
+            // The minimum spread is 10 basis points
+            let percent_distant = f64::max(0.001, distance_from_spread / mid_market);
             let depth =
                 (*algo_price) * (*balance as f64) * *price / (10_f64.powf(*decimals as f64) as f64);
             let order_type = match escrow_addr_to_data
