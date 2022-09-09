@@ -211,6 +211,9 @@ const databases = [
         ownerAddr: {
           map: require('../../views/rewards/rewards-map').toString(),
         },
+        topWallets: {
+          map: require('../../views/rewards/topWallets-map').toString(),
+        },
       },
     },
   },
