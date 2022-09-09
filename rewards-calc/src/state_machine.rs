@@ -76,6 +76,10 @@ impl StateMachine {
             self.algo_price = price_entry.price;
             self.algo_price_step += 1;
         }
+
+        if (self.algo_price == 0.0) { // Best effort, since we don't know the price before
+            self.algo_price = tinyman_prices[0].price;
+        }
     }
 
     fn update_balances(

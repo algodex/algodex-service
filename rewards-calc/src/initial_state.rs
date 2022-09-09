@@ -205,9 +205,9 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
             map
         });
 
-    let owner_wallets: Vec<String> =
+    let owner_wallets_set: HashSet<String> =
         escrows.iter().map(|escrow| &escrow.data.escrow_info.owner_addr).cloned().collect();
-
+    let owner_wallets: Vec<String> = owner_wallets_set.into_iter().collect();
     let algx_balance_data_query_res = query_couch_db::<AlgxBalanceValue>(
         api_url,
         &"algx_balance".to_string(),
