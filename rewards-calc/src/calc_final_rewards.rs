@@ -59,12 +59,25 @@ fn get_total_quality(
     (total_quality, owner_rewards_res_to_final_rewards_entry)
 }
 
+/// Unformatted ALGX rewarded total per epoch
+fn get_formatted_epoch_rewards(epoch: u16) -> f64 {
+    let algx = match epoch {
+        1..=2 => 18_000_000.0,
+        3..=12 => 9_000_000.0,
+        _ => 3_819_600.0,
+    };
+    algx
+}
 pub fn get_owner_rewards_res_to_final_rewards_entry(
+    epoch: u16,
     state_machine: &StateMachine,
     mainnet_period: &MainnetPeriod,
 ) -> HashMap<OwnerRewardsKey, EarnedAlgxEntry> {
     let (total_quality, mut owner_rewards_res_to_final_rewards_entry) =
         get_total_quality(state_machine, mainnet_period);
+
+    let total_epoch_rewards = get_formatted_epoch_rewards(epoch);
+    // dbg!(&state_machine.owner_wallet_asset_to_quality_result);
 
     state_machine.owner_wallet_asset_to_quality_result.keys().for_each(|owner_wallet| {
         let owner_asset_entries =
@@ -75,9 +88,9 @@ pub fn get_owner_rewards_res_to_final_rewards_entry(
                 .get_mut(&OwnerRewardsKey { wallet: owner_wallet.clone(), asset_id: *asset_id })
                 .unwrap();
 
-            // FIXME - 18k depends on epoch
             final_rewards_entry.earned_algx = EarnedAlgx::from(
-                (18000000.0 * final_rewards_entry.quality.val() / total_quality).round() as u64,
+                (total_epoch_rewards * final_rewards_entry.quality.val() / total_quality).round()
+                    as u64,
             );
         });
     });

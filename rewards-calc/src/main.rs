@@ -99,8 +99,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let mainnet_period = check_mainnet_period(&initial_state.epoch_end);
 
-    let owner_rewards_res_to_final_rewards_entry =
-        get_owner_rewards_res_to_final_rewards_entry(&state_machine, &mainnet_period);
+    let owner_rewards_res_to_final_rewards_entry = get_owner_rewards_res_to_final_rewards_entry(
+        initial_state.epoch,
+        &state_machine,
+        &mainnet_period,
+    );
     // rewardsFinal.sort_by(|a, b| a.qualityFinal.val().partial_cmp(&b.qualityFinal.val()).unwrap());
 
     println!("saving rewards in DB!");
