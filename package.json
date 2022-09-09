@@ -15,7 +15,7 @@
     "start-tiny": "cross-env APP_CONTEXT=tinyman npm start",
     "test-local": "jest --testPathPattern=built/ --testPathIgnorePatterns=rewards-integration && npm run lint",
     "test": "npm run test-unit && npm run lint",
-    "test-unit": "jest --testPathPattern=built/ --testPathIgnorePatterns=verify-end-to-end --testPathIgnorePatterns=rewards-integration",
+    "test-unit": "jest --testPathPattern=built/ --testPathIgnorePatterns=verify-end-to-end --testPathIgnorePatterns=rewards-integration --testPathIgnorePatterns=get-planned-distributions",
     "dev-test": "jest --watch",
     "lint": "eslint src/*.js services/*.js bin/*.js views/**/*.js server.js",
     "prepare": "husky install",
