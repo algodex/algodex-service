@@ -176,9 +176,6 @@ impl StateMachine {
         // let assets_with_balances = self.get_assets_with_balances(initial_state);
         let assets_with_tolerable_spreads = self.get_assets_with_tolerable_spreads(initial_state);
         assets_with_tolerable_spreads.into_iter().for_each(|asset_id| {
-            if (asset_id == 732254344) {
-                println!("here 732254344");
-            }
             update_owner_wallet_quality_per_asset(&asset_id, self, initial_state);
         });
 
