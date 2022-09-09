@@ -64,7 +64,7 @@ fn get_formatted_epoch_rewards(epoch: u16) -> f64 {
     let algx = match epoch {
         1..=2 => 18_000_000.0,
         3..=12 => 9_000_000.0,
-        _ => 3_819_600.0
+        _ => 3_819_600.0,
     };
     algx
 }
@@ -89,7 +89,8 @@ pub fn get_owner_rewards_res_to_final_rewards_entry(
                 .unwrap();
 
             final_rewards_entry.earned_algx = EarnedAlgx::from(
-                (total_epoch_rewards * final_rewards_entry.quality.val() / total_quality).round() as u64,
+                (total_epoch_rewards * final_rewards_entry.quality.val() / total_quality).round()
+                    as u64,
             );
         });
     });

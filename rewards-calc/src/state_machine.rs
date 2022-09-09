@@ -48,14 +48,12 @@ impl StateMachine {
         }
     }
     fn update_owner_wallet_algx_balances(&mut self, initial_state: &InitialState) {
-        let InitialState{algx_balance_data, block_to_unix_time, ..} = initial_state;
+        let InitialState { algx_balance_data, block_to_unix_time, .. } = initial_state;
 
         while self.owner_wallet_step < algx_balance_data.len() {
             let owner_balance_entry = &algx_balance_data[self.owner_wallet_step];
-            let owner_wallet_time = get_time_from_round(
-                block_to_unix_time,
-                &owner_balance_entry.value.round,
-            );
+            let owner_wallet_time =
+                get_time_from_round(block_to_unix_time, &owner_balance_entry.value.round);
             if owner_wallet_time > self.timestep {
                 break;
             }
@@ -66,7 +64,7 @@ impl StateMachine {
     }
 
     fn update_algx_price(&mut self, initial_state: &InitialState) {
-        let InitialState{tinyman_prices, ..} = initial_state;
+        let InitialState { tinyman_prices, .. } = initial_state;
 
         while self.algo_price_step < tinyman_prices.len() {
             let price_entry = &tinyman_prices[self.algo_price_step];
@@ -77,7 +75,8 @@ impl StateMachine {
             self.algo_price_step += 1;
         }
 
-        if (self.algo_price == 0.0) { // Best effort, since we don't know the price before
+        if self.algo_price == 0.0 {
+            // Best effort, since we don't know the price before
             self.algo_price = tinyman_prices[0].price;
         }
     }
@@ -96,15 +95,18 @@ impl StateMachine {
     }
 
     fn update_escrow_balances(&mut self, initial_state: &InitialState) -> bool {
-        let InitialState{changed_escrow_seq, unix_time_to_changed_escrows,
-            escrow_time_to_balance, ..} = initial_state;
+        let InitialState {
+            changed_escrow_seq,
+            unix_time_to_changed_escrows,
+            escrow_time_to_balance,
+            ..
+        } = initial_state;
         let mut escrow_did_change = false;
         while self.escrow_step < changed_escrow_seq.len()
             && changed_escrow_seq[self.escrow_step] <= self.timestep
         {
             let change_time = &changed_escrow_seq[self.escrow_step];
-            let changed_escrows =
-                unix_time_to_changed_escrows.get(change_time).unwrap();
+            let changed_escrows = unix_time_to_changed_escrows.get(change_time).unwrap();
             escrow_did_change = true;
             Self::update_balances(
                 changed_escrows,
@@ -133,11 +135,13 @@ impl StateMachine {
         assets_with_balances
     }
 
-    fn get_assets_with_tolerable_spreads(&mut self, initial_state: &InitialState) -> HashSet<u32> {
-        let assets_with_tolerable_spreads: HashSet<u32> =
-            self.spreads.keys().filter(|asset_id| {
+    fn get_assets_with_tolerable_spreads(&mut self, _initial_state: &InitialState) -> HashSet<u32> {
+        let assets_with_tolerable_spreads: HashSet<u32> = self
+            .spreads
+            .keys()
+            .filter(|asset_id| {
                 let spread = self.spreads.get(asset_id).unwrap();
-                if (spread.ask.is_none() || spread.bid.is_none()) {
+                if spread.ask.is_none() || spread.bid.is_none() {
                     return false;
                 }
                 let ask = spread.ask.unwrap();
@@ -146,7 +150,9 @@ impl StateMachine {
                     return false;
                 }
                 return true;
-            }).cloned().collect();
+            })
+            .cloned()
+            .collect();
         assets_with_tolerable_spreads
     }
 

@@ -2,7 +2,7 @@ use crate::InitialState;
 use crate::StateMachine;
 
 use core::panic;
-use std::cmp;
+
 use std::collections::HashMap;
 
 use crate::quality_type::*;
@@ -198,7 +198,7 @@ fn get_analytics_per_escrow(
             let asset_decimals = escrow_addr_to_data.get(escrow).unwrap().data.asset_decimals;
             let order_amount_decimals = match order_type {
                 Ask => asset_decimals,
-                Bid => 6 // If this is a buy order, use algo num decimals which is 6
+                Bid => 6, // If this is a buy order, use algo num decimals which is 6
             };
             let balance = escrow_to_balance.get(escrow).unwrap();
             let owner_addr = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.owner_addr;
@@ -209,7 +209,7 @@ fn get_analytics_per_escrow(
                 dbg!("{spread} {assetId}");
                 panic!("Invalid spread!");
             }
-            
+
             let ask = spread.unwrap().ask.unwrap();
             let bid = spread.unwrap().bid.unwrap();
 
@@ -221,9 +221,8 @@ fn get_analytics_per_escrow(
             // Need to adjust price based on differences between algo decimals and asset's decimals
             // to be the decimal-formatted price.
             let formatted_price = price / 10_f64.powf((6 - asset_decimals) as f64);
-            let depth =
-                (*algo_price) * (*balance as f64) * formatted_price 
-                    / (10_f64.powf(order_amount_decimals as f64) as f64);
+            let depth = (*algo_price) * (*balance as f64) * formatted_price
+                / (10_f64.powf(order_amount_decimals as f64) as f64);
 
             let is_eligible = check_is_eligible(
                 &percent_distant,
