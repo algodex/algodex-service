@@ -6,7 +6,8 @@ export interface VestedRewards {
   formattedVestedRewards: number,
   epoch: number,
   vestedUnixTime: number,
-  assetId: number,
+  sentAssetId: number,
+  accrualAssetId: number,
   result: string,
   transactionId: string,
   fromWallet: string,
@@ -23,14 +24,15 @@ export const schema = {
     formattedVestedRewards: {type: 'number', minimum: 0},
     epoch: {type: 'integer', minimum: 1},
     vestedUnixTime: {type: 'integer', minimum: 0},
-    assetId: {type: 'number', minimum: 0},
+    sentAssetId: {type: 'number', minimum: 0},
+    accrualAssetId: {type: 'number', minimum: 0},
     result: {type: 'string'},
     transactionId: {type: 'string'},
     fromWallet: {type: 'string', pattern: '^[A-Z2-7]{58}$'},
     error: {type: 'string'},
   },
   required: ['_id', 'ownerWallet', 'vestedRewards', 'formattedVestedRewards', 'epoch',
-    'vestedUnixTime', 'assetId', 'result', 'transactionId', 'fromWallet'],
+    'vestedUnixTime', 'sentAssetId', 'accrualAssetId', 'result', 'transactionId', 'fromWallet'],
 };
 
 

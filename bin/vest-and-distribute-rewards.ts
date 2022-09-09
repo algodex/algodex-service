@@ -3,7 +3,7 @@ const args = require('minimist')(process.argv.slice(2));
 const getAlgod = require('../src/algod');
 const getDatabases = require('../src/db/get-databases');
 const getIndexer = require('../src/get-indexer');
-const distributeRewards =
+const { distributeRewards } =
   require('../src/rewards/distribute/vest-distribute-rewards');
 const algosdk = require('algosdk');
 
@@ -11,28 +11,17 @@ import {DistributeRewardsInput} from '../src/rewards/distribute/vest-distribute-
 
 /* Usage
  *
- * ./vest-and-distribute-rewards --inputFile=<file>
- *                      --epoch=<epoch> --accrualNetwork=<testnet|mainnet>
+ * ./vest-and-distribute-rewards [--dryRunWithDBSave] [--removeOldFirst]
  */
 
 const initAndDistribute = async () => {
   const algodClient = getAlgod();
-  const inputFile = args.inputFile;
   const distributeNetwork = process.env.ALGORAND_NETWORK;
   const mnemonic = process.env.REWARDS_WALLET_MNEMONIC;
   const assetId = process.env.ALGX_ASSET_ID;
-  const epoch = args.epoch;
   const dryRunWithDBSave = args.dryRunWithDBSave;
+  const removeOldFirst = args.removeOldFirst;
 
-  if (!inputFile) {
-    throw new Error('No input file defined!');
-  }
-  if (!distributeNetwork) {
-    throw new Error('No distribute network defined!');
-  }
-  if (!epoch) {
-    throw new Error('no epoch defined');
-  }
   if (!mnemonic) {
     throw new Error('no mnemonic defined');
   }
@@ -42,9 +31,9 @@ const initAndDistribute = async () => {
   const account = algosdk.mnemonicToSecretKey(mnemonic);
   const indexer = getIndexer();
 
-  const config:DistributeRewardsInput = {epoch, algodClient,
+  const config:DistributeRewardsInput = {algodClient,
     distributeNetwork, indexer,
-    dryRunWithDBSave,
+    dryRunWithDBSave, removeOldFirst,
     fromAccount: account, sendAssetId: parseInt(assetId)};
 
   printIntro(config);

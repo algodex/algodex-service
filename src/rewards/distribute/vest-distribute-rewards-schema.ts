@@ -3,12 +3,12 @@ import algosdk from 'algosdk';
 
 export interface DistributeRewardsInput {
   algodClient: algosdk.Algod,
-  epoch: number,
   distributeNetwork: string,
   fromAccount: algosdk.Account,
   sendAssetId: number,
   indexer: algosdk.Indexer,
-  dryRunWithDBSave?: boolean
+  dryRunWithDBSave?: boolean,
+  removeOldFirst?: boolean
 }
 
 export const schema = {
@@ -16,8 +16,8 @@ export const schema = {
   properties: {
     algodClient: {type: 'object'},
     dryRunWithDBSave: {type: 'boolean'},
+    removeOldFirst: {type: 'boolean'},
     amount: {type: 'integer', minimum: 1},
-    epoch: {type: 'integer'},
     distributeNetwork: {type: 'string', pattern: '^(mainnet|testnet)$'},
     fromAccount: {
       type: 'object',

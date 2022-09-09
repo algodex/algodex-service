@@ -23,7 +23,7 @@ const getEpochKey = (accrualNetwork, epoch) => {
 
 interface RewardsKey {
   ownerWallet: string,
-  assetId: number,
+  accrualAssetId: number,
   epoch: number
 }
 
@@ -35,7 +35,8 @@ interface SendRewardsObject {
   epoch: number,
   accrualNetwork: string,
   fromAccount: algosdk.Account,
-  assetId: number,
+  accrualAssetId: number,
+  sentAssetId: number
 }
 
 type PlannedDistribution = SendRewardsObject; 
@@ -54,15 +55,16 @@ const addDistributionToDB = async(result:string, distribution: SendRewardsObject
   const vestedUnixTime = Math.round((new Date()).getTime() / 1000);
 
   const {
-    algodClient, toWalletAddr, amount, epoch, accrualNetwork, fromAccount, assetId,
+    toWalletAddr, amount, epoch, fromAccount, accrualAssetId, sentAssetId
   } = distribution;
     // eslint-disable-next-line camelcase
-  const id = `${toWalletAddr}:${epoch}:${assetId}:${vestedUnixTime}`;
+  const id = `${toWalletAddr}:${epoch}:${accrualAssetId}:${vestedUnixTime}`;
     const dbItem:VestedRewards = {
       ownerWallet: toWalletAddr,
       vestedRewards: amount,
       formattedVestedRewards: amount / (10**6),
-      assetId,
+      sentAssetId,
+      accrualAssetId,
       epoch,
       vestedUnixTime,
       fromWallet: fromAccount.addr,
@@ -77,7 +79,7 @@ const addDistributionToDB = async(result:string, distribution: SendRewardsObject
       }
     }
     try {
-      await databases.vested_rewards.post(withDbSchemaCheck('rewards_distribution', dbItem));
+      await databases.vested_rewards.post(withDbSchemaCheck('vested_rewards', dbItem));
     } catch (e) {
       console.error(e);
       console.error('Attempted to save: ' + JSON.stringify(dbItem));
@@ -90,15 +92,30 @@ const distributeRewards = async (input:DistributeRewardsInput) => {
   const isDryRun = input.dryRunWithDBSave === true;
   console.log({isDryRun});
   
-  if (isDryRun) {
+  if (!isDryRun) {
     await checkHasNeededAlgx(input.fromAccount, input.indexer, plannedDistributions);
+  }
+
+  if (isDryRun && input.removeOldFirst === true) {
+    console.log("Going to delete all old records from vested_rewards");
+    const db = databases.vested_rewards;
+    const allDocs = await db.allDocs();
+    console.log(allDocs.rows.filter(row => row.id.includes(":")).length + " docs to delete");
+    const deletePromises = allDocs.rows
+      .filter(row => row.id.includes(":"))
+      .map(row => {
+        console.log("sending remove for: ", {id: row.id});
+       return db.get(row.id).then(doc => db.remove(doc))
+        .then(console.log("removed "+row.id)).catch(e => console.log("failed to remove " + row.id, e))
+      });
+    await Promise.allSettled(deletePromises);
   }
 
   const sendPromises = plannedDistributions.map(distribution => {
     if (!isDryRun) {
-      sendRewards(distribution).then(res => addDistributionToDB(res.result, res.distribution, res.error));
+      sendRewards(distribution).then(res => addDistributionToDB(res.result, res.distribution, res.transactionId, res.error));
     } else {
-      fakeSendRewards(distribution).then(res => addDistributionToDB(res.result, res.distribution, res.error));
+      fakeSendRewards(distribution).then(res => addDistributionToDB(res.result, res.distribution, res.transactionId, res.error));
     }
   });
 
@@ -144,9 +161,11 @@ const getPlannedDistributions = async (input:DistributeRewardsInput): Promise<Ar
   }, new Set<RewardsKey>);
 
   return allRewardsDocs.filter(rewardsDoc => {
-    const key = <RewardsKey>rewardsDoc;
+    const key = <RewardsKey>{...rewardsDoc, accrualAssetId: rewardsDoc.assetId};
     return !allVestedRewardKeySet.has(key);
-  }).map(rewardsDoc => {
+  })
+  .filter(rewardsDoc => rewardsDoc.earnedRewards > 0)
+  .map(rewardsDoc => {
     const plannedSend:PlannedDistribution = {
       algodClient: input.algodClient,
       toWalletAddr: rewardsDoc.ownerWallet,
@@ -154,7 +173,8 @@ const getPlannedDistributions = async (input:DistributeRewardsInput): Promise<Ar
       epoch: rewardsDoc.epoch,
       accrualNetwork: 'mainnet',
       fromAccount: input.fromAccount,
-      assetId: input.sendAssetId
+      sentAssetId: input.sendAssetId,
+      accrualAssetId: rewardsDoc.assetId
     };
     return plannedSend;
   });
@@ -163,7 +183,7 @@ const getPlannedDistributions = async (input:DistributeRewardsInput): Promise<Ar
 
 const sendRewards = async (input: SendRewardsObject):Promise<SendRewardsResult> => {
   const {fromAccount, toWalletAddr, amount,
-    algodClient, accrualNetwork, epoch, assetId} = input;
+    algodClient, accrualNetwork, epoch, sentAssetId} = input;
   const params:SuggestedParams = await ((algodClient.getTransactionParams()) as unknown as JSONRequest).do() as SuggestedParams;
   const epochKey = getEpochKey(accrualNetwork, epoch);
   const enc = new TextEncoder();
@@ -175,7 +195,7 @@ const sendRewards = async (input: SendRewardsObject):Promise<SendRewardsResult> 
       undefined,
       amount,
       note,
-      assetId,
+      sentAssetId,
       params);
     // Must be signed by the account sending the asset
   const rawSignedTxn = xtxn.signTxn(fromAccount.sk);
@@ -189,7 +209,7 @@ const sendRewards = async (input: SendRewardsObject):Promise<SendRewardsResult> 
 
 const fakeSendRewards = async (input: SendRewardsObject):Promise<SendRewardsResult> => {
   const {fromAccount, toWalletAddr, amount,
-    algodClient, accrualNetwork, epoch, assetId} = input;
+    algodClient, accrualNetwork, epoch, accrualAssetId: assetId} = input;
   const params:SuggestedParams = await ((algodClient.getTransactionParams()) as unknown as JSONRequest).do() as SuggestedParams;
   const epochKey = getEpochKey(accrualNetwork, epoch);
   const enc = new TextEncoder();

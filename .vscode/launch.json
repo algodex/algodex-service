@@ -231,6 +231,16 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}/services/algodex-info-debug-server.js",
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Fake Distribute Rewards",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/built/bin/vest-and-distribute-rewards.js",
+            "args": "--dryRunWithDBSave"
         }
     ]
 }
