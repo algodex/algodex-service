@@ -15,12 +15,13 @@
     "start-tiny": "cross-env APP_CONTEXT=tinyman npm start",
     "test-local": "jest --testPathPattern=built/ --testPathIgnorePatterns=rewards-integration && npm run lint",
     "test": "npm run test-unit && npm run lint",
-    "test-unit": "jest --testPathPattern=built/ --testPathIgnorePatterns=verify-end-to-end --testPathIgnorePatterns=rewards-integration",
+    "test-unit": "jest --testPathPattern=built/ --testPathIgnorePatterns=verify-end-to-end --testPathIgnorePatterns=rewards-integration --testPathIgnorePatterns=get-planned-distributions",
     "dev-test": "jest --watch",
     "lint": "eslint src/*.js services/*.js bin/*.js views/**/*.js server.js",
     "prepare": "husky install",
     "check-types": "tsc --project jsconfig.json --maxNodeModuleJsDepth 0",
-    "run-end-to-end": "node built/bin/run-end-to-end-test.js --mode=heavy && jest -- built/src/__tests__/verify-end"
+    "run-end-to-end-heavy": "node built/bin/run-end-to-end-test.js --mode=heavy && jest -- built/src/__tests__/verify-end",
+    "run-end-to-end-light": "node built/bin/run-end-to-end-test.js --mode=light && jest -- built/src/__tests__/verify-end"
   },
   "author": "Michael Feher",
   "license": "UNLICENSED",

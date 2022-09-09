@@ -48,10 +48,12 @@ impl StateMachine {
         }
     }
     fn update_owner_wallet_algx_balances(&mut self, initial_state: &InitialState) {
-        while self.owner_wallet_step < initial_state.algx_balance_data.len() {
-            let owner_balance_entry = &initial_state.algx_balance_data[self.owner_wallet_step];
+        let InitialState{algx_balance_data, block_to_unix_time, ..} = initial_state;
+
+        while self.owner_wallet_step < algx_balance_data.len() {
+            let owner_balance_entry = &algx_balance_data[self.owner_wallet_step];
             let owner_wallet_time = get_time_from_round(
-                &initial_state.block_to_unix_time,
+                block_to_unix_time,
                 &owner_balance_entry.value.round,
             );
             if owner_wallet_time > self.timestep {
@@ -64,8 +66,10 @@ impl StateMachine {
     }
 
     fn update_algx_price(&mut self, initial_state: &InitialState) {
-        while self.algo_price_step < initial_state.tinyman_prices.len() {
-            let price_entry = &initial_state.tinyman_prices[self.algo_price_step];
+        let InitialState{tinyman_prices, ..} = initial_state;
+
+        while self.algo_price_step < tinyman_prices.len() {
+            let price_entry = &tinyman_prices[self.algo_price_step];
             if price_entry.unix_time > self.timestep {
                 break;
             }
@@ -88,19 +92,21 @@ impl StateMachine {
     }
 
     fn update_escrow_balances(&mut self, initial_state: &InitialState) -> bool {
+        let InitialState{changed_escrow_seq, unix_time_to_changed_escrows,
+            escrow_time_to_balance, ..} = initial_state;
         let mut escrow_did_change = false;
-        while self.escrow_step < initial_state.changed_escrow_seq.len()
-            && initial_state.changed_escrow_seq[self.escrow_step] <= self.timestep
+        while self.escrow_step < changed_escrow_seq.len()
+            && changed_escrow_seq[self.escrow_step] <= self.timestep
         {
-            let change_time = &initial_state.changed_escrow_seq[self.escrow_step];
+            let change_time = &changed_escrow_seq[self.escrow_step];
             let changed_escrows =
-                initial_state.unix_time_to_changed_escrows.get(change_time).unwrap();
+                unix_time_to_changed_escrows.get(change_time).unwrap();
             escrow_did_change = true;
             Self::update_balances(
                 changed_escrows,
                 change_time,
                 &mut self.escrow_to_balance,
-                &initial_state.escrow_time_to_balance,
+                escrow_time_to_balance,
             );
             self.escrow_step += 1;
         }

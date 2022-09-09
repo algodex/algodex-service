@@ -1,5 +1,18 @@
-const _ = require('lodash');
 
+export interface Rewards {
+  _id: string,
+  _rev?: string,
+  ownerWallet: string,
+  uptime: number,
+  depthSum: number,
+  qualitySum: number,
+  algxAvg: number,
+  qualityFinal: number,
+  epoch: number,
+  assetId: number,
+  earnedRewards: number,
+  earnedRewardsFormatted: number
+}
 const schema = {
   type: 'object',
   properties: {
@@ -11,9 +24,10 @@ const schema = {
     qualitySum: {type: 'number', minimum: 0},
     algxAvg: {type: 'number', minimum: 0},
     qualityFinal: {type: 'number', minimum: 0},
-    earnedRewards: {type: 'number', minimum: 0},
-    epoch: {type: 'number', minimum: 0},
-    assetId: {type: 'number', minimum: 0},
+    earnedRewards: {type: 'integer', minimum: 0}, // FIXME - update the script that stores this!
+    earnedRewardsFormatted: {type: 'number', minimum: 0},
+    epoch: {type: 'integer', minimum: 0},
+    assetId: {type: 'integer', minimum: 0},
   },
   required: ['_id', 'ownerWallet', 'uptime', 'depthSum',
     'qualitySum', 'algxAvg', 'qualityFinal', 'earnedRewards', 'epoch',
