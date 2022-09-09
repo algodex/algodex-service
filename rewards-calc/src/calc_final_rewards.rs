@@ -77,6 +77,7 @@ pub fn get_owner_rewards_res_to_final_rewards_entry(
         get_total_quality(state_machine, mainnet_period);
 
     let total_epoch_rewards = get_formatted_epoch_rewards(epoch);
+    // dbg!(&state_machine.owner_wallet_asset_to_quality_result);
 
     state_machine.owner_wallet_asset_to_quality_result.keys().for_each(|owner_wallet| {
         let owner_asset_entries =

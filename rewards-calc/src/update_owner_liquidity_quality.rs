@@ -182,27 +182,6 @@ fn get_analytics_per_escrow(
             true
         })
         .map(|escrow| {
-            let asset_id = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.asset_id;
-            let price = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.price;
-            let decimals = &escrow_addr_to_data.get(escrow).unwrap().data.asset_decimals;
-            let balance = escrow_to_balance.get(escrow).unwrap();
-            let owner_addr = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.owner_addr;
-            let owner_algx_balance =
-                AlgxBalance::from(*owner_wallet_to_algx_balance.get(owner_addr).unwrap_or(&0u64));
-            let spread = spreads.get(asset_id);
-            if spread.is_none() || spread.unwrap().ask.is_none() || spread.unwrap().bid.is_none() {
-                dbg!("{spread} {assetId}");
-                panic!("Invalid spread!");
-            }
-            let ask = spread.unwrap().ask.unwrap();
-            let bid = spread.unwrap().bid.unwrap();
-
-            let mid_market = (ask + bid) / 2.0;
-            let distance_from_spread = (price - mid_market).abs();
-            // The minimum spread is 10 basis points
-            let percent_distant = f64::max(0.001, distance_from_spread / mid_market);
-            let depth =
-                (*algo_price) * (*balance as f64) * *price / (10_f64.powf(*decimals as f64) as f64);
             let order_type = match escrow_addr_to_data
                 .get(escrow)
                 .unwrap()
@@ -214,6 +193,38 @@ fn get_analytics_per_escrow(
                 false => Ask,
             };
 
+            let asset_id = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.asset_id;
+            let price = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.price;
+            let asset_decimals = escrow_addr_to_data.get(escrow).unwrap().data.asset_decimals;
+            let order_amount_decimals = match order_type {
+                Ask => asset_decimals,
+                Bid => 6 // If this is a buy order, use algo num decimals which is 6
+            };
+            let balance = escrow_to_balance.get(escrow).unwrap();
+            let owner_addr = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.owner_addr;
+            let owner_algx_balance =
+                AlgxBalance::from(*owner_wallet_to_algx_balance.get(owner_addr).unwrap_or(&0u64));
+            let spread = spreads.get(asset_id);
+            if spread.is_none() || spread.unwrap().ask.is_none() || spread.unwrap().bid.is_none() {
+                dbg!("{spread} {assetId}");
+                panic!("Invalid spread!");
+            }
+            
+            let ask = spread.unwrap().ask.unwrap();
+            let bid = spread.unwrap().bid.unwrap();
+
+            let mid_market = (ask + bid) / 2.0;
+            let distance_from_spread = (price - mid_market).abs();
+            // The minimum spread is 10 basis points
+            let percent_distant = f64::max(0.001, distance_from_spread / mid_market);
+
+            // Need to adjust price based on differences between algo decimals and asset's decimals
+            // to be the decimal-formatted price.
+            let formatted_price = price / 10_f64.powf((6 - asset_decimals) as f64);
+            let depth =
+                (*algo_price) * (*balance as f64) * formatted_price 
+                    / (10_f64.powf(order_amount_decimals as f64) as f64);
+
             let is_eligible = check_is_eligible(
                 &percent_distant,
                 &order_type,
@@ -223,7 +234,7 @@ fn get_analytics_per_escrow(
             );
             let spread_multiplier = get_spread_multiplier(timestep, &percent_distant);
             let quality = match is_eligible {
-                true => spread_multiplier * depth / (percent_distant + 0.0001),
+                true => spread_multiplier * depth / percent_distant,
                 false => 0.0,
             };
             let bid_depth = match order_type {
