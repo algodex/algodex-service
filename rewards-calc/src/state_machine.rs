@@ -129,6 +129,23 @@ impl StateMachine {
         assets_with_balances
     }
 
+    fn get_assets_with_tolerable_spreads(&mut self, initial_state: &InitialState) -> HashSet<u32> {
+        let assets_with_tolerable_spreads: HashSet<u32> =
+            self.spreads.keys().filter(|asset_id| {
+                let spread = self.spreads.get(asset_id).unwrap();
+                if (spread.ask.is_none() || spread.bid.is_none()) {
+                    return false;
+                }
+                let ask = spread.ask.unwrap();
+                let bid = spread.bid.unwrap();
+                if ((ask - bid) / bid).abs() > 0.1 {
+                    return false;
+                }
+                return true;
+            }).cloned().collect();
+        assets_with_tolerable_spreads
+    }
+
     fn print_progress(&self, initial_state: &InitialState) {
         println!(
             "{}",
@@ -152,9 +169,9 @@ impl StateMachine {
             update_spreads(initial_state, self);
         }
 
-        let assets_with_balances = self.get_assets_with_balances(initial_state);
-
-        assets_with_balances.into_iter().for_each(|asset_id| {
+        // let assets_with_balances = self.get_assets_with_balances(initial_state);
+        let assets_with_tolerable_spreads = self.get_assets_with_tolerable_spreads(initial_state);
+        assets_with_tolerable_spreads.into_iter().for_each(|asset_id| {
             update_owner_wallet_quality_per_asset(&asset_id, self, initial_state);
         });
 
