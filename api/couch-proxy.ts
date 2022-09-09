@@ -22,72 +22,6 @@ const getDatabase = (dbname:string) => {
   return db
 }
 
-// {
-//   "_id": "da42b5aa00230629bb6b9175a30374db",
-//   "_rev": "5-5e5d6fb9e29d0025c6c25e983e3979a6",
-//   "ownerWallet": "KJMDX5PTKZCK3DMQXQ6JYSIDLVZOK5WX6FHGF7ZWPN2ROILIMO6GNBZLHA",
-//   "uptime": 2843,
-//   "depthSum": 1298.4046350579222,
-//   "qualitySum": 28538621675447583000,
-//   "algxAvg": 0,
-//   "qualityFinal": 8241412412,
-//   "earnedRewards": 2500,
-//   "epoch": 2,
-//   "assetId": 31566704
-// }
-
-
-// {
-//   "owner_rewards": {
-//     "2FBOYGB2JIPNU4CGSYRY535CNYCRGD3WKPUAHDC34Q4IVCC7FK4JGSCAPU": {
-//       "312769": {
-//         "algxBalanceSum": {
-//           "val": 0
-//         },
-//         "qualitySum": {
-//           "val": 1297.177484663885
-//         },
-//         "uptime": {
-//           "val": 7
-//         },
-//         "depth": {
-//           "val": 0.06810756989259556
-//         },
-//         "has_bid": true,
-//         "has_ask": true
-//       }
-//     },
-	
-	
-// 	req.body.ownerRewardsResToFinalRewardsEntry
-	
-	
-// 	'{
-//   "{\"wallet\":\"A2JKOEI4L3FUZWENDCRABY5XB7ZWIRD2RAHTVJYDRLWBNILDCK67WAD6YA\",\"assetId\":31566704}": {
-//     "quality": {
-//       "val": 2.9285939969433757e+24
-//     },
-//     "earned_algx": {
-//       "val": 81
-//     }
-//   },
-  
-  
-  
-//   {
-//   "_id": "da42b5aa00230629bb6b9175a30374db",
-//   "_rev": "5-5e5d6fb9e29d0025c6c25e983e3979a6",
-//   "ownerWallet": "KJMDX5PTKZCK3DMQXQ6JYSIDLVZOK5WX6FHGF7ZWPN2ROILIMO6GNBZLHA",
-//   "uptime": 2843,
-//   "depthSum": 1298.4046350579222,
-//   "qualitySum": 28538621675447583000,
-//   "algxAvg": 0,
-//   "qualityFinal": 8241412412,
-//   "earnedRewards": 2500,
-//   "epoch": 2,
-//   "assetId": 31566704
-// }
-
 
 interface WrappedNumber {
   val: number
@@ -225,6 +159,112 @@ app.post('/save_rewards', async (req, res) => {
   res.sendStatus(200);
 });
 
+const isOptedIn = async (wallet:string):Promise<boolean> => {
+  const db = getDatabase('blocks');
+  const data = await db.query('blocks/algxRewardsOptin', {
+    key: wallet,
+    limit: 1,
+  });
+
+  const optedIn = data.rows.length > 0 && data.rows[0].key === wallet && data.rows[0].value === 1;
+  return optedIn;
+}
+
+const getAlgxBalance = async (wallet:string):Promise<number> => {
+  const db = getDatabase('algx_balance');
+  const data = await db.query('algx_balance/algx_balance', {
+    key: wallet,
+    limit: 1,
+    reduce: true
+  });
+
+  const algxBalance:number = data.rows.length > 0 ? data.rows[0].value.balance : 0;
+  return algxBalance;
+}
+
+interface Order {
+  "ownerAddress": string,
+  "escrowAddress": string,
+  "algoAmount": number,
+  "asaAmount": number,
+  "assetLimitPriceD": number,
+  "assetLimitPriceN": number,
+  "asaPrice": number,
+  "formattedPrice": number,
+  "formattedASAAmount": number,
+  "round": number,
+  "unix_time": number,
+  "decimals": number,
+  "version": string,
+  "isAlgoBuyEscrow": boolean,
+  "assetId": number
+}
+
+const getOpenOrders = async (wallet:string):Promise<Array<Order>> => {
+  const db = getDatabase('formatted_escrow');
+  const data = await db.query('formatted_escrow/orders', {
+    key: ['ownerAddr', wallet],
+  });
+
+  return data.rows.map(entry => entry.value);
+}
+
+app.get('/rewards/is_accruing/:wallet', async (req, res) => {
+  const {wallet} = req.params;
+
+  res.setHeader('Content-Type', 'application/json');
+  const optedIntoRewards = await isOptedIn(wallet);
+  if (!optedIntoRewards) {
+    const retdata = {
+      wallet, optedIntoRewards, isAccruingRewards: false, 
+      notAccruingReason: 'Not opted into ALGX rewards'
+    };
+    res.end(JSON.stringify(retdata));
+    return;
+  }
+
+  const algxBalance = await getAlgxBalance(wallet);
+  if (algxBalance < (3000 * 1000000)) { // 3,000 ALGX
+    const retdata = {
+      wallet, optedIntoRewards, isAccruingRewards: false, 
+      notAccruingReason: `Insufficient ALGX Balance. Must be over 3000. Current balance: ${algxBalance}`
+    };
+    res.end(JSON.stringify(retdata));
+    return;
+  }
+
+  const openOrders = await getOpenOrders(wallet);
+
+  const openOrdersByAsset = openOrders.reduce((assetToOrders, order) => {
+      const { assetId } = order;
+      const ordersArr = assetToOrders.get(assetId) || new Array<Order>();
+      assetToOrders.set(assetId, ordersArr);
+      ordersArr.push(order);
+      return assetToOrders;
+  }, new Map<number,Array<Order>>);
+
+  const assetsWithBidAndAsk = Array.from(openOrdersByAsset.keys()).filter(assetId => {
+    const orders = openOrdersByAsset.get(assetId);
+    const hasBuyOrder = orders.find(order => order.isAlgoBuyEscrow) !== undefined;
+    const hasSellOrder = orders.find(order => !order.isAlgoBuyEscrow) !== undefined;
+    return hasBuyOrder && hasSellOrder;
+  });
+  if (assetsWithBidAndAsk.length == 0) {
+    const retdata = {
+      wallet, optedIntoRewards, algxBalance, isAccruingRewards: false, 
+      notAccruingReason: `Must have both a buy and sell order for any given trading pair to accrue rewards.` 
+    };
+    res.end(JSON.stringify(retdata));
+    return;
+  }
+
+  const retdata = {
+    wallet, optedIntoRewards, algxBalance, isAccruingRewards: true, assetsAccruingRewards: assetsWithBidAndAsk
+  };
+  res.end(JSON.stringify(retdata));
+  return;
+});
+
 app.get('/wallets/leaderboard', async (req, res) => {
   const db = getDatabase('rewards');
   const topWallets = await db.query('rewards/topWallets', {
@@ -240,13 +280,7 @@ app.get('/wallets/leaderboard', async (req, res) => {
 app.get('/rewards/optin/:wallet', async (req, res) => {
   const {wallet} = req.params;
 
-  const db = getDatabase('blocks');
-  const data = await db.query('blocks/algxRewardsOptin', {
-    key: wallet,
-    limit: 1,
-  });
-
-  const optedIn = data.rows.length > 0 && data.rows[0].key === wallet && data.rows[0].value === 1;
+  const optedIn = await isOptedIn(wallet);
 
   res.setHeader('Content-Type', 'application/json');
   const retdata = {

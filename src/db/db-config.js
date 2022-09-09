@@ -79,6 +79,10 @@ const databases = [
           map: require('../../views/formatted_orders/openOrderCount-map').toString(),
           reduce: '_count',
         },
+        spreads: {
+          map: require('../../views/formatted_orders/spreads-map').toString(),
+          reduce: require('../../views/formatted_orders/spreads-reduce').toString(),
+        },
       },
     },
   },
