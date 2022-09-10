@@ -287,7 +287,7 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
   if (assetsWithBidAndAsk.length == 0) {
     const retdata = {
       wallet, optedIntoRewards, algxBalance, isAccruingRewards: false, 
-      notAccruingReason: `Must have both a buy and sell order for any given trading pair, with minimum USD$50 bid and $100 ask, at a bid/ask spread less than 10%, to accrue rewards.` 
+      notAccruingReason: `Must have both a buy and sell order for any given trading pair, with minimum USD$50 bid and $100 ask, at a bid/ask spread less than 5%, to accrue rewards.` 
     };
     res.end(JSON.stringify(retdata));
     return;
