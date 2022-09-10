@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use crate::{
     epoch::get_seconds_in_epoch,
@@ -8,6 +8,27 @@ use crate::{
         EarnedAlgxEntry, MainnetPeriod, OwnerRewardsKey, OwnerWalletAssetQualityResult,
     },
 };
+
+lazy_static! {
+    static ref US_LISTED_ASSETS_SET:HashSet<u32> = {
+        let mut s = HashSet::new();
+        s.insert(31566704); //USDC
+        s.insert(465865291); //STBL
+        s.insert(386192725); //goBTC
+        s.insert(386195940); //goETH
+        s.insert(793124631); //gALGO
+        s.insert(441139422); //goMINT
+        s.insert(312769); //USDT
+        s
+    };
+}
+
+fn get_asset_grade_multiplier(asset_id: &u32) -> u8 {
+    if US_LISTED_ASSETS_SET.contains(asset_id) {
+        return 3;
+    }
+    return 1;
+}
 
 fn get_total_quality(
     state_machine: &StateMachine,
@@ -33,6 +54,7 @@ fn get_total_quality(
                 let algx_avg = (algx_balance_sum.val() as f64) / (get_seconds_in_epoch() as f64);
                 let uptime_str = format!("{}", uptime.val());
                 let uptimef64 = uptime_str.parse::<f64>().unwrap();
+                let asset_grade = get_asset_grade_multiplier(asset_id);
                 let quality_final = Quality::from(match mainnet_period {
                     MainnetPeriod::Version1 => {
                         quality_sum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3)
@@ -42,6 +64,7 @@ fn get_total_quality(
                             * uptimef64.powi(5)
                             * depth.val().powf(0.3)
                             * algx_avg.powf(0.2)
+                            * asset_grade as f64
                     }
                 });
                 let owner_rewards_key =
