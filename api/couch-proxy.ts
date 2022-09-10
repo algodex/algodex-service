@@ -265,7 +265,7 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
     const highestBid = buyOrders[0];
     const lowestAsk = sellOrders[0];
     const spread = Math.abs((highestBid.asaPrice - lowestAsk.asaPrice) / highestBid.asaPrice);
-    if (spread > 0.1) {
+    if (spread > 0.05) {
       return false;
     }
 
@@ -283,7 +283,7 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
     }
     return true;
   });
-  
+
   if (assetsWithBidAndAsk.length == 0) {
     const retdata = {
       wallet, optedIntoRewards, algxBalance, isAccruingRewards: false, 
