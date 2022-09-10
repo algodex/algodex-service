@@ -209,10 +209,19 @@ const getOpenOrders = async (wallet:string):Promise<Array<Order>> => {
   return data.rows.map(entry => entry.value);
 }
 
+const getAlgoPrice = async():Promise<number> => {
+  const tinyManUrl = 'https://mainnet.analytics.tinyman.org/api/v1/current-asset-prices/';
+  const pricesReq = await fetch(tinyManUrl);
+  const prices = await pricesReq.json();
+  return prices[0].price;
+}
+
 app.get('/rewards/is_accruing/:wallet', async (req, res) => {
   const {wallet} = req.params;
 
   res.setHeader('Content-Type', 'application/json');
+  const algoPrice = await getAlgoPrice();
+
   const optedIntoRewards = await isOptedIn(wallet);
   if (!optedIntoRewards) {
     const retdata = {
@@ -245,14 +254,40 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
 
   const assetsWithBidAndAsk = Array.from(openOrdersByAsset.keys()).filter(assetId => {
     const orders = openOrdersByAsset.get(assetId);
-    const hasBuyOrder = orders.find(order => order.isAlgoBuyEscrow) !== undefined;
-    const hasSellOrder = orders.find(order => !order.isAlgoBuyEscrow) !== undefined;
-    return hasBuyOrder && hasSellOrder;
+    const buyOrders = orders.filter(order => order.isAlgoBuyEscrow);
+    const sellOrders = orders.filter(order => !order.isAlgoBuyEscrow);
+    if (buyOrders.length == 0 || sellOrders.length == 0) {
+      return false;
+    }
+    buyOrders.sort((a,b) => b.asaPrice - a.asaPrice);
+    sellOrders.sort((a,b) => a.asaPrice - b.asaPrice);
+
+    const highestBid = buyOrders[0];
+    const lowestAsk = sellOrders[0];
+    const spread = Math.abs((highestBid.asaPrice - lowestAsk.asaPrice) / highestBid.asaPrice);
+    if (spread > 0.1) {
+      return false;
+    }
+
+    const buyDepth = (order:Order):number => 
+      order.algoAmount/1000000 * algoPrice;
+    const sellDepth = (order:Order):number => 
+      order.asaPrice * order.asaAmount * algoPrice / (10**(6-order.decimals));
+
+    if (!buyOrders.find(order => buyDepth(order) >= 50)) {
+      return false;
+    }
+
+    if (!sellOrders.find(order => sellDepth(order) >= 100)) {
+      return false;
+    }
+    return true;
   });
+  
   if (assetsWithBidAndAsk.length == 0) {
     const retdata = {
       wallet, optedIntoRewards, algxBalance, isAccruingRewards: false, 
-      notAccruingReason: `Must have both a buy and sell order for any given trading pair to accrue rewards.` 
+      notAccruingReason: `Must have both a buy and sell order for any given trading pair, with minimum USD$50 bid and $100 ask, at a bid/ask spread less than 10%, to accrue rewards.` 
     };
     res.end(JSON.stringify(retdata));
     return;
