@@ -223,14 +223,14 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
   const algoPrice = await getAlgoPrice();
 
   const optedIntoRewards = await isOptedIn(wallet);
-  if (!optedIntoRewards) {
-    const retdata = {
-      wallet, optedIntoRewards, isAccruingRewards: false, 
-      notAccruingReason: 'Not opted into ALGX rewards'
-    };
-    res.end(JSON.stringify(retdata));
-    return;
-  }
+  // if (!optedIntoRewards) {
+  //   const retdata = {
+  //     wallet, optedIntoRewards, isAccruingRewards: false, 
+  //     notAccruingReason: 'Not opted into ALGX rewards'
+  //   };
+  //   res.end(JSON.stringify(retdata));
+  //   return;
+  // }
 
   const algxBalance = await getAlgxBalance(wallet);
   if (algxBalance < (3000 * 1000000)) { // 3,000 ALGX
