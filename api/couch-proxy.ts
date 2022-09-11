@@ -245,7 +245,7 @@ const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> =
       if (maxOrder == null) {
         maxOrder = order;
       }
-      if (order.formattedPrice > maxOrder.formattedPrice) {
+      if (parseFloat(order.formattedPrice) > parseFloat(maxOrder.formattedPrice)) {
         maxOrder = order;
       }
       return maxOrder;
@@ -254,7 +254,7 @@ const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> =
       if (minOrder == null) {
         minOrder = order;
       }
-      if (order.formattedPrice < minOrder.formattedPrice) {
+      if (parseFloat(order.formattedPrice) < parseFloat(minOrder.formattedPrice)) {
         minOrder = order;
       }
       return minOrder;
