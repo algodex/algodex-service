@@ -223,6 +223,18 @@ interface Spread {
   highestBid:HighestBid,
   lowestAsk:LowestAsk
 }
+
+interface V1OrdersInnerResult {
+  formattedPrice:string
+}
+interface V1OrdersResult {
+  buyASAOrdersInEscrow:Array<V1OrdersInnerResult>,
+  sellASAOrdersInEscrow:Array<V1OrdersInnerResult>,
+  assetId:number,
+  timer:NodeJS.Timeout
+}
+const cachedAssetIdToSpread = new Map<number, V1OrdersResult>();
+
 const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> => {
   const db = getDatabase('formatted_escrow');
   const data = await db.query('formatted_escrow/spreads', {
@@ -231,14 +243,26 @@ const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> =
     group: true
   });
 
-  const promises = assetIds.map(assetId => 
-    fetch(`https://app.algodex.com/algodex-backend/orders.php?assetId=${assetId}`)
-    .then(async (res) => {
-      const json = await res.json();
-      json.assetId = assetId;
-      return json;
-    }));
-  let results = await Promise.all(promises);
+  const promises:Array<Promise<V1OrdersResult>> = assetIds.map(assetId => {
+    if (cachedAssetIdToSpread.has(assetId)) {
+      clearTimeout(cachedAssetIdToSpread.get(assetId).timer);
+      cachedAssetIdToSpread.get(assetId).timer = setTimeout(() => {
+        cachedAssetIdToSpread.delete(assetId);
+      }, 60*1000);
+      return new Promise((resolve) => resolve(cachedAssetIdToSpread.get(assetId)));
+    }
+    return fetch(`https://app.algodex.com/algodex-backend/orders.php?assetId=${assetId}`)
+      .then(async (res) => {
+        const json = await res.json();
+        json.assetId = assetId;
+        json.timer = setTimeout(() => {
+          cachedAssetIdToSpread.delete(assetId);
+        }, 60*1000);
+        cachedAssetIdToSpread.set(assetId, json);
+        return json;
+      })
+  });
+  let results:Array<V1OrdersResult> = await Promise.all(promises);
 
   const map = results.reduce((map, result) => {
     const highestBid = result.buyASAOrdersInEscrow.reduce((maxOrder, order) => {
