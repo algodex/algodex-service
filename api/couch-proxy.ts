@@ -285,11 +285,11 @@ const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> =
     }, null);
     const spread:Spread = {
       highestBid: {
-        maxPrice: parseFloat(highestBid.formattedPrice),
+        maxPrice: highestBid.formattedPrice ? parseFloat(highestBid.formattedPrice) : null,
         isAlgoBuyEscrow: true
       },
       lowestAsk: {
-        minPrice: parseFloat(lowestAsk.formattedPrice),
+        minPrice: highestBid.formattedPrice ? parseFloat(lowestAsk.formattedPrice) : null,
         isAlgoBuyEscrow: false
       }
     };
