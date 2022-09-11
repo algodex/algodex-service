@@ -40,7 +40,7 @@ const getRoundsWithNoDataSets = async (minRound: number, maxRound: number): Prom
 
   const roundsWithNoData =
   await metadataDB.query('block_custom_metadata/blocks_without_changes',
-      {startKey: minRound, endKey: maxRound} );
+      {startkey: minRound, endkey: maxRound} );
 
   const retmap = roundsWithNoData.rows.reduce((map:Map<number,Set<ChangesType>>, entry:DBViewEntry) => {
     const changesType = entry.value.changesType;
