@@ -210,13 +210,14 @@ const getOpenOrders = async (wallet:string):Promise<Array<Order>> => {
 }
 
 
+
 interface HighestBid {
   maxPrice: number,
-  isAlgoBuyEscrow: 'true',
+  isAlgoBuyEscrow: boolean,
 }
 interface LowestAsk {
   minPrice: number,
-  isAlgoBuyEscrow: 'false',
+  isAlgoBuyEscrow: boolean,
 }
 interface Spread {
   highestBid:HighestBid,
@@ -230,16 +231,60 @@ const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> =
     group: true
   });
 
-  return data.rows.reduce((map, row) => {
-    map.set(row.key, row.value);
+  const promises = assetIds.map(assetId => 
+    fetch(`https://app.algodex.com/algodex-backend/orders.php?assetId=${assetId}`)
+    .then(async (res) => {
+      const json = await res.json();
+      json.assetId = assetId;
+      return json;
+    }));
+  let results = await Promise.all(promises);
+
+  const map = results.reduce((map, result) => {
+    const highestBid = result.buyASAOrdersInEscrow.reduce((maxOrder, order) => {
+      if (maxOrder == null) {
+        maxOrder = order;
+      }
+      if (order.formattedPrice > maxOrder.formattedPrice) {
+        maxOrder = order;
+      }
+      return maxOrder;
+    }, null);
+    const lowestAsk = result.sellASAOrdersInEscrow.reduce((minOrder, order) => {
+      if (minOrder == null) {
+        minOrder = order;
+      }
+      if (order.formattedPrice < minOrder.formattedPrice) {
+        minOrder = order;
+      }
+      return minOrder;
+    }, null);
+    const spread:Spread = {
+      highestBid: {
+        maxPrice: parseFloat(highestBid.formattedPrice),
+        isAlgoBuyEscrow: true
+      },
+      lowestAsk: {
+        minPrice: parseFloat(lowestAsk.formattedPrice),
+        isAlgoBuyEscrow: false
+      }
+    };
+    map.set(result.assetId, spread);
     return map;
   }, new Map<number, Spread>);
+  return map;
 }
+//   return data.rows.reduce((map, row) => {
+//     map.set(row.key, row.value);
+//     return map;
+//   }, new Map<number, Spread>);
+// }
 
 const getAlgoPrice = async():Promise<number> => {
   const tinyManUrl = 'https://mainnet.analytics.tinyman.org/api/v1/current-asset-prices/';
   const pricesReq = await fetch(tinyManUrl);
   const prices = await pricesReq.json();
+
   return prices[0].price;
 }
 
@@ -294,6 +339,12 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
     // const highestBid = buyOrders[0];
     // const lowestAsk = sellOrders[0];
     const spread = assetIdToSpread.get(assetId);
+    if (!spread?.highestBid?.maxPrice || !spread?.lowestAsk?.minPrice) {
+      res.status(500);
+      const retdata = {'serverError': 'Sync issue in backend. Please contact Algodex support'};
+      res.end(JSON.stringify(retdata));
+      return;
+    }
     const midpoint = (spread.highestBid.maxPrice + spread.lowestAsk.minPrice) / 2;
     const getSpread = (order:Order):number => 
       Math.abs((order.formattedPrice - midpoint) / midpoint);
