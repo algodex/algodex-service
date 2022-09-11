@@ -292,7 +292,21 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
   const {wallet} = req.params;
 
   res.setHeader('Content-Type', 'application/json');
-  const algoPrice = await getAlgoPrice();
+
+  const algoPrice:number = await (async () => {
+    try {
+      const algoPrice = await getAlgoPrice();
+      return algoPrice;
+    } catch (e) {
+      res.status(500);
+      const retdata = {'serverError': 'Cannot fetch prices from Tinyman'};
+      res.end(JSON.stringify(retdata));
+      return;
+    }
+  })();
+  if (!algoPrice) {
+    return;
+  }
 
   const optedIntoRewards = await isOptedIn(wallet);
   // if (!optedIntoRewards) {
@@ -314,7 +328,19 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
     return;
   }
 
-  const openOrders = await getOpenOrders(wallet);
+  const openOrders = await (async () => {
+    try {
+      return await getOpenOrders(wallet);
+    } catch (e) {
+        res.status(500);
+        const retdata = {'serverError': 'Cannot fetch open orders'};
+        res.end(JSON.stringify(retdata));
+        return;
+    }
+  })();
+  if (!openOrders) {
+    return;
+  }
 
   const openOrdersByAsset = openOrders.reduce((assetToOrders, order) => {
       const { assetId } = order;
