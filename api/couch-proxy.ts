@@ -209,6 +209,33 @@ const getOpenOrders = async (wallet:string):Promise<Array<Order>> => {
   return data.rows.map(entry => entry.value);
 }
 
+
+interface HighestBid {
+  maxPrice: number,
+  isAlgoBuyEscrow: 'true',
+}
+interface LowestAsk {
+  minPrice: number,
+  isAlgoBuyEscrow: 'false',
+}
+interface Spread {
+  highestBid:HighestBid,
+  lowestAsk:LowestAsk
+}
+const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> => {
+  const db = getDatabase('formatted_escrow');
+  const data = await db.query('formatted_escrow/spreads', {
+    keys: assetIds,
+    reduce: true,
+    group: true
+  });
+
+  return data.rows.reduce((map, row) => {
+    map.set(row.key, row.value);
+    return map;
+  }, new Map<number, Spread>);
+}
+
 const getAlgoPrice = async():Promise<number> => {
   const tinyManUrl = 'https://mainnet.analytics.tinyman.org/api/v1/current-asset-prices/';
   const pricesReq = await fetch(tinyManUrl);
@@ -252,7 +279,9 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
       return assetToOrders;
   }, new Map<number,Array<Order>>);
 
-  const assetsWithBidAndAsk = Array.from(openOrdersByAsset.keys()).filter(assetId => {
+  const assetIds = Array.from(openOrdersByAsset.keys());
+  const assetIdToSpread = await getSpreads(assetIds);
+  const assetsWithBidAndAsk = assetIds.filter(assetId => {
     const orders = openOrdersByAsset.get(assetId);
     const buyOrders = orders.filter(order => order.isAlgoBuyEscrow);
     const sellOrders = orders.filter(order => !order.isAlgoBuyEscrow);
@@ -262,23 +291,23 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
     buyOrders.sort((a,b) => b.asaPrice - a.asaPrice);
     sellOrders.sort((a,b) => a.asaPrice - b.asaPrice);
 
-    const highestBid = buyOrders[0];
-    const lowestAsk = sellOrders[0];
-    const spread = Math.abs((highestBid.asaPrice - lowestAsk.asaPrice) / highestBid.asaPrice);
-    if (spread > 0.05) {
-      return false;
-    }
+    // const highestBid = buyOrders[0];
+    // const lowestAsk = sellOrders[0];
+    const spread = assetIdToSpread.get(assetId);
+    const midpoint = (spread.highestBid.maxPrice + spread.lowestAsk.minPrice) / 2;
+    const getSpread = (order:Order):number => 
+      Math.abs((order.formattedPrice - midpoint) / midpoint);
 
     const buyDepth = (order:Order):number => 
       order.algoAmount/1000000 * algoPrice;
     const sellDepth = (order:Order):number => 
       order.asaPrice * order.asaAmount * algoPrice / (10**(6-order.decimals));
 
-    if (!buyOrders.find(order => buyDepth(order) >= 50)) {
+    if (!buyOrders.find(order => buyDepth(order) >= 50 && getSpread(order) < 0.05)) {
       return false;
     }
 
-    if (!sellOrders.find(order => sellDepth(order) >= 100)) {
+    if (!sellOrders.find(order => sellDepth(order) >= 100 && getSpread(order) < 0.05)) {
       return false;
     }
     return true;
@@ -287,7 +316,8 @@ app.get('/rewards/is_accruing/:wallet', async (req, res) => {
   if (assetsWithBidAndAsk.length == 0) {
     const retdata = {
       wallet, optedIntoRewards, algxBalance, isAccruingRewards: false, 
-      notAccruingReason: `Must have both a buy and sell order for any given trading pair, with minimum USD$50 bid and $100 ask, at a bid/ask spread less than 5%, to accrue rewards.` 
+      notAccruingReason: `Must have both a buy and sell order for any given trading pair, with minimum USD$50 bid and $100 ask, at a bid/ask spread less than 5%,` 
+       + ` to accrue rewards. The spread is defined as the distance between your order's price and the midpoint of the lowest ask and highest bid of the orderbook.` 
     };
     res.end(JSON.stringify(retdata));
     return;
