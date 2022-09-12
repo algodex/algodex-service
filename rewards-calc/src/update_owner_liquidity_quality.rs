@@ -39,6 +39,7 @@ pub struct OwnerWalletAssetQualityResult {
     pub quality_sum: Quality,
     pub uptime: Uptime,
     pub depth: Depth,
+    pub sum_depth: Depth,
     pub has_bid: bool,
     pub has_ask: bool,
 }
@@ -50,6 +51,7 @@ impl Default for OwnerWalletAssetQualityResult {
             quality_sum: Quality::from(0.0),
             uptime: Uptime::from(0),
             depth: Depth::from(0.0),
+            sum_depth: Depth::from(0.0),
             has_bid: false,
             has_ask: false,
         }
@@ -342,10 +344,12 @@ fn update_owner_wallet_quality(
         owner_entry.quality_sum += *quality;
         if total_bid_depth.val() > 0.0 {
             owner_entry.depth += bid_depth.as_depth() / total_bid_depth.as_depth();
+            owner_entry.sum_depth += bid_depth.as_depth();
             owner_entry.has_bid = true;
         }
         if total_ask_depth.val() > 0.0 {
             owner_entry.depth += ask_depth.as_depth() / total_ask_depth.as_depth();
+            owner_entry.sum_depth += ask_depth.as_depth();
             owner_entry.has_ask = true;
         }
         if quality.val() >= 0.0000001 {

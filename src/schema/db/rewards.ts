@@ -27,11 +27,12 @@ const schema = {
     earnedRewards: {type: 'integer', minimum: 0}, // FIXME - update the script that stores this!
     earnedRewardsFormatted: {type: 'number', minimum: 0},
     epoch: {type: 'integer', minimum: 0},
-    assetId: {type: 'integer', minimum: 0},
+    accrualAssetId: {type: 'integer', minimum: 0},
+    rewardsAssetId: {type: 'integer', minimum: 0},
   },
-  required: ['_id', 'ownerWallet', 'uptime', 'depthSum',
-    'qualitySum', 'algxAvg', 'qualityFinal', 'earnedRewards', 'epoch',
-    'assetId'],
+  required: ['_id', 'ownerWallet', 'uptime', 'depthSum', 'accrualAssetId', 'rewardsAssetId',
+    'qualitySum', 'algxAvg', 'qualityFinal', 'earnedRewardsFormatted', 'epoch',
+   ],
 };
 
 module.exports = () => {

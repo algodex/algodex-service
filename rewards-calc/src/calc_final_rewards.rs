@@ -14,6 +14,7 @@ lazy_static! {
         let mut s = HashSet::new();
         s.insert(31566704); //USDC
         s.insert(465865291); //STBL
+        
         s.insert(386192725); //goBTC
         s.insert(386195940); //goETH
         s.insert(793124631); //gALGO
@@ -26,6 +27,9 @@ lazy_static! {
 fn get_asset_grade_multiplier(asset_id: &u32) -> u8 {
     if US_LISTED_ASSETS_SET.contains(asset_id) {
         return 3;
+    }
+    if *asset_id == 724480511 { // ALGX gives 2x rewards
+        return 2;
     }
     return 1;
 }
