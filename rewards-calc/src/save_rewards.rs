@@ -13,7 +13,7 @@ use serde_json_any_key::*;
 use std::fs::File;
 use std::io::prelude::*;
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 struct SaveRewardsEntry {
     #[serde(with = "any_key_map")]
@@ -69,7 +69,7 @@ pub async fn save_rewards(
     Ok(resp)
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, Debug, PartialEq)]
 #[serde(rename_all = "camelCase")]
 struct FlattenedFinalRewardsEntry {
     asset_id: u32,

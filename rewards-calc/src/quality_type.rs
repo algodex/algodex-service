@@ -48,13 +48,13 @@ pub struct AlgxBalance {
     val: u64,
 }
 
-#[derive(Debug, Copy, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Serialize, Deserialize)]
 pub struct EarnedAlgx {
-    val: u64,
+    val: f64,
 }
 
 #[duplicate_item(name; [BidDepth]; [AskDepth]; [Depth];
-  [Quality]; [Price])]
+  [Quality]; [Price]; [EarnedAlgx])]
 impl name {
     pub fn from(val: f64) -> Self {
         Self { val }
@@ -64,7 +64,7 @@ impl name {
     }
 }
 
-#[duplicate_item(name; [Uptime]; [AlgxBalance]; [EarnedAlgx])]
+#[duplicate_item(name; [Uptime]; [AlgxBalance])]
 impl name {
     pub fn from(val: u64) -> Self {
         Self { val }
@@ -82,7 +82,7 @@ impl name {
 }
 
 #[duplicate_item(name; [BidDepth]; [AskDepth]; [Price];
-  [Quality]; [Depth];)]
+  [Quality]; [Depth]; [EarnedAlgx])]
 impl PartialEq for name {
     fn eq(&self, other: &Self) -> bool {
         let res = ulps_eq!(self.val, other.val, max_ulps = 15);

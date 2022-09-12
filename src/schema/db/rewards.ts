@@ -29,7 +29,7 @@ const schema = {
     epoch: {type: 'integer', minimum: 0},
     accrualAssetId: {type: 'integer', minimum: 0},
     rewardsAssetId: {type: 'integer', minimum: 0},
-    updatedAt: {type: 'string', minimum: 0},
+    updatedAt: {type: 'string'},
   },
   required: ['_id', 'ownerWallet', 'uptime', 'depthSum', 'accrualAssetId', 'rewardsAssetId',
     'qualitySum', 'algxAvg', 'qualityFinal', 'earnedRewardsFormatted', 'epoch', 'updatedAt'

@@ -25,7 +25,7 @@ pub struct OwnerRewardsKey {
     pub asset_id: u32,
 }
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct EarnedAlgxEntry {
     pub quality: Quality,
