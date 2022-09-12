@@ -119,22 +119,6 @@ impl StateMachine {
         escrow_did_change
     }
 
-    fn get_assets_with_balances(&mut self, initial_state: &InitialState) -> HashSet<u32> {
-        let assets_with_balances: HashSet<u32> =
-            self.escrow_to_balance.keys().fold(HashSet::new(), |mut set, escrow| {
-                let asset_id = initial_state
-                    .escrow_addr_to_data
-                    .get(escrow)
-                    .unwrap()
-                    .data
-                    .escrow_info
-                    .asset_id;
-                set.insert(asset_id);
-                set
-            });
-        assets_with_balances
-    }
-
     fn get_assets_with_tolerable_spreads(&mut self, _initial_state: &InitialState) -> HashSet<u32> {
         let assets_with_tolerable_spreads: HashSet<u32> = self
             .spreads
