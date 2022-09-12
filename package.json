@@ -31,6 +31,7 @@
     "@bull-board/express": "^3.11.1",
     "@pactfi/pactsdk": "^0.2.2",
     "algosdk": "^1.16.0",
+    "axios": "^0.27.2",
     "bullmq": "^1.50.2",
     "cli-progress": "^3.11.2",
     "commander": "^8.2.0",
