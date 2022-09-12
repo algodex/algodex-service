@@ -198,10 +198,10 @@ fn get_analytics_per_escrow(
             let asset_id = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.asset_id;
             let price = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.price;
             let asset_decimals = escrow_addr_to_data.get(escrow).unwrap().data.asset_decimals;
-            let order_amount_decimals = match order_type {
-                Ask => asset_decimals,
-                Bid => 6, // If this is a buy order, use algo num decimals which is 6
-            };
+            // let asse = match order_type {
+            //     Ask => asset_decimals,
+            //     Bid => 6, // If this is a buy order, use algo num decimals which is 6
+            // };
             let balance = escrow_to_balance.get(escrow).unwrap();
             let owner_addr = &escrow_addr_to_data.get(escrow).unwrap().data.escrow_info.owner_addr;
             let owner_algx_balance =
@@ -223,9 +223,12 @@ fn get_analytics_per_escrow(
             // Need to adjust price based on differences between algo decimals and asset's decimals
             // to be the decimal-formatted price.
             let formatted_price = price / 10_f64.powf((6i8 - asset_decimals as i8) as f64);
-            let depth = (*algo_price) * (*balance as f64) * formatted_price
-                / (10_f64.powf(order_amount_decimals as f64) as f64);
-
+            let depth = match order_type {
+                Ask => (*algo_price) * (*balance as f64) * formatted_price 
+                    / 10_f64.powf(asset_decimals as f64),
+                Bid => (*algo_price) * (*balance as f64) / 1_000_000.0
+            };
+            // println!("{} {} {} {}", *algo_price, *balance, formatted_price, 10_f64.powf(asset_decimals as f64));
             let is_eligible = check_is_eligible(
                 &percent_distant,
                 &order_type,
