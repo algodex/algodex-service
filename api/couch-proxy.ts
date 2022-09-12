@@ -1,3 +1,4 @@
+import { get_rewards_per_epoch, save_rewards } from "./rewards";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config();
@@ -25,68 +26,6 @@ const getDatabase = (dbname:string) => {
   return db
 }
 
-
-interface WrappedNumber {
-  val: number
-}
-
-interface OwnerRewardsResult {
-  algxBalanceSum: WrappedNumber,
-  qualitySum: WrappedNumber,
-  uptime: WrappedNumber,
-  depth: WrappedNumber,
-  sumDepth: WrappedNumber
-}
-
-interface EarnedAlgxEntry {
-  quality: WrappedNumber,
-  earnedAlgx: WrappedNumber
-}
-
-// These should be simple maps, but no easy way to do this
-interface OwnerRewardsAssetToResMapObj {
-  [key: string]: OwnerRewardsResult
-}
-interface OwnerRewardsWalletToAssetMapObj {
-  [key: string]: OwnerRewardsAssetToResMapObj
-}
-
-interface OwnerWalletAssetToFinalRewardsMapObj {
-  [key: string]: EarnedAlgxEntry
-}
-
-interface SaveRewardsRequest {
-  ownerRewards: OwnerRewardsWalletToAssetMapObj,
-  ownerRewardsResToFinalRewardsEntry: OwnerWalletAssetToFinalRewardsMapObj,
-  epoch: number
-}
-
-interface CouchRewardsData {
-  _id: string,
-  _rev?: string,
-  ownerWallet: string,
-  uptime: number,
-  depthSum: number,
-  depthRatio: number,
-  qualitySum: number,
-  algxAvg: number,
-  qualityFinal: number,
-  earnedRewardsFormatted: number,
-  epoch: number,
-  rewardsAssetId: number,
-  accrualAssetId: number,
-  updatedAt: string
-}
-
-interface OwnerRewardsKey {
-  wallet: string,
-  assetId: number
-}
-
-const generateRewardsSaveKey = (wallet:string, assetId:number, epoch:number) => {
-  return `${epoch}:${wallet}:${assetId}`;
-}
-
 app.post('/query/:database/_design/:index/_view/:view', async (req, res) => {
 
   const {database, index, view} = req.params;
@@ -109,63 +48,7 @@ app.post('/query/:database/_design/:index/_view/:view', async (req, res) => {
 
 })
 
-app.post('/save_rewards', async (req, res) => {
-  console.log('Got body:', req.body);
-
-  const saveRewardsReqData = <SaveRewardsRequest>(req.body);
-  const db = getDatabase('rewards');
-
-  const rewardsDataDocs = Object.keys(saveRewardsReqData.ownerRewardsResToFinalRewardsEntry).map(data => {
-    const walletAssetKey = <OwnerRewardsKey>JSON.parse(data);
-    const earnedAlgxEntry = saveRewardsReqData.ownerRewardsResToFinalRewardsEntry[data];
-    const wallet = walletAssetKey.wallet;
-    const assetId = walletAssetKey.assetId;
-    const rewardsResult = saveRewardsReqData.ownerRewards[walletAssetKey.wallet][walletAssetKey.assetId.toString()];
-
-    const rewardsSaveKey = generateRewardsSaveKey(wallet, assetId, saveRewardsReqData.epoch);
-    var date = new Date();
-    const utc = date.toUTCString()
-    const dataForSaving:CouchRewardsData = {
-      _id: rewardsSaveKey,
-      ownerWallet: wallet,
-      uptime: rewardsResult.uptime.val,
-      depthRatio: rewardsResult.depth.val,
-      depthSum: rewardsResult.sumDepth.val,
-      qualitySum: rewardsResult.qualitySum.val,
-      algxAvg: rewardsResult.algxBalanceSum.val,
-      qualityFinal: earnedAlgxEntry.quality.val,
-      earnedRewardsFormatted: earnedAlgxEntry.earnedAlgx.val,
-      rewardsAssetId: parseInt(process.env.ALGX_ASSET_ID),
-      epoch: saveRewardsReqData.epoch,
-      accrualAssetId: assetId,
-      updatedAt: utc
-    }
-    return withSchemaCheck('rewards', dataForSaving);
-  });
-
-  // FIXME - reset old rewards to 0
-
-
-  const allDocs = await db.allDocs();
-  const idToRev = allDocs.rows.reduce((map, row) => {
-    map.set(row.id,row.value.rev);
-    return map
-  }, new Map<String, String>);
-
-  rewardsDataDocs.forEach(doc => {
-    doc._rev = idToRev.get(doc._id);
-  });
-
-  try {
-    await db.bulkDocs(rewardsDataDocs);
-  } catch (e) {
-    console.log(e);
-    res.sendStatus(500);
-    res.send(e);
-    return;
-  }
-  res.sendStatus(200);
-});
+app.post('/save_rewards', async (req, res) => save_rewards(req,res));
 
 const isOptedIn = async (wallet:string):Promise<boolean> => {
   const db = getDatabase('blocks');
@@ -218,33 +101,6 @@ const getOpenOrders = async (wallet:string):Promise<Array<Order>> => {
 }
 
 
-
-interface HighestBid {
-  maxPrice: number,
-  isAlgoBuyEscrow: boolean,
-}
-interface LowestAsk {
-  minPrice: number,
-  isAlgoBuyEscrow: boolean,
-}
-interface Spread {
-  highestBid:HighestBid,
-  lowestAsk:LowestAsk
-}
-
-interface V1OrdersInnerResult {
-  formattedPrice:string,
-  escrowAddress:string
-}
-interface V1OrdersResult {
-  buyASAOrdersInEscrow:Array<V1OrdersInnerResult>,
-  sellASAOrdersInEscrow:Array<V1OrdersInnerResult>,
-  assetId:number,
-  timer:NodeJS.Timeout
-}
-interface V2OrdersResult {
-  escrowAddress: string
-}
 const cachedAssetIdToOrders = new Map<number, V1OrdersResult>();
 
 const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1OrdersResult>> => {
@@ -375,38 +231,7 @@ app.get('/asset/hidden/:assetId', async (req, res) => {
 
 });
 
-app.get('/rewards/per_epoch/wallet/:wallet', async (req, res) => {
-  const {wallet} = req.params;
-  let asTable = req.query.asTable;
-  const db = getDatabase('rewards');
-  const rewards = await db.query('rewards/rewards', {
-    reduce: false,
-    key: wallet
-  })
-
-  rewards.rows.sort((a, b) => (a.epoch > b.epoch ? -1 : 1));
-  const message = rewards.rows.length > 0 ? 'Sorry, no rewards exist for this wallet.': undefined;
-  const result = {
-    result: rewards.rows,
-    message,
-  }
-  if (asTable && rewards.rows.length > 0) {
-    res.setHeader('Content-Type', 'text/html');
-    const html = tableify(rewards.rows.map(entry => {
-      delete entry.value.depthRatio;
-      delete entry.value.depthSum;
-      delete entry.value.qualitySum;
-      delete entry.value.algxAvg;
-      entry.value.earnedAlgx = entry?.value?.earnedRewardsFormatted ? entry.value.earnedRewardsFormatted.toLocaleString() : 0;
-      delete entry.value.earnedRewardsFormatted;
-      return entry.value;
-    }));
-    res.end(html);
-  } else {
-    res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(result));
-  }
-});
+app.get('/rewards/per_epoch/wallet/:wallet', get_rewards_per_epoch);
 
 app.get('/rewards/is_accruing/:wallet', async (req, res) => {
   const {wallet} = req.params;
