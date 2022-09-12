@@ -80,7 +80,7 @@ export const save_rewards = async (req, res) => {
       algxAvg: rewardsResult.algxBalanceSum.val,
       qualityFinal: earnedAlgxEntry.quality.val,
       earnedRewardsFormatted: earnedAlgxEntry.earnedAlgx.val,
-      rewardsAssetId: parseInt(process.env.ALGX_ASSET_ID),
+      rewardsAssetId: parseInt(process.env.ALGX_ASSET_ID!),
       epoch: saveRewardsReqData.epoch,
       accrualAssetId: assetId,
       updatedAt: utc
