@@ -38,6 +38,7 @@ export const get_rewards_per_epoch = async (req, res) => {
     res.setHeader('Content-Type', 'text/html');
     const html = tableify(rewards.rows.map(entry => {
       delete entry.value.depthRatio;
+      entry.value.avgLiquidityUSD = (entry.value.depthSum / 10080).toLocaleString();
       delete entry.value.depthSum;
       delete entry.value.qualitySum;
       delete entry.value.algxAvg;
