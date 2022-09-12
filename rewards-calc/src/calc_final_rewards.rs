@@ -116,7 +116,7 @@ pub fn get_owner_rewards_res_to_final_rewards_entry(
                 .unwrap();
 
             final_rewards_entry.earned_algx = EarnedAlgx::from(
-                (total_epoch_rewards * final_rewards_entry.quality.val() / total_quality).round()
+                (total_epoch_rewards * final_rewards_entry.quality.val() / total_quality)
                     as f64,
             );
         });

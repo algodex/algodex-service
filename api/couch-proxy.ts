@@ -398,6 +398,8 @@ app.get('/rewards/per_epoch/wallet/:wallet', async (req, res) => {
       delete entry.value.qualitySum;
       delete entry.value.algxAvg;
       delete entry.value.qualityFinal;
+      entry.value.earnedAlgx = entry.value.earnedRewardsFormatted;
+      delete entry.value.earnedRewardsFormatted;
       return entry.value;
     }));
     res.end(html);
