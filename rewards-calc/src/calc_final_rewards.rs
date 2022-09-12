@@ -14,7 +14,7 @@ lazy_static! {
         let mut s = HashSet::new();
         s.insert(31566704); //USDC
         s.insert(465865291); //STBL
-        
+
         s.insert(386192725); //goBTC
         s.insert(386195940); //goETH
         s.insert(793124631); //gALGO
@@ -74,7 +74,7 @@ fn get_total_quality(
                 let owner_rewards_key =
                     OwnerRewardsKey { wallet: owner_wallet.clone(), asset_id: *asset_id };
                 let earned_algx_entry =
-                    EarnedAlgxEntry { quality: quality_final, earned_algx: EarnedAlgx::from(0) };
+                    EarnedAlgxEntry { quality: quality_final, earned_algx: EarnedAlgx::from(0.0) };
 
                 owner_rewards_res_to_final_rewards_entry
                     .insert(owner_rewards_key, earned_algx_entry);
@@ -116,8 +116,8 @@ pub fn get_owner_rewards_res_to_final_rewards_entry(
                 .unwrap();
 
             final_rewards_entry.earned_algx = EarnedAlgx::from(
-                (total_epoch_rewards * final_rewards_entry.quality.val() / total_quality).round()
-                    as u64,
+                (total_epoch_rewards * final_rewards_entry.quality.val() / total_quality)
+                    as f64,
             );
         });
     });

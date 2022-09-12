@@ -9,7 +9,7 @@ const PouchMapReduce = require('pouchdb-mapreduce');
 // const bodyParser = require('body-parser');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
-
+const tableify = require('tableify');
 PouchDB.plugin(PouchMapReduce)
 const axios = require('axios').default;
 
@@ -375,6 +375,40 @@ app.get('/asset/hidden/:assetId', async (req, res) => {
 
 });
 
+app.get('/rewards/per_epoch/wallet/:wallet', async (req, res) => {
+  const {wallet} = req.params;
+  let asTable = req.query.asTable;
+  const db = getDatabase('rewards');
+  const rewards = await db.query('rewards/rewards', {
+    reduce: false,
+    key: wallet
+  })
+
+  rewards.rows.sort((a, b) => (a.epoch > b.epoch ? -1 : 1));
+  const message = rewards.rows.length > 0 ? 'Sorry, no rewards exist for this wallet.': undefined;
+  const result = {
+    result: rewards.rows,
+    message,
+  }
+  if (asTable && rewards.rows.length > 0) {
+    res.setHeader('Content-Type', 'text/html');
+    const html = tableify(rewards.rows.map(entry => {
+      delete entry.value.depthRatio;
+      delete entry.value.depthSum;
+      delete entry.value.qualitySum;
+      delete entry.value.algxAvg;
+      delete entry.value.qualityFinal;
+      entry.value.earnedAlgx = entry.value.earnedRewardsFormatted.toLocaleString();
+      delete entry.value.earnedRewardsFormatted;
+      return entry.value;
+    }));
+    res.end(html);
+  } else {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(result));
+  }
+});
+
 app.get('/rewards/is_accruing/:wallet', async (req, res) => {
   const {wallet} = req.params;
 
@@ -503,7 +537,7 @@ app.get('/wallets/leaderboard', async (req, res) => {
   topWallets.rows.sort((a, b) => (a.value > b.value ? -1 : 1));
 
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(topWallets.rows));
+  res.end(JSON.stringify(topWallets.rows,null,2));
 });
 
 app.get('/rewards/optin/:wallet', async (req, res) => {

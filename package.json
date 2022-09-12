@@ -48,6 +48,7 @@
     "pouchdb-mapreduce": "^7.3.0",
     "pouchdb-node": "^7.3.0",
     "swagger-client": "^3.17.0",
+    "tableify": "^1.1.1",
     "ws": "^8.2.3"
   },
   "devDependencies": {
