@@ -220,7 +220,7 @@ fn get_analytics_per_escrow(
 
             // Need to adjust price based on differences between algo decimals and asset's decimals
             // to be the decimal-formatted price.
-            let formatted_price = price / 10_f64.powf((6 - asset_decimals) as f64);
+            let formatted_price = price / 10_f64.powf((6i8 - asset_decimals as i8) as f64);
             let depth = (*algo_price) * (*balance as f64) * formatted_price
                 / (10_f64.powf(order_amount_decimals as f64) as f64);
 

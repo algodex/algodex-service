@@ -33,7 +33,7 @@ impl StateMachine {
     pub fn new(initial_state: &InitialState) -> StateMachine {
         let timestep = initial_state.epoch_start;
         let escrow_to_balance = get_initial_balances(timestep, &initial_state.escrows);
-        let spreads = get_spreads(&escrow_to_balance, &initial_state.escrow_addr_to_data);
+        let spreads = get_spreads(&escrow_to_balance, &initial_state.escrow_addr_to_data, &initial_state.hidden_addresses_set);
 
         StateMachine {
             escrow_to_balance,
