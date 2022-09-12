@@ -33,7 +33,11 @@ impl StateMachine {
     pub fn new(initial_state: &InitialState) -> StateMachine {
         let timestep = initial_state.epoch_start;
         let escrow_to_balance = get_initial_balances(timestep, &initial_state.escrows);
-        let spreads = get_spreads(&escrow_to_balance, &initial_state.escrow_addr_to_data, &initial_state.hidden_addresses_set);
+        let spreads = get_spreads(
+            &escrow_to_balance,
+            &initial_state.escrow_addr_to_data,
+            &initial_state.hidden_addresses_set,
+        );
 
         StateMachine {
             escrow_to_balance,
@@ -117,22 +121,6 @@ impl StateMachine {
             self.escrow_step += 1;
         }
         escrow_did_change
-    }
-
-    fn get_assets_with_balances(&mut self, initial_state: &InitialState) -> HashSet<u32> {
-        let assets_with_balances: HashSet<u32> =
-            self.escrow_to_balance.keys().fold(HashSet::new(), |mut set, escrow| {
-                let asset_id = initial_state
-                    .escrow_addr_to_data
-                    .get(escrow)
-                    .unwrap()
-                    .data
-                    .escrow_info
-                    .asset_id;
-                set.insert(asset_id);
-                set
-            });
-        assets_with_balances
     }
 
     fn get_assets_with_tolerable_spreads(&mut self, _initial_state: &InitialState) -> HashSet<u32> {

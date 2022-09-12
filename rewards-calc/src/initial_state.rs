@@ -1,6 +1,5 @@
 use std::collections::HashMap;
-use std::future::{Future, self};
-use std::pin::Pin;
+
 // use futures::future::{join_all, ok, err};
 use futures::future::join_all;
 use serde::{Deserialize, Serialize};
@@ -302,12 +301,15 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         });
     let all_assets: Vec<u32> = all_assets_set.clone().into_iter().collect();
 
-
-    let hidden_address_urls:Vec<String> = all_assets.iter().map(|assetId| {
-        format!("{}/asset/hidden/{}", api_url, assetId)
-    }).collect();
+    let hidden_address_urls: Vec<String> =
+        all_assets.iter().map(|assetId| format!("{}/asset/hidden/{}", api_url, assetId)).collect();
     let hidden_address_reqs = hidden_address_urls.iter().map(|u| query_get_api::<Vec<String>>(u));
-    let hidden_addresses_set: HashSet<_> = join_all(hidden_address_reqs).await.into_iter().map(|res| res.unwrap()).flat_map(|v| v).collect();
+    let hidden_addresses_set: HashSet<_> = join_all(hidden_address_reqs)
+        .await
+        .into_iter()
+        .map(|res| res.unwrap())
+        .flat_map(|v| v)
+        .collect();
     let initial_state = InitialState {
         algx_balance_data,
         all_assets,

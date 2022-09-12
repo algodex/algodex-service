@@ -26,7 +26,7 @@ enum PriceType {
 pub fn get_spreads(
     escrow_to_balance: &HashMap<String, u64>,
     escrow_addr_to_data: &HashMap<String, EscrowValue>,
-    hidden_addresses_set: &HashSet<String>
+    hidden_addresses_set: &HashSet<String>,
 ) -> HashMap<u32, Spread> {
     let spreads: HashMap<u32, Spread> = escrow_to_balance
         .keys()
