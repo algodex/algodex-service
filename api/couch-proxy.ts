@@ -9,6 +9,7 @@ const PouchMapReduce = require('pouchdb-mapreduce');
 // const bodyParser = require('body-parser');
 
 PouchDB.plugin(PouchMapReduce)
+const axios = require('axios').default;
 
 const app = express()
 app.use(express.json({limit: '50mb'}));
@@ -225,7 +226,8 @@ interface Spread {
 }
 
 interface V1OrdersInnerResult {
-  formattedPrice:string
+  formattedPrice:string,
+  escrowAddress:string
 }
 interface V1OrdersResult {
   buyASAOrdersInEscrow:Array<V1OrdersInnerResult>,
@@ -233,36 +235,64 @@ interface V1OrdersResult {
   assetId:number,
   timer:NodeJS.Timeout
 }
-const cachedAssetIdToSpread = new Map<number, V1OrdersResult>();
+interface V2OrdersResult {
+  escrowAddress: string
+}
+const cachedAssetIdToOrders = new Map<number, V1OrdersResult>();
 
-const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> => {
-  const db = getDatabase('formatted_escrow');
-  const data = await db.query('formatted_escrow/spreads', {
-    keys: assetIds,
-    reduce: true,
-    group: true
-  });
-
+const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1OrdersResult>> => {
   const promises:Array<Promise<V1OrdersResult>> = assetIds.map(assetId => {
-    if (cachedAssetIdToSpread.has(assetId)) {
-      clearTimeout(cachedAssetIdToSpread.get(assetId).timer);
-      cachedAssetIdToSpread.get(assetId).timer = setTimeout(() => {
-        cachedAssetIdToSpread.delete(assetId);
+    if (cachedAssetIdToOrders.has(assetId)) {
+      clearTimeout(cachedAssetIdToOrders.get(assetId).timer);
+      cachedAssetIdToOrders.get(assetId).timer = setTimeout(() => {
+        cachedAssetIdToOrders.delete(assetId);
       }, 60*1000);
-      return new Promise((resolve) => resolve(cachedAssetIdToSpread.get(assetId)));
+      return new Promise((resolve) => resolve(cachedAssetIdToOrders.get(assetId)));
     }
-    return fetch(`https://app.algodex.com/algodex-backend/orders.php?assetId=${assetId}`)
+    return axios.get(`https://app.algodex.com/algodex-backend/orders.php?assetId=${assetId}`)
       .then(async (res) => {
-        const json = await res.json();
+        const json:V1OrdersResult = res.data;
         json.assetId = assetId;
         json.timer = setTimeout(() => {
-          cachedAssetIdToSpread.delete(assetId);
+          cachedAssetIdToOrders.delete(assetId);
         }, 60*1000);
-        cachedAssetIdToSpread.set(assetId, json);
+        cachedAssetIdToOrders.set(assetId, json);
         return json;
       })
   });
   let results:Array<V1OrdersResult> = await Promise.all(promises);
+  return results;
+};
+
+const getV2Orders =  async (assetId:number):Promise<Array<V2OrdersResult>> => {
+  const db = getDatabase('formatted_escrow');
+  const data = await db.query('formatted_escrow/orders', {
+    key: ['assetId', assetId],
+  });
+
+  return data.rows.map(row => row.value);
+}
+
+const getHiddenOrderAddrs = async (assetId:number):Promise<Array<string>> => {
+  const v1Orders = await getV1Orders([assetId]);
+  const v2Orders = await getV2Orders(assetId);
+
+  const v1OrderAddrs = new Set([...v1Orders[0].buyASAOrdersInEscrow.map(order => order.escrowAddress),
+    ...v1Orders[0].sellASAOrdersInEscrow.map(order => order.escrowAddress)]);
+  const v2OrderAddrs = v2Orders.map(order => order.escrowAddress);
+
+  return v2OrderAddrs.filter(addr => !v1OrderAddrs.has(addr));
+};
+
+const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> => {
+  // const db = getDatabase('formatted_escrow');
+  // const data = await db.query('formatted_escrow/spreads', {
+  //   keys: assetIds,
+  //   reduce: true,
+  //   group: true
+  // });
+
+  const results = await getV1Orders(assetIds);
 
   const map = results.reduce((map, result) => {
     const highestBid = result.buyASAOrdersInEscrow.reduce((maxOrder, order) => {
@@ -306,11 +336,16 @@ const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> =
 
 const getAlgoPrice = async():Promise<number> => {
   const tinyManUrl = 'https://mainnet.analytics.tinyman.org/api/v1/current-asset-prices/';
-  const pricesReq = await fetch(tinyManUrl);
-  const prices = await pricesReq.json();
-
+  const prices = (await axios.get(tinyManUrl)).data;
   return prices[0].price;
 }
+
+app.get('/asset/hidden/:assetId', async (req, res) => {
+  const assetId = parseInt(req.params.assetId);
+  const hiddenAddrs = await getHiddenOrderAddrs(assetId);
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(hiddenAddrs));
+});
 
 app.get('/rewards/is_accruing/:wallet', async (req, res) => {
   const {wallet} = req.params;
