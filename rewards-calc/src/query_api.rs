@@ -1,17 +1,8 @@
-use core::panic;
-
-use std::fs::File;
-use std::io::Write;
 use std::time::Duration;
 
 use serde::de::DeserializeOwned;
 
 use std::error::Error;
-use std::{env, fs};
-
-use crate::structs::CouchDBResp;
-use crate::structs::{CouchDBGroupedResp, CouchDBKey, CouchDBResult, Keys, Queries};
-use crate::DEBUG;
 
 pub async fn query_get_api<T: DeserializeOwned + Default>(
     proxy_url: &String,
@@ -22,29 +13,27 @@ pub async fn query_get_api<T: DeserializeOwned + Default>(
 
     let mut attempts = 0;
     loop {
-      let resp = client
-      .get(proxy_url)
-      //.header(reqwest::header::CONTENT_TYPE, "application/json")
-      // .json(&queries)
-      .send()
-      .await;
+        let resp = client
+            .get(proxy_url)
+            //.header(reqwest::header::CONTENT_TYPE, "application/json")
+            // .json(&queries)
+            .send()
+            .await;
 
-      if let Ok(ok_res) = resp {
-        if (ok_res.status() == 200) {
-            let res = ok_res.text().await?;
+        if let Ok(ok_res) = resp {
+            if ok_res.status() == 200 {
+                let res = ok_res.text().await?;
 
-            let result = serde_json::from_str(&res);
-            //return Err("Error...".into());
-            return Ok(result?)
+                let result = serde_json::from_str(&res);
+                //return Err("Error...".into());
+                return Ok(result?);
+            }
+            println!("error in result. sleeping 1 second and trying again");
+            tokio::time::sleep(Duration::from_secs(1)).await;
+            attempts += 1;
         }
-        println!("error in result. sleeping 1 second and trying again");
-        tokio::time::sleep(Duration::from_secs(1)).await;
-        attempts += 1;
-      }
-      if (attempts > 15) {
-        return Err(format!("Error - could not fetch {} after 15 attempts.", proxy_url).into());
-      }
+        if attempts > 15 {
+            return Err(format!("Error - could not fetch {} after 15 attempts.", proxy_url).into());
+        }
     }
-
-
 }

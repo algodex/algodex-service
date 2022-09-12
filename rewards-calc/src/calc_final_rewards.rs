@@ -28,7 +28,8 @@ fn get_asset_grade_multiplier(asset_id: &u32) -> u8 {
     if US_LISTED_ASSETS_SET.contains(asset_id) {
         return 3;
     }
-    if *asset_id == 724480511 { // ALGX gives 2x rewards
+    if *asset_id == 724480511 {
+        // ALGX gives 2x rewards
         return 2;
     }
     return 1;
@@ -116,8 +117,7 @@ pub fn get_owner_rewards_res_to_final_rewards_entry(
                 .unwrap();
 
             final_rewards_entry.earned_algx = EarnedAlgx::from(
-                (total_epoch_rewards * final_rewards_entry.quality.val() / total_quality)
-                    as f64,
+                (total_epoch_rewards * final_rewards_entry.quality.val() / total_quality) as f64,
             );
         });
     });

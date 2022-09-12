@@ -17,9 +17,9 @@ use std::hash::{Hash, Hasher};
 use std::io::Write;
 
 mod epoch;
+mod query_api;
 mod state_machine;
 mod structs;
-mod query_api;
 use crate::calc_final_rewards::get_owner_rewards_res_to_final_rewards_entry;
 use crate::initial_state::{get_initial_state, save_initial_state};
 

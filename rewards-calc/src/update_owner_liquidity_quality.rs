@@ -224,9 +224,11 @@ fn get_analytics_per_escrow(
             // to be the decimal-formatted price.
             let formatted_price = price / 10_f64.powf((6i8 - asset_decimals as i8) as f64);
             let depth = match order_type {
-                Ask => (*algo_price) * (*balance as f64) * formatted_price 
-                    / 10_f64.powf(asset_decimals as f64),
-                Bid => (*algo_price) * (*balance as f64) / 1_000_000.0
+                Ask => {
+                    (*algo_price) * (*balance as f64) * formatted_price
+                        / 10_f64.powf(asset_decimals as f64)
+                }
+                Bid => (*algo_price) * (*balance as f64) / 1_000_000.0,
             };
             // println!("{} {} {} {}", *algo_price, *balance, formatted_price, 10_f64.powf(asset_decimals as f64));
             let is_eligible = check_is_eligible(
