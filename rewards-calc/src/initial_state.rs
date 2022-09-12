@@ -1,5 +1,8 @@
 use std::collections::HashMap;
-
+use std::future::{Future, self};
+use std::pin::Pin;
+// use futures::future::{join_all, ok, err};
+use futures::future::join_all;
 use serde::{Deserialize, Serialize};
 use serde_json_any_key::*;
 
@@ -9,6 +12,7 @@ use std::fs::{self, File};
 use std::io::Write;
 
 use crate::epoch::{get_epoch_end, get_epoch_start};
+use crate::query_api::query_get_api;
 use crate::{structs, Cli};
 
 use crate::query_couch::{query_couch_db, query_couch_db_with_full_str};
@@ -46,6 +50,8 @@ pub struct InitialState {
     pub account_data: Vec<CouchDBResult<String>>,
     pub escrows: Vec<EscrowValue>,
     pub escrow_addr_to_data: HashMap<String, EscrowValue>,
+    /// Addresses that are hidden in the GUI due to v1 API errors
+    pub hidden_addresses_set: HashSet<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -296,6 +302,12 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         });
     let all_assets: Vec<u32> = all_assets_set.clone().into_iter().collect();
 
+
+    let hidden_address_urls:Vec<String> = all_assets.iter().map(|assetId| {
+        format!("{}/asset/hidden/{}", api_url, assetId)
+    }).collect();
+    let hidden_address_reqs = hidden_address_urls.iter().map(|u| query_get_api::<Vec<String>>(u));
+    let hidden_addresses_set: HashSet<_> = join_all(hidden_address_reqs).await.into_iter().map(|res| res.unwrap()).flat_map(|v| v).collect();
     let initial_state = InitialState {
         algx_balance_data,
         all_assets,
@@ -309,6 +321,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         epoch_end,
         epoch_launch_time,
         escrow_time_to_balance,
+        hidden_addresses_set,
         tinyman_prices,
         unix_time_to_changed_escrows,
         formatted_escrow_data,

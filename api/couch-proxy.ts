@@ -7,6 +7,8 @@ const express = require('express')
 const PouchDB = require('pouchdb')
 const PouchMapReduce = require('pouchdb-mapreduce');
 // const bodyParser = require('body-parser');
+const withSchemaCheck = require('../src/schema/with-db-schema-check');
+
 
 PouchDB.plugin(PouchMapReduce)
 const axios = require('axios').default;
@@ -32,7 +34,8 @@ interface OwnerRewardsResult {
   algxBalanceSum: WrappedNumber,
   qualitySum: WrappedNumber,
   uptime: WrappedNumber,
-  depth: WrappedNumber
+  depth: WrappedNumber,
+  sumDepth: WrappedNumber
 }
 
 interface EarnedAlgxEntry {
@@ -64,12 +67,14 @@ interface CouchRewardsData {
   ownerWallet: string,
   uptime: number,
   depthSum: number,
+  depthRatio: number,
   qualitySum: number,
   algxAvg: number,
   qualityFinal: number,
-  earnedRewards: number,
+  earnedRewardsFormatted: number,
   epoch: number,
-  assetId: number,
+  rewardsAssetId: number,
+  accrualAssetId: number,
   updatedAt: string
 }
 
@@ -124,16 +129,18 @@ app.post('/save_rewards', async (req, res) => {
       _id: rewardsSaveKey,
       ownerWallet: wallet,
       uptime: rewardsResult.uptime.val,
-      depthSum: rewardsResult.depth.val,
+      depthRatio: rewardsResult.depth.val,
+      depthSum: rewardsResult.sumDepth.val,
       qualitySum: rewardsResult.qualitySum.val,
       algxAvg: rewardsResult.algxBalanceSum.val,
       qualityFinal: earnedAlgxEntry.quality.val,
-      earnedRewards: earnedAlgxEntry.earnedAlgx.val,
+      earnedRewardsFormatted: earnedAlgxEntry.earnedAlgx.val,
+      rewardsAssetId: parseInt(process.env.ALGX_ASSET_ID),
       epoch: saveRewardsReqData.epoch,
-      assetId,
+      accrualAssetId: assetId,
       updatedAt: utc
     }
-    return dataForSaving;
+    return withSchemaCheck('rewards', dataForSaving);
   });
 
   // FIXME - reset old rewards to 0
@@ -241,7 +248,19 @@ interface V2OrdersResult {
 const cachedAssetIdToOrders = new Map<number, V1OrdersResult>();
 
 const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1OrdersResult>> => {
+  const getEmptyOrderPromise = (assetId:number):Promise<V1OrdersResult> => {
+    return new Promise((resolve) => resolve({
+      buyASAOrdersInEscrow:[],
+      sellASAOrdersInEscrow:[],
+      assetId,
+      timer:null
+    }));
+  };
+
   const promises:Array<Promise<V1OrdersResult>> = assetIds.map(assetId => {
+    if (assetId === 399383365) { // V1 API doesn't work with this
+      return getEmptyOrderPromise(assetId);
+    }
     if (cachedAssetIdToOrders.has(assetId)) {
       clearTimeout(cachedAssetIdToOrders.get(assetId).timer);
       cachedAssetIdToOrders.get(assetId).timer = setTimeout(() => {
@@ -258,7 +277,9 @@ const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1OrdersResult>
         }, 60*1000);
         cachedAssetIdToOrders.set(assetId, json);
         return json;
-      })
+      }).catch((err) => {
+        console.error(err, `https://app.algodex.com/algodex-backend/orders.php?assetId=${assetId}`);
+      });
   });
   let results:Array<V1OrdersResult> = await Promise.all(promises);
   return results;
@@ -342,9 +363,16 @@ const getAlgoPrice = async():Promise<number> => {
 
 app.get('/asset/hidden/:assetId', async (req, res) => {
   const assetId = parseInt(req.params.assetId);
-  const hiddenAddrs = await getHiddenOrderAddrs(assetId);
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(hiddenAddrs));
+  try {
+    const hiddenAddrs = await getHiddenOrderAddrs(assetId);
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(hiddenAddrs));
+  } catch (e) {
+    res.status(500);
+    res.end(JSON.stringify(e));
+    return;
+  }
+
 });
 
 app.get('/rewards/is_accruing/:wallet', async (req, res) => {
@@ -517,3 +545,5 @@ app.get('/rewards_distribution', async (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+
+export {};

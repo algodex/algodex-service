@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use serde::Serialize;
 
 use crate::EscrowValue;
@@ -24,10 +26,13 @@ enum PriceType {
 pub fn get_spreads(
     escrow_to_balance: &HashMap<String, u64>,
     escrow_addr_to_data: &HashMap<String, EscrowValue>,
+    hidden_addresses_set: &HashSet<String>
 ) -> HashMap<u32, Spread> {
     let spreads: HashMap<u32, Spread> = escrow_to_balance
         .keys()
         .filter(|&escrow| *(escrow_to_balance.get(escrow).unwrap()) > 0u64)
+        // Filter out addresses that are not in V1. FIXME: add timestamp for when v1 is deprecated
+        .filter(|&escrow| !hidden_addresses_set.contains(escrow))
         .fold(HashMap::new(), |mut spreads, escrow| {
             let escrow_data = &escrow_addr_to_data.get(escrow).unwrap().data;
             let asset_id = &escrow_data.escrow_info.asset_id;

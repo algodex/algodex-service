@@ -1,13 +1,16 @@
 {
-  "_id": "da42b5aa00230629bb6b9175a302c4dc",
-  "_rev": "5-278b8ed0e08a7edbeb6724d2964ae872",
-  "ownerWallet": "NN3BAWDPHEJAPIGO3IDB6I4ITGUMYG3QMN26ZYICXEZM3QRWISGXUK6J4Y",
-  "uptime": 2845,
-  "depthSum": 1598.4046350579222,
-  "qualitySum": 25138621675447583000,
+  "_id": "10:346YZQYGIYVVFH7HOAJ6WXVMKQZMWMXDFBZRNB4KZHD2Y62O4QX52X6QUY:31566704",
+  "_rev": "9-0458d4e08b9a0b4e563cbfd4c5bb6d86",
+  "ownerWallet": "346YZQYGIYVVFH7HOAJ6WXVMKQZMWMXDFBZRNB4KZHD2Y62O4QX52X6QUY",
+  "uptime": 3,
+  "depthRatio": 0.004461889663165944,
+  "depthSum": 633.0469389092574,
+  "qualitySum": 7805.2690871937875,
   "algxAvg": 0,
-  "qualityFinal": 8.544528521298251e+27,
-  "earnedRewards": 3500,
-  "epoch": 1,
-  "assetId": 386192725
+  "qualityFinal": 4233.0740091892985,
+  "earnedRewardsFormatted": 0,
+  "rewardsAssetId": 724480511,
+  "epoch": 10,
+  "accrualAssetId": 31566704,
+  "updatedAt": "Mon, 12 Sep 2022 18:01:00 GMT"
 }
