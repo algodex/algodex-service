@@ -1,5 +1,6 @@
 import { getDatabase } from "./util";
-const tableify = require('tableify');
+const json2html = require('json2html');
+
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 // curl -d '{"message":"a log message", "severity":"error", "unixTime":132133, "environment":"development", "href":"http://my-href"}' -H "Content-Type: application/json" -X POST http://localhost:3006/debug/log/post
@@ -33,13 +34,17 @@ export const serveGetLogs = async (req, res) => {
   });
   data.rows.sort((a, b) => (a.unixTime > b.unixTime) ? 1 : -1);
 
-  const html = tableify(data.rows.map(entry => {
+  const html = json2html.render(data.rows.map(entry => {
     const message = entry.value.message;
     delete entry.value.message;
     const date = new Date(entry.value.unixTime).toUTCString();
     delete entry.value.unixTime;
     entry.value.date = date;
-    entry.value.message = JSON.stringify(message); // shift to end
+    if (typeof message === 'object') {
+      entry.value.message = JSON.stringify(message, null, 2); // shift to end
+    } else {
+      entry.value.message = message; // shift to end
+    }
     return entry.value;
   }));
   res.end(html);
