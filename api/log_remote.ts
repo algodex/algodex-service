@@ -40,10 +40,8 @@ export const serveGetLogs = async (req, res) => {
     const date = new Date(entry.value.unixTime).toUTCString();
     delete entry.value.unixTime;
     entry.value.date = date;
-    if (typeof message === 'object') {
+    if (typeof message !== 'string') {
       entry.value.message = JSON.stringify(message, null, 2); // shift to end
-    } else {
-      entry.value.message = message; // shift to end
     }
     return entry.value;
   }));
