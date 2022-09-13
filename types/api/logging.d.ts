@@ -3,5 +3,9 @@ type Severity = 'Error' | 'Info' | 'Debug'
 interface LogMessage {
   message: string,
   severity: Severity,
-  unixTime: number
+  unixTime: number,
+  environment: string,
+  href: string,
+  unixTime: number,
+  ipAddress: string
 }
