@@ -17,6 +17,9 @@ export const logRemote = async (req, res) => {
     ipAddress = req.socket.remoteAddress.replace(regex, '');
   }
   saveRewardsReqData.ipAddress = ipAddress || "UNKNOWN";
+  if (typeof saveRewardsReqData.message !== 'string') {
+    saveRewardsReqData.message = JSON.stringify(saveRewardsReqData.message, null, 2);
+  }
   await db.post(withSchemaCheck('logging', saveRewardsReqData));
   res.sendStatus(200);
 };
