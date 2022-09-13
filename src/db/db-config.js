@@ -182,6 +182,14 @@ const databases = [
   {
     dbName: 'logging',
     appendOnly: true,
+    design: {
+      _id: '_design/logging',
+      views: {
+        ipAddress: {
+          map: require('../../views/logging/ipAddress-map').toString(),
+        },
+      },
+    },
   },
   {
     dbName: 'prices',

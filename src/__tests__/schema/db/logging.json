@@ -1,0 +1,10 @@
+{
+  "_id": "45213b28a37a73f618062d6734026ba6",
+  "_rev": "1-da5ab12c913f7ffdcd97f953042fe2b9",
+  "severity": "Error",
+  "message": "This is my error message",
+  "environment": "development",
+  "href": "http://localhost:3000/about",
+  "unixTime": 1663093552021,
+  "ipAddress": "197.211.58.27"
+}
