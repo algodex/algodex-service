@@ -1,22 +1,15 @@
-const PouchDB = require('pouchdb')
-const PouchMapReduce = require('pouchdb-mapreduce');
+import { getOpenOrders, getSpreads } from "./orders";
+import { getAlgoPrice, getAlgxBalance, getDatabase, isOptedIn } from "./util";
+
 // const bodyParser = require('body-parser');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 const tableify = require('tableify');
-PouchDB.plugin(PouchMapReduce)
 const axios = require('axios').default;
 
 
 const generateRewardsSaveKey = (wallet:string, assetId:number, epoch:number) => {
   return `${epoch}:${wallet}:${assetId}`;
-}
-
-export const getDatabase = (dbname:string) => {
-  const fullUrl = process.env.COUCHDB_BASE_URL + '/' + dbname
-  // console.log({fullUrl});
-  const db = new PouchDB(fullUrl)
-  return db
 }
 
 export const get_rewards_per_epoch = async (req, res) => {
@@ -111,4 +104,168 @@ export const save_rewards = async (req, res) => {
   }
   res.sendStatus(200);
 }
+export const serveGetRewardsDistribution = async (req, res) => {
+  const db = getDatabase('rewards_distribution');
+  const statusData = await db.query('rewards_distribution/rewards_distribution', {
+    reduce: false,
+    group: false
+  })
 
+  // const getPromises = statusData.rows
+  //   .map(row => row.value._id)
+  //   .filter(id => {
+  //     const alreadySeen = idSet.has(id);
+  //     idSet.add(id);
+  //     return !alreadySeen;
+  //   })
+  //   .map(id => {
+  //     return db.get(id);
+  //   });
+
+  // const allDocs = await Promise.all(getPromises);
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(statusData.rows))
+}
+
+export const serveGetLeaderboard = async (req, res) => {
+  const db = getDatabase('rewards');
+  const topWallets = await db.query('rewards/topWallets', {
+    reduce: true,
+    group: true
+  })
+  topWallets.rows.sort((a, b) => (a.value > b.value ? -1 : 1));
+
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(topWallets.rows,null,2));
+};
+
+export const serveIsOptedIn = async (req, res) => {
+  const {wallet} = req.params;
+
+  const optedIn = await isOptedIn(wallet);
+
+  res.setHeader('Content-Type', 'application/json');
+  const retdata = {
+    wallet, optedIn
+  }
+  res.end(JSON.stringify(retdata));
+};
+
+export const isAccruingRewards = async (req, res) => {
+  const {wallet} = req.params;
+
+  res.setHeader('Content-Type', 'application/json');
+
+  const algoPrice:number|undefined = await (async () => {
+    try {
+      const algoPrice = await getAlgoPrice();
+      return algoPrice;
+    } catch (e) {
+      res.status(500);
+      const retdata = {'serverError': 'Cannot fetch prices from Tinyman'};
+      res.end(JSON.stringify(retdata));
+      return;
+    }
+  })();
+  if (!algoPrice) {
+    return;
+  }
+
+  const optedIntoRewards = await isOptedIn(wallet);
+  // if (!optedIntoRewards) {
+  //   const retdata = {
+  //     wallet, optedIntoRewards, isAccruingRewards: false, 
+  //     notAccruingReason: 'Not opted into ALGX rewards'
+  //   };
+  //   res.end(JSON.stringify(retdata));
+  //   return;
+  // }
+
+  const algxBalance = await getAlgxBalance(wallet);
+  if (algxBalance < (3000 * 1000000)) { // 3,000 ALGX
+    const retdata = {
+      wallet, optedIntoRewards, isAccruingRewards: false, 
+      notAccruingReason: `Insufficient ALGX Balance. Must be over 3000. Current balance: ${algxBalance}`
+    };
+    res.end(JSON.stringify(retdata));
+    return;
+  };
+
+  const openOrders = await (async () => {
+    try {
+      return await getOpenOrders(wallet);
+    } catch (e) {
+        res.status(500);
+        const retdata = {'serverError': 'Cannot fetch open orders'};
+        res.end(JSON.stringify(retdata));
+        return;
+    }
+  })();
+  if (!openOrders) {
+    return;
+  };
+
+  const openOrdersByAsset = openOrders.reduce((assetToOrders, order) => {
+      const { assetId } = order;
+      const ordersArr = assetToOrders.get(assetId) || new Array<Order>();
+      assetToOrders.set(assetId, ordersArr);
+      ordersArr.push(order);
+      return assetToOrders;
+  }, new Map<number,Array<Order>>);
+
+  const assetIds = Array.from(openOrdersByAsset.keys());
+  const assetIdToSpread = await getSpreads(assetIds);
+  const assetsWithBidAndAsk = assetIds.filter(assetId => {
+    const orders = openOrdersByAsset.get(assetId)!;
+    const buyOrders = orders.filter(order => order.isAlgoBuyEscrow);
+    const sellOrders = orders.filter(order => !order.isAlgoBuyEscrow);
+    if (buyOrders.length == 0 || sellOrders.length == 0) {
+      return false;
+    }
+    buyOrders.sort((a,b) => b.asaPrice - a.asaPrice);
+    sellOrders.sort((a,b) => a.asaPrice - b.asaPrice);
+
+    // const highestBid = buyOrders[0];
+    // const lowestAsk = sellOrders[0];
+    const spread = assetIdToSpread.get(assetId);
+    if (!spread?.highestBid?.maxPrice || !spread?.lowestAsk?.minPrice) {
+      res.status(500);
+      const retdata = {'serverError': 'Sync issue in backend. Please contact Algodex support'};
+      res.end(JSON.stringify(retdata));
+      return;
+    }
+    const midpoint = (spread.highestBid.maxPrice + spread.lowestAsk.minPrice) / 2;
+    const getSpread = (order:Order):number => 
+      Math.abs((order.formattedPrice - midpoint) / midpoint);
+
+    const buyDepth = (order:Order):number => 
+      order.algoAmount/1000000 * algoPrice;
+    const sellDepth = (order:Order):number => 
+      order.asaPrice * order.asaAmount * algoPrice / (10**(6-order.decimals));
+
+    if (!buyOrders.find(order => buyDepth(order) >= 50 && getSpread(order) < 0.05)) {
+      return false;
+    }
+
+    if (!sellOrders.find(order => sellDepth(order) >= 100 && getSpread(order) < 0.05)) {
+      return false;
+    }
+    return true;
+  });
+
+  if (assetsWithBidAndAsk.length == 0) {
+    const retdata = {
+      wallet, optedIntoRewards, algxBalance, isAccruingRewards: false, 
+      notAccruingReason: `Must have both a buy and sell order for any given trading pair, with minimum USD$50 bid and $100 ask, at a bid/ask spread less than 5%,` 
+       + ` to accrue rewards. The spread is defined as the distance between your order's price and the midpoint of the lowest ask and highest bid of the orderbook.` 
+    };
+    res.end(JSON.stringify(retdata));
+    return;
+  }
+
+  const retdata = {
+    wallet, optedIntoRewards, algxBalance, isAccruingRewards: true, assetsAccruingRewards: assetsWithBidAndAsk
+  };
+  res.end(JSON.stringify(retdata));
+  return;
+};
