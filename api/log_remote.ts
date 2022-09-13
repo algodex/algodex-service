@@ -42,6 +42,8 @@ export const serveGetLogs = async (req, res) => {
     entry.value.date = date;
     if (typeof message !== 'string') {
       entry.value.message = JSON.stringify(message, null, 2); // shift to end
+    } else {
+      entry.value.message = message;
     }
     return entry.value;
   }));
