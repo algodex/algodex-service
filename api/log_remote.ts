@@ -7,7 +7,13 @@ export const logRemote = async (req, res) => {
   const db = getDatabase('logging');
 
   const saveRewardsReqData = <LogMessage>(req.body);
-  const ipAddress = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  let ipAddress;
+  if (req.headers['x-forwarded-for'] !== '::1') {
+    ipAddress = req.headers['x-forwarded-for']
+  } else {
+    const regex = /^::ffff:/i;
+    ipAddress = req.socket.remoteAddress.replace(regex, '');
+  }
   saveRewardsReqData.ipAddress = ipAddress;
   await db.post(saveRewardsReqData);
   res.sendStatus(200);
