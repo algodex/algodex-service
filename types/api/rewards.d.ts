@@ -59,11 +59,11 @@ interface OwnerRewardsKey {
 
 
 interface HighestBid {
-  maxPrice: number,
+  maxPrice: number|null,
   isAlgoBuyEscrow: boolean,
 }
 interface LowestAsk {
-  minPrice: number,
+  minPrice: number|null,
   isAlgoBuyEscrow: boolean,
 }
 interface Spread {
@@ -79,7 +79,7 @@ interface V1OrdersResult {
   buyASAOrdersInEscrow:Array<V1OrdersInnerResult>,
   sellASAOrdersInEscrow:Array<V1OrdersInnerResult>,
   assetId:number,
-  timer:NodeJS.Timeout
+  timer?:NodeJS.Timeout
 }
 interface V2OrdersResult {
   escrowAddress: string
