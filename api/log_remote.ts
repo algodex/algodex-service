@@ -1,5 +1,5 @@
 import { getDatabase } from "./util";
-const json2html = require('json2html');
+const tableify = require('tableify');
 
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
@@ -17,6 +17,9 @@ export const logRemote = async (req, res) => {
     ipAddress = req.socket.remoteAddress.replace(regex, '');
   }
   saveRewardsReqData.ipAddress = ipAddress || "UNKNOWN";
+  if (typeof saveRewardsReqData.message !== 'string') {
+    saveRewardsReqData.message = JSON.stringify(saveRewardsReqData.message, null, 2);
+  }
   await db.post(withSchemaCheck('logging', saveRewardsReqData));
   res.sendStatus(200);
 };
@@ -34,16 +37,16 @@ export const serveGetLogs = async (req, res) => {
   });
   data.rows.sort((a, b) => (a.unixTime > b.unixTime) ? -1 : 1);
 
-  const html = json2html.render(data.rows.map(entry => {
+  const html = tableify(data.rows.map(entry => {
     const message = entry.value.message;
     delete entry.value.message;
     const date = new Date(entry.value.unixTime).toUTCString();
     delete entry.value.unixTime;
     entry.value.date = date;
-    if (typeof message === 'object') {
+    if (typeof message !== 'string') {
       entry.value.message = JSON.stringify(message, null, 2); // shift to end
     } else {
-      entry.value.message = message; // shift to end
+      entry.value.message = message;
     }
     return entry.value;
   }));
