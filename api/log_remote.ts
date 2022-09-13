@@ -36,7 +36,17 @@ export const serveGetLogs = async (req, res) => {
     limit: 1000
   });
   data.rows.sort((a, b) => (a.unixTime > b.unixTime) ? -1 : 1);
-
+  const style = `<style>
+  table, tr, td,th {
+    border: 1px solid #BBB;
+  
+  }
+  
+  td {
+    font-family: monospace;
+      white-space: pre;
+  }
+  </style>`;
   const html = tableify(data.rows.map(entry => {
     const message = entry.value.message;
     delete entry.value.message;
@@ -50,6 +60,6 @@ export const serveGetLogs = async (req, res) => {
     }
     return entry.value;
   }));
-  res.end(html);
+  res.end(style+html);
 
 };
