@@ -32,7 +32,7 @@ export const serveGetLogs = async (req, res) => {
     descending: true,
     limit: 1000
   });
-  data.rows.sort((a, b) => (a.unixTime > b.unixTime) ? 1 : -1);
+  data.rows.sort((a, b) => (a.unixTime > b.unixTime) ? -1 : 1);
 
   const html = json2html.render(data.rows.map(entry => {
     const message = entry.value.message;
