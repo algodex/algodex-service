@@ -1,3 +1,4 @@
+import { logRemote } from "./log_remote";
 import { serveGetHiddenOrders } from "./orders";
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
@@ -29,6 +30,10 @@ app.get('/rewards/is_accruing/:wallet', isAccruingRewards);
 app.get('/wallets/leaderboard', serveGetLeaderboard);
 app.get('/rewards/optin/:wallet', serveIsOptedIn);
 app.get('/rewards_distribution', serveGetRewardsDistribution);
+
+// Logging
+
+app.post('/debug/log/post', logRemote);
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
