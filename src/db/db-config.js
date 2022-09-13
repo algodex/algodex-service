@@ -180,6 +180,10 @@ const databases = [
     },
   },
   {
+    dbName: 'logging',
+    appendOnly: true,
+  },
+  {
     dbName: 'prices',
   },
   {
