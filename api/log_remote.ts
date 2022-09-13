@@ -1,5 +1,5 @@
 import { getDatabase } from "./util";
-const json2html = require('json2html');
+const tableify = require('tableify');
 
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
@@ -34,7 +34,7 @@ export const serveGetLogs = async (req, res) => {
   });
   data.rows.sort((a, b) => (a.unixTime > b.unixTime) ? -1 : 1);
 
-  const html = json2html.render(data.rows.map(entry => {
+  const html = tableify(data.rows.map(entry => {
     const message = entry.value.message;
     delete entry.value.message;
     const date = new Date(entry.value.unixTime).toUTCString();
