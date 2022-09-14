@@ -1,8 +1,10 @@
 import { logRemote, serveGetLogs } from "./log_remote";
-import { serveGetHiddenOrders } from "./orders";
+import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, serveGetOrdersByWallet } from "./orders";
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
   get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard } from "./rewards";
+import { serveTradeHistoryByAssetId, serveTradeHistoryByOwner } from "./trade_history";
+import { serveGetWalletAssets } from "./wallet";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config();
@@ -17,6 +19,18 @@ const port = 3006
 // Orders
 
 app.get('/asset/hidden/:assetId', serveGetHiddenOrders);
+app.get('/orders/asset/:assetId', serveGetOrdersByAssetId);
+app.get('/orders/wallet/:ownerAddress', serveGetOrdersByWallet);
+
+// Trade History
+
+app.get('/trades/history/asset/:assetId', serveTradeHistoryByAssetId);
+app.get('/trades/history/wallet/:ownerAddress', serveTradeHistoryByOwner);
+
+// Wallet
+
+app.get('/wallet/assets/:ownerAddress', serveGetWalletAssets);
+
 
 // Proxy
 
@@ -24,7 +38,7 @@ app.post('/query/:database/_design/:index/_view/:view', serveCouchProxy);
 
 // Rewards
 
-app.post('/save_rewards', async (req, res) => save_rewards(req,res));
+app.post('/save_rewards', save_rewards);
 app.get('/rewards/per_epoch/wallet/:wallet', get_rewards_per_epoch);
 app.get('/rewards/is_accruing/:wallet', isAccruingRewards);
 app.get('/wallets/leaderboard', serveGetLeaderboard);

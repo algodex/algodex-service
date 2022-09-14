@@ -5,7 +5,7 @@ const cachedAssetIdToOrders = new Map<number, V1OrdersResult>();
 
 export const getHiddenOrderAddrs = async (assetId:number):Promise<Array<string>> => {
   const v1Orders = await getV1Orders([assetId]);
-  const v2Orders = await getV2Orders(assetId);
+  const v2Orders = await getV2OrdersByAssetId(assetId);
 
   const v1OrderAddrs = new Set([...v1Orders[0].buyASAOrdersInEscrow.map(order => order.escrowAddress),
     ...v1Orders[0].sellASAOrdersInEscrow.map(order => order.escrowAddress)]);
@@ -119,11 +119,30 @@ export const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1Orders
   return results;
 };
 
-export const getV2Orders =  async (assetId:number):Promise<Array<V2OrdersResult>> => {
+export const getV2OrdersByAssetId =  async (assetId:number):Promise<Array<V2OrdersResult>> => {
   const db = getDatabase('formatted_escrow');
   const data = await db.query('formatted_escrow/orders', {
     key: ['assetId', assetId],
   });
 
   return data.rows.map(row => row.value);
+}
+
+
+export const serveGetOrdersByAssetId = async (req, res) => {
+  const assetId = parseInt(req.params.assetId);
+  const orders = await getV2OrdersByAssetId(assetId);
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(orders));
+}
+
+export const serveGetOrdersByWallet = async (req, res) => {
+  const db = getDatabase('formatted_escrow');
+  const data = await db.query('formatted_escrow/orders', {
+    key: ['ownerAddr', req.params.ownerAddress],
+  });
+
+  const orders = data.rows.map(row => row.value);
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(orders));
 }
