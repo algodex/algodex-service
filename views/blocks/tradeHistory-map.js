@@ -86,8 +86,8 @@ module.exports = function(doc) {
     const executeGroups = groups.filter( group => {
       return group.filter( txn => {
         if (txn.txn && txn.txn.type) {
-          const isAlgodex = ( txn.txn.apid === 22045503 ||
-            txn.txn.apid === 22045522);
+          const isAlgodex = ( txn.txn.apid === '<ALGODEX_ALGO_ESCROW_APP>' ||
+            txn.txn.apid === '<ALGODEX_ASA_ESCROW_APP>');
           if (txn.txn.type === 'appl' && isAlgodex) {
             const appCallType = atob(txn.txn.apaa[0]);
             if (appCallType === 'open' || appCallType === 'close') {
@@ -133,7 +133,7 @@ module.exports = function(doc) {
       const tradeHistoryEntry = group.reduce( (result, txn) => {
         if (txn.txn && txn.txn.type) {
           if (txn.txn.type === 'appl') {
-            const isAlgoBuyEscrow = txn.txn.apid === 22045503;
+            const isAlgoBuyEscrow = txn.txn.apid === '<ALGODEX_ALGO_ESCROW_APP>';
             // reverse direction because selling into buy orders, etc.
             result.tradeType = isAlgoBuyEscrow ? 'sell' : 'buy';
             result.executeType = atob(txn.txn.apaa[0]);

@@ -32,7 +32,7 @@ app.post('/query/:database/_design/:index/_view/:view', serveCouchProxy);
 
 // Rewards
 
-app.post('/save_rewards', async (req, res) => save_rewards(req,res));
+app.post('/save_rewards', save_rewards);
 app.get('/rewards/per_epoch/wallet/:wallet', get_rewards_per_epoch);
 app.get('/rewards/is_accruing/:wallet', isAccruingRewards);
 app.get('/wallets/leaderboard', serveGetLeaderboard);
