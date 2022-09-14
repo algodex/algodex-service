@@ -5,8 +5,9 @@ module.exports = function(doc) {
 
   delete newDoc._id;
   delete newDoc._rev;
-  emit(doc.assetBuyerAddr, newDoc);
-  emit(doc.assetBuyerAddr, newDoc);
+  emit(['assetId', doc.asaId, doc.unixTime], newDoc);
+  emit(['ownerAddr', doc.assetBuyerAddr, doc.unixTime], newDoc);
+  emit(['ownerAddr', doc.assetSellerAddr, doc.unixTime], newDoc);
 };
 
 // reducer: count

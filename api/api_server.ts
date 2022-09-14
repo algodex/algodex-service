@@ -1,8 +1,9 @@
 import { logRemote, serveGetLogs } from "./log_remote";
-import { serveGetHiddenOrders } from "./orders";
+import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, serveGetOrdersByWallet } from "./orders";
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
   get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard } from "./rewards";
+import { serveTradeHistoryByAssetId, serveTradeHistoryByOwner } from "./trade_history";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config();
@@ -17,6 +18,13 @@ const port = 3006
 // Orders
 
 app.get('/asset/hidden/:assetId', serveGetHiddenOrders);
+app.get('/orders/asset/:assetId', serveGetOrdersByAssetId);
+app.get('/orders/wallet/:ownerAddress', serveGetOrdersByWallet);
+
+// Trade History
+
+app.get('/trades/history/asset/:assetId', serveTradeHistoryByAssetId);
+app.get('/trades/history/wallet/:ownerAddress', serveTradeHistoryByOwner);
 
 // Proxy
 
