@@ -1,8 +1,17 @@
 const axios = require('axios').default;
+require('dotenv').config()
 import { getOpenOrders } from "./orders";
 import { getDatabase } from "./util";
 
 const initOrGetIndexer = require('../src/get-indexer');
+const getAssetQueuePromise = require('../services/block-worker/getOrdersPromise/getAssetQueuePromise');
+
+const getQueues = require('../src/queues');
+const sleep = require('../src/sleep');
+const getQueueCounts = require('../src/get-queue-counts');
+
+const queues = getQueues();
+
 /*
         {
             "assetId": 724480511,
@@ -52,11 +61,11 @@ export interface FullAssetInfo {
   _id: string
   _rev: string
   type: string
-  asset: Asset
+  asset: Asset2
   "current-round": number
 }
 
-export interface Asset {
+export interface Asset2 {
   "created-at-round": number
   deleted: boolean
   index: number
@@ -78,26 +87,35 @@ export interface Params {
   "unit-name-b64": string
 }
 
+type WalletAssetError = 'AssetNotInDB' | 'AssetQueueSizeError';
 
-
-
-const getWalletAssets = async (walletAddr:string):Promise<WalletAsset[]> => {
+interface WalletAssetsResult {
+  walletAssets:WalletAsset[],
+  error?:WalletAssetError,
+  assetsNotInDB?:number[]
+}
+const getWalletAssets = async (walletAddr:string):Promise<WalletAssetsResult> => {
   const db = getDatabase('assets');
   const indexer = initOrGetIndexer();
   const accountAssets:IndexerAssetResult = await indexer.lookupAccountAssets(walletAddr).do();
 
   if (!accountAssets.assets) {
-    return [];
+    return {
+      walletAssets: [],
+    };
   }
 
   const walletAssetIdToAmount = accountAssets.assets.reduce((map, asset) => {
+    if (asset.deleted) {
+      return map; //skip
+    }
     const assetId = asset["asset-id"];
     const amount = asset.amount;
     map.set(assetId, amount);
     return map;
   }, new Map<number, number>);
 
-  const assetIds = accountAssets.assets.map(asset => ''+asset["asset-id"]);
+  const assetIds = Array.from(walletAssetIdToAmount.keys()).map(assetId => ''+assetId);
 
   // console.log(JSON.stringify(accountAssets));
   const data = await db.query('assets/assets', {
@@ -105,6 +123,27 @@ const getWalletAssets = async (walletAddr:string):Promise<WalletAsset[]> => {
   });
 
   const fullAssetInfo:Array<FullAssetInfo> = data.rows.map(entry => entry.value);
+
+  const assetIdsInDB = new Set(fullAssetInfo.map(assetInfo => assetInfo.asset.index));;
+  const neededAssets = Array.from(walletAssetIdToAmount.keys()).filter(assetId => !assetIdsInDB.has(assetId))
+  
+  if (neededAssets.length) {
+    if (await getQueueCounts(['assets']) > 2000) {
+      return {
+        walletAssets: [],
+        error: 'AssetQueueSizeError',
+        assetsNotInDB: neededAssets
+      }; 
+    }
+    const assetsQueue = queues.assets;
+    const queuePromises = neededAssets.map(assetId => getAssetQueuePromise(assetsQueue, assetId));
+    await Promise.all(queuePromises);
+    return {
+      walletAssets: [],
+      error: 'AssetNotInDB',
+      assetsNotInDB: neededAssets
+    }; 
+  }
 
   const orders = await getOpenOrders(walletAddr);
   const assetToAmountInOrder:Map<number,number> = orders.reduce((map, order) => {
@@ -115,7 +154,7 @@ const getWalletAssets = async (walletAddr:string):Promise<WalletAsset[]> => {
   }, new Map());
 
   // FIXME - need to set prices
-  return fullAssetInfo.map(asset => {
+  const walletAssets = fullAssetInfo.map(asset => {
     const assetId = asset.asset.index;
     const walletAssetAmount = walletAssetIdToAmount.get(assetId);
     const formattedASAAvailable = walletAssetAmount / 10**asset.asset.params.decimals;
@@ -139,12 +178,40 @@ const getWalletAssets = async (walletAddr:string):Promise<WalletAsset[]> => {
     }
     return walletAsset;
   });
-};
 
+  return <WalletAssetsResult> {
+    walletAssets: walletAssets
+  };
+};
 
 export const serveGetWalletAssets = async (req, res) => {
   const wallet = req.params.ownerAddress;
-  const assets = await getWalletAssets(wallet);
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(assets,null,2));
+  let attempts = 0;
+  let assetResult;
+  do {
+    assetResult = await getWalletAssets(wallet);
+    if (!assetResult.error) {
+      res.setHeader('Content-Type', 'application/json');
+      res.end(JSON.stringify(assetResult.walletAssets,null,2));
+      return;
+    }
+
+    if (assetResult.error === 'AssetQueueSizeError') {
+      // The queue size is too high, which is a serious error (asset worker not on?)
+      res.status(500);
+      res.end(JSON.stringify(assetResult,null,2));
+      return;
+    }
+    // The backend does not yet store the asset in the DB. So, wait for the worker to store the asset
+    // and try more times.
+    attempts += 1;
+    await sleep(1000);
+    console.log({attempts});
+  } while (attempts < 5);
+
+  if (assetResult.error) {
+    res.status(404);
+    res.end(JSON.stringify(assetResult,null,2));
+    return;
+  }
 }
