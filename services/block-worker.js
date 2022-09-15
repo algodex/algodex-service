@@ -43,6 +43,7 @@ const performJob = async job=>{
   } else {
     console.log('in fast sync mode, not adding block to DB');
   }
+  delete job.data.fastSyncMode;
 
   // eslint-disable-next-line max-len
   const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );
@@ -68,7 +69,7 @@ const performJob = async job=>{
   syncedBlocksDB.post(withSchemaCheck('synced_blocks', {_id: `${job.data.rnd}`}))
       .then(function() { }).catch(function(err) {
         if (err.error === 'conflict') {
-          console.error('Block was already synced! Not supposed to happen');
+          console.log('Block was already synced!');
         } else {
           throw err;
         }
