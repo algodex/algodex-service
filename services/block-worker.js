@@ -38,9 +38,11 @@ const performJob = async job=>{
     'orders', 'algxBalance']);
 
   await checkBlockNotSynced(blocksDB, job.data.rnd);
-
-  await addBlockToDB(blocksDB, job.data.rnd, job.data);
-
+  if (!job.data.fastSyncMode) {
+    await addBlockToDB(blocksDB, job.data.rnd, job.data);
+  } else {
+    console.log('in fast sync mode, not adding block to DB');
+  }
 
   // eslint-disable-next-line max-len
   const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );
