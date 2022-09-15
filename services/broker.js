@@ -34,6 +34,7 @@ const getBlockPromises = (queues, block,
   addMetadata(block.rnd, 'algx_balance', hasAlgxTransactions);
   return retarr;
 };
+
 const waitForBlockToBeStored = async (blocksDB, blockNum) => {
   const blockStr = `${blockNum}`;
   let foundPrevBlock = false;
@@ -47,6 +48,7 @@ const waitForBlockToBeStored = async (blocksDB, blockNum) => {
     }
   } while (!foundPrevBlock);
 };
+
 module.exports = ({queues, events, databases}) => {
   console.log({
     msg: 'Broker Starting',
@@ -65,6 +67,7 @@ module.exports = ({queues, events, databases}) => {
      * Run the Broker
      * @return {Promise<void>}
      */
+
   async function runWaitBlockSync() {
     console.log('in runWaitBlockSync!');
     const latestBlock = await waitForBlock({
@@ -80,6 +83,7 @@ module.exports = ({queues, events, databases}) => {
         round: round['last-round'],
         next: latestBlock['last-round'],
       });
+
       console.debug(new Date().getTime());
       await sleepWhileWaitingForQueues(['blocks']);
       await waitForBlockToBeStored(databases.blocks, round['last-round']);
@@ -92,7 +96,9 @@ module.exports = ({queues, events, databases}) => {
         runWaitBlockSync();
         return;
       }
+
       await Promise.all(getBlockPromises(queues, block));
+
       console.log({
         msg: 'Published and Queued',
         round: roundNumber,
@@ -103,6 +109,7 @@ module.exports = ({queues, events, databases}) => {
     // Rerun forever
     runWaitBlockSync();
   }
+
   const queueTradeHistoryInTestMode = async round => {
     if (process.env.INTEGRATION_TEST_MODE) {
       // In INTEGRATION_TEST_MODE, because we don't have
@@ -116,7 +123,8 @@ module.exports = ({queues, events, databases}) => {
       });
     }
   };
-    /**
+
+  /**
        * Run the Broker
        * @return {Promise<void>}
        */
@@ -150,9 +158,11 @@ module.exports = ({queues, events, databases}) => {
       lastSyncedRound = 16583454 - 1;
       maxSyncedRoundInTestMode = 16583654;
     }
+
     let noOrderDataMap = new Map();
     let maxMetadataBlock = lastSyncedRound;
     let blockIdsToSaveAsSynced = [];
+
     do {
       if (maxMetadataBlock <= lastSyncedRound) {
         // This is an optimization to improve resync speed
@@ -162,13 +172,7 @@ module.exports = ({queues, events, databases}) => {
           await getRoundsWithNoDataSets(maxMetadataBlock, maxMetadataBlock + 5000);
         maxMetadataBlock += 5000;
       }
-      //            await sleepWhileWaitingForQueues(['blocks']);
-      // if (hadFirstRound) {
-      // Get block before this round and make sure it exists in the DB
-      // Probably unnecessary now since concurrency is 1? FIXME
-      // await waitForBlockToBeStored(databases.blocks, lastSyncedRound);
-      // }
-      // events.publish(`blocks`, JSON.stringify(lastSyncedRound));
+
       if (process.env.INTEGRATION_TEST_MODE && maxSyncedRoundInTestMode &&
                 lastSyncedRound >= maxSyncedRoundInTestMode) {
         console.log('last synced round found! exiting ',
@@ -216,6 +220,7 @@ module.exports = ({queues, events, databases}) => {
     round['last-round'] = lastSyncedRound;
     runWaitBlockSync();
   }
-  // Kick off the wrapper
+
+  // Kick off the catch up
   runCatchUp();
 };
