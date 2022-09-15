@@ -11,7 +11,7 @@ test('verify end to end test', async () => {
 
   // FIXME - fix later
   const skipDBSet = new Set(['rewards_distribution',
-    'rewards', 'vested_rewards']);
+    'rewards', 'vested_rewards', 'logging']);
 
   const verificationFileNames = Object.keys(databases)
       .filter(dbName => !skipDBSet.has(dbName)).map(dbName => {

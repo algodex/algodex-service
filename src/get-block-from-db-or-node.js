@@ -1,4 +1,5 @@
 const {getBlock} = require('../src/explorer');
+const addBlockToDB = require('../services/block-worker/addBlockToDB');
 
 module.exports = async (blocksDB, round) => {
   try {
@@ -15,6 +16,8 @@ module.exports = async (blocksDB, round) => {
   // Not in couchdb, so get from Algorand node
   try {
     const block = await getBlock({round});
+    await addBlockToDB(blocksDB, round, block);
+
     console.log('Got ' + round + ' block from Algorand node');
     return block;
   } catch (e) {
