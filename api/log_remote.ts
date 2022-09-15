@@ -20,6 +20,7 @@ export const logRemote = async (req, res) => {
   if (typeof saveRewardsReqData.message !== 'string') {
     saveRewardsReqData.message = JSON.stringify(saveRewardsReqData.message, null, 2);
   }
+  saveRewardsReqData.message = saveRewardsReqData.message.slice(0, 10000);
   await db.post(withSchemaCheck('logging', saveRewardsReqData));
   res.sendStatus(200);
 };
