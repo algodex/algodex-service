@@ -116,7 +116,7 @@ export const serveCharts = async (req, res) => {
 const getAllAssetPrices = async () => {
   const db = getDatabase('formatted_history');
   
-  const data = await db.query('fh2/allAssets', {
+  const data = await db.query('formatted_history/allAssets', {
       reduce: true,
       group: true
     });
