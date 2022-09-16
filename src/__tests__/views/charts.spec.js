@@ -15,7 +15,6 @@ test('it can get charts', () => {
   tradeHistory.forEach(row => {
     chartMap(row);
   });
-  console.log('here3fsdas');
   const chartData = globalThis.emitted;
   console.log(chartData);
   // const json = JSON.stringify(chartData, null, 2);
