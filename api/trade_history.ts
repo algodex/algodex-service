@@ -31,7 +31,18 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
       });
     }
     return row.value;
-  });
+  }).map(row => {
+    const retval = row;
+    retval.low = retval.l.formattedPrice;
+    retval.high = retval.h.formattedPrice;
+    retval.open = retval.o.formattedPrice;
+    retval.close = retval.c.formattedPrice;
+    delete retval.o;
+    delete retval.h;
+    delete retval.l;
+    delete retval.c;
+    return retval;
+  });;
   return charts;
 }
 
@@ -48,19 +59,7 @@ export const getTradeHistory = async (key:TradeHistoryKey) => {
       descending: true,
       reduce: false
     });
-  const history = data.rows.map(row => {
-    const retval = row.value;
-    retval.low = retval.l.formattedPrice;
-    retval.high = retval.h.formattedPrice;
-    retval.open = retval.o.formattedPrice;
-    retval.close = retval.c.formattedPrice;
-    retval.openTime = new Date(retval.o.unixTime).toISOString();
-    retval.closeTime = new Date(retval.c.unixTime).toISOString();
-    delete retval.o;
-    delete retval.h;
-    delete retval.l;
-    delete retval.c;
-  });
+  const history = data.rows.map(row => row.value);
   return history;
 }
 
