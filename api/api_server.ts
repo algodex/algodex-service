@@ -3,7 +3,7 @@ import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, se
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
   get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard } from "./rewards";
-import { serveTradeHistoryByAssetId, serveTradeHistoryByOwner } from "./trade_history";
+import { serveCharts, serveTradeHistoryByAssetId, serveTradeHistoryByOwner } from "./trade_history";
 import { serveGetWalletAssets } from "./wallet";
 
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -26,6 +26,9 @@ app.get('/orders/wallet/:ownerAddress', serveGetOrdersByWallet);
 
 app.get('/trades/history/asset/:assetId', serveTradeHistoryByAssetId);
 app.get('/trades/history/wallet/:ownerAddress', serveTradeHistoryByOwner);
+
+// Charts
+app.get('/trades/charts/asset/:assetId/period/:period', serveCharts);
 
 // Wallet
 
