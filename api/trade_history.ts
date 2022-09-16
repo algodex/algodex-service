@@ -13,6 +13,7 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
   const endKey = [assetId, period, ""];
     // ?startkey="object"&endkey="object\u0000"
 
+  
   const data = await db.query('formatted_history/charts', {
       startkey: startKey,
       endkey: endKey,
@@ -37,12 +38,51 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
     retval.high = retval.h.formattedPrice;
     retval.open = retval.o.formattedPrice;
     retval.close = retval.c.formattedPrice;
+
+    const timeStart = retval.o.unixTime;
+
+    const date = new Date(timeStart);
+    // The padding is needed for sorting the view
+    const month = date.getMonth();
+    const year = date.getFullYear();
+    const day = date.getUTCDate();
+  
+    const hour = date.getHours();
+
+    const min = date.getMinutes();
+    const min5 = min % 5;
+    const min15 = min % 15;
+    const hour4 = hour % 4;
+
+    let startMinute;
+    let startHour;
+    if (period === '15m') {
+      startMinute = min15 * 15;
+    } else if (period === '5m') {
+      startMinute = min5 * 5;
+    } else if (period === '1m') {
+      startMinute = min;
+    } else {
+      startMinute = 0;
+    }
+
+    if (period === '1h' || period === '15m' || 
+      period === '5m' || period === '1m') {
+        startHour = hour;
+    } else if (period === '4h') {
+      startHour = hour * 4;
+    } else {
+      startHour = 0;
+    }
+
+    const startDate = new Date(year, month, day, startHour, startMinute, 0);
+    retval.startUnixTime = Math.floor(startDate.getTime() / 1000);
     delete retval.o;
     delete retval.h;
     delete retval.l;
     delete retval.c;
     return retval;
-  });;
+  });
   return charts;
 }
 
