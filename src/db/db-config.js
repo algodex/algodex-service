@@ -27,9 +27,9 @@ const databases = [
         blockToTime: {
           map: require('../../views/blocks/blockToTime-map').toString(),
         },
-        ohlc: {
-          map: require('../../views/chart/map').toString(),
-          reduce: require('../../views/chart/reduce').toString(),
+        maxBlock: {
+          map: require('../../views/blocks/maxBlock-map').toString(),
+          reduce: require('../../views/blocks/maxBlock-reduce').toString(),
         },
         maxBlock: {
           map: require('../../views/blocks/maxBlock-map').toString(),
@@ -159,6 +159,10 @@ const databases = [
         },
         distinctDates: {
           map: require('../../views/formatted_history/distinctDates-map.js').toString(),
+        },
+        charts: {
+          map: require('../../views/formatted_history/charts-map.js').toString(),
+          reduce: require('../../views/formatted_history/charts-reduce.js').toString(),
         },
       },
     },
