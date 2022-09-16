@@ -20,12 +20,12 @@ test('it can get charts', () => {
   console.log(chartData);
   const json = JSON.stringify(chartData, null, 2);
   const filename = `./charts_test_output.txt`;
-  fs.writeFile(filename, json, err => {
-    if (err) {
-      console.error(err);
-    }
-    // file written successfully
-  });
+  // fs.writeFile(filename, json, err => {
+  //   if (err) {
+  //     console.error(err);
+  //   }
+  //   // file written successfully
+  // });
 
   const dayData = chartData.filter(item => item.key[1] === '1d').map(item => item.val);
   console.log(dayData);

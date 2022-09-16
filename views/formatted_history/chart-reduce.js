@@ -4,7 +4,7 @@
 module.exports = function(keys, values, rereduce) {
   const getOpen = vals => {
     return vals.reduce((retVal, val) => {
-      if (retVal.unixTime < val.unixTime) {
+      if (val.unixTime < retVal.unixTime) {
         retVal = val;
       }
       return retVal;
@@ -12,7 +12,7 @@ module.exports = function(keys, values, rereduce) {
   };
   const getClose = vals => {
     return vals.reduce((retVal, val) => {
-      if (retVal.unixTime > val.unixTime) {
+      if (val.unixTime > retVal.unixTime) {
         retVal = val;
       }
       return retVal;
@@ -20,7 +20,7 @@ module.exports = function(keys, values, rereduce) {
   };
   const getHigh = vals => {
     return vals.reduce((retVal, val) => {
-      if (retVal.formattedPrice > val.formattedPrice) {
+      if (val.formattedPrice > retVal.formattedPrice) {
         retVal = val;
       }
       return retVal;
@@ -28,7 +28,7 @@ module.exports = function(keys, values, rereduce) {
   };
   const getLow = vals => {
     return vals.reduce((retVal, val) => {
-      if (retVal.formattedPrice < val.formattedPrice) {
+      if (val.formattedPrice < retVal.formattedPrice) {
         retVal = val;
       }
       return retVal;
