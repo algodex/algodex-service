@@ -7,8 +7,8 @@ globalThis.emit = (key, val) => {
 };
 
 const tradeHistory = require('./trade_history.json');
-const chartMap = require('../../../views/formatted_history/chart-map');
-const chartReduce = require('../../../views/formatted_history/chart-reduce');
+const chartMap = require('../../../views/formatted_history/charts-map');
+const chartReduce = require('../../../views/formatted_history/charts-reduce');
 const fs = require('fs');
 
 test('it can get charts', () => {
