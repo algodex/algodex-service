@@ -7,7 +7,7 @@ interface TradeHistoryKey {
   searchKey: number | string
 }
 
-export const getCharts = async (assetId:number, period:Period, debug=false) => {
+const getCharts = async (assetId:number, period:Period, debug=false) => {
   const db = getDatabase('formatted_history');
   const startKey = [assetId, period, "zzzzz"];
   const endKey = [assetId, period, ""];
@@ -86,7 +86,7 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
   return charts;
 }
 
-export const getTradeHistory = async (key:TradeHistoryKey) => {
+const getTradeHistory = async (key:TradeHistoryKey) => {
   const db = getDatabase('formatted_history');
   const {keyType, searchKey} = key;
   const startKey = [keyType, searchKey, 1e30];
@@ -113,6 +113,23 @@ export const serveCharts = async (req, res) => {
   res.end(JSON.stringify(charts));
 }
 
+const getAllAssetPrices = async () => {
+  const db = getDatabase('formatted_history');
+  
+  const data = await db.query('fh2/allAssets', {
+      reduce: true,
+      group: true
+    });
+  const allAssets = data.rows.map(row => row.value);
+  return allAssets;
+}
+
+
+export const serveAllAssetPrices = async (req, res) => {  
+  const history = await getAllAssetPrices();
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify(history));
+}
 
 export const serveTradeHistoryByAssetId = async (req, res) => {
   const assetId = parseInt(req.params.assetId);
