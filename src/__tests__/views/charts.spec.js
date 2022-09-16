@@ -18,8 +18,8 @@ test('it can get charts', () => {
   console.log('here3fsdas');
   const chartData = globalThis.emitted;
   console.log(chartData);
-  const json = JSON.stringify(chartData, null, 2);
-  const filename = `./charts_test_output.txt`;
+  // const json = JSON.stringify(chartData, null, 2);
+  // const filename = `./charts_test_output.txt`;
   // fs.writeFile(filename, json, err => {
   //   if (err) {
   //     console.error(err);
