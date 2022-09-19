@@ -20,9 +20,8 @@ const getLatestBlock = throttle(async () => {
 }, 3000);
 
 
-const getChartCacheKeyToRev = async (viewCacheDB):Promise<Map<string,string>> => {
-  const docs = await viewCacheDB.allDocs();
-  return docs.rows.reduce((map, doc) => {
+const getChartCacheKeyToRev = async (allDocs):Promise<Map<string,string>> => {
+  return allDocs.rows.reduce((map, doc) => {
     map.set(doc.id, doc.value.rev);
     return map;
   }, new Map<string,string>());
@@ -50,7 +49,8 @@ const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>
     return chartDataPromise;
   }));
   const allChartData = await Promise.all(promises);
-  const cacheKeyToRev = await getChartCacheKeyToRev(viewCacheDB);
+  const docs = await viewCacheDB.allDocs();
+  const cacheKeyToRev = await getChartCacheKeyToRev(docs);
 
   const newDocs = allChartData.map(result => {
     const rev = cacheKeyToRev.get(`trade_history:charts:${result.assetId}:${result.period}`);
