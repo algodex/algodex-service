@@ -79,6 +79,7 @@ const verifyIfNeeded = async (assetDB, assetDoc:AssetDoc) => {
       'https://indexer.testnet.algoexplorerapi.io/v2/assets/' + assetId :
       'https://indexer.algoexplorerapi.io/v2/assets/' + assetId;
     const algoExplorerRes = await axios.get(algoExplorerUrl).data;
+    console.log({algoExplorerRes});
     const verified = !!(algoExplorerRes?.asset?.verification);
     assetDoc.verified = verified;
     assetDoc.lastVerified = currentTime;
