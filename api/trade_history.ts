@@ -1,7 +1,7 @@
 import { getDatabase } from "./util";
 
 type WalletOrAsset = 'ownerAddr' | 'assetId';
-type Period = '1d' | '4h' | '1h' | '15m' | '5m' | '1m';
+export type Period = '1d' | '4h' | '1h' | '15m' | '5m' | '1m';
 interface TradeHistoryKey {
   keyType: WalletOrAsset,
   searchKey: number | string
