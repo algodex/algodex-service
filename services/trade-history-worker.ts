@@ -49,6 +49,7 @@ const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>
       const key = `trade_history:charts:${assetId}:${period}`;
       return oldCacheIdSet.has(key);
     }).map(period => {
+      console.log(`getting charts for ${assetId} ${period}`);
       const chartDataPromise = getCharts(assetId, period, false).then(chartData => {
         return {
           assetId, period, chartData
@@ -60,9 +61,11 @@ const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>
   const cacheKeyToRev = await getChartCacheKeyToRev(oldCacheDocs);
 
   const newDocs = allChartData.map(result => {
-    const rev = cacheKeyToRev.get(`trade_history:charts:${result.assetId}:${result.period}`);
+    const id = `trade_history:charts:${result.assetId}:${result.period}`;
+    const rev = cacheKeyToRev.get(id);
+    console.log(`updating charts for ${rev} ${id}`);
     return {
-      _id: `trade_history:charts:${result.assetId}:${result.period}`,
+      _id: id,
       _rev: rev,
       round: queueRound,
       cachedData: result.chartData
