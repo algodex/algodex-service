@@ -59,3 +59,4 @@ module.exports = ({queues, databases}) =>{
   });
 };
 
+export {};

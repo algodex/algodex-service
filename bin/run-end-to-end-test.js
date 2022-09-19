@@ -217,14 +217,6 @@ const runScripts = async () => {
   console.log('starting service:', services);
   await startServices(services);
 
-  // await runScript('./bin/sync-sequential', 'sync-sequential').then(err => {
-  //   if (err && !isGloballyShuttingDown) {
-  //     throw err;
-  //   }
-  //   console.log('Finished sync-sequential');
-  //   // resolve('Completed Integration Test');
-  // });
-  // const lastSyncedRound = 16583454 - 1;
   const maxSyncedRoundInTestMode = 16583654;
   const syncedBlocksDB = databases.synced_blocks;
   do {
