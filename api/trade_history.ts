@@ -101,14 +101,35 @@ const getTradeHistory = async (key:TradeHistoryKey) => {
   return history;
 }
 
+const getChartsFromCache = async (assetId:number, period:Period) => {
+  const db = getDatabase('view_cache');
+  const key = `trade_history:charts:${assetId}:${period}`;
+
+  const cachedData = await db.get(key);
+  return cachedData.cachedData;
+}
+
 export const serveCharts = async (req, res) => {
   const assetId = parseInt(req.params.assetId);
   const period = req.params.period;
   const debug = req.query.debug || false;
-  
-  const charts = await getCharts(assetId, period, debug);
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(charts));
+  try {
+    const charts = await getChartsFromCache(assetId, period);
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(charts));
+    return;
+  } catch (e) {
+    if (e.error === 'not_found') {
+      console.error(e);
+      res.sendStatus(404);
+      return;
+    } else {
+      console.error(e);
+      res.sendStatus(500);
+      res.send(e);
+      return;
+    }
+  }
 }
 
 const getAllAssetPrices = async () => {
