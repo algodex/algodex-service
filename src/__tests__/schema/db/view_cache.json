@@ -1,0 +1,3553 @@
+{
+  "_id": "trade_history:charts:31566704:1d",
+  "_rev": "7-416ee67cd300ed7afd95e975671c72b3",
+  "round": 23556867,
+  "cachedData": [
+    {
+      "o": {
+        "unixTime": 1663571531000,
+        "formattedPrice": 3.2273697646219373
+      },
+      "l": {
+        "unixTime": 1663591812000,
+        "formattedPrice": 3.1640583844015775
+      },
+      "h": {
+        "unixTime": 1663612710000,
+        "formattedPrice": 3.2347058109259423
+      },
+      "c": {
+        "unixTime": 1663619325000,
+        "formattedPrice": 3.1872195169236948
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1663499559000,
+        "formattedPrice": 3.254701869473838
+      },
+      "l": {
+        "unixTime": 1663499559000,
+        "formattedPrice": 3.254701869473838
+      },
+      "h": {
+        "unixTime": 1663542272000,
+        "formattedPrice": 3.423081582489473
+      },
+      "c": {
+        "unixTime": 1663542272000,
+        "formattedPrice": 3.4164805038584656
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1663400410000,
+        "formattedPrice": 3.3397027196513274
+      },
+      "l": {
+        "unixTime": 1663400410000,
+        "formattedPrice": 3.3397027196513274
+      },
+      "h": {
+        "unixTime": 1663400410000,
+        "formattedPrice": 3.3397027196513274
+      },
+      "c": {
+        "unixTime": 1663400410000,
+        "formattedPrice": 3.3397027196513274
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1663364959000,
+        "formattedPrice": 3.3927154946262585
+      },
+      "l": {
+        "unixTime": 1663364959000,
+        "formattedPrice": 3.392715493333392
+      },
+      "h": {
+        "unixTime": 1663364959000,
+        "formattedPrice": 3.3927154946262585
+      },
+      "c": {
+        "unixTime": 1663364959000,
+        "formattedPrice": 3.3927154946262585
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1663203464000,
+        "formattedPrice": 3.3517121547104827
+      },
+      "l": {
+        "unixTime": 1663203464000,
+        "formattedPrice": 3.3517121537702272
+      },
+      "h": {
+        "unixTime": 1663255814000,
+        "formattedPrice": 3.4230815793234006
+      },
+      "c": {
+        "unixTime": 1663255814000,
+        "formattedPrice": 3.4230815793234006
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1663134972000,
+        "formattedPrice": 3.3144416540496917
+      },
+      "l": {
+        "unixTime": 1663134976000,
+        "formattedPrice": 3.30054416073671
+      },
+      "h": {
+        "unixTime": 1663134976000,
+        "formattedPrice": 3.3144416540496917
+      },
+      "c": {
+        "unixTime": 1663135759000,
+        "formattedPrice": 3.3005709624796085
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1663072486000,
+        "formattedPrice": 3.1554205364180032
+      },
+      "l": {
+        "unixTime": 1663109055000,
+        "formattedPrice": 2.792391999807791
+      },
+      "h": {
+        "unixTime": 1663112494000,
+        "formattedPrice": 3.382953401529175
+      },
+      "c": {
+        "unixTime": 1663112494000,
+        "formattedPrice": 3.312548
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1662947460000,
+        "formattedPrice": 3.087817309242426
+      },
+      "l": {
+        "unixTime": 1662947542000,
+        "formattedPrice": 3.0437579213348043
+      },
+      "h": {
+        "unixTime": 1662971605000,
+        "formattedPrice": 3.093751056210118
+      },
+      "c": {
+        "unixTime": 1662972120000,
+        "formattedPrice": 3.0937510494101965
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1662883638000,
+        "formattedPrice": 3.087818490215032
+      },
+      "l": {
+        "unixTime": 1662883638000,
+        "formattedPrice": 3.087818490215032
+      },
+      "h": {
+        "unixTime": 1662922225000,
+        "formattedPrice": 3.0957488210908846
+      },
+      "c": {
+        "unixTime": 1662922225000,
+        "formattedPrice": 3.0957488210908846
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1662826169000,
+        "formattedPrice": 3.146183187392763
+      },
+      "l": {
+        "unixTime": 1662826169000,
+        "formattedPrice": 3.146183187392763
+      },
+      "h": {
+        "unixTime": 1662826169000,
+        "formattedPrice": 3.146183187392763
+      },
+      "c": {
+        "unixTime": 1662826169000,
+        "formattedPrice": 3.146183187392763
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1662685606000,
+        "formattedPrice": 3.3152702144939887
+      },
+      "l": {
+        "unixTime": 1662685606000,
+        "formattedPrice": 3.204928574070254
+      },
+      "h": {
+        "unixTime": 1662685606000,
+        "formattedPrice": 3.3152702144939887
+      },
+      "c": {
+        "unixTime": 1662685606000,
+        "formattedPrice": 3.3152702144939887
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1662622602000,
+        "formattedPrice": 3.3798105238965808
+      },
+      "l": {
+        "unixTime": 1662649659000,
+        "formattedPrice": 3.315276562017851
+      },
+      "h": {
+        "unixTime": 1662622615000,
+        "formattedPrice": 3.3798105340843274
+      },
+      "c": {
+        "unixTime": 1662662483000,
+        "formattedPrice": 3.3152765954453733
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1662556319000,
+        "formattedPrice": 3.432557080065355
+      },
+      "l": {
+        "unixTime": 1662578103000,
+        "formattedPrice": 3.39999585689723
+      },
+      "h": {
+        "unixTime": 1662556336000,
+        "formattedPrice": 3.43255975072446
+      },
+      "c": {
+        "unixTime": 1662578103000,
+        "formattedPrice": 3.39999585689723
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1662348604000,
+        "formattedPrice": 3.2470000060801496
+      },
+      "l": {
+        "unixTime": 1662350246000,
+        "formattedPrice": 3.2470000012850373
+      },
+      "h": {
+        "unixTime": 1662393647000,
+        "formattedPrice": 3.3200000072001723
+      },
+      "c": {
+        "unixTime": 1662393647000,
+        "formattedPrice": 3.320000000800019
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1662300014000,
+        "formattedPrice": 3.25
+      },
+      "l": {
+        "unixTime": 1662307553000,
+        "formattedPrice": 3.247400004457157
+      },
+      "h": {
+        "unixTime": 1662300014000,
+        "formattedPrice": 3.25
+      },
+      "c": {
+        "unixTime": 1662308451000,
+        "formattedPrice": 3.24765478424015
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1661731217000,
+        "formattedPrice": 3.5496103841154083
+      },
+      "l": {
+        "unixTime": 1661731217000,
+        "formattedPrice": 3.5496103841154083
+      },
+      "h": {
+        "unixTime": 1661731217000,
+        "formattedPrice": 3.5496103841154083
+      },
+      "c": {
+        "unixTime": 1661731217000,
+        "formattedPrice": 3.5496103841154083
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1661485324000,
+        "formattedPrice": 3.252236198198198
+      },
+      "l": {
+        "unixTime": 1661485324000,
+        "formattedPrice": 3.252236198198198
+      },
+      "h": {
+        "unixTime": 1661514755000,
+        "formattedPrice": 3.3350373516475074
+      },
+      "c": {
+        "unixTime": 1661522544000,
+        "formattedPrice": 3.2850067155940685
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1661441121000,
+        "formattedPrice": 3.2989139963982677
+      },
+      "l": {
+        "unixTime": 1661441121000,
+        "formattedPrice": 3.2989139963982677
+      },
+      "h": {
+        "unixTime": 1661452649000,
+        "formattedPrice": 3.313857593931997
+      },
+      "c": {
+        "unixTime": 1661452649000,
+        "formattedPrice": 3.313857593931997
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1661341035000,
+        "formattedPrice": 3.2737907927661936
+      },
+      "l": {
+        "unixTime": 1661370050000,
+        "formattedPrice": 3.2320043150163187
+      },
+      "h": {
+        "unixTime": 1661341061000,
+        "formattedPrice": 3.2737908022877846
+      },
+      "c": {
+        "unixTime": 1661374755000,
+        "formattedPrice": 3.246733174914397
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1661237365000,
+        "formattedPrice": 3.2824995817299647
+      },
+      "l": {
+        "unixTime": 1661283669000,
+        "formattedPrice": 3.262286031933514
+      },
+      "h": {
+        "unixTime": 1661248852000,
+        "formattedPrice": 3.316241109653255
+      },
+      "c": {
+        "unixTime": 1661283669000,
+        "formattedPrice": 3.262286031933514
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1661150577000,
+        "formattedPrice": 3.429999013474537
+      },
+      "l": {
+        "unixTime": 1661183592000,
+        "formattedPrice": 3.2824939594173683
+      },
+      "h": {
+        "unixTime": 1661150577000,
+        "formattedPrice": 3.429999033185894
+      },
+      "c": {
+        "unixTime": 1661211802000,
+        "formattedPrice": 3.31583689
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1661103835000,
+        "formattedPrice": 3.2740000345803115
+      },
+      "l": {
+        "unixTime": 1661107747000,
+        "formattedPrice": 3.274
+      },
+      "h": {
+        "unixTime": 1661114510000,
+        "formattedPrice": 3.28500003285
+      },
+      "c": {
+        "unixTime": 1661114510000,
+        "formattedPrice": 3.28500003285
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1661036061000,
+        "formattedPrice": 3.3635245180500055
+      },
+      "l": {
+        "unixTime": 1661036113000,
+        "formattedPrice": 3.363524475326285
+      },
+      "h": {
+        "unixTime": 1661036315000,
+        "formattedPrice": 3.363524534698308
+      },
+      "c": {
+        "unixTime": 1661036384000,
+        "formattedPrice": 3.363524521902537
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1660872336000,
+        "formattedPrice": 3.075889110510667
+      },
+      "l": {
+        "unixTime": 1660872361000,
+        "formattedPrice": 3.0758891100344963
+      },
+      "h": {
+        "unixTime": 1660926434000,
+        "formattedPrice": 4
+      },
+      "c": {
+        "unixTime": 1660939239000,
+        "formattedPrice": 3.2120000457388835
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1660743713000,
+        "formattedPrice": 2.88000017316943
+      },
+      "l": {
+        "unixTime": 1660743722000,
+        "formattedPrice": 2.8800001104268826
+      },
+      "h": {
+        "unixTime": 1660765215000,
+        "formattedPrice": 2.915000005887157
+      },
+      "c": {
+        "unixTime": 1660765215000,
+        "formattedPrice": 2.915000005887157
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1660543767000,
+        "formattedPrice": 2.7031630170316303
+      },
+      "l": {
+        "unixTime": 1660543767000,
+        "formattedPrice": 2.7027031514168787
+      },
+      "h": {
+        "unixTime": 1660556292000,
+        "formattedPrice": 2.821500151334745
+      },
+      "c": {
+        "unixTime": 1660593235000,
+        "formattedPrice": 2.8045000278276517
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1660439427000,
+        "formattedPrice": 2.7027029945544165
+      },
+      "l": {
+        "unixTime": 1660496379000,
+        "formattedPrice": 2.7027020115177534
+      },
+      "h": {
+        "unixTime": 1660496404000,
+        "formattedPrice": 2.702704280574103
+      },
+      "c": {
+        "unixTime": 1660496417000,
+        "formattedPrice": 2.7027030116664696
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1660412788000,
+        "formattedPrice": 2.702702337813828
+      },
+      "l": {
+        "unixTime": 1660412788000,
+        "formattedPrice": 2.702702337813828
+      },
+      "h": {
+        "unixTime": 1660412788000,
+        "formattedPrice": 2.702702337813828
+      },
+      "c": {
+        "unixTime": 1660412788000,
+        "formattedPrice": 2.702702337813828
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1660263246000,
+        "formattedPrice": 2.791052800187916
+      },
+      "l": {
+        "unixTime": 1660263246000,
+        "formattedPrice": 2.791052800187916
+      },
+      "h": {
+        "unixTime": 1660263246000,
+        "formattedPrice": 2.791052800187916
+      },
+      "c": {
+        "unixTime": 1660263246000,
+        "formattedPrice": 2.791052800187916
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1660178532000,
+        "formattedPrice": 2.761425874882294
+      },
+      "l": {
+        "unixTime": 1660178532000,
+        "formattedPrice": 2.761425874882294
+      },
+      "h": {
+        "unixTime": 1660178532000,
+        "formattedPrice": 2.761425874882294
+      },
+      "c": {
+        "unixTime": 1660178532000,
+        "formattedPrice": 2.761425874882294
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1660143094000,
+        "formattedPrice": 2.777777991519231
+      },
+      "l": {
+        "unixTime": 1660157722000,
+        "formattedPrice": 2.7777777777777777
+      },
+      "h": {
+        "unixTime": 1660143154000,
+        "formattedPrice": 2.777777999760259
+      },
+      "c": {
+        "unixTime": 1660157722000,
+        "formattedPrice": 2.7777777777777777
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1660006480000,
+        "formattedPrice": 2.702702945189456
+      },
+      "l": {
+        "unixTime": 1660006707000,
+        "formattedPrice": 2.7027027027027026
+      },
+      "h": {
+        "unixTime": 1660006506000,
+        "formattedPrice": 2.702702999479085
+      },
+      "c": {
+        "unixTime": 1660006707000,
+        "formattedPrice": 2.7027027027027026
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1659891998000,
+        "formattedPrice": 2.7777
+      },
+      "l": {
+        "unixTime": 1659891998000,
+        "formattedPrice": 2.7777
+      },
+      "h": {
+        "unixTime": 1659891998000,
+        "formattedPrice": 2.7777
+      },
+      "c": {
+        "unixTime": 1659891998000,
+        "formattedPrice": 2.7777
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1659671211000,
+        "formattedPrice": 2.939999986773869
+      },
+      "l": {
+        "unixTime": 1659678017000,
+        "formattedPrice": 2.938224660558354
+      },
+      "h": {
+        "unixTime": 1659671215000,
+        "formattedPrice": 2.9399999900592286
+      },
+      "c": {
+        "unixTime": 1659678017000,
+        "formattedPrice": 2.938224660558354
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1659565307000,
+        "formattedPrice": 3.005100970295757
+      },
+      "l": {
+        "unixTime": 1659565307000,
+        "formattedPrice": 3.005100970295757
+      },
+      "h": {
+        "unixTime": 1659565307000,
+        "formattedPrice": 3.005100970295757
+      },
+      "c": {
+        "unixTime": 1659565307000,
+        "formattedPrice": 3.005100970295757
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1659449774000,
+        "formattedPrice": 3.1000000119403
+      },
+      "l": {
+        "unixTime": 1659449774000,
+        "formattedPrice": 3.1000000119403
+      },
+      "h": {
+        "unixTime": 1659449774000,
+        "formattedPrice": 3.1000001440297047
+      },
+      "c": {
+        "unixTime": 1659449774000,
+        "formattedPrice": 3.1000000119403
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1659146172000,
+        "formattedPrice": 2.9821410437631264
+      },
+      "l": {
+        "unixTime": 1659146172000,
+        "formattedPrice": 2.9821410437631264
+      },
+      "h": {
+        "unixTime": 1659146172000,
+        "formattedPrice": 2.9821410437631264
+      },
+      "c": {
+        "unixTime": 1659146172000,
+        "formattedPrice": 2.9821410437631264
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1658976466000,
+        "formattedPrice": 3.0790877508611727
+      },
+      "l": {
+        "unixTime": 1659047109000,
+        "formattedPrice": 2.9704535876881697
+      },
+      "h": {
+        "unixTime": 1658976466000,
+        "formattedPrice": 3.0790877508611727
+      },
+      "c": {
+        "unixTime": 1659047109000,
+        "formattedPrice": 2.9704535876881697
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1658891207000,
+        "formattedPrice": 3.2417650733794208
+      },
+      "l": {
+        "unixTime": 1658953186000,
+        "formattedPrice": 3.0650000381592504
+      },
+      "h": {
+        "unixTime": 1658891207000,
+        "formattedPrice": 3.2417650733794208
+      },
+      "c": {
+        "unixTime": 1658953186000,
+        "formattedPrice": 3.0650000381592504
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1658825849000,
+        "formattedPrice": 3.23
+      },
+      "l": {
+        "unixTime": 1658825849000,
+        "formattedPrice": 3.23
+      },
+      "h": {
+        "unixTime": 1658836265000,
+        "formattedPrice": 3.249274728978665
+      },
+      "c": {
+        "unixTime": 1658855962000,
+        "formattedPrice": 3.240001990286937
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1658772716000,
+        "formattedPrice": 3.050000400272185
+      },
+      "l": {
+        "unixTime": 1658772716000,
+        "formattedPrice": 3.050000400272185
+      },
+      "h": {
+        "unixTime": 1658772716000,
+        "formattedPrice": 3.050000400272185
+      },
+      "c": {
+        "unixTime": 1658772716000,
+        "formattedPrice": 3.050000400272185
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1658480695000,
+        "formattedPrice": 2.8225559751440685
+      },
+      "l": {
+        "unixTime": 1658480695000,
+        "formattedPrice": 2.8225559751440685
+      },
+      "h": {
+        "unixTime": 1658480695000,
+        "formattedPrice": 2.8225559751440685
+      },
+      "c": {
+        "unixTime": 1658480695000,
+        "formattedPrice": 2.8225559751440685
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1658346639000,
+        "formattedPrice": 2.792000012564
+      },
+      "l": {
+        "unixTime": 1658346639000,
+        "formattedPrice": 2.792000012564
+      },
+      "h": {
+        "unixTime": 1658349075000,
+        "formattedPrice": 2.860000151389376
+      },
+      "c": {
+        "unixTime": 1658349075000,
+        "formattedPrice": 2.860000010092635
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1658203045000,
+        "formattedPrice": 2.848565333003525
+      },
+      "l": {
+        "unixTime": 1658248642000,
+        "formattedPrice": 2.6499995997278147
+      },
+      "h": {
+        "unixTime": 1658205557000,
+        "formattedPrice": 2.848708487084871
+      },
+      "c": {
+        "unixTime": 1658249660000,
+        "formattedPrice": 2.6541768433663373
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1658105035000,
+        "formattedPrice": 2.9663500158066305
+      },
+      "l": {
+        "unixTime": 1658161189000,
+        "formattedPrice": 2.832997437772275
+      },
+      "h": {
+        "unixTime": 1658110749000,
+        "formattedPrice": 2.966352211967442
+      },
+      "c": {
+        "unixTime": 1658179561000,
+        "formattedPrice": 2.891228812811965
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1658020721000,
+        "formattedPrice": 2.967397606657337
+      },
+      "l": {
+        "unixTime": 1658064750000,
+        "formattedPrice": 2.9501890141261615
+      },
+      "h": {
+        "unixTime": 1658020721000,
+        "formattedPrice": 2.967397606657337
+      },
+      "c": {
+        "unixTime": 1658064750000,
+        "formattedPrice": 2.9501890141261615
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1657905211000,
+        "formattedPrice": 3.1134907384051558
+      },
+      "l": {
+        "unixTime": 1657905228000,
+        "formattedPrice": 3.1134907384051558
+      },
+      "h": {
+        "unixTime": 1657905237000,
+        "formattedPrice": 3.1134908703496955
+      },
+      "c": {
+        "unixTime": 1657905237000,
+        "formattedPrice": 3.1134908703496955
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1657757228000,
+        "formattedPrice": 3.2499999988647383
+      },
+      "l": {
+        "unixTime": 1657817588000,
+        "formattedPrice": 3.164
+      },
+      "h": {
+        "unixTime": 1657799414000,
+        "formattedPrice": 3.2854574168369015
+      },
+      "c": {
+        "unixTime": 1657817588000,
+        "formattedPrice": 3.164
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1657697891000,
+        "formattedPrice": 3.4499991375890438
+      },
+      "l": {
+        "unixTime": 1657726908000,
+        "formattedPrice": 3.250001207245404
+      },
+      "h": {
+        "unixTime": 1657697891000,
+        "formattedPrice": 3.4499991375890438
+      },
+      "c": {
+        "unixTime": 1657754067000,
+        "formattedPrice": 3.2749990556495243
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1657584153000,
+        "formattedPrice": 3.35000051844632
+      },
+      "l": {
+        "unixTime": 1657584192000,
+        "formattedPrice": 3.2499993633638833
+      },
+      "h": {
+        "unixTime": 1657651922000,
+        "formattedPrice": 3.4500008625002154
+      },
+      "c": {
+        "unixTime": 1657669277000,
+        "formattedPrice": 3.3000002064482032
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1657550427000,
+        "formattedPrice": 3.3500000047794454
+      },
+      "l": {
+        "unixTime": 1657560704000,
+        "formattedPrice": 3.24993927617197
+      },
+      "h": {
+        "unixTime": 1657560362000,
+        "formattedPrice": 3.3500034656706075
+      },
+      "c": {
+        "unixTime": 1657560747000,
+        "formattedPrice": 3.3500010955222352
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1657412021000,
+        "formattedPrice": 3.0320625485277177
+      },
+      "l": {
+        "unixTime": 1657412021000,
+        "formattedPrice": 3.032002714011082
+      },
+      "h": {
+        "unixTime": 1657495417000,
+        "formattedPrice": 3.354998178101717
+      },
+      "c": {
+        "unixTime": 1657495551000,
+        "formattedPrice": 3.0937432413908645
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1657326981000,
+        "formattedPrice": 3.119999519537475
+      },
+      "l": {
+        "unixTime": 1657353814000,
+        "formattedPrice": 2.509999997724619
+      },
+      "h": {
+        "unixTime": 1657353783000,
+        "formattedPrice": 4.260000004851467
+      },
+      "c": {
+        "unixTime": 1657370834000,
+        "formattedPrice": 3.247946101124686
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1657294382000,
+        "formattedPrice": 3.1699995896969755
+      },
+      "l": {
+        "unixTime": 1657294408000,
+        "formattedPrice": 3.169990944342536
+      },
+      "h": {
+        "unixTime": 1657294382000,
+        "formattedPrice": 3.1699995896969755
+      },
+      "c": {
+        "unixTime": 1657294503000,
+        "formattedPrice": 3.1699970498574097
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1657079338000,
+        "formattedPrice": 3.4318958098894554
+      },
+      "l": {
+        "unixTime": 1657079417000,
+        "formattedPrice": 3.173753888925664
+      },
+      "h": {
+        "unixTime": 1657079338000,
+        "formattedPrice": 3.4318958098894554
+      },
+      "c": {
+        "unixTime": 1657119335000,
+        "formattedPrice": 3.2355
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656977177000,
+        "formattedPrice": 3.1599986161683433
+      },
+      "l": {
+        "unixTime": 1656977251000,
+        "formattedPrice": 3.1599795879313644
+      },
+      "h": {
+        "unixTime": 1656977242000,
+        "formattedPrice": 3.1599996228573586
+      },
+      "c": {
+        "unixTime": 1656977376000,
+        "formattedPrice": 3.159998975514804
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656852459000,
+        "formattedPrice": 3.355999038496649
+      },
+      "l": {
+        "unixTime": 1656852511000,
+        "formattedPrice": 3.194799904011965
+      },
+      "h": {
+        "unixTime": 1656852459000,
+        "formattedPrice": 3.3559990828628528
+      },
+      "c": {
+        "unixTime": 1656869595000,
+        "formattedPrice": 3.285
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656762064000,
+        "formattedPrice": 3.4038640063960433
+      },
+      "l": {
+        "unixTime": 1656762160000,
+        "formattedPrice": 2.7244879976250975
+      },
+      "h": {
+        "unixTime": 1656762064000,
+        "formattedPrice": 3.649999007564353
+      },
+      "c": {
+        "unixTime": 1656762160000,
+        "formattedPrice": 2.8499945697839917
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656689270000,
+        "formattedPrice": 3.235999809952171
+      },
+      "l": {
+        "unixTime": 1656691496000,
+        "formattedPrice": 3.2049996912719383
+      },
+      "h": {
+        "unixTime": 1656691819000,
+        "formattedPrice": 3.269999957388292
+      },
+      "c": {
+        "unixTime": 1656691819000,
+        "formattedPrice": 3.269999957388292
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656581271000,
+        "formattedPrice": 3.467500013131308
+      },
+      "l": {
+        "unixTime": 1656629242000,
+        "formattedPrice": 3.299995361442989
+      },
+      "h": {
+        "unixTime": 1656581271000,
+        "formattedPrice": 3.467500013131308
+      },
+      "c": {
+        "unixTime": 1656629242000,
+        "formattedPrice": 3.299995361442989
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656508817000,
+        "formattedPrice": 3.3000000330000003
+      },
+      "l": {
+        "unixTime": 1656510809000,
+        "formattedPrice": 3.170066225165563
+      },
+      "h": {
+        "unixTime": 1656523969000,
+        "formattedPrice": 3.507597138968886
+      },
+      "c": {
+        "unixTime": 1656538724000,
+        "formattedPrice": 3.2999999572438896
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656408276000,
+        "formattedPrice": 3.005000017338042
+      },
+      "l": {
+        "unixTime": 1656419713000,
+        "formattedPrice": 2.949999711014397
+      },
+      "h": {
+        "unixTime": 1656456241000,
+        "formattedPrice": 3.1800155665097662
+      },
+      "c": {
+        "unixTime": 1656456241000,
+        "formattedPrice": 3.1800155665097662
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656342558000,
+        "formattedPrice": 3.090969135802469
+      },
+      "l": {
+        "unixTime": 1656346015000,
+        "formattedPrice": 2.9669900058788947
+      },
+      "h": {
+        "unixTime": 1656347126000,
+        "formattedPrice": 3.0909726154476345
+      },
+      "c": {
+        "unixTime": 1656347173000,
+        "formattedPrice": 2.9669985708042472
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656135018000,
+        "formattedPrice": 2.9286913769564804
+      },
+      "l": {
+        "unixTime": 1656135018000,
+        "formattedPrice": 2.9286913769564804
+      },
+      "h": {
+        "unixTime": 1656173428000,
+        "formattedPrice": 2.9709999959307436
+      },
+      "c": {
+        "unixTime": 1656190874000,
+        "formattedPrice": 2.95
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1656029029000,
+        "formattedPrice": 2.9106254151274182
+      },
+      "l": {
+        "unixTime": 1656092481000,
+        "formattedPrice": 2.5136049363704585
+      },
+      "h": {
+        "unixTime": 1656051163000,
+        "formattedPrice": 3.1456646796990917
+      },
+      "c": {
+        "unixTime": 1656114276000,
+        "formattedPrice": 2.73248127831682
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655971775000,
+        "formattedPrice": 3.090018371096142
+      },
+      "l": {
+        "unixTime": 1656023553000,
+        "formattedPrice": 3.049999980811545
+      },
+      "h": {
+        "unixTime": 1656017453000,
+        "formattedPrice": 3.164999398554776
+      },
+      "c": {
+        "unixTime": 1656023623000,
+        "formattedPrice": 3.1154200832440244
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655891279000,
+        "formattedPrice": 3.2799998409696083
+      },
+      "l": {
+        "unixTime": 1655897783000,
+        "formattedPrice": 3.0899984354377366
+      },
+      "h": {
+        "unixTime": 1655891279000,
+        "formattedPrice": 3.2799998409696083
+      },
+      "c": {
+        "unixTime": 1655900045000,
+        "formattedPrice": 3.0900000618542514
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655800890000,
+        "formattedPrice": 3
+      },
+      "l": {
+        "unixTime": 1655832473000,
+        "formattedPrice": 2.8199999953090487
+      },
+      "h": {
+        "unixTime": 1655800890000,
+        "formattedPrice": 3
+      },
+      "c": {
+        "unixTime": 1655832473000,
+        "formattedPrice": 2.8199999953090487
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655720524000,
+        "formattedPrice": 3.1000008593380275
+      },
+      "l": {
+        "unixTime": 1655728632000,
+        "formattedPrice": 2.899999565272205
+      },
+      "h": {
+        "unixTime": 1655742063000,
+        "formattedPrice": 3.299999
+      },
+      "c": {
+        "unixTime": 1655742452000,
+        "formattedPrice": 3.1000000112665376
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655535394000,
+        "formattedPrice": 3.288700273972603
+      },
+      "l": {
+        "unixTime": 1655535488000,
+        "formattedPrice": 3.1000008936491463
+      },
+      "h": {
+        "unixTime": 1655551297000,
+        "formattedPrice": 3.6499990781603784
+      },
+      "c": {
+        "unixTime": 1655551297000,
+        "formattedPrice": 3.6499990781603784
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655457592000,
+        "formattedPrice": 3.207199967620611
+      },
+      "l": {
+        "unixTime": 1655470375000,
+        "formattedPrice": 3.100002489068839
+      },
+      "h": {
+        "unixTime": 1655500664000,
+        "formattedPrice": 3.288699125915274
+      },
+      "c": {
+        "unixTime": 1655501280000,
+        "formattedPrice": 3.1500009457576463
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655348757000,
+        "formattedPrice": 3.195499239295344
+      },
+      "l": {
+        "unixTime": 1655385706000,
+        "formattedPrice": 2.5
+      },
+      "h": {
+        "unixTime": 1655420193000,
+        "formattedPrice": 3.2890000114055966
+      },
+      "c": {
+        "unixTime": 1655420193000,
+        "formattedPrice": 3.2890000114055966
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655282870000,
+        "formattedPrice": 3.3100019970120655
+      },
+      "l": {
+        "unixTime": 1655292142000,
+        "formattedPrice": 2.581015450897446
+      },
+      "h": {
+        "unixTime": 1655282870000,
+        "formattedPrice": 3.3100019970120655
+      },
+      "c": {
+        "unixTime": 1655304325000,
+        "formattedPrice": 3.1119909502262444
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655207169000,
+        "formattedPrice": 3.1902255639097743
+      },
+      "l": {
+        "unixTime": 1655207169000,
+        "formattedPrice": 3.1902255639097743
+      },
+      "h": {
+        "unixTime": 1655207330000,
+        "formattedPrice": 3.649999383479723
+      },
+      "c": {
+        "unixTime": 1655238414000,
+        "formattedPrice": 3.310000002527864
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655078798000,
+        "formattedPrice": 3.0300053512728384
+      },
+      "l": {
+        "unixTime": 1655104068000,
+        "formattedPrice": 2.960843373493976
+      },
+      "h": {
+        "unixTime": 1655144590000,
+        "formattedPrice": 4.260000442273211
+      },
+      "c": {
+        "unixTime": 1655160979000,
+        "formattedPrice": 3.1900001518118746
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1655001787000,
+        "formattedPrice": 2.977000013263183
+      },
+      "l": {
+        "unixTime": 1655054491000,
+        "formattedPrice": 2.8600008684637706
+      },
+      "h": {
+        "unixTime": 1655077616000,
+        "formattedPrice": 3.030000021295897
+      },
+      "c": {
+        "unixTime": 1655077616000,
+        "formattedPrice": 3.030000021295897
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654926863000,
+        "formattedPrice": 2.850000029630244
+      },
+      "l": {
+        "unixTime": 1654951846000,
+        "formattedPrice": 2.2000009639305884
+      },
+      "h": {
+        "unixTime": 1654927261000,
+        "formattedPrice": 2.9800044466785245
+      },
+      "c": {
+        "unixTime": 1654989352000,
+        "formattedPrice": 2.8000002283389143
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654866489000,
+        "formattedPrice": 2.6299900066685
+      },
+      "l": {
+        "unixTime": 1654879267000,
+        "formattedPrice": 2.4100009658411863
+      },
+      "h": {
+        "unixTime": 1654878882000,
+        "formattedPrice": 2.980000099902096
+      },
+      "c": {
+        "unixTime": 1654892351000,
+        "formattedPrice": 2.6699999926211175
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654772524000,
+        "formattedPrice": 2.37
+      },
+      "l": {
+        "unixTime": 1654787636000,
+        "formattedPrice": 2.3698812562423703
+      },
+      "h": {
+        "unixTime": 1654787241000,
+        "formattedPrice": 2.6301946344029457
+      },
+      "c": {
+        "unixTime": 1654794808000,
+        "formattedPrice": 2.3699026571954747
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654693602000,
+        "formattedPrice": 2.593489416851167
+      },
+      "l": {
+        "unixTime": 1654726392000,
+        "formattedPrice": 2.3699995579481463
+      },
+      "h": {
+        "unixTime": 1654693732000,
+        "formattedPrice": 2.630000155228082
+      },
+      "c": {
+        "unixTime": 1654726392000,
+        "formattedPrice": 2.3709996556869046
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654562544000,
+        "formattedPrice": 2.593490871881952
+      },
+      "l": {
+        "unixTime": 1654562613000,
+        "formattedPrice": 2.440440536305067
+      },
+      "h": {
+        "unixTime": 1654571741000,
+        "formattedPrice": 2.593491510996945
+      },
+      "c": {
+        "unixTime": 1654617623000,
+        "formattedPrice": 2.5000005219310193
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654499050000,
+        "formattedPrice": 2.636
+      },
+      "l": {
+        "unixTime": 1654499106000,
+        "formattedPrice": 2.409995879329415
+      },
+      "h": {
+        "unixTime": 1654499050000,
+        "formattedPrice": 2.6444024019083656
+      },
+      "c": {
+        "unixTime": 1654508617000,
+        "formattedPrice": 2.5880000828187355
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654400657000,
+        "formattedPrice": 2.5221647869674184
+      },
+      "l": {
+        "unixTime": 1654400657000,
+        "formattedPrice": 2.5221647869674184
+      },
+      "h": {
+        "unixTime": 1654400657000,
+        "formattedPrice": 2.5222004554147355
+      },
+      "c": {
+        "unixTime": 1654434685000,
+        "formattedPrice": 2.5221999840225098
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654336637000,
+        "formattedPrice": 2.85000103842468
+      },
+      "l": {
+        "unixTime": 1654356090000,
+        "formattedPrice": 2.84999
+      },
+      "h": {
+        "unixTime": 1654336637000,
+        "formattedPrice": 2.85000103842468
+      },
+      "c": {
+        "unixTime": 1654356090000,
+        "formattedPrice": 2.84999
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654237561000,
+        "formattedPrice": 2.610043005312421
+      },
+      "l": {
+        "unixTime": 1654237618000,
+        "formattedPrice": 2.4529452065707504
+      },
+      "h": {
+        "unixTime": 1654265074000,
+        "formattedPrice": 2.850000125268844
+      },
+      "c": {
+        "unixTime": 1654265074000,
+        "formattedPrice": 2.8100111731843573
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654153269000,
+        "formattedPrice": 2.7
+      },
+      "l": {
+        "unixTime": 1654213609000,
+        "formattedPrice": 2.311100971847515
+      },
+      "h": {
+        "unixTime": 1654158233000,
+        "formattedPrice": 2.7990004457703255
+      },
+      "c": {
+        "unixTime": 1654213609000,
+        "formattedPrice": 2.4729201109761596
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1654042810000,
+        "formattedPrice": 2.5
+      },
+      "l": {
+        "unixTime": 1654050987000,
+        "formattedPrice": 2.3499990522864116
+      },
+      "h": {
+        "unixTime": 1654095516000,
+        "formattedPrice": 2.7000002778321868
+      },
+      "c": {
+        "unixTime": 1654115638000,
+        "formattedPrice": 2.6200000169151876
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653983522000,
+        "formattedPrice": 2.604550287922292
+      },
+      "l": {
+        "unixTime": 1654039276000,
+        "formattedPrice": 2.4499995458632684
+      },
+      "h": {
+        "unixTime": 1653983522000,
+        "formattedPrice": 2.604550287922292
+      },
+      "c": {
+        "unixTime": 1654039276000,
+        "formattedPrice": 2.4499995458632684
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653874395000,
+        "formattedPrice": 2.6499999399181626
+      },
+      "l": {
+        "unixTime": 1653953517000,
+        "formattedPrice": 2.398997064475035
+      },
+      "h": {
+        "unixTime": 1653901564000,
+        "formattedPrice": 2.799899441340782
+      },
+      "c": {
+        "unixTime": 1653953517000,
+        "formattedPrice": 2.398997064475035
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653789268000,
+        "formattedPrice": 2.799900137824421
+      },
+      "l": {
+        "unixTime": 1653789268000,
+        "formattedPrice": 2.799900137824421
+      },
+      "h": {
+        "unixTime": 1653789268000,
+        "formattedPrice": 2.799900137824421
+      },
+      "c": {
+        "unixTime": 1653789268000,
+        "formattedPrice": 2.799900137824421
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653699314000,
+        "formattedPrice": 2.799899023508984
+      },
+      "l": {
+        "unixTime": 1653721604000,
+        "formattedPrice": 2.649980894153611
+      },
+      "h": {
+        "unixTime": 1653733554000,
+        "formattedPrice": 2.799900845032973
+      },
+      "c": {
+        "unixTime": 1653769404000,
+        "formattedPrice": 2.64999987699181
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653669072000,
+        "formattedPrice": 2.8500008407082125
+      },
+      "l": {
+        "unixTime": 1653682145000,
+        "formattedPrice": 2.6999951242503535
+      },
+      "h": {
+        "unixTime": 1653674447000,
+        "formattedPrice": 2.8500084760128837
+      },
+      "c": {
+        "unixTime": 1653689879000,
+        "formattedPrice": 2.8400002482829683
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653553458000,
+        "formattedPrice": 2.534
+      },
+      "l": {
+        "unixTime": 1653593248000,
+        "formattedPrice": 2.5160581542897305
+      },
+      "h": {
+        "unixTime": 1653571531000,
+        "formattedPrice": 2.8499992448992946
+      },
+      "c": {
+        "unixTime": 1653593619000,
+        "formattedPrice": 2.5559999200683956
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653359351000,
+        "formattedPrice": 2.3880116872768054
+      },
+      "l": {
+        "unixTime": 1653359407000,
+        "formattedPrice": 2.329345670038316
+      },
+      "h": {
+        "unixTime": 1653430684000,
+        "formattedPrice": 2.5339990391770773
+      },
+      "c": {
+        "unixTime": 1653430684000,
+        "formattedPrice": 2.5339990125339273
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653335240000,
+        "formattedPrice": 2.39
+      },
+      "l": {
+        "unixTime": 1653345938000,
+        "formattedPrice": 2.283682504615398
+      },
+      "h": {
+        "unixTime": 1653345882000,
+        "formattedPrice": 2.4000004400856407
+      },
+      "c": {
+        "unixTime": 1653345938000,
+        "formattedPrice": 2.283682504615398
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653212973000,
+        "formattedPrice": 2.2400007900610324
+      },
+      "l": {
+        "unixTime": 1653212973000,
+        "formattedPrice": 2.239999906844753
+      },
+      "h": {
+        "unixTime": 1653212973000,
+        "formattedPrice": 2.2400007900610324
+      },
+      "c": {
+        "unixTime": 1653212973000,
+        "formattedPrice": 2.2400007900610324
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653120292000,
+        "formattedPrice": 2.2476124517022673
+      },
+      "l": {
+        "unixTime": 1653120292000,
+        "formattedPrice": 2.2476124517022673
+      },
+      "h": {
+        "unixTime": 1653120292000,
+        "formattedPrice": 2.247639606833986
+      },
+      "c": {
+        "unixTime": 1653120292000,
+        "formattedPrice": 2.2476124517022673
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1653006663000,
+        "formattedPrice": 2.200852793891616
+      },
+      "l": {
+        "unixTime": 1653038906000,
+        "formattedPrice": 2.2000989740954338
+      },
+      "h": {
+        "unixTime": 1653066421000,
+        "formattedPrice": 3.2000019246067386
+      },
+      "c": {
+        "unixTime": 1653066421000,
+        "formattedPrice": 3.2000019246067386
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652926483000,
+        "formattedPrice": 2.2720842036301616
+      },
+      "l": {
+        "unixTime": 1652926795000,
+        "formattedPrice": 1.9000009809702667
+      },
+      "h": {
+        "unixTime": 1652926791000,
+        "formattedPrice": 2.286151784150136
+      },
+      "c": {
+        "unixTime": 1652988245000,
+        "formattedPrice": 2.245
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652894478000,
+        "formattedPrice": 2.348619029217269
+      },
+      "l": {
+        "unixTime": 1652894560000,
+        "formattedPrice": 2.174203099868402
+      },
+      "h": {
+        "unixTime": 1652894478000,
+        "formattedPrice": 2.348619029217269
+      },
+      "c": {
+        "unixTime": 1652894560000,
+        "formattedPrice": 2.174203394945762
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652765499000,
+        "formattedPrice": 2.3334662666301873
+      },
+      "l": {
+        "unixTime": 1652826220000,
+        "formattedPrice": 1.968003893841582
+      },
+      "h": {
+        "unixTime": 1652765499000,
+        "formattedPrice": 2.3334662666301873
+      },
+      "c": {
+        "unixTime": 1652827361000,
+        "formattedPrice": 1.9680041369565693
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652664980000,
+        "formattedPrice": 2.322736111111111
+      },
+      "l": {
+        "unixTime": 1652671477000,
+        "formattedPrice": 2.0448680045911445
+      },
+      "h": {
+        "unixTime": 1652723007000,
+        "formattedPrice": 2.413178040865232
+      },
+      "c": {
+        "unixTime": 1652723007000,
+        "formattedPrice": 2.413178040865232
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652616169000,
+        "formattedPrice": 2.320000540884075
+      },
+      "l": {
+        "unixTime": 1652616439000,
+        "formattedPrice": 2.3200001800898646
+      },
+      "h": {
+        "unixTime": 1652616169000,
+        "formattedPrice": 2.320000540884075
+      },
+      "c": {
+        "unixTime": 1652616439000,
+        "formattedPrice": 2.3200001800898646
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652527835000,
+        "formattedPrice": 2.415779023259573
+      },
+      "l": {
+        "unixTime": 1652538745000,
+        "formattedPrice": 2.362164
+      },
+      "h": {
+        "unixTime": 1652538977000,
+        "formattedPrice": 2.5
+      },
+      "c": {
+        "unixTime": 1652557143000,
+        "formattedPrice": 2.499999
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652451059000,
+        "formattedPrice": 2.089999537196041
+      },
+      "l": {
+        "unixTime": 1652451059000,
+        "formattedPrice": 2.089999537196041
+      },
+      "h": {
+        "unixTime": 1652467530000,
+        "formattedPrice": 2.332305049278677
+      },
+      "c": {
+        "unixTime": 1652473905000,
+        "formattedPrice": 2.3
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652328398000,
+        "formattedPrice": 2.460000015468307
+      },
+      "l": {
+        "unixTime": 1652349226000,
+        "formattedPrice": 2.25
+      },
+      "h": {
+        "unixTime": 1652332103000,
+        "formattedPrice": 2.460000618733178
+      },
+      "c": {
+        "unixTime": 1652349226000,
+        "formattedPrice": 2.250236071765817
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652234637000,
+        "formattedPrice": 1.79
+      },
+      "l": {
+        "unixTime": 1652236994000,
+        "formattedPrice": 1.6526973919256878
+      },
+      "h": {
+        "unixTime": 1652304963000,
+        "formattedPrice": 2.2500017923331157
+      },
+      "c": {
+        "unixTime": 1652304963000,
+        "formattedPrice": 2.2500017923331157
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652161593000,
+        "formattedPrice": 1.5472958194774036
+      },
+      "l": {
+        "unixTime": 1652161593000,
+        "formattedPrice": 1.5472958194774036
+      },
+      "h": {
+        "unixTime": 1652196928000,
+        "formattedPrice": 1.7313572266419954
+      },
+      "c": {
+        "unixTime": 1652196928000,
+        "formattedPrice": 1.7313572266419954
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652064079000,
+        "formattedPrice": 1.380000029062935
+      },
+      "l": {
+        "unixTime": 1652065856000,
+        "formattedPrice": 1.2999999902312884
+      },
+      "h": {
+        "unixTime": 1652140781000,
+        "formattedPrice": 1.7100000516652265
+      },
+      "c": {
+        "unixTime": 1652140781000,
+        "formattedPrice": 1.7100000516652265
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1652002397000,
+        "formattedPrice": 1.39
+      },
+      "l": {
+        "unixTime": 1652030620000,
+        "formattedPrice": 1.2999999956555683
+      },
+      "h": {
+        "unixTime": 1652008223000,
+        "formattedPrice": 1.4121982412708676
+      },
+      "c": {
+        "unixTime": 1652041747000,
+        "formattedPrice": 1.3800001883310107
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651888494000,
+        "formattedPrice": 1.515
+      },
+      "l": {
+        "unixTime": 1651924500000,
+        "formattedPrice": 1.3799999477793887
+      },
+      "h": {
+        "unixTime": 1651889824000,
+        "formattedPrice": 1.5150048402710552
+      },
+      "c": {
+        "unixTime": 1651928261000,
+        "formattedPrice": 1.4299990354975192
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651853554000,
+        "formattedPrice": 1.5199999354623932
+      },
+      "l": {
+        "unixTime": 1651857121000,
+        "formattedPrice": 1.3000009974708495
+      },
+      "h": {
+        "unixTime": 1651853554000,
+        "formattedPrice": 1.5199999354623932
+      },
+      "c": {
+        "unixTime": 1651860741000,
+        "formattedPrice": 1.5149990683229813
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651758871000,
+        "formattedPrice": 1.490000047193241
+      },
+      "l": {
+        "unixTime": 1651762153000,
+        "formattedPrice": 1.4850000767182934
+      },
+      "h": {
+        "unixTime": 1651778361000,
+        "formattedPrice": 1.6200002135968101
+      },
+      "c": {
+        "unixTime": 1651778361000,
+        "formattedPrice": 1.5815
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651632106000,
+        "formattedPrice": 1.5499990797029808
+      },
+      "l": {
+        "unixTime": 1651632167000,
+        "formattedPrice": 1.3939954353037791
+      },
+      "h": {
+        "unixTime": 1651650966000,
+        "formattedPrice": 1.5499991684129995
+      },
+      "c": {
+        "unixTime": 1651700242000,
+        "formattedPrice": 1.4340000171881195
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651543951000,
+        "formattedPrice": 1.5799999359698538
+      },
+      "l": {
+        "unixTime": 1651563738000,
+        "formattedPrice": 1.3700009220858202
+      },
+      "h": {
+        "unixTime": 1651543951000,
+        "formattedPrice": 1.5799999359698538
+      },
+      "c": {
+        "unixTime": 1651612706000,
+        "formattedPrice": 1.55
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651474328000,
+        "formattedPrice": 1.7519990476190477
+      },
+      "l": {
+        "unixTime": 1651474582000,
+        "formattedPrice": 1.6559974785932032
+      },
+      "h": {
+        "unixTime": 1651474328000,
+        "formattedPrice": 1.7519990476190477
+      },
+      "c": {
+        "unixTime": 1651508655000,
+        "formattedPrice": 1.716
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651410490000,
+        "formattedPrice": 1.6500096098404766
+      },
+      "l": {
+        "unixTime": 1651410490000,
+        "formattedPrice": 1.6500096098404766
+      },
+      "h": {
+        "unixTime": 1651418703000,
+        "formattedPrice": 1.8000188720787595
+      },
+      "c": {
+        "unixTime": 1651437405000,
+        "formattedPrice": 1.68
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651304243000,
+        "formattedPrice": 1.5410801963993452
+      },
+      "l": {
+        "unixTime": 1651304330000,
+        "formattedPrice": 1.540000284488118
+      },
+      "h": {
+        "unixTime": 1651360347000,
+        "formattedPrice": 1.8000002541700568
+      },
+      "c": {
+        "unixTime": 1651360347000,
+        "formattedPrice": 1.800000192007496
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651214952000,
+        "formattedPrice": 1.5199950257560613
+      },
+      "l": {
+        "unixTime": 1651214952000,
+        "formattedPrice": 1.5199950257560613
+      },
+      "h": {
+        "unixTime": 1651261834000,
+        "formattedPrice": 1.5800007634614615
+      },
+      "c": {
+        "unixTime": 1651261834000,
+        "formattedPrice": 1.58000006065346
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651130402000,
+        "formattedPrice": 1.5253439536567706
+      },
+      "l": {
+        "unixTime": 1651150578000,
+        "formattedPrice": 1.45
+      },
+      "h": {
+        "unixTime": 1651130747000,
+        "formattedPrice": 1.5329990609262698
+      },
+      "c": {
+        "unixTime": 1651178400000,
+        "formattedPrice": 1.496
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1651038951000,
+        "formattedPrice": 1.4644504146740716
+      },
+      "l": {
+        "unixTime": 1651038951000,
+        "formattedPrice": 1.4644504146740716
+      },
+      "h": {
+        "unixTime": 1651095076000,
+        "formattedPrice": 1.5250032429627707
+      },
+      "c": {
+        "unixTime": 1651095124000,
+        "formattedPrice": 1.469999922470403
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650954755000,
+        "formattedPrice": 1.49
+      },
+      "l": {
+        "unixTime": 1650972276000,
+        "formattedPrice": 1.43
+      },
+      "h": {
+        "unixTime": 1651015270000,
+        "formattedPrice": 1.5250000486152568
+      },
+      "c": {
+        "unixTime": 1651015270000,
+        "formattedPrice": 1.5223001753492025
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650848145000,
+        "formattedPrice": 1.4400000438067588
+      },
+      "l": {
+        "unixTime": 1650912765000,
+        "formattedPrice": 1.414
+      },
+      "h": {
+        "unixTime": 1650877407000,
+        "formattedPrice": 1.510002196496994
+      },
+      "c": {
+        "unixTime": 1650927038000,
+        "formattedPrice": 1.4600000400658684
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650785644000,
+        "formattedPrice": 1.3999996194357944
+      },
+      "l": {
+        "unixTime": 1650817579000,
+        "formattedPrice": 1.3820004186550823
+      },
+      "h": {
+        "unixTime": 1650817483000,
+        "formattedPrice": 1.4390000436259298
+      },
+      "c": {
+        "unixTime": 1650817579000,
+        "formattedPrice": 1.3820004186550823
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650705886000,
+        "formattedPrice": 1.3700006979009602
+      },
+      "l": {
+        "unixTime": 1650720262000,
+        "formattedPrice": 1.3699997885440875
+      },
+      "h": {
+        "unixTime": 1650733786000,
+        "formattedPrice": 1.4100004896835203
+      },
+      "c": {
+        "unixTime": 1650733786000,
+        "formattedPrice": 1.41
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650593565000,
+        "formattedPrice": 1.357194581475717
+      },
+      "l": {
+        "unixTime": 1650593565000,
+        "formattedPrice": 1.357194581475717
+      },
+      "h": {
+        "unixTime": 1650600481000,
+        "formattedPrice": 1.4399990710897945
+      },
+      "c": {
+        "unixTime": 1650657740000,
+        "formattedPrice": 1.439999
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650508341000,
+        "formattedPrice": 1.4400000066606067
+      },
+      "l": {
+        "unixTime": 1650553765000,
+        "formattedPrice": 1.33
+      },
+      "h": {
+        "unixTime": 1650508345000,
+        "formattedPrice": 1.4400008126530073
+      },
+      "c": {
+        "unixTime": 1650580379000,
+        "formattedPrice": 1.4399992085894426
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650430544000,
+        "formattedPrice": 1.365000358471599
+      },
+      "l": {
+        "unixTime": 1650439978000,
+        "formattedPrice": 1.2579229973670025
+      },
+      "h": {
+        "unixTime": 1650489875000,
+        "formattedPrice": 1.4500000116732126
+      },
+      "c": {
+        "unixTime": 1650495451000,
+        "formattedPrice": 1.3699999979933288
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650340312000,
+        "formattedPrice": 1.4429980599152694
+      },
+      "l": {
+        "unixTime": 1650346645000,
+        "formattedPrice": 1.2200009797401474
+      },
+      "h": {
+        "unixTime": 1650347286000,
+        "formattedPrice": 1.4600001095758988
+      },
+      "c": {
+        "unixTime": 1650402847000,
+        "formattedPrice": 1.348
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650255316000,
+        "formattedPrice": 1.4352331606217616
+      },
+      "l": {
+        "unixTime": 1650315211000,
+        "formattedPrice": 1.3235359150925516
+      },
+      "h": {
+        "unixTime": 1650257542000,
+        "formattedPrice": 1.4433226851297418
+      },
+      "c": {
+        "unixTime": 1650315211000,
+        "formattedPrice": 1.3235359150925516
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650178776000,
+        "formattedPrice": 1.427999013906927
+      },
+      "l": {
+        "unixTime": 1650178806000,
+        "formattedPrice": 1.3300005081817259
+      },
+      "h": {
+        "unixTime": 1650178776000,
+        "formattedPrice": 1.4279990651835441
+      },
+      "c": {
+        "unixTime": 1650217762000,
+        "formattedPrice": 1.3359999505938798
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650085430000,
+        "formattedPrice": 1.3899990476190476
+      },
+      "l": {
+        "unixTime": 1650103309000,
+        "formattedPrice": 1.3220004950777844
+      },
+      "h": {
+        "unixTime": 1650085430000,
+        "formattedPrice": 1.3899990476190476
+      },
+      "c": {
+        "unixTime": 1650142448000,
+        "formattedPrice": 1.3300009708737863
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1650039072000,
+        "formattedPrice": 1.3460999912563023
+      },
+      "l": {
+        "unixTime": 1650057390000,
+        "formattedPrice": 1.3219987024604103
+      },
+      "h": {
+        "unixTime": 1650054522000,
+        "formattedPrice": 1.3899993809818063
+      },
+      "c": {
+        "unixTime": 1650060000000,
+        "formattedPrice": 1.3899992027175567
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649931390000,
+        "formattedPrice": 1.374999136955752
+      },
+      "l": {
+        "unixTime": 1649931433000,
+        "formattedPrice": 1.2860979802498111
+      },
+      "h": {
+        "unixTime": 1649973963000,
+        "formattedPrice": 1.4258430121596726
+      },
+      "c": {
+        "unixTime": 1649975087000,
+        "formattedPrice": 1.335100639715378
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649816952000,
+        "formattedPrice": 1.3510002728484867
+      },
+      "l": {
+        "unixTime": 1649863861000,
+        "formattedPrice": 1.3249999090197055
+      },
+      "h": {
+        "unixTime": 1649871550000,
+        "formattedPrice": 1.3999990291262137
+      },
+      "c": {
+        "unixTime": 1649871550000,
+        "formattedPrice": 1.3999990291262137
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649722307000,
+        "formattedPrice": 1.4088305470269484
+      },
+      "l": {
+        "unixTime": 1649764780000,
+        "formattedPrice": 1.23000096994791
+      },
+      "h": {
+        "unixTime": 1649757313000,
+        "formattedPrice": 1.419999108207897
+      },
+      "c": {
+        "unixTime": 1649786288000,
+        "formattedPrice": 1.3500001504044374
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649635844000,
+        "formattedPrice": 1.3200000004006693
+      },
+      "l": {
+        "unixTime": 1649646775000,
+        "formattedPrice": 1.2875319085663204
+      },
+      "h": {
+        "unixTime": 1649713042000,
+        "formattedPrice": 1.4355500638453966
+      },
+      "c": {
+        "unixTime": 1649713042000,
+        "formattedPrice": 1.4310065359477124
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649564838000,
+        "formattedPrice": 1.30773
+      },
+      "l": {
+        "unixTime": 1649615902000,
+        "formattedPrice": 1.2371625664308592
+      },
+      "h": {
+        "unixTime": 1649608463000,
+        "formattedPrice": 1.3100055884133563
+      },
+      "c": {
+        "unixTime": 1649625598000,
+        "formattedPrice": 1.2899991173316623
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649487545000,
+        "formattedPrice": 1.263735
+      },
+      "l": {
+        "unixTime": 1649547441000,
+        "formattedPrice": 1.2274799805164776
+      },
+      "h": {
+        "unixTime": 1649547398000,
+        "formattedPrice": 1.3099990393677832
+      },
+      "c": {
+        "unixTime": 1649547441000,
+        "formattedPrice": 1.2381399228443333
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649417295000,
+        "formattedPrice": 1.2700006248014262
+      },
+      "l": {
+        "unixTime": 1649421340000,
+        "formattedPrice": 1.2369978091637563
+      },
+      "h": {
+        "unixTime": 1649459398000,
+        "formattedPrice": 1.31
+      },
+      "c": {
+        "unixTime": 1649459398000,
+        "formattedPrice": 1.31
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649292824000,
+        "formattedPrice": 1.2974820888523133
+      },
+      "l": {
+        "unixTime": 1649357313000,
+        "formattedPrice": 1.2050009984810985
+      },
+      "h": {
+        "unixTime": 1649333618000,
+        "formattedPrice": 1.3100012030316397
+      },
+      "c": {
+        "unixTime": 1649357313000,
+        "formattedPrice": 1.2299999057377435
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649203815000,
+        "formattedPrice": 1.1900001408606369
+      },
+      "l": {
+        "unixTime": 1649203815000,
+        "formattedPrice": 1.1900000313724506
+      },
+      "h": {
+        "unixTime": 1649272944000,
+        "formattedPrice": 1.2974811053584203
+      },
+      "c": {
+        "unixTime": 1649274284000,
+        "formattedPrice": 1.2969992268935417
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649150914000,
+        "formattedPrice": 1.1499993841530256
+      },
+      "l": {
+        "unixTime": 1649161667000,
+        "formattedPrice": 1.105
+      },
+      "h": {
+        "unixTime": 1649201371000,
+        "formattedPrice": 1.1800002275837151
+      },
+      "c": {
+        "unixTime": 1649201371000,
+        "formattedPrice": 1.1800002275837151
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1649062182000,
+        "formattedPrice": 1.0710000715321895
+      },
+      "l": {
+        "unixTime": 1649062182000,
+        "formattedPrice": 1.0710000715321895
+      },
+      "h": {
+        "unixTime": 1649094820000,
+        "formattedPrice": 1.1550230946882216
+      },
+      "c": {
+        "unixTime": 1649106390000,
+        "formattedPrice": 1.1199999793249094
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648948847000,
+        "formattedPrice": 1.0999990011518772
+      },
+      "l": {
+        "unixTime": 1649024532000,
+        "formattedPrice": 1.0709997161897051
+      },
+      "h": {
+        "unixTime": 1648997341000,
+        "formattedPrice": 1.1039993385618445
+      },
+      "c": {
+        "unixTime": 1649024532000,
+        "formattedPrice": 1.0709997161897051
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648884516000,
+        "formattedPrice": 1.039999
+      },
+      "l": {
+        "unixTime": 1648884887000,
+        "formattedPrice": 1.0189987163029526
+      },
+      "h": {
+        "unixTime": 1648917939000,
+        "formattedPrice": 1.069999235045934
+      },
+      "c": {
+        "unixTime": 1648925415000,
+        "formattedPrice": 1.069999006049368
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648779756000,
+        "formattedPrice": 1.0800003111793113
+      },
+      "l": {
+        "unixTime": 1648800420000,
+        "formattedPrice": 1.049999987893868
+      },
+      "h": {
+        "unixTime": 1648798586000,
+        "formattedPrice": 1.1090342679127725
+      },
+      "c": {
+        "unixTime": 1648845372000,
+        "formattedPrice": 1.050099858666027
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648693646000,
+        "formattedPrice": 1.0599999651770964
+      },
+      "l": {
+        "unixTime": 1648731332000,
+        "formattedPrice": 1.0099998567518644
+      },
+      "h": {
+        "unixTime": 1648747348000,
+        "formattedPrice": 1.110000128492314
+      },
+      "c": {
+        "unixTime": 1648757216000,
+        "formattedPrice": 1.075999913483138
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648599171000,
+        "formattedPrice": 1.1109992
+      },
+      "l": {
+        "unixTime": 1648653832000,
+        "formattedPrice": 1.0269999468070534
+      },
+      "h": {
+        "unixTime": 1648599176000,
+        "formattedPrice": 1.111000044444506
+      },
+      "c": {
+        "unixTime": 1648661870000,
+        "formattedPrice": 1.0600009276607587
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648534529000,
+        "formattedPrice": 1.0660103937637417
+      },
+      "l": {
+        "unixTime": 1648556652000,
+        "formattedPrice": 1.0258989842378452
+      },
+      "h": {
+        "unixTime": 1648535117000,
+        "formattedPrice": 1.1151055514390737
+      },
+      "c": {
+        "unixTime": 1648598330000,
+        "formattedPrice": 1.0339875557689615
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648428320000,
+        "formattedPrice": 1.049999659708302
+      },
+      "l": {
+        "unixTime": 1648470508000,
+        "formattedPrice": 1.0259929355041242
+      },
+      "h": {
+        "unixTime": 1648429789000,
+        "formattedPrice": 1.0700487057407104
+      },
+      "c": {
+        "unixTime": 1648509641000,
+        "formattedPrice": 1.065999029207071
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648339241000,
+        "formattedPrice": 1.0600009937141888
+      },
+      "l": {
+        "unixTime": 1648421948000,
+        "formattedPrice": 1.0500098708692691
+      },
+      "h": {
+        "unixTime": 1648397399000,
+        "formattedPrice": 1.1522000284553098
+      },
+      "c": {
+        "unixTime": 1648423535000,
+        "formattedPrice": 1.0500107838393966
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648252900000,
+        "formattedPrice": 1.070640819199151
+      },
+      "l": {
+        "unixTime": 1648333105000,
+        "formattedPrice": 1.060000890035779
+      },
+      "h": {
+        "unixTime": 1648260771000,
+        "formattedPrice": 1.1530212302667393
+      },
+      "c": {
+        "unixTime": 1648339184000,
+        "formattedPrice": 1.1000001222563707
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648169194000,
+        "formattedPrice": 1.1199999740074262
+      },
+      "l": {
+        "unixTime": 1648225406000,
+        "formattedPrice": 1.0524999410862466
+      },
+      "h": {
+        "unixTime": 1648209364000,
+        "formattedPrice": 1.1530000026475706
+      },
+      "c": {
+        "unixTime": 1648252590000,
+        "formattedPrice": 1.1200000694008079
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648105991000,
+        "formattedPrice": 1.1870999414072207
+      },
+      "l": {
+        "unixTime": 1648156227000,
+        "formattedPrice": 1.1010998603588107
+      },
+      "h": {
+        "unixTime": 1648125870000,
+        "formattedPrice": 1.1900008352578124
+      },
+      "c": {
+        "unixTime": 1648157103000,
+        "formattedPrice": 1.1011
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1648005242000,
+        "formattedPrice": 1.2320328542094456
+      },
+      "l": {
+        "unixTime": 1648055482000,
+        "formattedPrice": 1.1869993804282095
+      },
+      "h": {
+        "unixTime": 1648005505000,
+        "formattedPrice": 1.2399994503241942
+      },
+      "c": {
+        "unixTime": 1648058463000,
+        "formattedPrice": 1.2170000229622444
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647907282000,
+        "formattedPrice": 1.2200999671889152
+      },
+      "l": {
+        "unixTime": 1647965822000,
+        "formattedPrice": 1.1759998238593166
+      },
+      "h": {
+        "unixTime": 1647926596000,
+        "formattedPrice": 1.2599990129271872
+      },
+      "c": {
+        "unixTime": 1647978277000,
+        "formattedPrice": 1.1870006283326937
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647820838000,
+        "formattedPrice": 1.357900622225881
+      },
+      "l": {
+        "unixTime": 1647906701000,
+        "formattedPrice": 1.22009998242413
+      },
+      "h": {
+        "unixTime": 1647836833000,
+        "formattedPrice": 1.3700003250829977
+      },
+      "c": {
+        "unixTime": 1647906701000,
+        "formattedPrice": 1.2200999988366334
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647749227000,
+        "formattedPrice": 1.3149941286311049
+      },
+      "l": {
+        "unixTime": 1647761737000,
+        "formattedPrice": 1.281102
+      },
+      "h": {
+        "unixTime": 1647809215000,
+        "formattedPrice": 1.3579000077157684
+      },
+      "c": {
+        "unixTime": 1647819504000,
+        "formattedPrice": 1.3215999871553992
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647669938000,
+        "formattedPrice": 1.339999
+      },
+      "l": {
+        "unixTime": 1647709684000,
+        "formattedPrice": 1.2819990440912892
+      },
+      "h": {
+        "unixTime": 1647681367000,
+        "formattedPrice": 1.340000169573938
+      },
+      "c": {
+        "unixTime": 1647728355000,
+        "formattedPrice": 1.3049990109055791
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647576842000,
+        "formattedPrice": 1.3780000531925212
+      },
+      "l": {
+        "unixTime": 1647593443000,
+        "formattedPrice": 1.3020009725748931
+      },
+      "h": {
+        "unixTime": 1647576842000,
+        "formattedPrice": 1.3780000531925212
+      },
+      "c": {
+        "unixTime": 1647633947000,
+        "formattedPrice": 1.31399996197148
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647484985000,
+        "formattedPrice": 1.3509866666666666
+      },
+      "l": {
+        "unixTime": 1647545918000,
+        "formattedPrice": 1.3399993259006286
+      },
+      "h": {
+        "unixTime": 1647503141000,
+        "formattedPrice": 1.4149961717968984
+      },
+      "c": {
+        "unixTime": 1647551521000,
+        "formattedPrice": 1.3779990150155956
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647394727000,
+        "formattedPrice": 1.4479990149577238
+      },
+      "l": {
+        "unixTime": 1647466063000,
+        "formattedPrice": 1.350987010302549
+      },
+      "h": {
+        "unixTime": 1647401618000,
+        "formattedPrice": 1.4479990715881907
+      },
+      "c": {
+        "unixTime": 1647466063000,
+        "formattedPrice": 1.3509978899243889
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647307219000,
+        "formattedPrice": 1.4589997244464354
+      },
+      "l": {
+        "unixTime": 1647307258000,
+        "formattedPrice": 1.391999922651631
+      },
+      "h": {
+        "unixTime": 1647330455000,
+        "formattedPrice": 1.4880003672654283
+      },
+      "c": {
+        "unixTime": 1647382431000,
+        "formattedPrice": 1.3919999675545207
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647218984000,
+        "formattedPrice": 1.4649992962369063
+      },
+      "l": {
+        "unixTime": 1647273414000,
+        "formattedPrice": 1.3920009914680134
+      },
+      "h": {
+        "unixTime": 1647231330000,
+        "formattedPrice": 1.4870008373516588
+      },
+      "c": {
+        "unixTime": 1647286339000,
+        "formattedPrice": 1.421
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647132109000,
+        "formattedPrice": 1.4349690009618392
+      },
+      "l": {
+        "unixTime": 1647168370000,
+        "formattedPrice": 1.3849997469571191
+      },
+      "h": {
+        "unixTime": 1647214106000,
+        "formattedPrice": 1.4634002444752185
+      },
+      "c": {
+        "unixTime": 1647214106000,
+        "formattedPrice": 1.4630044843049328
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1647058909000,
+        "formattedPrice": 1.443999
+      },
+      "l": {
+        "unixTime": 1647098012000,
+        "formattedPrice": 1.3529983260577019
+      },
+      "h": {
+        "unixTime": 1647076961000,
+        "formattedPrice": 1.444
+      },
+      "c": {
+        "unixTime": 1647112499000,
+        "formattedPrice": 1.384999990707259
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646957261000,
+        "formattedPrice": 1.3700002476496096
+      },
+      "l": {
+        "unixTime": 1646991705000,
+        "formattedPrice": 1.3699998707501881
+      },
+      "h": {
+        "unixTime": 1647030498000,
+        "formattedPrice": 1.4439993448619433
+      },
+      "c": {
+        "unixTime": 1647030498000,
+        "formattedPrice": 1.4439993448619433
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646881242000,
+        "formattedPrice": 1.307007007007007
+      },
+      "l": {
+        "unixTime": 1646881242000,
+        "formattedPrice": 1.307007007007007
+      },
+      "h": {
+        "unixTime": 1646931175000,
+        "formattedPrice": 1.3700130846396592
+      },
+      "c": {
+        "unixTime": 1646931924000,
+        "formattedPrice": 1.354999576328211
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646800137000,
+        "formattedPrice": 1.3679970336939324
+      },
+      "l": {
+        "unixTime": 1646837944000,
+        "formattedPrice": 1.1760098414453217
+      },
+      "h": {
+        "unixTime": 1646800137000,
+        "formattedPrice": 1.3679970496678744
+      },
+      "c": {
+        "unixTime": 1646865146000,
+        "formattedPrice": 1.2570369998544977
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646707639000,
+        "formattedPrice": 1.3599992400469905
+      },
+      "l": {
+        "unixTime": 1646764164000,
+        "formattedPrice": 1.2920009722363415
+      },
+      "h": {
+        "unixTime": 1646716876000,
+        "formattedPrice": 1.3789992817471324
+      },
+      "c": {
+        "unixTime": 1646775530000,
+        "formattedPrice": 1.375
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646612706000,
+        "formattedPrice": 1.3339961568568024
+      },
+      "l": {
+        "unixTime": 1646672664000,
+        "formattedPrice": 1.2909995670357504
+      },
+      "h": {
+        "unixTime": 1646640558000,
+        "formattedPrice": 1.3800155767733002
+      },
+      "c": {
+        "unixTime": 1646695336000,
+        "formattedPrice": 1.3796902242126186
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646532159000,
+        "formattedPrice": 1.3200022696771139
+      },
+      "l": {
+        "unixTime": 1646542367000,
+        "formattedPrice": 1.2799998502801366
+      },
+      "h": {
+        "unixTime": 1646578849000,
+        "formattedPrice": 1.3345001025088612
+      },
+      "c": {
+        "unixTime": 1646605535000,
+        "formattedPrice": 1.2909997402866982
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646455840000,
+        "formattedPrice": 1.2899998773917483
+      },
+      "l": {
+        "unixTime": 1646468185000,
+        "formattedPrice": 1.2710009488877163
+      },
+      "h": {
+        "unixTime": 1646481274000,
+        "formattedPrice": 1.3295004019921348
+      },
+      "c": {
+        "unixTime": 1646508506000,
+        "formattedPrice": 1.3189965012090825
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646353203000,
+        "formattedPrice": 1.251
+      },
+      "l": {
+        "unixTime": 1646417110000,
+        "formattedPrice": 1.2220009886621628
+      },
+      "h": {
+        "unixTime": 1646436730000,
+        "formattedPrice": 1.3295003168183763
+      },
+      "c": {
+        "unixTime": 1646436730000,
+        "formattedPrice": 1.3295003168183763
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646268850000,
+        "formattedPrice": 1.2450000092947153
+      },
+      "l": {
+        "unixTime": 1646281380000,
+        "formattedPrice": 1.1700098100988188
+      },
+      "h": {
+        "unixTime": 1646329322000,
+        "formattedPrice": 1.2990001784314487
+      },
+      "c": {
+        "unixTime": 1646345495000,
+        "formattedPrice": 1.270000251984377
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646183478000,
+        "formattedPrice": 1.194900009227528
+      },
+      "l": {
+        "unixTime": 1646199789000,
+        "formattedPrice": 1.1500107297293043
+      },
+      "h": {
+        "unixTime": 1646229057000,
+        "formattedPrice": 1.26085
+      },
+      "c": {
+        "unixTime": 1646265012000,
+        "formattedPrice": 1.1800007997711424
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646093174000,
+        "formattedPrice": 1.18
+      },
+      "l": {
+        "unixTime": 1646111642000,
+        "formattedPrice": 1.124000951302291
+      },
+      "h": {
+        "unixTime": 1646153674000,
+        "formattedPrice": 1.2995002475575008
+      },
+      "c": {
+        "unixTime": 1646172667000,
+        "formattedPrice": 1.2495001549259062
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1646009725000,
+        "formattedPrice": 1.2269999895073962
+      },
+      "l": {
+        "unixTime": 1646034904000,
+        "formattedPrice": 1.1499999833816554
+      },
+      "h": {
+        "unixTime": 1646012207000,
+        "formattedPrice": 1.2791000086769984
+      },
+      "c": {
+        "unixTime": 1646092347000,
+        "formattedPrice": 1.185
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645922080000,
+        "formattedPrice": 1.150001752602615
+      },
+      "l": {
+        "unixTime": 1645948238000,
+        "formattedPrice": 1.1299940646214341
+      },
+      "h": {
+        "unixTime": 1645993142000,
+        "formattedPrice": 1.2995001284503982
+      },
+      "c": {
+        "unixTime": 1645993142000,
+        "formattedPrice": 1.2500005905711769
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645838458000,
+        "formattedPrice": 1.179999998948812
+      },
+      "l": {
+        "unixTime": 1645845977000,
+        "formattedPrice": 1.0799995993384075
+      },
+      "h": {
+        "unixTime": 1645862359000,
+        "formattedPrice": 1.2490000258984253
+      },
+      "c": {
+        "unixTime": 1645915392000,
+        "formattedPrice": 1.1499980900414764
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645747230000,
+        "formattedPrice": 1.2999994599294669
+      },
+      "l": {
+        "unixTime": 1645801941000,
+        "formattedPrice": 1.078
+      },
+      "h": {
+        "unixTime": 1645802126000,
+        "formattedPrice": 1.4300001097108712
+      },
+      "c": {
+        "unixTime": 1645823803000,
+        "formattedPrice": 1.2199999399617556
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645663120000,
+        "formattedPrice": 1.2600339174674957
+      },
+      "l": {
+        "unixTime": 1645670615000,
+        "formattedPrice": 1.2299999494716602
+      },
+      "h": {
+        "unixTime": 1645695297000,
+        "formattedPrice": 1.56
+      },
+      "c": {
+        "unixTime": 1645747090000,
+        "formattedPrice": 1.3250001385834784
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645574597000,
+        "formattedPrice": 1.283000005518368
+      },
+      "l": {
+        "unixTime": 1645604362000,
+        "formattedPrice": 1.1601018876095923
+      },
+      "h": {
+        "unixTime": 1645576929000,
+        "formattedPrice": 1.3200000008096706
+      },
+      "c": {
+        "unixTime": 1645660788000,
+        "formattedPrice": 1.2559015733198218
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645488071000,
+        "formattedPrice": 1.29
+      },
+      "l": {
+        "unixTime": 1645488507000,
+        "formattedPrice": 1.1503
+      },
+      "h": {
+        "unixTime": 1645508137000,
+        "formattedPrice": 1.3700100023352206
+      },
+      "c": {
+        "unixTime": 1645572220000,
+        "formattedPrice": 1.2299998181779437
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645408160000,
+        "formattedPrice": 1.1240009274082052
+      },
+      "l": {
+        "unixTime": 1645410340000,
+        "formattedPrice": 1.124000735091427
+      },
+      "h": {
+        "unixTime": 1645487692000,
+        "formattedPrice": 1.2756756756756757
+      },
+      "c": {
+        "unixTime": 1645487793000,
+        "formattedPrice": 1.2750000183394172
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645324599000,
+        "formattedPrice": 1.1000050397298704
+      },
+      "l": {
+        "unixTime": 1645326373000,
+        "formattedPrice": 1.0899993099613172
+      },
+      "h": {
+        "unixTime": 1645384822000,
+        "formattedPrice": 1.200000794505202
+      },
+      "c": {
+        "unixTime": 1645398409000,
+        "formattedPrice": 1.124999896770741
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645228809000,
+        "formattedPrice": 1.157
+      },
+      "l": {
+        "unixTime": 1645260606000,
+        "formattedPrice": 1.0779997403774957
+      },
+      "h": {
+        "unixTime": 1645256843000,
+        "formattedPrice": 1.2
+      },
+      "c": {
+        "unixTime": 1645310341000,
+        "formattedPrice": 1.0899997198016196
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645142682000,
+        "formattedPrice": 1.0979
+      },
+      "l": {
+        "unixTime": 1645186431000,
+        "formattedPrice": 1.0399999969367426
+      },
+      "h": {
+        "unixTime": 1645185438000,
+        "formattedPrice": 1.1690000140021377
+      },
+      "c": {
+        "unixTime": 1645228766000,
+        "formattedPrice": 1.1574074074074074
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1645059976000,
+        "formattedPrice": 1.0048
+      },
+      "l": {
+        "unixTime": 1645116258000,
+        "formattedPrice": 1
+      },
+      "h": {
+        "unixTime": 1645135626000,
+        "formattedPrice": 1.1000002150449766
+      },
+      "c": {
+        "unixTime": 1645142001000,
+        "formattedPrice": 1.0979004093505784
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1644970572000,
+        "formattedPrice": 1.0389999714082807
+      },
+      "l": {
+        "unixTime": 1645004521000,
+        "formattedPrice": 1.0000999192513027
+      },
+      "h": {
+        "unixTime": 1644975786000,
+        "formattedPrice": 1.095
+      },
+      "c": {
+        "unixTime": 1645053245000,
+        "formattedPrice": 1.004699760233905
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1644883236000,
+        "formattedPrice": 1.1135
+      },
+      "l": {
+        "unixTime": 1644925565000,
+        "formattedPrice": 1.029999969495557
+      },
+      "h": {
+        "unixTime": 1644925490000,
+        "formattedPrice": 1.1300007692146319
+      },
+      "c": {
+        "unixTime": 1644966941000,
+        "formattedPrice": 1.0449979540661622
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1644800182000,
+        "formattedPrice": 1.1400000478346453
+      },
+      "l": {
+        "unixTime": 1644832177000,
+        "formattedPrice": 1.0872999340236291
+      },
+      "h": {
+        "unixTime": 1644811409000,
+        "formattedPrice": 1.1470588235294117
+      },
+      "c": {
+        "unixTime": 1644881692000,
+        "formattedPrice": 1.1149996350052709
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1644710600000,
+        "formattedPrice": 1.0649997377783702
+      },
+      "l": {
+        "unixTime": 1644773713000,
+        "formattedPrice": 1.0502009049425785
+      },
+      "h": {
+        "unixTime": 1644774291000,
+        "formattedPrice": 1.1763002767458564
+      },
+      "c": {
+        "unixTime": 1644795256000,
+        "formattedPrice": 1.0849999458962694
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1644629397000,
+        "formattedPrice": 1.123
+      },
+      "l": {
+        "unixTime": 1644646832000,
+        "formattedPrice": 1.034998687002155
+      },
+      "h": {
+        "unixTime": 1644672788000,
+        "formattedPrice": 1.195000022108633
+      },
+      "c": {
+        "unixTime": 1644709069000,
+        "formattedPrice": 1.0599988936428335
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1644538868000,
+        "formattedPrice": 1.0340001017375693
+      },
+      "l": {
+        "unixTime": 1644539600000,
+        "formattedPrice": 0.9599999900611602
+      },
+      "h": {
+        "unixTime": 1644588522000,
+        "formattedPrice": 2
+      },
+      "c": {
+        "unixTime": 1644622795000,
+        "formattedPrice": 1.0351
+      }
+    },
+    {
+      "o": {
+        "unixTime": 1644501849000,
+        "formattedPrice": 1
+      },
+      "l": {
+        "unixTime": 1644509782000,
+        "formattedPrice": 0.959999880327032
+      },
+      "h": {
+        "unixTime": 1644504788000,
+        "formattedPrice": 1.2
+      },
+      "c": {
+        "unixTime": 1644536654000,
+        "formattedPrice": 1.03400012188214
+      }
+    }
+  ]
+}

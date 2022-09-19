@@ -116,6 +116,18 @@ const databases = [
     },
   },
   {
+    dbName: 'view_cache',
+    appendOnly: false,
+    design: {
+      _id: '_design/view_cache',
+      views: {
+        currentCache: {
+          map: require('../../views/view_cache/currentCache-map').toString(),
+        },
+      },
+    },
+  },
+  {
     dbName: 'verified_account',
     appendOnly: true,
     design: {
