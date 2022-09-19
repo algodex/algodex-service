@@ -2,6 +2,8 @@
   "_id": "12294411",
   "_rev": "1-e458e7e3de42b186d3e4aa8605dafd62",
   "type": "asset",
+  "verified": true,
+  "lastVerified": 1663598019,
   "asset": {
     "created-at-round": 9527064,
     "deleted": false,

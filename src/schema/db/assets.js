@@ -3,6 +3,8 @@ const schema = {
   properties: {
     _id: {type: 'string', pattern: '^[0-9]+$'},
     _rev: {type: 'string'},
+    verified: {type: 'boolean'},
+    lastVerified: {type: 'integer'},
     asset: {
       type: 'object',
       properties: {
@@ -18,7 +20,7 @@ const schema = {
       required: ['index', 'params'],
     },
   },
-  required: ['_id', 'asset'],
+  required: ['_id', 'asset', 'lastVerified', 'verified'],
 };
 
 module.exports = () => {
