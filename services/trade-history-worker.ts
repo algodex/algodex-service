@@ -57,6 +57,7 @@ const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>
     return {
       _id: `trade_history:charts:${result.assetId}:${result.period}`,
       _rev: rev,
+      round: queueRound,
       cachedData: result.chartData
     };
   });
