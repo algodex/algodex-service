@@ -1,3 +1,7 @@
+import { getCharts, Period } from "../api/trade_history";
+import { waitForBlock } from "../src/explorer";
+import map from "../views/chart/map";
+
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
@@ -6,10 +10,75 @@ const convertQueueURL = require('../src/convert-queue-url');
 const initOrGetIndexer = require('../src/get-indexer');
 const withQueueSchemaCheck = require('../src/schema/with-queue-schema-check');
 const {waitForViewBuildingSimple} = require('./waitForViewBuilding');
+const throttle = require('lodash.throttle');
+
+let latestBlock;
+const getLatestBlock = throttle(async () => {
+  latestBlock = await waitForBlock({
+    round: 1,
+  });
+}, 3000);
+
+
+const getChartCacheKeyToRev = async (oldCacheDocs):Promise<Map<string,string>> => {
+  return oldCacheDocs.reduce((map, doc) => {
+    map.set(doc.key, doc.value.rev);
+    return map;
+  }, new Map<string,string>());
+};
+
+
+const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>) => {
+  if (assetIds.size === 0) {
+    return;
+  }
+  await getLatestBlock();
+  const latestBlockRound = latestBlock['last-round'];
+  if (queueRound < latestBlockRound - 5) {
+    // This is happening during a resync, so simply return
+    return;
+  }
+  const docs = await viewCacheDB.query('view_cache/currentCache', {reduce: false});
+  const ignoreCacheDocs = docs.rows.filter(doc => doc.value.round >= queueRound);
+  const ignoreCacheIdSet = new Set(ignoreCacheDocs.map(doc => doc.key));
+
+  // FIXME - somehow iterate over this from the definition
+  const periods:Array<Period> = ['1d', '4h', '1h' , '15m', '5m', '1m'];
+  const promises = Array.from(assetIds).flatMap(assetId => periods
+    .filter(period => {
+      const key = `trade_history:charts:${assetId}:${period}`;
+      return !ignoreCacheIdSet.has(key);
+    }).map(period => {
+      console.log(`getting charts for ${assetId} ${period}`);
+      const chartDataPromise = getCharts(assetId, period, false).then(chartData => {
+        return {
+          assetId, period, chartData
+        };
+      });
+    return chartDataPromise;
+  }));
+  const allChartData = await Promise.all(promises);
+  const cacheKeyToRev = await getChartCacheKeyToRev(docs.rows);
+
+  const newDocs = allChartData.map(result => {
+    const id = `trade_history:charts:${result.assetId}:${result.period}`;
+    const rev = cacheKeyToRev.get(id);
+    console.log(`updating charts for ${rev} ${id}`);
+    return {
+      _id: id,
+      _rev: rev,
+      round: queueRound,
+      cachedData: result.chartData
+    };
+  });
+
+  await viewCacheDB.bulkDocs(newDocs);
+}
 
 module.exports = ({queues, databases}) =>{
   const blockDB = databases.blocks;
   const escrowDB = databases.escrow;
+  const viewCacheDB = databases.view_cache;
   const assetDB = databases.assets;
   const formattedHistoryDB = databases.formatted_history;
   const indexer = initOrGetIndexer();
@@ -17,7 +86,7 @@ module.exports = ({queues, databases}) =>{
   console.log({blockDB});
   console.log('in trade-history-worker.js');
   const tradeHistoryWorker = new Worker(convertQueueURL('tradeHistory'), async job=>{
-    const blockId = job.data.block;
+    const blockId:string = job.data.block;
     console.log('received block: ' + blockId);
     await waitForViewBuildingSimple();
 
@@ -97,9 +166,11 @@ module.exports = ({queues, databases}) =>{
                     row._id = `${row.block}:${row.groupId}`;
                   },
                   );
-                  return formattedHistoryDB.bulkDocs(
+                  await formattedHistoryDB.bulkDocs(
                       validHistoryRows.map( row =>
                         withSchemaCheck('formatted_history', row)));
+                  const assetSet = new Set<number>(validHistoryRows.map(row => row.asaId));
+                  await rebuildCache(viewCacheDB, parseInt(blockId), assetSet);
                 });
           }).catch(function(e) {
             if (e.error === 'not_found') {
@@ -122,3 +193,4 @@ module.exports = ({queues, databases}) =>{
   });
 };
 
+export {};

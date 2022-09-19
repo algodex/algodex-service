@@ -1,7 +1,7 @@
 import { getDatabase } from "./util";
 
 type WalletOrAsset = 'ownerAddr' | 'assetId';
-type Period = '1d' | '4h' | '1h' | '15m' | '5m' | '1m';
+export type Period = '1d' | '4h' | '1h' | '15m' | '5m' | '1m';
 interface TradeHistoryKey {
   keyType: WalletOrAsset,
   searchKey: number | string
@@ -12,11 +12,11 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
   const startKey = [assetId, period, "zzzzz"];
   const endKey = [assetId, period, ""];
     // ?startkey="object"&endkey="object\u0000"
-
+  
   const data = await db.query('formatted_history/charts', {
       startkey: startKey,
       endkey: endKey,
-      limit: 50000,
+      limit: 5000,
       descending: true,
       reduce: true,
       group: true
