@@ -10,8 +10,8 @@ const waitForViewBuilding = async (blocksDB, skipCheckAgain = false, pauseMS=500
   const couchUrl = process.env.COUCHDB_BASE_URL;
   let loop = true;
 
-  const waitLogThrottle = throttle(() => {
-    console.log('Waiting for DB indexes to rebuild...');
+  const waitLogThrottle = throttle(waitData => {
+    console.log('Waiting for DB indexes to rebuild...', {waitData});
   }, 5000);
 
   while (loop) {
@@ -23,6 +23,7 @@ const waitForViewBuilding = async (blocksDB, skipCheckAgain = false, pauseMS=500
                 // Ignore these types of DB operations since data
                 // can still be added and views still work
                 item.type !== 'view_compaction' &&
+                item.process_status !== 'waiting' &&
                 item.type !== 'database_compaction').length === 0) {
             if (!skipCheckAgain) {
               // Try to get max block
