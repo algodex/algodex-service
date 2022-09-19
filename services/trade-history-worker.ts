@@ -23,7 +23,7 @@ const getLatestBlock = throttle(async () => {
 const getChartCacheKeyToRev = async (viewCacheDB):Promise<Map<string,string>> => {
   const docs = await viewCacheDB.allDocs();
   return docs.rows.reduce((map, doc) => {
-    map.set(doc.id, doc.rev);
+    map.set(doc.id, doc.value.rev);
     return map;
   }, new Map<string,string>());
 };
