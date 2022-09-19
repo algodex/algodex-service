@@ -20,9 +20,9 @@ const getLatestBlock = throttle(async () => {
 }, 3000);
 
 
-const getChartCacheKeyToRev = async (allDocs):Promise<Map<string,string>> => {
-  return allDocs.rows.reduce((map, doc) => {
-    map.set(doc.id, doc.value.rev);
+const getChartCacheKeyToRev = async (oldCacheDocs):Promise<Map<string,string>> => {
+  return oldCacheDocs.reduce((map, doc) => {
+    map.set(doc.key, doc.value.rev);
     return map;
   }, new Map<string,string>());
 };
@@ -38,19 +38,26 @@ const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>
     // This is happening during a resync, so simply return
     return;
   }
+  const docs = await viewCacheDB.query('view_cache/currentCache', {reduce: false});
+  const oldCacheDocs = docs.rows.filter(doc => doc.value.round < queueRound);
+  const oldCacheIdSet = new Set(oldCacheDocs.map(doc => doc.key));
+
   // FIXME - somehow iterate over this from the definition
   const periods:Array<Period> = ['1d', '4h', '1h' , '15m', '5m', '1m'];
-  const promises = Array.from(assetIds).flatMap(assetId => periods.map(period => {
-    const chartDataPromise = getCharts(assetId, period, false).then(chartData => {
-      return {
-        assetId, period, chartData
-      };
-    });
+  const promises = Array.from(assetIds).flatMap(assetId => periods
+    .filter(period => {
+      const key = `trade_history:charts:${assetId}:${period}`;
+      return oldCacheIdSet.has(key);
+    }).map(period => {
+      const chartDataPromise = getCharts(assetId, period, false).then(chartData => {
+        return {
+          assetId, period, chartData
+        };
+      });
     return chartDataPromise;
   }));
   const allChartData = await Promise.all(promises);
-  const docs = await viewCacheDB.allDocs();
-  const cacheKeyToRev = await getChartCacheKeyToRev(docs);
+  const cacheKeyToRev = await getChartCacheKeyToRev(oldCacheDocs);
 
   const newDocs = allChartData.map(result => {
     const rev = cacheKeyToRev.get(`trade_history:charts:${result.assetId}:${result.period}`);
