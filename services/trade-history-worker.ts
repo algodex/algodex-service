@@ -39,15 +39,15 @@ const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>
     return;
   }
   const docs = await viewCacheDB.query('view_cache/currentCache', {reduce: false});
-  const oldCacheDocs = docs.rows.filter(doc => doc.value.round < queueRound);
-  const oldCacheIdSet = new Set(oldCacheDocs.map(doc => doc.key));
+  const ignoreCacheDocs = docs.rows.filter(doc => doc.value.round >= queueRound);
+  const ignoreCacheIdSet = new Set(ignoreCacheDocs.map(doc => doc.key));
 
   // FIXME - somehow iterate over this from the definition
   const periods:Array<Period> = ['1d', '4h', '1h' , '15m', '5m', '1m'];
   const promises = Array.from(assetIds).flatMap(assetId => periods
     .filter(period => {
       const key = `trade_history:charts:${assetId}:${period}`;
-      return oldCacheIdSet.has(key);
+      return !ignoreCacheIdSet.has(key);
     }).map(period => {
       console.log(`getting charts for ${assetId} ${period}`);
       const chartDataPromise = getCharts(assetId, period, false).then(chartData => {
@@ -58,7 +58,7 @@ const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>
     return chartDataPromise;
   }));
   const allChartData = await Promise.all(promises);
-  const cacheKeyToRev = await getChartCacheKeyToRev(oldCacheDocs);
+  const cacheKeyToRev = await getChartCacheKeyToRev(docs.rows);
 
   const newDocs = allChartData.map(result => {
     const id = `trade_history:charts:${result.assetId}:${result.period}`;
