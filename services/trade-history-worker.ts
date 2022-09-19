@@ -24,8 +24,8 @@ const getChartCacheKeyToRev = async (viewCacheDB):Promise<Map<string,string>> =>
   const docs = await viewCacheDB.allDocs();
   return docs.rows.reduce((map, doc) => {
     map.set(doc.id, doc.rev);
-    return <Map<String,String>>map;
-  });
+    return map;
+  }, new Map<string,string>());
 };
 
 
