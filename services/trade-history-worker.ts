@@ -1,5 +1,6 @@
 import { getCharts, Period } from "../api/trade_history";
 import { waitForBlock } from "../src/explorer";
+import map from "../views/chart/map";
 
 const bullmq = require('bullmq');
 const Worker = bullmq.Worker;
@@ -17,6 +18,15 @@ const getLatestBlock = throttle(async () => {
     round: 1,
   });
 }, 3000);
+
+
+const getChartCacheKeyToRev = async (viewCacheDB):Promise<Map<string,string>> => {
+  const docs = await viewCacheDB.allDocs();
+  return docs.reduce((map, doc) => {
+    map.set(doc._id, doc._rev);
+    return <Map<String,String>>map;
+  });
+};
 
 
 const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>) => {
@@ -40,9 +50,13 @@ const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>
     return chartDataPromise;
   }));
   const allChartData = await Promise.all(promises);
+  const cacheKeyToRev = await getChartCacheKeyToRev(viewCacheDB);
+
   const newDocs = allChartData.map(result => {
+    const rev = cacheKeyToRev.get(`trade_history:charts:${result.assetId}:${result.period}`);
     return {
       _id: `trade_history:charts:${result.assetId}:${result.period}`,
+      _rev: rev,
       cachedData: result.chartData
     };
   });
