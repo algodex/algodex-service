@@ -144,7 +144,7 @@ module.exports = ({queues, databases}) =>{
                   await formattedHistoryDB.bulkDocs(
                       validHistoryRows.map( row =>
                         withSchemaCheck('formatted_history', row)));
-                  const assetSet = new Set(validHistoryRows.map(row => row.asaId));
+                  const assetSet = new Set<number>(validHistoryRows.map(row => row.asaId));
                   await rebuildCache(viewCacheDB, parseInt(blockId), assetSet);
                 });
           }).catch(function(e) {
