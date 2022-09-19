@@ -20,7 +20,7 @@ const schema = {
       required: ['index', 'params'],
     },
   },
-  required: ['_id', 'asset', 'lastVerified'],
+  required: ['_id', 'asset', 'lastVerified', 'verified'],
 };
 
 module.exports = () => {
