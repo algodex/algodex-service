@@ -9,9 +9,14 @@ globalThis.emit = (key, val) => {
 const tradeHistory = require('./trade_history.json');
 const chartMap = require('../../../views/formatted_history/charts-map');
 const chartReduce = require('../../../views/formatted_history/charts-reduce');
+
+const allAssetsMap = require('../../../views/formatted_history/allAssets-map');
+const allAssetsReduce = require('../../../views/formatted_history/allAssets-reduce');
+
 const fs = require('fs');
 
 test('it can get charts', () => {
+  globalThis.emitted = [];
   tradeHistory.forEach(row => {
     chartMap(row);
   });
@@ -30,4 +35,18 @@ test('it can get charts', () => {
   console.log(dayData);
   const dayReduced = chartReduce(null, dayData, false);
   console.log(dayReduced);
+});
+
+test('gets all asset view', () => {
+  globalThis.emitted = [];
+  tradeHistory.forEach(row => {
+    allAssetsMap(row);
+  });
+  const allAssetsData = globalThis.emitted;
+  console.log(allAssetsData);
+
+  const allAssetsVals = allAssetsData.map(item => item.val);
+
+  const allAssetsReduced = allAssetsReduce(null, allAssetsVals, false);
+  console.log(allAssetsReduced);
 });

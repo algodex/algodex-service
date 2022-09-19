@@ -12,9 +12,9 @@ module.exports = function(doc) {
 
   const hour = `${date.getHours()}`.padStart(2, '0');
   const min = `${date.getMinutes()}`.padStart(2, '0');
-  const min5 = `${min % 5}`.padStart(2, '0'); ;
-  const min15 = `${min % 15}`.padStart(2, '0');
-  const hour4 = `${hour % 4}`.padStart(2, '0');
+  const min5 = `${date.getMinutes() % 5}`.padStart(2, '0'); ;
+  const min15 = `${date.getMinutes() % 15}`.padStart(2, '0');
+  const hour4 = `${date.getHours() % 4}`.padStart(2, '0');
 
   const formattedPrice = doc.algoAmount / doc.asaAmount /
     Math.pow(10, (6-doc.assetDecimals));
