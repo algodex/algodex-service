@@ -29,10 +29,13 @@ const schema = {
     epoch: {type: 'integer', minimum: 0},
     accrualAssetId: {type: 'integer', minimum: 0},
     rewardsAssetId: {type: 'integer', minimum: 0},
+    algoTotalDepth: {type: 'integer', minimum: 0},
+    asaTotalDepth: {type: 'integer', minimum: 0},
     updatedAt: {type: 'string'},
   },
   required: ['_id', 'ownerWallet', 'uptime', 'depthSum', 'accrualAssetId', 'rewardsAssetId',
-    'qualitySum', 'algxAvg', 'qualityFinal', 'earnedRewardsFormatted', 'epoch', 'updatedAt'
+    'qualitySum', 'algxAvg', 'qualityFinal', 'earnedRewardsFormatted', 'epoch', 'updatedAt',
+    'algoTotalDepth', 'asaTotalDepth'
    ],
 };
 
