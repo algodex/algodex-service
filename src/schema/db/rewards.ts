@@ -21,6 +21,7 @@ const schema = {
     ownerWallet: {type: 'string', pattern: '^[A-Z2-7]{58}$'},
     uptime: {type: 'integer', minimum: 0},
     depthSum: {type: 'number', minimum: 0},
+    depthRatio: {type: 'number', minimum: 0},    
     qualitySum: {type: 'number', minimum: 0},
     algxAvg: {type: 'number', minimum: 0},
     qualityFinal: {type: 'number', minimum: 0},
@@ -29,11 +30,15 @@ const schema = {
     epoch: {type: 'integer', minimum: 0},
     accrualAssetId: {type: 'integer', minimum: 0},
     rewardsAssetId: {type: 'integer', minimum: 0},
+    algoTotalDepth: {type: 'number', minimum: 0},
+    asaTotalDepth: {type: 'number', minimum: 0},
     updatedAt: {type: 'string'},
   },
   required: ['_id', 'ownerWallet', 'uptime', 'depthSum', 'accrualAssetId', 'rewardsAssetId',
-    'qualitySum', 'algxAvg', 'qualityFinal', 'earnedRewardsFormatted', 'epoch', 'updatedAt'
+    'qualitySum', 'algxAvg', 'qualityFinal', 'earnedRewardsFormatted', 'epoch', 'updatedAt',
+    'algoTotalDepth', 'asaTotalDepth'
    ],
+  additionalProperties: false,
 };
 
 module.exports = () => {
