@@ -70,6 +70,8 @@ export const save_rewards = async (req, res) => {
       depthRatio: rewardsResult.depth.val,
       depthSum: rewardsResult.sumDepth.val,
       qualitySum: rewardsResult.qualitySum.val,
+      algoTotalDepth: rewardsResult.algoTotalDepth.val,
+      asaTotalDepth: rewardsResult.asaTotalDepth.val,
       algxAvg: rewardsResult.algxBalanceSum.val,
       qualityFinal: earnedAlgxEntry.quality.val,
       earnedRewardsFormatted: earnedAlgxEntry.earnedAlgx.val,

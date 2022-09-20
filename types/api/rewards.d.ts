@@ -8,7 +8,9 @@ interface OwnerRewardsResult {
   qualitySum: WrappedNumber,
   uptime: WrappedNumber,
   depth: WrappedNumber,
-  sumDepth: WrappedNumber
+  sumDepth: WrappedNumber,
+  algoTotalDepth: WrappedNumber,
+  asaTotalDepth: WrappedNumber
 }
 
 interface EarnedAlgxEntry {
@@ -43,6 +45,8 @@ interface CouchRewardsData {
   depthRatio: number,
   qualitySum: number,
   algxAvg: number,
+  algoTotalDepth: number,
+  asaTotalDepth: number,
   qualityFinal: number,
   earnedRewardsFormatted: number,
   epoch: number,

@@ -16,6 +16,8 @@ pub struct QualityResult {
     bid_depth: BidDepth,
     ask_depth: AskDepth,
     algx_balance: AlgxBalance,
+    algo_depth: BidDepth,
+    asa_depth: AskDepth
 }
 
 #[derive(Debug, Serialize, Deserialize, Hash, Eq, PartialEq, Clone)]
@@ -40,6 +42,8 @@ pub struct OwnerWalletAssetQualityResult {
     pub uptime: Uptime,
     pub depth: Depth,
     pub sum_depth: Depth,
+    pub algo_total_depth: Depth,
+    pub asa_total_depth: Depth,
     pub has_bid: bool,
     pub has_ask: bool,
 }
@@ -51,6 +55,8 @@ impl Default for OwnerWalletAssetQualityResult {
             quality_sum: Quality::from(0.0),
             uptime: Uptime::from(0),
             depth: Depth::from(0.0),
+            algo_total_depth: Depth::from(0.0),
+            asa_total_depth: Depth::from(0.0),
             sum_depth: Depth::from(0.0),
             has_bid: false,
             has_ask: false,
@@ -64,8 +70,11 @@ impl QualityResult {
         bid_depth: BidDepth,
         ask_depth: AskDepth,
         algx_balance: AlgxBalance,
+        algo_depth: BidDepth,
+        asa_depth: AskDepth
     ) -> QualityResult {
-        QualityResult { addr, quality, bid_depth, ask_depth, algx_balance }
+        QualityResult { addr, quality, bid_depth, ask_depth, algx_balance,
+            algo_depth, asa_depth }
     }
 }
 
@@ -230,6 +239,11 @@ fn get_analytics_per_escrow(
                 }
                 Bid => (*algo_price) * (*balance as f64) / 1_000_000.0,
             };
+            let (algo_depth, asa_depth) = match order_type {
+                Ask => (0.0, *balance as f64 / 10_f64.powf(asset_decimals as f64)),
+                Bid => (*balance as f64 / 1_000_000.0, 0.0)
+            };
+
             // println!("{} {} {} {}", *algo_price, *balance, formatted_price, 10_f64.powf(asset_decimals as f64));
             let is_eligible = check_is_eligible(
                 &percent_distant,
@@ -256,6 +270,8 @@ fn get_analytics_per_escrow(
                 quality: Quality::from(quality),
                 bid_depth: BidDepth::from(bid_depth),
                 ask_depth: AskDepth::from(ask_depth),
+                algo_depth: BidDepth::from(algo_depth),
+                asa_depth: AskDepth::from(asa_depth),
                 algx_balance: owner_algx_balance,
             }
         })
@@ -287,6 +303,8 @@ fn get_owner_wallet_to_quality<'a>(
                         bid_depth: BidDepth::from(0.0),
                         ask_depth: AskDepth::from(0.0),
                         algx_balance: AlgxBalance::from(0),
+                        algo_depth: BidDepth::from(0.0),
+                        asa_depth: AskDepth::from(0.0),
                     },
                 );
             }
@@ -313,6 +331,8 @@ fn update_owner_wallet_quality(
     unix_time: &u32,
     total_bid_depth: &BidDepth,
     total_ask_depth: &AskDepth,
+    total_algo_depth: &BidDepth,
+    total_asa_depth: &AskDepth
 ) {
     owner_wallet_to_quality.keys().for_each(|owner| {
         let res: QualityResult;
@@ -325,11 +345,14 @@ fn update_owner_wallet_quality(
                     BidDepth::from(0.0),
                     AskDepth::from(0.0),
                     AlgxBalance::from(0),
+                    BidDepth::from(0.0),
+                    AskDepth::from(0.0),
                 );
                 &res
             }
         };
-        let QualityResult { ref quality, addr: _, bid_depth, ask_depth, algx_balance } =
+        let QualityResult { ref quality, addr: _, bid_depth, ask_depth,
+            algx_balance, algo_depth, asa_depth } =
             quality_result;
 
         if quality.val() == 0.0 {
@@ -350,13 +373,16 @@ fn update_owner_wallet_quality(
         if total_bid_depth.val() > 0.0 {
             owner_entry.depth += bid_depth.as_depth() / total_bid_depth.as_depth();
             owner_entry.sum_depth += bid_depth.as_depth();
+            owner_entry.algo_total_depth += total_algo_depth.as_depth();
             owner_entry.has_bid = true;
         }
         if total_ask_depth.val() > 0.0 {
             owner_entry.depth += ask_depth.as_depth() / total_ask_depth.as_depth();
             owner_entry.sum_depth += ask_depth.as_depth();
+            owner_entry.asa_total_depth += total_asa_depth.as_depth();
             owner_entry.has_ask = true;
         }
+        
         if quality.val() >= 0.0000001 {
             match check_mainnet_period(unix_time) {
                 MainnetPeriod::Version1 => owner_entry.uptime += Uptime::from(1),
@@ -389,6 +415,11 @@ pub fn update_owner_wallet_quality_per_asset(
     let total_ask_depth =
         quality_analytics.iter().fold(AskDepth::from(0.0), |sum, entry| sum + entry.ask_depth);
 
+    let total_algo_depth =
+        quality_analytics.iter().fold(BidDepth::from(0.0), |sum, entry| sum + entry.algo_depth);
+    let total_asa_depth =
+        quality_analytics.iter().fold(AskDepth::from(0.0), |sum, entry| sum + entry.asa_depth);
+
     update_owner_wallet_quality(
         owner_wallet_asset_to_quality_result,
         &owner_wallet_to_quality,
@@ -396,5 +427,7 @@ pub fn update_owner_wallet_quality_per_asset(
         timestep,
         &total_bid_depth,
         &total_ask_depth,
+        &total_algo_depth,
+        &total_asa_depth
     );
 }
