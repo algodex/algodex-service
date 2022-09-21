@@ -22,6 +22,7 @@ module.exports = async (blocksDB, round) => {
     return block;
   } catch (e) {
     console.error('Could not get block from node!');
+    throw e;
   }
 };
 
