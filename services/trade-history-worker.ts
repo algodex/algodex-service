@@ -1,4 +1,4 @@
-import { getCharts, Period } from "../api/trade_history";
+import { getCharts, getAllAssetPrices, Period } from "../api/trade_history";
 import { waitForBlock } from "../src/explorer";
 import map from "../views/chart/map";
 
@@ -28,7 +28,7 @@ const getChartCacheKeyToRev = async (oldCacheDocs):Promise<Map<string,string>> =
 };
 
 
-const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>) => {
+const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>) => {
   if (assetIds.size === 0) {
     return;
   }
@@ -75,6 +75,32 @@ const rebuildCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>
   await viewCacheDB.bulkDocs(newDocs);
 }
 
+
+const rebuildCurrentOrdersCache = async (viewCacheDB, queueRound:number) => {
+  await getLatestBlock();
+  const latestBlockRound = latestBlock['last-round'];
+  if (queueRound < latestBlockRound - 5) {
+    // This is happening during a resync, so simply return
+    return;
+  }
+  const docs = await viewCacheDB.query('view_cache/currentCache', 
+    {reduce: false, key: 'allPrices'
+  });
+
+  const rev = docs.rows.length > 0 ? docs.rows[0].value.rev : undefined;
+
+  const allAssetPriceData = await getAllAssetPrices();
+  const id = `allPrices`;
+
+  const newDoc = {
+      _id: id,
+      _rev: rev,
+      round: queueRound,
+      cachedData: allAssetPriceData
+  };
+
+  await viewCacheDB.put(newDoc);
+}
 module.exports = ({queues, databases}) =>{
   const blockDB = databases.blocks;
   const escrowDB = databases.escrow;
@@ -170,7 +196,8 @@ module.exports = ({queues, databases}) =>{
                       validHistoryRows.map( row =>
                         withSchemaCheck('formatted_history', row)));
                   const assetSet = new Set<number>(validHistoryRows.map(row => row.asaId));
-                  await rebuildCache(viewCacheDB, parseInt(blockId), assetSet);
+                  return Promise.all([rebuildCurrentOrdersCache(viewCacheDB, parseInt(blockId)),
+                    rebuildChartsCache(viewCacheDB, parseInt(blockId), assetSet)]);
                 });
           }).catch(function(e) {
             if (e.error === 'not_found') {

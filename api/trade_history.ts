@@ -132,7 +132,7 @@ export const serveCharts = async (req, res) => {
   }
 }
 
-const getAllAssetPrices = async () => {
+export const getAllAssetPrices = async () => {
   const db = getDatabase('formatted_history');
   
   const data = await db.query('formatted_history/allAssets', {
