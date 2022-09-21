@@ -87,7 +87,7 @@ const rebuildCurrentOrdersCache = async (viewCacheDB, queueRound:number) => {
     {reduce: false, key: 'allPrices'
   });
 
-  const rev = docs.rows.length > 0 ? docs.rows[0].value.rev : 0;
+  const rev = docs.rows.length > 0 ? docs.rows[0].value.rev : undefined;
 
   const allAssetPriceData = await getAllAssetPrices();
   const id = `allPrices`;
