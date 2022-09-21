@@ -38,7 +38,7 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
     // This is happening during a resync, so simply return
     return;
   }
-  const docs = await viewCacheDB.query('view_cache/currentCache', {reduce: false};
+  const docs = await viewCacheDB.query('view_cache/currentCache', {reduce: false});
   const ignoreCacheDocs = docs.rows.filter(doc => doc.value.round >= queueRound);
   const ignoreCacheIdSet = new Set(ignoreCacheDocs.map(doc => doc.key));
 
