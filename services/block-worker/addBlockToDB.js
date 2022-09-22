@@ -19,7 +19,7 @@ const addBlockToDB = async (blocksDB, round, blockData) => {
   const blockExistsQuery = await blocksDB.query('blocks/blockToTime',
       {key: `${round}`});
 
-  if (blockExistsQuery.rows.length === 0) {
+  if (blockExistsQuery.rows.length >= 1) {
     console.log('block ' + round + 'already added, returning');
     return;
   }
