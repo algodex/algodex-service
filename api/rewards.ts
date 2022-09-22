@@ -163,9 +163,8 @@ export const isAccruingRewards = async (req, res) => {
       const algoPrice = await getAlgoPrice();
       return algoPrice;
     } catch (e) {
-      res.status(500);
       const retdata = {'serverError': 'Cannot fetch prices from Tinyman'};
-      res.end(JSON.stringify(retdata));
+      res.status(500).json(retdata);
       return;
     }
   })();
@@ -197,9 +196,8 @@ export const isAccruingRewards = async (req, res) => {
     try {
       return await getOpenOrders(wallet);
     } catch (e) {
-        res.status(500);
         const retdata = {'serverError': 'Cannot fetch open orders'};
-        res.end(JSON.stringify(retdata));
+        res.status(500).json(retdata);
         return;
     }
   })();
@@ -231,9 +229,8 @@ export const isAccruingRewards = async (req, res) => {
     // const lowestAsk = sellOrders[0];
     const spread = assetIdToSpread.get(assetId);
     if (!spread?.highestBid?.maxPrice || !spread?.lowestAsk?.minPrice) {
-      res.status(500);
       const retdata = {'serverError': 'Sync issue in backend. Please contact Algodex support'};
-      res.end(JSON.stringify(retdata));
+      res.status(500).json(retdata);
       return;
     }
     const midpoint = (spread.highestBid.maxPrice + spread.lowestAsk.minPrice) / 2;
