@@ -32,18 +32,26 @@ const performJob = async job=>{
     msg: 'Received block',
     round: job.data.rnd,
   });
+
+  console.log('here1');
   await waitForViewBuildingSimple();
+  console.log('here2');
 
   await sleepWhileWaitingForQueues(['tradeHistory', 'assets',
     'orders', 'algxBalance']);
 
   await checkBlockNotSynced(blocksDB, job.data.rnd);
   if (!job.data.fastSyncMode) {
+    console.log('here3');
+
     await addBlockToDB(blocksDB, job.data.rnd, job.data);
   } else {
+    console.log('here4');
+
     console.log('in fast sync mode, not adding block to DB');
   }
   delete job.data.fastSyncMode;
+  console.log('here5');
 
   // eslint-disable-next-line max-len
   const dirtyAccounts = getDirtyAccounts(job.data).map( account => [account] );
@@ -53,6 +61,7 @@ const performJob = async job=>{
   // The trade history is always from orders that previously existed
   // in other blocks, so we can queue it in parallel
   // to adding them to orders
+
   queues.tradeHistory.add('tradeHistory', {block: `${job.data.rnd}`},
       {removeOnComplete: true}).then(function() {
   }).catch(function(err) {

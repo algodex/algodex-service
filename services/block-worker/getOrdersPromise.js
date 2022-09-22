@@ -9,6 +9,8 @@ const getOrdersPromise = ({databases, queues, dirtyAccounts, blockData}) => {
   return databases.blocks.query('blocks/orders',
       {reduce: true, group: true, keys: dirtyAccounts})
       .then(async function(res) {
+        console.log('here6a');
+
         // This below situation occurs during testing. Basically, the
         // known earliest round is after the current round because
         // the block where the order was initialized
@@ -16,10 +18,13 @@ const getOrdersPromise = ({databases, queues, dirtyAccounts, blockData}) => {
 
         res.rows = removeEarliestRound(res.rows, blockData.rnd);
         await addMetadata(blockData.rnd, 'order', res.rows.length > 0);
+        console.log('here6b');
 
         if (!res.rows.length) {
           return;
         }
+        console.log('here7');
+
         const accountsToVerify = res.rows;
 
         console.log('verifying ' + blockData.rnd,
