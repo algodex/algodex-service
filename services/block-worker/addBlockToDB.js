@@ -14,6 +14,15 @@ const withSchemaCheck = require('../../src/schema/with-db-schema-check');
  * @return {Promise<any>}
  */
 const addBlockToDB = async (blocksDB, round, blockData) => {
+  console.log('checking if block exists');
+
+  const blockExistsQuery = await blocksDB.query('blocks/blockToTime',
+      {key: `${round}`});
+
+  if (blockExistsQuery.rows.length >= 1) {
+    console.log('block ' + round + 'already added, returning');
+    return;
+  }
   try {
     const result =
           await blocksDB.post(withSchemaCheck('blocks', {_id: `${round}`,
