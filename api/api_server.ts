@@ -5,7 +5,7 @@ import { isAccruingRewards,
   get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard } from "./rewards";
 import { serveCharts, serveAllAssetPrices, serveTradeHistoryByAssetId, serveTradeHistoryByOwner } from "./trade_history";
 import { serveGetWalletAssets } from "./wallet";
-
+const nocache = require("nocache");
 /* eslint-disable @typescript-eslint/no-var-requires */
 require('dotenv').config();
 
@@ -14,6 +14,9 @@ const express = require('express')
 const app = express()
 app.use(express.json({limit: '50mb'}));
 app.use(express.urlencoded({limit: '50mb'}));
+app.enable('etag'); // should be enabled by default anyways
+app.use(nocache());
+
 const port = 3006
 
 // Orders
@@ -55,7 +58,7 @@ app.post('/debug/log/post', logRemote);
 app.get('/debug/log/get', serveGetLogs);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Algodex Service listening on port ${port}`)
 })
 
 export {};
