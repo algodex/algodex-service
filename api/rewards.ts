@@ -229,9 +229,11 @@ export const isAccruingRewards = async (req, res) => {
     // const lowestAsk = sellOrders[0];
     const spread = assetIdToSpread.get(assetId);
     if (!spread?.highestBid?.maxPrice || !spread?.lowestAsk?.minPrice) {
-      const retdata = {'serverError': 'Sync issue in backend. Please contact Algodex support'};
-      res.status(500).json(retdata);
-      return;
+      //This asset does not have both a bid and an ask in the order book
+      // res.status(500).json(retdata);
+      // throw new Error(JSON.stringify(retdata));
+      // FIXME - is there also a possible sync error here?
+      return false;
     }
     const midpoint = (spread.highestBid.maxPrice + spread.lowestAsk.minPrice) / 2;
     const getSpread = (order:Order):number => 
