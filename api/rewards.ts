@@ -215,7 +215,11 @@ export const isAccruingRewards = async (req, res) => {
 
   const assetIds = Array.from(openOrdersByAsset.keys());
   const assetIdToSpread = await getSpreads(assetIds);
+  let syncIssue = false; //FIXME - switch to better error handling
   const assetsWithBidAndAsk = assetIds.filter(assetId => {
+    if (syncIssue) {
+      return false;
+    }
     const orders = openOrdersByAsset.get(assetId)!;
     const buyOrders = orders.filter(order => order.isAlgoBuyEscrow);
     const sellOrders = orders.filter(order => !order.isAlgoBuyEscrow);
@@ -231,7 +235,8 @@ export const isAccruingRewards = async (req, res) => {
     if (!spread?.highestBid?.maxPrice || !spread?.lowestAsk?.minPrice) {
       const retdata = {'serverError': 'Sync issue in backend. Please contact Algodex support'};
       res.status(500).json(retdata);
-      return;
+      syncIssue = true;
+      return false;
     }
     const midpoint = (spread.highestBid.maxPrice + spread.lowestAsk.minPrice) / 2;
     const getSpread = (order:Order):number => 
@@ -252,6 +257,9 @@ export const isAccruingRewards = async (req, res) => {
     return true;
   });
 
+  if (syncIssue) {
+    return;
+  }
   if (assetsWithBidAndAsk.length == 0) {
     const retdata = {
       wallet, optedIntoRewards, algxBalance, isAccruingRewards: false, 
