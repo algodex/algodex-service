@@ -61,6 +61,6 @@ export const serveGetLogs = async (req, res) => {
     }
     return entry.value;
   }));
-  res.end(style+html);
+  res.send(style+html);
 
 };
