@@ -141,6 +141,20 @@ export const serveGetLeaderboard = async (req, res) => {
   res.send(JSON.stringify(topWallets.rows,null,2));
 };
 
+export const serveRewardsIsRecorded = async (req, res) => {
+  const db = getDatabase('rewards');
+  const {epoch} = req.params;
+
+  const data = await db.query('rewards/isRecorded', {
+    key: epoch
+  })
+
+  const isRecorded = data.rows.length > 0;
+
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify({isRecorded, epoch}));
+};
+
 export const serveIsOptedIn = async (req, res) => {
   const {wallet} = req.params;
 

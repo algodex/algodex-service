@@ -246,6 +246,9 @@ const databases = [
         topWallets: {
           map: require('../../views/rewards/topWallets-map').toString(),
         },
+        isRecorded: {
+          map: require('../../views/rewards/isRecorded-map').toString(),
+        },
       },
     },
   },
