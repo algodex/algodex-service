@@ -2,7 +2,7 @@ import { logRemote, serveGetLogs } from "./log_remote";
 import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, serveGetOrdersByWallet } from "./orders";
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
-  get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard, serveRewardsIsRecorded } from "./rewards";
+  get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard, serveRewardsIsRecorded, serveRewardsData, serveVestedRewardsData } from "./rewards";
 import { serveCharts, serveAllAssetPrices, serveTradeHistoryByAssetId, serveTradeHistoryByOwner } from "./trade_history";
 import { serveGetWalletAssets } from "./wallet";
 const nocache = require("nocache");
@@ -52,6 +52,8 @@ app.get('/wallets/leaderboard', serveGetLeaderboard);
 app.get('/rewards/optin/:wallet', serveIsOptedIn);
 app.get('/rewards_distribution', serveGetRewardsDistribution);
 app.get('/rewards/is_recorded/period/:epoch', serveRewardsIsRecorded);
+app.get('/rewards/accumulated/wallet/:wallet', serveRewardsData);
+app.get('/rewards/vested/wallet/:wallet', serveVestedRewardsData);
 
 // Logging
 
