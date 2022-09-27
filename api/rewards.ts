@@ -141,6 +141,45 @@ export const serveGetLeaderboard = async (req, res) => {
   res.send(JSON.stringify(topWallets.rows,null,2));
 };
 
+export const serveRewardsData = async (req, res) => {
+  const wallet = req.params.wallet;
+  res.setHeader('Content-Type', 'application/json');
+  const rewardsData = await getRewardsData(wallet);
+  res.json(rewardsData);
+}
+export const getRewardsData = async (wallet) => {
+  if (wallet) {
+    const rewardsDB = getDatabase('rewards');
+    const rewardsData = await rewardsDB.query('rewards/rewards', {
+      reduce: false,
+      keys: [wallet],
+    })
+    return rewardsData.rows;
+  } else {
+    throw new TypeError('You cannot get rewards with an invalid address')
+  }
+}
+export const serveVestedRewardsData = async (req, res) => {
+  const wallet = req.params.wallet;
+  res.setHeader('Content-Type', 'application/json');
+  const rewardsData = await getVestedRewardsData(wallet);
+  res.json(rewardsData);
+}
+export const getVestedRewardsData = async (wallet) => {
+  if (wallet) {
+    const rewardsDB = getDatabase('vested_rewards');
+    const rewardsData = await rewardsDB.query('vested_rewards/vested_rewards', {
+      reduce: false,
+      keys: [wallet],
+    });
+    return rewardsData.rows;
+  } else {
+    throw new TypeError(
+      'You cannot get vested rewards with an invalid address'
+    )
+  }
+}
+
 export const serveRewardsIsRecorded = async (req, res) => {
   const db = getDatabase('rewards');
   const {epoch} = req.params;
