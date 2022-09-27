@@ -146,7 +146,7 @@ export const serveRewardsIsRecorded = async (req, res) => {
   const {epoch} = req.params;
 
   const data = await db.query('rewards/isRecorded', {
-    key: epoch
+    key: parseInt(epoch)
   })
 
   const isRecorded = data.rows.length > 0;
