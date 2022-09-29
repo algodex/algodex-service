@@ -48,7 +48,9 @@ const createHistoryEntry = jobData => {
 const activelyUpdatingOrderSet = new Set();
 
 // Delete the cache of the reverse proxy so it gets refreshed again
-// / curl http://localhost:8000/trades/history/asset/31566704 -H 'Clear-Cache: True' -H 'Clear-Cache-Key: MySecretKey'
+// Example:
+// curl http://localhost:8000/orders/asset/31566704
+//      -H 'Clear-Cache: True' -H 'Clear-Cache-Key: MySecretKey'
 const deleteCache = async (ownerAddr, assetId) => {
   const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
 
