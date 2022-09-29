@@ -40,6 +40,7 @@ test('verify end to end test', async () => {
   const keys = Array.from(keysSet);
   const removeRevisionAndOtherData = entry => {
     delete entry._rev;
+    entry.lastVerified = entry.lastVerified ? 123456 : undefined;
     if (entry.data?.indexerInfo?.round) {
       entry.data.indexerInfo.round = 12345;
     }
