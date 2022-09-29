@@ -39,10 +39,10 @@ export const get_rewards_per_epoch = async (req, res) => {
       delete entry.value.earnedRewardsFormatted;
       return entry.value;
     }));
-    res.end(html);
+    res.send(html);
   } else {
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(result));
+    res.send(JSON.stringify(result));
   }
 };
 
@@ -126,7 +126,7 @@ export const serveGetRewardsDistribution = async (req, res) => {
 
   // const allDocs = await Promise.all(getPromises);
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(statusData.rows))
+  res.send(JSON.stringify(statusData.rows))
 }
 
 export const serveGetLeaderboard = async (req, res) => {
@@ -138,7 +138,60 @@ export const serveGetLeaderboard = async (req, res) => {
   topWallets.rows.sort((a, b) => (a.value > b.value ? -1 : 1));
 
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(topWallets.rows,null,2));
+  res.send(JSON.stringify(topWallets.rows,null,2));
+};
+
+export const serveRewardsData = async (req, res) => {
+  const wallet = req.params.wallet;
+  res.setHeader('Content-Type', 'application/json');
+  const rewardsData = await getRewardsData(wallet);
+  res.json(rewardsData);
+}
+export const getRewardsData = async (wallet) => {
+  if (wallet) {
+    const rewardsDB = getDatabase('rewards');
+    const rewardsData = await rewardsDB.query('rewards/rewards', {
+      reduce: false,
+      keys: [wallet],
+    })
+    return rewardsData.rows;
+  } else {
+    throw new TypeError('You cannot get rewards with an invalid address')
+  }
+}
+export const serveVestedRewardsData = async (req, res) => {
+  const wallet = req.params.wallet;
+  res.setHeader('Content-Type', 'application/json');
+  const rewardsData = await getVestedRewardsData(wallet);
+  res.json(rewardsData);
+}
+export const getVestedRewardsData = async (wallet) => {
+  if (wallet) {
+    const rewardsDB = getDatabase('vested_rewards');
+    const rewardsData = await rewardsDB.query('vested_rewards/vested_rewards', {
+      reduce: false,
+      keys: [wallet],
+    });
+    return rewardsData.rows;
+  } else {
+    throw new TypeError(
+      'You cannot get vested rewards with an invalid address'
+    )
+  }
+}
+
+export const serveRewardsIsRecorded = async (req, res) => {
+  const db = getDatabase('rewards');
+  const {epoch} = req.params;
+
+  const data = await db.query('rewards/isRecorded', {
+    key: parseInt(epoch)
+  })
+
+  const isRecorded = data.rows.length > 0;
+
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify({isRecorded, epoch}));
 };
 
 export const serveIsOptedIn = async (req, res) => {
@@ -150,7 +203,7 @@ export const serveIsOptedIn = async (req, res) => {
   const retdata = {
     wallet, optedIn
   }
-  res.end(JSON.stringify(retdata));
+  res.send(JSON.stringify(retdata));
 };
 
 export const isAccruingRewards = async (req, res) => {
@@ -178,7 +231,7 @@ export const isAccruingRewards = async (req, res) => {
   //     wallet, optedIntoRewards, isAccruingRewards: false, 
   //     notAccruingReason: 'Not opted into ALGX rewards'
   //   };
-  //   res.end(JSON.stringify(retdata));
+  //   res.send(JSON.stringify(retdata));
   //   return;
   // }
 
@@ -188,7 +241,7 @@ export const isAccruingRewards = async (req, res) => {
       wallet, optedIntoRewards, isAccruingRewards: false, 
       notAccruingReason: `Insufficient ALGX Balance. Must be over 3000. Current balance: ${algxBalance}`
     };
-    res.end(JSON.stringify(retdata));
+    res.send(JSON.stringify(retdata));
     return;
   };
 
@@ -266,13 +319,13 @@ export const isAccruingRewards = async (req, res) => {
       notAccruingReason: `Must have both a buy and sell order for any given trading pair, with minimum USD$50 bid and $100 ask, at a bid/ask spread less than 5%,` 
        + ` to accrue rewards. The spread is defined as the distance between your order's price and the midpoint of the lowest ask and highest bid of the orderbook.` 
     };
-    res.end(JSON.stringify(retdata));
+    res.send(JSON.stringify(retdata));
     return;
   }
 
   const retdata = {
     wallet, optedIntoRewards, algxBalance, isAccruingRewards: true, assetsAccruingRewards: assetsWithBidAndAsk
   };
-  res.end(JSON.stringify(retdata));
+  res.send(JSON.stringify(retdata));
   return;
 };

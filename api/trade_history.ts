@@ -116,7 +116,7 @@ export const serveCharts = async (req, res) => {
   try {
     const charts = await getChartsFromCache(assetId, period);
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(charts));
+    res.send(JSON.stringify(charts));
     return;
   } catch (e) {
     if (e.error === 'not_found') {
@@ -147,7 +147,7 @@ export const getAllAssetPrices = async () => {
 export const serveAllAssetPrices = async (req, res) => {  
   const history = await getAllAssetPrices();
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(history));
+  res.send(JSON.stringify(history));
 }
 
 export const serveTradeHistoryByAssetId = async (req, res) => {
@@ -155,7 +155,7 @@ export const serveTradeHistoryByAssetId = async (req, res) => {
   
   const history = await getTradeHistory({keyType:'assetId', searchKey:assetId});
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(history));
+  res.send(JSON.stringify(history));
 }
 
 export const serveTradeHistoryByOwner = async (req, res) => {
@@ -163,5 +163,5 @@ export const serveTradeHistoryByOwner = async (req, res) => {
   
   const history = await getTradeHistory({keyType:'ownerAddr', searchKey:ownerAddr});
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(history));
+  res.send(JSON.stringify(history));
 }

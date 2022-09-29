@@ -192,14 +192,14 @@ export const serveGetWalletAssets = async (req, res) => {
     assetResult = await getWalletAssets(wallet);
     if (!assetResult.error) {
       res.setHeader('Content-Type', 'application/json');
-      res.end(JSON.stringify(assetResult.walletAssets,null,2));
+      res.send(JSON.stringify(assetResult.walletAssets,null,2));
       return;
     }
 
     if (assetResult.error === 'AssetQueueSizeError') {
       // The queue size is too high, which is a serious error (asset worker not on?)
       res.status(500);
-      res.end(JSON.stringify(assetResult,null,2));
+      res.send(JSON.stringify(assetResult,null,2));
       return;
     }
     // The backend does not yet store the asset in the DB. So, wait for the worker to store the asset
@@ -211,7 +211,7 @@ export const serveGetWalletAssets = async (req, res) => {
 
   if (assetResult.error) {
     res.status(404);
-    res.end(JSON.stringify(assetResult,null,2));
+    res.send(JSON.stringify(assetResult,null,2));
     return;
   }
 }

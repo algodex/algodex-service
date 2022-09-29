@@ -19,10 +19,10 @@ export const serveGetHiddenOrders = async (req, res) => {
   try {
     const hiddenAddrs = await getHiddenOrderAddrs(assetId);
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify(hiddenAddrs));
+    res.send(JSON.stringify(hiddenAddrs));
   } catch (e) {
     res.status(500);
-    res.end(JSON.stringify(e));
+    res.send(JSON.stringify(e));
     return;
   }
 };
@@ -133,7 +133,7 @@ export const serveGetOrdersByAssetId = async (req, res) => {
   const assetId = parseInt(req.params.assetId);
   const orders = await getV2OrdersByAssetId(assetId);
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(orders));
+  res.send(JSON.stringify(orders));
 }
 
 export const serveGetOrdersByWallet = async (req, res) => {
@@ -144,5 +144,5 @@ export const serveGetOrdersByWallet = async (req, res) => {
 
   const orders = data.rows.map(row => row.value);
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify(orders));
+  res.send(JSON.stringify(orders));
 }
