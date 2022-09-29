@@ -12,6 +12,7 @@ test('verify end to end test', async () => {
   // FIXME - fix later
   const skipDBSet = new Set(['rewards_distribution',
     'rewards', 'vested_rewards', 'logging', 'view_cache']);
+  // FIXME - add view_cache to here
 
   const verificationFileNames = Object.keys(databases)
       .filter(dbName => !skipDBSet.has(dbName)).map(dbName => {
@@ -39,6 +40,7 @@ test('verify end to end test', async () => {
   const keys = Array.from(keysSet);
   const removeRevisionAndOtherData = entry => {
     delete entry._rev;
+    entry.lastVerified = entry.lastVerified ? 123456 : undefined;
     if (entry.data?.indexerInfo?.round) {
       entry.data.indexerInfo.round = 12345;
     }

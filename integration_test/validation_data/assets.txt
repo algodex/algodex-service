@@ -1,7 +1,7 @@
 [
   {
     "_id": "15322902",
-    "_rev": "3-d16db12e04d196bf128f5aabc4c87d93",
+    "_rev": "2-26ad8cf8115e161d7bcbe00d4acb01e0",
     "type": "asset",
     "asset": {
       "created-at-round": 13596306,
@@ -24,11 +24,11 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664464980
   },
   {
     "_id": "15409802",
-    "_rev": "3-5b6e6471418f3afbf71a42a2898fc77f",
+    "_rev": "2-12cde1f72210798eb09c7148dcbfd319",
     "type": "asset",
     "asset": {
       "created-at-round": 13662066,
@@ -53,11 +53,11 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664465001
   },
   {
     "_id": "15870866",
-    "_rev": "3-186a3587511fb93656f42657b0ad3610",
+    "_rev": "2-dd627b0efd04018f0d318a281f007926",
     "type": "asset",
     "asset": {
       "created-at-round": 14200055,
@@ -82,11 +82,11 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664464999
   },
   {
     "_id": "16056043",
-    "_rev": "3-15eded064fae14f545ab73366a9e6ad5",
+    "_rev": "2-77bbe66f9825cfeb9d04ee5b160fbb5d",
     "type": "asset",
     "asset": {
       "created-at-round": 14673960,
@@ -111,11 +111,11 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664465012
   },
   {
     "_id": "22060777",
-    "_rev": "3-108d5778f9953281819672dd4af00e90",
+    "_rev": "2-69197a08bec64ce7a498779167652980",
     "type": "asset",
     "asset": {
       "created-at-round": 15917936,
@@ -140,11 +140,11 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664465000
   },
   {
     "_id": "22847685",
-    "_rev": "3-2d7ab4c2696d9ac22a0a53af6a29966d",
+    "_rev": "2-b30258bab6aeda4dca3a46b29b3f1a31",
     "type": "asset",
     "asset": {
       "created-at-round": 16065861,
@@ -169,11 +169,11 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664465012
   },
   {
     "_id": "23749470",
-    "_rev": "3-93069af74cc56a68a36035b0e27ef043",
+    "_rev": "2-890445fe5414c977e2bab4d44b68d47c",
     "type": "asset",
     "asset": {
       "created-at-round": 16241800,
@@ -199,11 +199,11 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664465021
   },
   {
     "_id": "24257476",
-    "_rev": "3-7dd21384ebbc2411126a46e9d07fd6d2",
+    "_rev": "2-fbeb222d82671c29863c6e34883fd0f0",
     "type": "asset",
     "asset": {
       "created-at-round": 16325237,
@@ -228,11 +228,11 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664465004
   },
   {
     "_id": "24270812",
-    "_rev": "3-ff060f188a5903babc23a65f2f9355e3",
+    "_rev": "2-79e4cea48064183e95961a8e3427751f",
     "type": "asset",
     "asset": {
       "created-at-round": 16327845,
@@ -255,11 +255,11 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664465006
   },
   {
     "_id": "24819405",
-    "_rev": "3-da8675c05851c9d7f42a805316744620",
+    "_rev": "2-35aca0a2c4ad5d2aa2083dc15319f43f",
     "type": "asset",
     "asset": {
       "created-at-round": 16415944,
@@ -282,7 +282,7 @@
     },
     "current-round": 24078319,
     "verified": false,
-    "lastVerified": 1664378144
+    "lastVerified": 1664465019
   },
   {
     "_id": "_design/assets",

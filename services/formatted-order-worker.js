@@ -6,6 +6,7 @@ const withQueueSchemaCheck = require('../src/schema/with-queue-schema-check');
 const sleep = require('../src/sleep');
 const throttle = require('lodash.throttle');
 const {waitForViewBuildingSimple} = require('./waitForViewBuilding');
+const axios = require('axios').default;
 
 const Worker = bullmq.Worker;
 // const algosdk = require('algosdk');
@@ -46,6 +47,30 @@ const createHistoryEntry = jobData => {
 
 const activelyUpdatingOrderSet = new Set();
 
+// Delete the cache of the reverse proxy so it gets refreshed again
+// Example:
+// curl http://localhost:8000/orders/asset/31566704
+//      -H 'Clear-Cache: True' -H 'Clear-Cache-Key: MySecretKey'
+const deleteCache = async (ownerAddr, assetId) => {
+  const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
+
+  const headers = {'Clear-Cache': true,
+    'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
+
+  const clearCacheUrls = [
+    `${reverseProxyAddr}/orders/asset/${assetId}`,
+    `${reverseProxyAddr}/orders/wallet/${ownerAddr}`,
+  ];
+
+  const clearCachePromises = clearCacheUrls.map(url => axios({
+    method: 'get',
+    url: url,
+    timeout: 3000,
+    headers,
+  }));
+  await Promise.all(clearCachePromises);
+};
+
 module.exports = ({queues, databases}) =>{
   const formattedEscrowDB = databases.formatted_escrow;
   const assetDB = databases.assets;
@@ -64,6 +89,7 @@ module.exports = ({queues, databases}) =>{
         const assetId = job.data.escrowInfo.assetId;
         const addr = job.data.indexerInfo.address;
         const data = job.data;
+        const ownerAddr = job.data.escrowInfo.ownerAddr;
 
         const assetGetPromise = assetDB.get(assetId)
             .then(async function(res) {
@@ -107,6 +133,7 @@ module.exports = ({queues, databases}) =>{
                       data,
                     })).then(function(res) {
                       console.log('added doc revision: ' + data);
+                      deleteCache(ownerAddr, assetId);
                       activelyUpdatingOrderSet.delete(addr);
                     }).catch(function(err) {
                       console.error('error 442b', err);
@@ -122,6 +149,7 @@ module.exports = ({queues, databases}) =>{
                         type: 'formatted_escrow', data: data}))
                       .then(function(response) {
                         console.log('posted formatted escrow');
+                        deleteCache(ownerAddr, assetId);
                         activelyUpdatingOrderSet.delete(addr);
                       }).catch(function(err) {
                         console.error('error 445b', err);

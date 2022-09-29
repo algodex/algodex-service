@@ -41,7 +41,7 @@ cargo build
 First make sure CouchDB and Redis services are running according to .testnet.local.env. The node.js should *not* be running as these will be started by the end-to-end test.
 
 ```
-npm run end-to-end-light
+npm run build && npm run end-to-end-light
 ```
 
 ### Quick Start (Docker Only)
