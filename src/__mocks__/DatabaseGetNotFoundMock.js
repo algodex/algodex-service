@@ -7,5 +7,8 @@ module.exports = {
   get: jest.fn(() => new Promise(resolve => {
     throw {'error': 'not_found'};
   })),
+  query: jest.fn(() => new Promise(resolve => {
+    resolve({rows: []});
+  })),
 };
 
