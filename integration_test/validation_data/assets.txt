@@ -1,7 +1,7 @@
 [
   {
     "_id": "15322902",
-    "_rev": "1-7e1f26bab21aeae7b247304b9496c7d1",
+    "_rev": "2-26ad8cf8115e161d7bcbe00d4acb01e0",
     "type": "asset",
     "asset": {
       "created-at-round": 13596306,
@@ -22,11 +22,13 @@
         "unit-name-b64": "TEFNUA=="
       }
     },
-    "current-round": 23276467
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664464980
   },
   {
     "_id": "15409802",
-    "_rev": "1-181b4f92f6647f1f6a15ed058a86dc98",
+    "_rev": "2-12cde1f72210798eb09c7148dcbfd319",
     "type": "asset",
     "asset": {
       "created-at-round": 13662066,
@@ -49,11 +51,13 @@
         "url-b64": "aHR0cHM6Ly9wdWRkaW5ncG9pbnRzLmNvbQ=="
       }
     },
-    "current-round": 23276469
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664465001
   },
   {
     "_id": "15870866",
-    "_rev": "1-be6738a62436b01513075bbfc3fe954d",
+    "_rev": "2-dd627b0efd04018f0d318a281f007926",
     "type": "asset",
     "asset": {
       "created-at-round": 14200055,
@@ -76,11 +80,13 @@
         "url-b64": "aHR0cHM6Ly9nZXN0dXJlLnF0dW5lLmlv"
       }
     },
-    "current-round": 23276469
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664464999
   },
   {
     "_id": "16056043",
-    "_rev": "1-0080cd4c100099e1487825cdab0ee966",
+    "_rev": "2-77bbe66f9825cfeb9d04ee5b160fbb5d",
     "type": "asset",
     "asset": {
       "created-at-round": 14673960,
@@ -103,11 +109,13 @@
         "url-b64": "aHR0cHM6Ly93d3cuZXhhbXBsZS5jb20v"
       }
     },
-    "current-round": 23276470
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664465012
   },
   {
     "_id": "22060777",
-    "_rev": "1-d35fddaf42ccc42f58b33d3c95ce6e1c",
+    "_rev": "2-69197a08bec64ce7a498779167652980",
     "type": "asset",
     "asset": {
       "created-at-round": 15917936,
@@ -130,11 +138,13 @@
         "url-b64": "aHR0cHM6Ly9nbGFzc3dhdmUuY28vd2F2ZWNvaW4="
       }
     },
-    "current-round": 23276469
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664465000
   },
   {
     "_id": "22847685",
-    "_rev": "1-46390cd3af49d6603b182a8771711c0b",
+    "_rev": "2-b30258bab6aeda4dca3a46b29b3f1a31",
     "type": "asset",
     "asset": {
       "created-at-round": 16065861,
@@ -157,11 +167,13 @@
         "url-b64": "aHR0cHM6Ly9hbGdvYmFuay5maW5hbmNl"
       }
     },
-    "current-round": 23276470
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664465012
   },
   {
     "_id": "23749470",
-    "_rev": "1-d75e89528a7b74b1d19c3b98e3fad976",
+    "_rev": "2-890445fe5414c977e2bab4d44b68d47c",
     "type": "asset",
     "asset": {
       "created-at-round": 16241800,
@@ -185,11 +197,13 @@
         "url-b64": "aHR0cHM6Ly90aW55dXJsLmNvbS8zc3NuYm1qNA=="
       }
     },
-    "current-round": 23276471
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664465021
   },
   {
     "_id": "24257476",
-    "_rev": "1-6a1d23e1f15ec957b551110e5d095d42",
+    "_rev": "2-fbeb222d82671c29863c6e34883fd0f0",
     "type": "asset",
     "asset": {
       "created-at-round": 16325237,
@@ -212,11 +226,13 @@
         "url-b64": "em9tYm8uY29t"
       }
     },
-    "current-round": 23276469
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664465004
   },
   {
     "_id": "24270812",
-    "_rev": "1-b85b32496f072dbb0502e541242d211f",
+    "_rev": "2-79e4cea48064183e95961a8e3427751f",
     "type": "asset",
     "asset": {
       "created-at-round": 16327845,
@@ -237,11 +253,13 @@
         "unit-name-b64": "U2hpdA=="
       }
     },
-    "current-round": 23276470
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664465006
   },
   {
     "_id": "24819405",
-    "_rev": "1-d7518b810706a0eb8a9629e825bb0319",
+    "_rev": "2-35aca0a2c4ad5d2aa2083dc15319f43f",
     "type": "asset",
     "asset": {
       "created-at-round": 16415944,
@@ -262,7 +280,9 @@
         "unit-name-b64": "RlJa"
       }
     },
-    "current-round": 23276471
+    "current-round": 24078319,
+    "verified": false,
+    "lastVerified": 1664465019
   },
   {
     "_id": "_design/assets",
