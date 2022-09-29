@@ -79,7 +79,6 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
 // Delete the cache of the reverse proxy so it gets refreshed again
 const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
   const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
- // FIXME - set clear cache headers
    const headers = {'Clear-Cache': true,
     'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
 
