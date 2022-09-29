@@ -11,6 +11,7 @@ const initOrGetIndexer = require('../src/get-indexer');
 const withQueueSchemaCheck = require('../src/schema/with-queue-schema-check');
 const {waitForViewBuildingSimple} = require('./waitForViewBuilding');
 const throttle = require('lodash.throttle');
+const axios = require('axios').default;
 
 let latestBlock;
 const getLatestBlock = throttle(async () => {
@@ -75,6 +76,29 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
   await viewCacheDB.bulkDocs(newDocs);
 }
 
+// Delete the cache of the reverse proxy so it gets refreshed again
+const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
+  const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
+ // FIXME - set clear cache headers
+ 
+  const clearOwnerCachePromises = Array.from(ownerAddrSet)
+  .map(ownerAddr => `${reverseProxyAddr}/trades/history/wallet/${ownerAddr}`)
+  .map(url => axios({
+    method: 'get',
+    url: url,
+    timeout: 3000,
+  }));
+
+  const clearAssetCachePromises = Array.from(assetSet)
+  .map(assetId => `${reverseProxyAddr}/trades/history/asset/${assetId}`)
+  .map(url => axios({
+    method: 'get',
+    url: url,
+    timeout: 3000,
+  }));
+
+  await Promise.all([...clearOwnerCachePromises, ...clearAssetCachePromises]);
+};
 
 const rebuildCurrentOrdersCache = async (viewCacheDB, queueRound:number) => {
   await getLatestBlock();
@@ -147,6 +171,10 @@ module.exports = ({queues, databases}) =>{
             if (innerRows.length === 0 && !inIntegrationTest) {
               return;
             }
+
+            const ownerAddrSet:Set<string> = innerRows.map(row => row.value)
+            .reduce( (set, ownerAddr) => set.add(ownerAddr), new Set());
+
             const validAccountsSet = innerRows.map(row => row.key)
                 .reduce( (set, account) => set.add(account), new Set());
 
@@ -196,8 +224,11 @@ module.exports = ({queues, databases}) =>{
                       validHistoryRows.map( row =>
                         withSchemaCheck('formatted_history', row)));
                   const assetSet = new Set<number>(validHistoryRows.map(row => row.asaId));
-                  return Promise.all([rebuildCurrentOrdersCache(viewCacheDB, parseInt(blockId)),
-                    rebuildChartsCache(viewCacheDB, parseInt(blockId), assetSet)]);
+                  return Promise.all([
+                    deleteCache(assetSet, ownerAddrSet),
+                    rebuildCurrentOrdersCache(viewCacheDB, parseInt(blockId)),
+                    rebuildChartsCache(viewCacheDB, parseInt(blockId), assetSet)
+                  ]);
                 });
           }).catch(function(e) {
             if (e.error === 'not_found') {
