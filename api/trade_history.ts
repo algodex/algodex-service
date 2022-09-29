@@ -101,7 +101,7 @@ const getTradeHistory = async (key:TradeHistoryKey) => {
   return history;
 }
 
-const getChartsFromCache = async (assetId:number, period:Period) => {
+export const getChartsFromCache = async (assetId:number, period:Period) => {
   const db = getDatabase('view_cache');
   const key = `trade_history:charts:${assetId}:${period}`;
 

@@ -1,4 +1,4 @@
-import { getCharts, getAllAssetPrices, Period } from "../api/trade_history";
+import { getCharts, getAllAssetPrices, Period, getChartsFromCache } from "../api/trade_history";
 import { waitForBlock } from "../src/explorer";
 import map from "../views/chart/map";
 
@@ -28,6 +28,11 @@ const getChartCacheKeyToRev = async (oldCacheDocs):Promise<Map<string,string>> =
   }, new Map<string,string>());
 };
 
+interface CurrentChartsCache {
+  assetId:number,
+  period:Period,
+  cache:any
+}
 
 const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>) => {
   if (assetIds.size === 0) {
@@ -39,12 +44,31 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
     // This is happening during a resync, so simply return
     return;
   }
+  const periods:Array<Period> = ['1d', '4h', '1h' , '15m', '5m', '1m'];
+
+  const currentChartsCachePromises:Promise<CurrentChartsCache>[] = Array.from(assetIds).flatMap(assetId => periods
+    .filter(period => {
+      const key = `trade_history:charts:${assetId}:${period}`;
+      return !ignoreCacheIdSet.has(key);
+    })
+    .map(period => getChartsFromCache(assetId, period).then(result => {
+        return <CurrentChartsCache>{
+          assetId, period, cache:result
+        };
+      })));
+  const currentCaches = await Promise.all(currentChartsCachePromises);
+  const keyToCurrentCache:Map<string,CurrentChartsCache> = currentCaches.reduce((map, cache) => {
+    const key = `trade_history:charts:${cache.assetId}:${cache.period}`;
+    map.set(key, cache);
+    console.log(`Setting current cache key: ${key}`);
+    console.log(`Setting current cache cache: ${cache}`);
+    return map;
+  }, new Map<string,CurrentChartsCache>);
   const docs = await viewCacheDB.query('view_cache/currentCache', {reduce: false});
   const ignoreCacheDocs = docs.rows.filter(doc => doc.value.round >= queueRound);
   const ignoreCacheIdSet = new Set(ignoreCacheDocs.map(doc => doc.key));
 
   // FIXME - somehow iterate over this from the definition
-  const periods:Array<Period> = ['1d', '4h', '1h' , '15m', '5m', '1m'];
   const promises = Array.from(assetIds).flatMap(assetId => periods
     .filter(period => {
       const key = `trade_history:charts:${assetId}:${period}`;
@@ -254,3 +278,4 @@ module.exports = ({queues, databases}) =>{
 };
 
 export {};
+
