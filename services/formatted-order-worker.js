@@ -48,9 +48,12 @@ const createHistoryEntry = jobData => {
 const activelyUpdatingOrderSet = new Set();
 
 // Delete the cache of the reverse proxy so it gets refreshed again
+// / curl http://localhost:8000/trades/history/asset/31566704 -H 'Clear-Cache: True' -H 'Clear-Cache-Key: MySecretKey'
 const deleteCache = async (ownerAddr, assetId) => {
   const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
-  // FIXME - set clear cache headers
+
+  const headers = {'Clear-Cache': true,
+    'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
 
   const clearCacheUrls = [
     `${reverseProxyAddr}/orders/asset/${assetId}`,
@@ -61,6 +64,7 @@ const deleteCache = async (ownerAddr, assetId) => {
     method: 'get',
     url: url,
     timeout: 3000,
+    headers,
   }));
   await Promise.all(clearCachePromises);
 };

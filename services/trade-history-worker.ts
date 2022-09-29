@@ -80,13 +80,16 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
 const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
   const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
  // FIXME - set clear cache headers
- 
+   const headers = {'Clear-Cache': true,
+    'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
+
   const clearOwnerCachePromises = Array.from(ownerAddrSet)
   .map(ownerAddr => `${reverseProxyAddr}/trades/history/wallet/${ownerAddr}`)
   .map(url => axios({
     method: 'get',
     url: url,
     timeout: 3000,
+    headers
   }));
 
   const clearAssetCachePromises = Array.from(assetSet)
@@ -95,6 +98,7 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
     method: 'get',
     url: url,
     timeout: 3000,
+    headers
   }));
 
   await Promise.all([...clearOwnerCachePromises, ...clearAssetCachePromises]);
@@ -158,8 +162,7 @@ module.exports = ({queues, databases}) =>{
           }
           const accounts = tradeHistoryRows.map(row => row.value.escrowAddr);
           return escrowDB.query('escrow/escrowAddr',
-              {reduce: true,
-                group: true, keys: accounts}).then(async function(res) {
+              {reduce: false, keys: accounts}).then(async function(res) {
             const innerRows = res.rows;
 
             // This gets around a race condition that only happens during
