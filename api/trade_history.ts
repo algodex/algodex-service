@@ -115,7 +115,14 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
   const charts = await getChartsData(db, startKey, endKey, period, debug);
 
   const tempCache = cache || [];
-  return [...charts, ...tempCache];
+  const timeSet:Set<number> = new Set<number>();
+  const combinedCharts = [...charts, ...tempCache].filter(item => {
+    const hasItem = timeSet.has(item.startUnixTime);
+    timeSet.add(item.startUnixTime);
+    return hasItem;
+  });
+
+  return combinedCharts;
 }
 
 const getTradeHistory = async (key:TradeHistoryKey) => {
