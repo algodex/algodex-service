@@ -47,10 +47,6 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
   const periods:Array<Period> = ['1d', '4h', '1h' , '15m', '5m', '1m'];
 
   const currentChartsCachePromises:Promise<CurrentChartsCache>[] = Array.from(assetIds).flatMap(assetId => periods
-    .filter(period => {
-      const key = `trade_history:charts:${assetId}:${period}`;
-      return !ignoreCacheIdSet.has(key);
-    })
     .map(period => getChartsFromCache(assetId, period).then(result => {
         return <CurrentChartsCache>{
           assetId, period, cache:result
