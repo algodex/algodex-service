@@ -8,4 +8,5 @@ APP_CONTEXT=order-worker pm2 -l ./log --name order-worker -l ./log/order-worker.
 APP_CONTEXT=trade-history-worker pm2 -l ./log/trade-history-worker.log --name trade-history-worker start built/server.js
 APP_CONTEXT=broker pm2 -l ./log/broker.log --name broker start built/server.js
 APP_CONTEXT=algx-balance-worker pm2 -l ./log/algx-balance-worker.log --name algx-balance-worker start built/server.js
+pm2 -l ./log/api.log --name api start built/api/api_server.js
 
