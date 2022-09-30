@@ -7,7 +7,7 @@ interface TradeHistoryKey {
   searchKey: number | string
 }
 
-const getStartKey = (assetId:number, period:Period, cache) => {
+const getEndKey = (assetId:number, period:Period, cache) => {
   if (cache && cache.length > 0) {
     const date = new Date(cache[0].startUnixTime * 1000);
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
@@ -27,7 +27,7 @@ const getStartKey = (assetId:number, period:Period, cache) => {
     console.log('Due to cache, created key of: ' + timeKey + ' from: ' + cache[0].startUnixTime);
     return [assetId, period, timeKey];
   }
-  return [assetId, period, "zzzzz"];
+  return [assetId, period, ""];
 }
 
 const getChartsData = async (db, startKey, endKey, period, debug) => {
@@ -106,8 +106,11 @@ const getChartsData = async (db, startKey, endKey, period, debug) => {
 export const getCharts = async (assetId:number, period:Period, cache, debug) => {
   const db = getDatabase('formatted_history');
 
-  const startKey = getStartKey(assetId, period, cache);
-  const endKey = [assetId, period, ""];
+  const startKey = [assetId, period, "zzzzz"];
+  const endKey = getEndKey(assetId, period, cache);
+  
+  console.log({startKey});
+  console.log({endKey});
   
   const charts = await getChartsData(db, startKey, endKey, period, debug);
 
