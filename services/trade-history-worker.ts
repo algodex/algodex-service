@@ -57,7 +57,7 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
     const key = `trade_history:charts:${cache.assetId}:${cache.period}`;
     map.set(key, cache);
     console.log(`Setting current cache key: ${key}`);
-    console.log(`Setting current cache val: ${cache}`);
+    console.log(`Setting current cache val: ${Object.keys(cache)}`);
     return map;
   }, new Map<string,CurrentChartsCache>);
   const docs = await viewCacheDB.query('view_cache/currentCache', {reduce: false});
