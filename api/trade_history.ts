@@ -16,13 +16,27 @@ const getEndKey = (assetId:number, period:Period, cache) => {
   
     const YMD = `${year}:${month}:${day}`;
   
-    //const hour = `${date.getHours()}`.padStart(2, '0');
+    const hour = `${date.getHours()}`.padStart(2, '0');
     const min = `${date.getMinutes()}`.padStart(2, '0');
-    //const min5 = `${date.getMinutes() % 5}`.padStart(2, '0'); ;
-    //const min15 = `${date.getMinutes() % 15}`.padStart(2, '0');
-    //const hour4 = `${date.getHours() % 4}`.padStart(2, '0');
+    const min5 = `${date.getMinutes() % 5}`.padStart(2, '0'); ;
+    const min15 = `${date.getMinutes() % 15}`.padStart(2, '0');
+    const hour4 = `${date.getHours() % 4}`.padStart(2, '0');
   
-    const timeKey = `${YMD}:${min}`;
+    let timeKey = null;
+
+    if (period === '1h') {
+      timeKey = `${YMD}:${hour}`;
+    } else if (period === '1d') {
+      timeKey = `${YMD}`;
+    } else if (period === '1m') {
+      timeKey = `${YMD}:${min}`;
+    } else if (period === '5m') {
+      timeKey = `${YMD}:${min5}`;
+    } else if (period === '15m') {
+      timeKey = `${YMD}:${min15}`;
+    } else if (period === '4h') {
+      timeKey = `${YMD}:${hour4}`;
+    }
 
     console.log('Due to cache, created key of: ' + timeKey + ' from: ' + cache[0].startUnixTime);
     return [assetId, period, timeKey];
@@ -119,7 +133,7 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
   const combinedCharts = [...charts, ...tempCache].filter(item => {
     const hasItem = timeSet.has(item.startUnixTime);
     timeSet.add(item.startUnixTime);
-    return hasItem;
+    return !hasItem;
   });
 
   return combinedCharts;
