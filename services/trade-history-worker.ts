@@ -55,11 +55,12 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
   const currentCaches = await Promise.all(currentChartsCachePromises);
   const keyToCurrentCache:Map<string,CurrentChartsCache> = currentCaches.reduce((map, cache) => {
     const key = `trade_history:charts:${cache.assetId}:${cache.period}`;
-    map.set(key, cache);
+    map.set(key, cache.cache);
     console.log(`Setting current cache key: ${key}`);
-    console.log(`Setting current cache val: ${Object.keys(cache)}`);
     return map;
   }, new Map<string,CurrentChartsCache>);
+
+  // This is currently redundant - TODO remove this extra call and fix the above to encode the round.
   const docs = await viewCacheDB.query('view_cache/currentCache', {reduce: false});
   const ignoreCacheDocs = docs.rows.filter(doc => doc.value.round >= queueRound);
   const ignoreCacheIdSet = new Set(ignoreCacheDocs.map(doc => doc.key));
@@ -71,7 +72,8 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
       return !ignoreCacheIdSet.has(key);
     }).map(period => {
       console.log(`getting charts for ${assetId} ${period}`);
-      const chartDataPromise = getCharts(assetId, period, false).then(chartData => {
+      const key = `trade_history:charts:${assetId}:${period}`;
+      const chartDataPromise = getCharts(assetId, period, keyToCurrentCache.get(key), false).then(chartData => {
         return {
           assetId, period, chartData
         };

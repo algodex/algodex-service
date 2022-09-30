@@ -7,19 +7,38 @@ interface TradeHistoryKey {
   searchKey: number | string
 }
 
-export const getCharts = async (assetId:number, period:Period, debug=false) => {
-  const db = getDatabase('formatted_history');
-  const startKey = [assetId, period, "zzzzz"];
-  const endKey = [assetId, period, ""];
+const getStartKey = (assetId:number, period:Period, cache) => {
+  if (cache && cache.length > 0) {
+    const date = new Date(cache[0].startUnixTime * 1000);
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const year = date.getFullYear();
+    const day = `${date.getUTCDate()}`.padStart(2, '0'); ;
   
+    const YMD = `${year}:${month}:${day}`;
+  
+    //const hour = `${date.getHours()}`.padStart(2, '0');
+    const min = `${date.getMinutes()}`.padStart(2, '0');
+    //const min5 = `${date.getMinutes() % 5}`.padStart(2, '0'); ;
+    //const min15 = `${date.getMinutes() % 15}`.padStart(2, '0');
+    //const hour4 = `${date.getHours() % 4}`.padStart(2, '0');
+  
+    const timeKey = `${YMD}:${min}`;
+
+    console.log('Due to cache, created key of: ' + timeKey + ' from: ' + cache[0].startUnixTime);
+    return [assetId, period, timeKey];
+  }
+  return [assetId, period, "zzzzz"];
+}
+
+const getChartsData = async (db, startKey, endKey, period, debug) => {
   const data = await db.query('formatted_history/charts', {
-      startkey: startKey,
-      endkey: endKey,
-      limit: 5000,
-      descending: true,
-      reduce: true,
-      group: true
-    });
+    startkey: startKey,
+    endkey: endKey,
+    limit: 5000,
+    descending: true,
+    reduce: true,
+    group: true
+  });
   const charts = data.rows.map(row => {
     const value = row.value;
     if (debug) {
@@ -44,7 +63,7 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
     const month = date.getMonth();
     const year = date.getFullYear();
     const day = date.getUTCDate();
-  
+
     const hour = date.getHours();
 
     const min = date.getMinutes();
@@ -82,6 +101,18 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
     return retval;
   });
   return charts;
+}
+
+export const getCharts = async (assetId:number, period:Period, cache, debug) => {
+  const db = getDatabase('formatted_history');
+
+  const startKey = getStartKey(assetId, period, cache);
+  const endKey = [assetId, period, ""];
+  
+  const charts = await getChartsData(db, startKey, endKey, period, debug);
+
+  const tempCache = cache || [];
+  return [...charts, ...tempCache];
 }
 
 const getTradeHistory = async (key:TradeHistoryKey) => {
