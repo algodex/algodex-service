@@ -144,7 +144,7 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
     return !hasItem;
   });
 
-  return combinedCharts;
+  return combinedCharts.slice(0, 1000); // Return up to 1000 items
 }
 
 const getTradeHistory = async (key:TradeHistoryKey) => {
