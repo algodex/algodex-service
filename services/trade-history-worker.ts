@@ -51,7 +51,15 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
         return <CurrentChartsCache>{
           assetId, period, cache:result
         };
-      })));
+      }).catch(e => {
+         if (e.error === 'not_found') {
+          return <CurrentChartsCache>{
+            assetId, period, cache:[]
+          };
+         } else {
+          throw e;
+         }
+      }));
   const currentCaches = await Promise.all(currentChartsCachePromises);
   const keyToCurrentCache:Map<string,CurrentChartsCache> = currentCaches.reduce((map, cache) => {
     const key = `trade_history:charts:${cache.assetId}:${cache.period}`;
