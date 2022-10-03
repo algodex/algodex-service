@@ -25,7 +25,7 @@ const getEndKey = (assetId:number, period:Period, cache) => {
     let timeKey = null;
 
     if (period === '1h') {
-      timeKey = `${YMD}:${hour}`;
+      timeKey = `${YMD}:${hour}:00`;
     } else if (period === '1d') {
       timeKey = `${YMD}:00:00`;
     } else if (period === '1m') {
@@ -131,11 +131,11 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
   
   console.log('printing newly fetched charts:');
   console.log(JSON.stringify(charts));
-  console.log('printing first 4 of cache charts:');
+  console.log('printing first 5 of cache charts:');
 
   const tempCache = cache || [];
 
-  console.log(JSON.stringify(tempCache.slice(4)));
+  console.log(JSON.stringify(tempCache.slice(0,5)));
 
   const timeSet:Set<number> = new Set<number>();
   const combinedCharts = [...charts, ...tempCache].filter(item => {
