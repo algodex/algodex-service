@@ -120,9 +120,9 @@ const getChartsData = async (db, startKey, endKey, period, debug) => {
 export const getCharts = async (assetId:number, period:Period, cache, debug) => {
   const db = getDatabase('formatted_history');
 
-  const startKey = [assetId, period, "zzzzz"];
-  const endKey = getEndKey(assetId, period, cache);
-  
+  const startKey = [assetId, period, "zzzzz"]; // start key is the most recent
+  const endKey = getEndKey(assetId, period, cache); // end key is the most historical
+  // The sorting is reverse sorting
 
   const charts = await getChartsData(db, startKey, endKey, period, debug);
 
