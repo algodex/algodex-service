@@ -123,18 +123,19 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
   const startKey = [assetId, period, "zzzzz"];
   const endKey = getEndKey(assetId, period, cache);
   
+
+  const charts = await getChartsData(db, startKey, endKey, period, debug);
+
   console.log({startKey});
   console.log({endKey});
   
-  const charts = await getChartsData(db, startKey, endKey, period, debug);
-
   console.log('printing newly fetched charts:');
   console.log(JSON.stringify(charts));
-  console.log('printing first 10 of cache charts:');
+  console.log('printing first 4 of cache charts:');
 
   const tempCache = cache || [];
 
-  console.log(JSON.stringify(tempCache.slice(10)));
+  console.log(JSON.stringify(tempCache.slice(4)));
 
   const timeSet:Set<number> = new Set<number>();
   const combinedCharts = [...charts, ...tempCache].filter(item => {
