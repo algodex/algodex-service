@@ -59,7 +59,7 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
          } else {
           throw e;
          }
-      }));
+      })));
   const currentCaches = await Promise.all(currentChartsCachePromises);
   const keyToCurrentCache:Map<string,CurrentChartsCache> = currentCaches.reduce((map, cache) => {
     const key = `trade_history:charts:${cache.assetId}:${cache.period}`;
