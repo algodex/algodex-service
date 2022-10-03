@@ -102,6 +102,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     let owner_rewards_res_to_final_rewards_entry = get_owner_rewards_res_to_final_rewards_entry(
         initial_state.epoch,
+        &initial_state.asset_id_to_tvl,
         &state_machine,
         &mainnet_period,
     );
