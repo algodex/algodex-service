@@ -27,6 +27,35 @@ export const serveGetHiddenOrders = async (req, res) => {
   }
 };
 
+export interface AssetTVL {
+  assetId:number,
+  formattedAlgoTVL:number,
+  formattedAssetTVL:number
+}
+
+export type AssetId = number
+
+const getTVL = async ():Promise<AssetTVL[]> => {
+  const db = getDatabase('formatted_escrow');
+  const tvlData = await db.query('formatted_escrow/tvl', {
+    reduce: true, group: true
+  });
+
+  return tvlData.rows.map(row => {
+    return {
+      assetId: row.key,
+      formattedAlgoTVL: row.value.algoAmount,
+      formattedAssetTVL: row.value.asaAmount
+    };
+  });
+}
+
+export const serveGetTVL = async (req, res) => {
+  const tvl = await getTVL();
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(tvl));
+}
+
 export const getOpenOrders = async (wallet:string):Promise<Array<Order>> => {
   const db = getDatabase('formatted_escrow');
   const data = await db.query('formatted_escrow/orders', {

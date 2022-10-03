@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::thread::current;
 
 // use futures::future::{join_all, ok, err};
 use futures::future::join_all;
