@@ -14,28 +14,28 @@ const getEndKey = (assetId:number, period:Period, cache) => {
     const year = date.getFullYear();
     const day = `${date.getUTCDate()}`.padStart(2, '0'); ;
   
-    const YMD = `${year}:${month}:${day}`;
-  
+    const YMD = `${year}-${month}-${day}`;
+
     const hour = `${date.getHours()}`.padStart(2, '0');
     const min = `${date.getMinutes()}`.padStart(2, '0');
-    const min5 = `${date.getMinutes() % 5}`.padStart(2, '0'); ;
-    const min15 = `${date.getMinutes() % 15}`.padStart(2, '0');
-    const hour4 = `${date.getHours() % 4}`.padStart(2, '0');
+    const min5 = `${Math.floor(date.getMinutes() / 5)*5}`.padStart(2, '0');
+    const min15 = `${Math.floor(date.getMinutes() / 15)*15}`.padStart(2, '0');
+    const hour4 = `${Math.floor(date.getHours() / 4)*4}`.padStart(2, '0');
   
     let timeKey = null;
 
     if (period === '1h') {
       timeKey = `${YMD}:${hour}`;
     } else if (period === '1d') {
-      timeKey = `${YMD}`;
+      timeKey = `${YMD}:00:00`;
     } else if (period === '1m') {
-      timeKey = `${YMD}:${min}`;
+      timeKey = `${YMD}:${hour}:${min}`;
     } else if (period === '5m') {
-      timeKey = `${YMD}:${min5}`;
+      timeKey = `${YMD}:${hour}:${min5}`;
     } else if (period === '15m') {
-      timeKey = `${YMD}:${min15}`;
+      timeKey = `${YMD}:${hour}:${min15}`;
     } else if (period === '4h') {
-      timeKey = `${YMD}:${hour4}`;
+      timeKey = `${YMD}:${hour4}:00`;
     }
 
     console.log('Due to cache, created key of: ' + timeKey + ' from: ' + cache[0].startUnixTime);
@@ -128,7 +128,14 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
   
   const charts = await getChartsData(db, startKey, endKey, period, debug);
 
+  console.log('printing newly fetched charts:');
+  console.log(JSON.stringify(charts));
+  console.log('printing first 10 of cache charts:');
+
   const tempCache = cache || [];
+
+  console.log(JSON.stringify(tempCache.slice(10)));
+
   const timeSet:Set<number> = new Set<number>();
   const combinedCharts = [...charts, ...tempCache].filter(item => {
     const hasItem = timeSet.has(item.startUnixTime);
