@@ -81,16 +81,16 @@ const getChartsData = async (db, startKey, endKey, period, debug) => {
     const hour = date.getHours();
 
     const min = date.getMinutes();
-    const min5 = min % 5;
-    const min15 = min % 15;
-    const hour4 = hour % 4;
+    const min5 = Math.floor(min / 5) * 5;
+    const min15 = Math.floor(min / 15) * 15;
+    const hour4 = Math.floor(hour / 4) * 4;
 
     let startMinute;
     let startHour;
     if (period === '15m') {
-      startMinute = min15 * 15;
+      startMinute = min15;
     } else if (period === '5m') {
-      startMinute = min5 * 5;
+      startMinute = min5;
     } else if (period === '1m') {
       startMinute = min;
     } else {
@@ -101,7 +101,7 @@ const getChartsData = async (db, startKey, endKey, period, debug) => {
       period === '5m' || period === '1m') {
         startHour = hour;
     } else if (period === '4h') {
-      startHour = hour * 4;
+      startHour = hour4;
     } else {
       startHour = 0;
     }
