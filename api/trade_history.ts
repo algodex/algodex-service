@@ -7,19 +7,52 @@ interface TradeHistoryKey {
   searchKey: number | string
 }
 
-export const getCharts = async (assetId:number, period:Period, debug=false) => {
-  const db = getDatabase('formatted_history');
-  const startKey = [assetId, period, "zzzzz"];
-  const endKey = [assetId, period, ""];
+const getEndKey = (assetId:number, period:Period, cache) => {
+  if (cache && cache.length > 0) {
+    const date = new Date(cache[0].startUnixTime * 1000);
+    const month = `${date.getMonth() + 1}`.padStart(2, '0');
+    const year = date.getFullYear();
+    const day = `${date.getUTCDate()}`.padStart(2, '0'); ;
   
+    const YMD = `${year}-${month}-${day}`;
+
+    const hour = `${date.getHours()}`.padStart(2, '0');
+    const min = `${date.getMinutes()}`.padStart(2, '0');
+    const min5 = `${Math.floor(date.getMinutes() / 5)*5}`.padStart(2, '0');
+    const min15 = `${Math.floor(date.getMinutes() / 15)*15}`.padStart(2, '0');
+    const hour4 = `${Math.floor(date.getHours() / 4)*4}`.padStart(2, '0');
+  
+    let timeKey = null;
+
+    if (period === '1h') {
+      timeKey = `${YMD}:${hour}:00`;
+    } else if (period === '1d') {
+      timeKey = `${YMD}:00:00`;
+    } else if (period === '1m') {
+      timeKey = `${YMD}:${hour}:${min}`;
+    } else if (period === '5m') {
+      timeKey = `${YMD}:${hour}:${min5}`;
+    } else if (period === '15m') {
+      timeKey = `${YMD}:${hour}:${min15}`;
+    } else if (period === '4h') {
+      timeKey = `${YMD}:${hour4}:00`;
+    }
+
+    console.log('Due to cache, created key of: ' + timeKey + ' from: ' + cache[0].startUnixTime);
+    return [assetId, period, timeKey];
+  }
+  return [assetId, period, ""];
+}
+
+const getChartsData = async (db, startKey, endKey, period, debug) => {
   const data = await db.query('formatted_history/charts', {
-      startkey: startKey,
-      endkey: endKey,
-      limit: 5000,
-      descending: true,
-      reduce: true,
-      group: true
-    });
+    startkey: startKey,
+    endkey: endKey,
+    limit: 5000,
+    descending: true,
+    reduce: true,
+    group: true
+  });
   const charts = data.rows.map(row => {
     const value = row.value;
     if (debug) {
@@ -44,20 +77,20 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
     const month = date.getMonth();
     const year = date.getFullYear();
     const day = date.getUTCDate();
-  
+
     const hour = date.getHours();
 
     const min = date.getMinutes();
-    const min5 = min % 5;
-    const min15 = min % 15;
-    const hour4 = hour % 4;
+    const min5 = Math.floor(min / 5) * 5;
+    const min15 = Math.floor(min / 15) * 15;
+    const hour4 = Math.floor(hour / 4) * 4;
 
     let startMinute;
     let startHour;
     if (period === '15m') {
-      startMinute = min15 * 15;
+      startMinute = min15;
     } else if (period === '5m') {
-      startMinute = min5 * 5;
+      startMinute = min5;
     } else if (period === '1m') {
       startMinute = min;
     } else {
@@ -68,7 +101,7 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
       period === '5m' || period === '1m') {
         startHour = hour;
     } else if (period === '4h') {
-      startHour = hour * 4;
+      startHour = hour4;
     } else {
       startHour = 0;
     }
@@ -82,6 +115,36 @@ export const getCharts = async (assetId:number, period:Period, debug=false) => {
     return retval;
   });
   return charts;
+}
+
+export const getCharts = async (assetId:number, period:Period, cache, debug) => {
+  const db = getDatabase('formatted_history');
+
+  const startKey = [assetId, period, "zzzzz"]; // start key is the most recent
+  const endKey = getEndKey(assetId, period, cache); // end key is the most historical
+  // The sorting is reverse sorting
+
+  const charts = await getChartsData(db, startKey, endKey, period, debug);
+
+  console.log({startKey});
+  console.log({endKey});
+  
+  console.log('printing newly fetched charts:');
+  console.log(JSON.stringify(charts));
+  console.log('printing first 5 of cache charts:');
+
+  const tempCache = cache || [];
+
+  console.log(JSON.stringify(tempCache.slice(0,5)));
+
+  const timeSet:Set<number> = new Set<number>();
+  const combinedCharts = [...charts, ...tempCache].filter(item => {
+    const hasItem = timeSet.has(item.startUnixTime);
+    timeSet.add(item.startUnixTime);
+    return !hasItem;
+  });
+
+  return combinedCharts.slice(0, 1000); // Return up to 1000 items
 }
 
 const getTradeHistory = async (key:TradeHistoryKey) => {
@@ -101,7 +164,7 @@ const getTradeHistory = async (key:TradeHistoryKey) => {
   return history;
 }
 
-const getChartsFromCache = async (assetId:number, period:Period) => {
+export const getChartsFromCache = async (assetId:number, period:Period) => {
   const db = getDatabase('view_cache');
   const key = `trade_history:charts:${assetId}:${period}`;
 
