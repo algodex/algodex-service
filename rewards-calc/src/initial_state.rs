@@ -211,7 +211,8 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         map
     });
 
-    let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL_RUST");
+    let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL_RUST")
+        .replace('\\', "");
     let api_url = env.get("API_PROXY_URL").expect("Missing API_PROXY_URL");
     let keys = [epoch.to_string()].to_vec();
     let account_epoch_data_query_res = query_couch_db::<String>(
@@ -326,7 +327,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
     );
 
     let tinyman_trades = query_couch_db_with_full_str::<TinymanTrade>(
-        couch_dburl,
+        &couch_dburl,
         &"blocks".to_string(),
         &"blocks".to_string(),
         &"tinymanTrades".to_string(),
