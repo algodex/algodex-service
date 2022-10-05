@@ -1,5 +1,5 @@
 import { logRemote, serveGetLogs } from "./log_remote";
-import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, serveGetOrdersByWallet } from "./orders";
+import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, serveGetOrdersByWallet, serveGetTVL } from "./orders";
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
   get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard, serveRewardsIsRecorded, serveRewardsData, serveVestedRewardsData } from "./rewards";
@@ -24,6 +24,7 @@ const port = 3006
 app.get('/asset/hidden/:assetId', serveGetHiddenOrders);
 app.get('/orders/asset/:assetId', serveGetOrdersByAssetId);
 app.get('/orders/wallet/:ownerAddress', serveGetOrdersByWallet);
+app.get('/orders/tvl', serveGetTVL);
 
 // Trade History
 

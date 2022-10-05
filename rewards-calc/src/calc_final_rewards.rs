@@ -6,7 +6,7 @@ use crate::{
     state_machine::StateMachine,
     update_owner_liquidity_quality::{
         EarnedAlgxEntry, MainnetPeriod, OwnerRewardsKey, OwnerWalletAssetQualityResult,
-    },
+    }, initial_state::InitialState,
 };
 
 lazy_static! {
@@ -37,6 +37,7 @@ fn get_asset_grade_multiplier(asset_id: &u32) -> u8 {
 
 fn get_total_quality(
     state_machine: &StateMachine,
+    asset_id_to_global_tvl: &HashMap<u32, f64>,
     mainnet_period: &MainnetPeriod,
 ) -> (f64, HashMap<OwnerRewardsKey, EarnedAlgxEntry>) {
     let mut owner_rewards_res_to_final_rewards_entry: HashMap<OwnerRewardsKey, EarnedAlgxEntry> =
@@ -60,16 +61,21 @@ fn get_total_quality(
                 let uptime_str = format!("{}", uptime.val());
                 let uptimef64 = uptime_str.parse::<f64>().unwrap();
                 let asset_grade = get_asset_grade_multiplier(asset_id);
+                let global_tvl = asset_id_to_global_tvl.get(asset_id).unwrap_or(&0.0);
                 let quality_final = Quality::from(match mainnet_period {
                     MainnetPeriod::Version1 => {
-                        quality_sum.val().powf(0.5) * uptimef64.powi(5) * depth.val().powf(0.3)
+                        quality_sum.val().powf(0.5625) 
+                      * uptimef64.powi(5) 
+                      * depth.val().powf(0.3375)
+                      * global_tvl.powf(0.1)
                     }
                     MainnetPeriod::Version2 => {
-                        quality_sum.val().powf(0.5)
+                        quality_sum.val().powf(0.45)
                             * uptimef64.powi(5)
-                            * depth.val().powf(0.3)
-                            * algx_avg.powf(0.2)
+                            * depth.val().powf(0.27)
+                            * algx_avg.powf(0.18)
                             * asset_grade as f64
+                            * global_tvl.powf(0.1)
                     }
                 });
                 let owner_rewards_key =
@@ -98,11 +104,12 @@ fn get_formatted_epoch_rewards(epoch: u16) -> f64 {
 }
 pub fn get_owner_rewards_res_to_final_rewards_entry(
     epoch: u16,
+    asset_id_to_global_tvl: &HashMap<u32, f64>,
     state_machine: &StateMachine,
     mainnet_period: &MainnetPeriod,
 ) -> HashMap<OwnerRewardsKey, EarnedAlgxEntry> {
     let (total_quality, mut owner_rewards_res_to_final_rewards_entry) =
-        get_total_quality(state_machine, mainnet_period);
+        get_total_quality(state_machine, asset_id_to_global_tvl, mainnet_period);
 
     let total_epoch_rewards = get_formatted_epoch_rewards(epoch);
     // dbg!(&state_machine.owner_wallet_asset_to_quality_result);

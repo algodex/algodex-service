@@ -83,6 +83,10 @@ const databases = [
           map: require('../../views/formatted_orders/spreads-map').toString(),
           reduce: require('../../views/formatted_orders/spreads-reduce').toString(),
         },
+        tvl: {
+          map: require('../../views/formatted_orders/tvl-map').toString(),
+          reduce: require('../../views/formatted_orders/tvl-reduce').toString(),
+        },
       },
     },
   },

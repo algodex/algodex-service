@@ -16,7 +16,7 @@ use crate::{structs, Cli};
 
 use crate::query_couch::{query_couch_db, query_couch_db_with_full_str};
 
-use crate::structs::{AlgxBalanceValue, CouchDBResult, EscrowTimeKey, EscrowValue, TinymanTrade};
+use crate::structs::{AlgxBalanceValue, CouchDBResult, EscrowTimeKey, EscrowValue, TinymanTrade, VestigeFiAsset, AlgodexAssetTVL};
 
 use crate::structs::CouchDBResp;
 
@@ -31,6 +31,7 @@ pub struct InitialState {
     pub all_assets_set: HashSet<u32>,
     #[serde(with = "any_key_map")]
     pub asset_id_to_escrows: HashMap<u32, Vec<String>>,
+    pub asset_id_to_tvl: HashMap<u32, f64>,
     #[serde(with = "any_key_map")]
     pub block_to_unix_time: HashMap<u32, u32>,
     pub env: HashMap<String, String>,
@@ -146,6 +147,53 @@ fn get_tinyman_prices_from_data(tinyman_trades_data: CouchDBResp<TinymanTrade>) 
 
     prices.sort_by(|a, b| a.unix_time.cmp(&b.unix_time));
     prices
+}
+
+fn get_asset_to_usd_tvl(vestige_asset_data: &Vec<VestigeFiAsset>,
+    algodex_tvl_data: &Vec<AlgodexAssetTVL>) -> HashMap<u32, f64> {
+
+    let current_algo_price = 1.0 / vestige_asset_data.into_iter().find(|i| i.id == 31566704).unwrap().price; // USDC price
+
+    let vestige_to_usd_price = vestige_asset_data.into_iter()
+    .fold(HashMap::new(), |mut map, asset_data| {
+        let price = asset_data.price * current_algo_price;
+        map.insert(asset_data.id, price);
+        map
+    });
+
+    let vestige_to_usd_tvl = vestige_asset_data.into_iter()
+        .fold(HashMap::new(), |mut map, asset_data| {
+            map.insert(asset_data.id, asset_data.tvl * current_algo_price);
+            map
+        });
+
+    let algodex_to_usd_tvl = algodex_tvl_data.into_iter()
+        .fold(HashMap::new(), |mut map, asset_data| {
+            let asset_usd_price = vestige_to_usd_price.get(&asset_data.asset_id);
+
+            let usd_tvl = match asset_usd_price {
+                None => (asset_data.formatted_algo_tvl * current_algo_price),
+                Some(price) => (asset_data.formatted_algo_tvl * current_algo_price) +
+                    (asset_data.formatted_asset_tvl * price)
+            };
+
+            map.insert(asset_data.asset_id, usd_tvl);
+            map
+        });
+
+    let vestige_keys:Vec<u32> = vestige_to_usd_tvl.keys().cloned().collect();
+    let algodex_keys:Vec<u32> = algodex_to_usd_tvl.keys().cloned().collect();
+
+    let all_asset_ids = [vestige_keys, algodex_keys].concat();
+
+    let asset_id_to_tvl = all_asset_ids.iter().fold(HashMap::new(), |mut map, asset_id| {
+        let algodex_tvl = algodex_to_usd_tvl.get(asset_id).unwrap_or(&0.0);
+        let global_tvl = vestige_to_usd_tvl.get(asset_id).unwrap_or(&0.0);
+        map.insert(*asset_id, algodex_tvl + global_tvl);
+        map
+    });
+
+    asset_id_to_tvl
 }
 
 pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
@@ -310,11 +358,18 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         .map(|res| res.unwrap())
         .flat_map(|v| v)
         .collect();
+
+    let vestige_tvl_data = query_get_api::<Vec<VestigeFiAsset>>("https://free-api.vestige.fi/assets/list").await.unwrap();
+    let algodex_tvl_data = query_get_api::<Vec<AlgodexAssetTVL>>(&format!("{}/orders/tvl", api_url)).await.unwrap();
+    
+    let asset_id_to_tvl = get_asset_to_usd_tvl(&vestige_tvl_data, &algodex_tvl_data);
+
     let initial_state = InitialState {
         algx_balance_data,
         all_assets,
         all_assets_set,
         asset_id_to_escrows,
+        asset_id_to_tvl,
         block_to_unix_time,
         changed_escrow_seq,
         env,

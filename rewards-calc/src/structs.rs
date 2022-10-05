@@ -174,3 +174,40 @@ pub struct TinymanTrade {
     pub user_xfer_amount: u64,
     pub user_xfer_type: String,
 }
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AlgodexAssetTVL {
+    pub asset_id: u32,
+    #[serde(rename = "formattedAlgoTVL")]
+    pub formatted_algo_tvl: f64,
+    #[serde(rename = "formattedAssetTVL")]
+    pub formatted_asset_tvl: f64,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct VestigeFiAsset {
+    pub id: u32,
+    pub name: String,
+    pub ticker: String,
+    pub verified: bool,
+    #[serde(rename = "created_round")]
+    pub created_round: i64,
+    #[serde(rename = "first_pool_round")]
+    pub first_pool_round: i64,
+    pub price: f64,
+    pub change1h: f64,
+    pub change24h: f64,
+    pub volume24h: f64,
+    pub tvl: f64,
+    #[serde(rename = "tvl_stable")]
+    pub tvl_stable: f64,
+    pub views1h: i64,
+    pub views24h: i64,
+    #[serde(rename = "market_cap")]
+    pub market_cap: f64,
+    pub fdmc: f64,
+    pub dexes: Vec<String>,
+}
+
