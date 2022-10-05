@@ -38,6 +38,8 @@ pub async fn query_couch_db<T: DeserializeOwned>(
     let full =
         format!("{}/query/{}/_design/{}/_view/{}", proxy_url, db_name, index_name, view_name);
 
+    println!("full url: {}", full);
+
     let resp = client
         .post(full)
         //.header(reqwest::header::CONTENT_TYPE, "application/json")

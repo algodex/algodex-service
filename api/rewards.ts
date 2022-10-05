@@ -1,5 +1,6 @@
 import { getOpenOrders, getSpreads } from "./orders";
 import { getAlgoPrice, getAlgxBalance, getDatabase, isOptedIn } from "./util";
+require('dotenv').config();
 
 // const bodyParser = require('body-parser');
 const withSchemaCheck = require('../src/schema/with-db-schema-check');
@@ -192,6 +193,46 @@ export const serveRewardsIsRecorded = async (req, res) => {
 
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify({isRecorded, epoch}));
+};
+
+const getSecondsInEpoch = () => {
+  return 604800;
+}
+
+export const getEpochStart = (epoch) => {
+  const start = parseInt(process.env.EPOCH_LAUNCH_UNIX_TIME);
+  return start + getSecondsInEpoch() * (epoch - 1);
+}
+
+export const getUnrecordedEpochs = async () => {
+  const db = getDatabase('rewards');
+
+  const curr_unix = Math.floor(new Date().getTime() / 1000);
+  const epoch = Math.floor((curr_unix - getEpochStart(1)) / 604800 + 1);
+  console.log({epoch});
+  const lastEpoch = epoch - 1;
+  console.log({lastEpoch});
+  const epochs = Array(lastEpoch).fill(1).map((element, index) => index + 1)
+
+  const data = await db.query('rewards/isRecorded', {
+    keys: epochs
+  })
+
+  const recordedEpochSet:Set<number> = data.rows
+    .map(row => row.key)
+    .reduce((set, epoch) => {
+      set.add(epoch);
+      return set;
+    }, new Set<number>());
+
+  const unrecordedEpochs = epochs.filter(epoch => !recordedEpochSet.has(epoch));
+  return unrecordedEpochs;
+}
+
+export const serveUnrecordedRewards = async (req, res) => {
+  const unrecordedEpochs = await getUnrecordedEpochs();
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(unrecordedEpochs));
 };
 
 export const serveIsOptedIn = async (req, res) => {

@@ -2,7 +2,7 @@ import { logRemote, serveGetLogs } from "./log_remote";
 import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, serveGetOrdersByWallet, serveGetTVL } from "./orders";
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
-  get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard, serveRewardsIsRecorded, serveRewardsData, serveVestedRewardsData } from "./rewards";
+  get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard, serveRewardsIsRecorded, serveRewardsData, serveVestedRewardsData, serveUnrecordedRewards } from "./rewards";
 import { serveCharts, serveAllAssetPrices, serveTradeHistoryByAssetId, serveTradeHistoryByOwner } from "./trade_history";
 import { serveGetWalletAssets } from "./wallet";
 const nocache = require("nocache");
@@ -49,6 +49,7 @@ app.post('/query/:database/_design/:index/_view/:view', serveCouchProxy);
 app.post('/save_rewards', save_rewards);
 app.get('/rewards/per_epoch/wallet/:wallet', get_rewards_per_epoch);
 app.get('/rewards/is_accruing/:wallet', isAccruingRewards);
+app.get('/rewards/unrecorded', serveUnrecordedRewards);
 app.get('/wallets/leaderboard', serveGetLeaderboard);
 app.get('/rewards/optin/:wallet', serveIsOptedIn);
 app.get('/rewards_distribution', serveGetRewardsDistribution);
