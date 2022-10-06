@@ -1,4 +1,4 @@
-# Algodex Gradation
+# Algodex Service
 
 This is the 2.0 backend (essentially a custom blockchain indexer) for Algodex and also includes the rewards calculations.
 
@@ -10,7 +10,6 @@ You can find the contribution guides for getting started in [CONTRIBUTING.md](.g
 Algodex Documentation: https://docs.algodex.com
 
 # Getting Started
-Use one of the following:
 
 ## Building rust rewards calculation on ubuntu
 
