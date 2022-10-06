@@ -45,8 +45,6 @@ npm run end-to-end-light
   - Username: admin
   - Password: dex
 
-<p align="center"><img src="/docs/images/dream.drawio.png?raw=true"/></p>
-
 ## Core Packages
 
 - Sockets/REST(optional): https://github.com/uNetworking/uWebSockets.js/
