@@ -1,1 +1,1 @@
-This Rust API is deprecated
+This Rust API is deprecated in favor of using the typescript API instead ($ROOT/api) . 
