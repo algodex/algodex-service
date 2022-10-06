@@ -68,17 +68,4 @@ npm run end-to-end-light
 - API endpoint: [./api/api_server.ts](./api/api_server.ts)
 - Rewards Calculator [./rewards-calc/src/main.rs](./rewards-calc/src/main.rs)
 
-# Scaling
-These terms are designed to reason with the data in a sane way. These 
-are non standard technology terms but are useful in understanding the problem.
-There is a hard client side 50MB hard cap unless we go Hybrid application.
-
-Data limitations: https://pouchdb.com/faq.html#data_limits
-
-This system can be scaled horizontally in two primary ways. First
-is simple duplication of workers and servers. Second: If this model breaks down
-we can then start to partition the keys, but it should be viable for the
-vast majority of our use case. Further optimizations can be done in
-a **ProtocolBuffer** if need be to increase throughput and decrease size
-
 
