@@ -37,7 +37,7 @@ const getFile = file => {
 };
 
 const getConfig = () => {
-  const envContents = getFile('./.testnet.localhost.env');
+  const envContents = getFile('./.integration.test.env');
   const buf = Buffer.from(envContents);
   const config = dotenv.parse(buf);
   return config;
