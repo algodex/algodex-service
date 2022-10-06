@@ -1,6 +1,22 @@
 #!/usr/bin/env node
 
 /*
+ * Algodex Service
+ * Copyright (C) 2022 Algodex VASP (BVI) Corp.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+/*
  * Usage:
  *
  * bin/run-end-to-end-test --mode=[light|heavy] --doNotRunService=[serviceName]
@@ -21,7 +37,7 @@ const getFile = file => {
 };
 
 const getConfig = () => {
-  const envContents = getFile('./.testnet.localhost.env');
+  const envContents = getFile('./.integration.test.env');
   const buf = Buffer.from(envContents);
   const config = dotenv.parse(buf);
   return config;
