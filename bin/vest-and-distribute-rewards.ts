@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /* 
  * Algodex Service 
  * Copyright (C) 2022 Algodex VASP (BVI) Corp.
@@ -14,7 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#!/usr/bin/env node
 const args = require('minimist')(process.argv.slice(2));
 const getAlgod = require('../src/algod');
 const getDatabases = require('../src/db/get-databases');

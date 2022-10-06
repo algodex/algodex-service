@@ -1,5 +1,7 @@
-/* 
- * Algodex Service 
+#!/usr/bin/env node
+
+/*
+ * Algodex Service
  * Copyright (C) 2022 Algodex VASP (BVI) Corp.
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,7 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#!/usr/bin/env node
 require('dotenv').config();
 
 const getQueues = require('../src/queues');
