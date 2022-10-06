@@ -80,8 +80,3 @@ vast majority of our use case. Further optimizations can be done in
 a **ProtocolBuffer** if need be to increase throughput and decrease size
 
 
-<p align="center">
-  <img alt="Kill all humans" src="https://github.com/semantic-release/semantic-release/raw/master/media/bender.png">
-</p>
-
-
