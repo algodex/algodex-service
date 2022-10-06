@@ -36,7 +36,6 @@ docker-compose up -f docker-compose.yml -f docker-compose.docker.yml
 ### Integration Test Run
 
 ```shell
-export ALGORAND_NETWORK=testnet
 npm run end-to-end-light 
 ```
 
