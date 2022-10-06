@@ -7,6 +7,8 @@ This is the 2.0 backend for Algodex and also includes the rewards calculations.
 
 You can find the contribution guides for getting started in [CONTRIBUTING.md](.github/CONTRIBUTING.md)
 
+Algodex Documentation: https://docs.algodex.com
+
 # Getting Started
 Use one of the following:
 
