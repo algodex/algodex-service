@@ -62,10 +62,11 @@ npm run end-to-end-light
   - All "Events" are published and pushed to Queue for basic example
 - Worker (BullMQ Worker): [./services/worker.js](./services/worker.js)
   - Removes items from the Queue and stores them in the Database
-- Socket (Event Subscriber and Socket Publisher ): [./server.js](./server.js)
+- Socket (Event Subscriber and Socket Publisher - only partially implemented): [./server.js](./server.js)
   - Push Broker Events to Subscribed Sockets. 
   - Future example: ```ws://localhost/asset/{id}``` would subscribe to the 
    appropriate redis channel coming from the **Broker**
+  
 - API endpoint: [./api/api_server.ts](./api/api_server.ts)
 - Rewards Calculator [./rewards-calc/src/main.rs](./rewards-calc/src/main.rs)
 
