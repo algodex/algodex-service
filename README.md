@@ -1,5 +1,7 @@
 # Algodex Gradation
 
+This is the 2.0 backend for Algodex and also includes the rewards calculations.
+
 [![@algodex/service](https://github.com/algodex/algodex-service/actions/workflows/package.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-service/actions/workflows/package.yml)
 [![algodex/service:image](https://github.com/algodex/algodex-service/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-service/actions/workflows/docker-image.yml)
 
@@ -64,7 +66,7 @@ npm run end-to-end-light
   - Future example: ```ws://localhost/asset/{id}``` would subscribe to the 
    appropriate redis channel coming from the **Broker**
 - API endpoint: [./api/api_server.ts](./api/api_server.ts)
-
+- Rewards Calculator [./rewards-calc/src/main.rs](./rewards-calc/src/main.rs)
 
 # Scaling
 These terms are designed to reason with the data in a sane way. These 
