@@ -1,6 +1,6 @@
 # Algodex Gradation
 
-This is the 2.0 backend for Algodex and also includes the rewards calculations.
+This is the 2.0 backend (essentially a custom blockchain indexer) for Algodex and also includes the rewards calculations.
 
 [![@algodex/service](https://github.com/algodex/algodex-service/actions/workflows/package.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-service/actions/workflows/package.yml)
 [![algodex/service:image](https://github.com/algodex/algodex-service/actions/workflows/docker-image.yml/badge.svg?branch=main)](https://github.com/algodex/algodex-service/actions/workflows/docker-image.yml)
