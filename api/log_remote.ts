@@ -21,6 +21,8 @@ const withSchemaCheck = require('../src/schema/with-db-schema-check');
 
 // curl -d '{"message":"a log message", "severity":"error", "unixTime":132133, "environment":"development", "href":"http://my-href"}' -H "Content-Type: application/json" -X POST http://localhost:3006/debug/log/post
 export const logRemote = async (req, res) => {
+  return;
+  /*
   console.log('Got body:', req.body);
   const db = getDatabase('logging');
 
@@ -39,6 +41,7 @@ export const logRemote = async (req, res) => {
   saveRewardsReqData.message = saveRewardsReqData.message.slice(0, 10000);
   await db.post(withSchemaCheck('logging', saveRewardsReqData));
   res.sendStatus(200);
+  */
 };
 
 export const serveGetLogs = async (req, res) => {

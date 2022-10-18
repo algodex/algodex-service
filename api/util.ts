@@ -42,6 +42,17 @@ export const getAlgxBalance = async (wallet:string):Promise<number> => {
   return algxBalance;
 }
 
+export const serve_auth_check = async (req, res) => {
+  if (req.headers['couch-password'] !== process.env.COUCHDB_PASSWORD ||
+    process.env.COUCHDB_PASSWORD === undefined || process.env.COUCHDB_PASSWORD.length === 0) {
+      res.status(401);
+      res.end();
+      return;
+  }
+
+  res.send('authenticated!');
+  res.end();
+}
 
 export const getDatabase = (dbname:string) => {
   const fullUrl = process.env.COUCHDB_BASE_URL + '/' + dbname

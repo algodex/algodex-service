@@ -17,7 +17,12 @@
 import { getDatabase } from "./util";
 
 export const serveCouchProxy = async (req, res) => {
-
+  if (req.headers['couch-password'] !== process.env.COUCHDB_PASSWORD ||
+    process.env.COUCHDB_PASSWORD === undefined || process.env.COUCHDB_PASSWORD.length === 0) {
+      res.status(401);
+      res.end();
+      return;
+  }
   const {database, index, view} = req.params;
   const {keys, group} = req.body.queries[0]
 

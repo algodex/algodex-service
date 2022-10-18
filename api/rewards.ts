@@ -64,7 +64,12 @@ export const get_rewards_per_epoch = async (req, res) => {
 };
 
 export const save_rewards = async (req, res) => {
-
+  if (req.headers['couch-password'] !== process.env.COUCHDB_PASSWORD ||
+    process.env.COUCHDB_PASSWORD === undefined || process.env.COUCHDB_PASSWORD.length === 0) {
+      res.status(401);
+      res.end();
+      return;
+  }
   console.log('Got body:', req.body);
 
   const saveRewardsReqData = <SaveRewardsRequest>(req.body);
