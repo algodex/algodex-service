@@ -181,13 +181,110 @@ export const serveGetOrdersByAssetId = async (req, res) => {
   res.send(JSON.stringify(orders));
 }
 
+export interface V1Order {
+  assetLimitPriceInAlgos: string
+  asaPrice: string
+  assetLimitPriceD: number
+  assetLimitPriceN: number
+  algoAmount: number
+  asaAmount: number
+  assetId: number
+  appId: number
+  escrowAddress: string
+  ownerAddress: string
+  version: number
+  minimumExecutionSizeInAlgo: number
+  round: number
+  unix_time: number
+  formattedPrice: string
+  formattedASAAmount: string
+  decimals: number
+}
+
+export interface DBOrder {
+    algoAmount: number,
+    asaAmount: number
+    asaPrice: number
+    assetId: number
+    assetLimitPriceD: number
+    assetLimitPriceN: number
+    decimals: number
+    escrowAddress: string
+    formattedASAAmount: number
+    formattedPrice: number
+    isAlgoBuyEscrow: boolean
+    ownerAddress: string
+    round: number
+    unix_time: number
+    version: string
+}
+
+
+// function getFormattedASA_Amount($asaAmount, $decimals)
+// {
+//     if (!is_numeric($asaAmount)) {
+//         return null;
+//     }
+//     $val = $asaAmount / (10 ** $decimals);
+
+//     return number_format((float)$val, $decimals, '.', '');
+// }
+
+const getFormattedAsaAmount = (asaAmount:number, price: number,
+  algoAmount:number, assetDecimals:number, escrow:string):string => {
+
+  if (!price || price <= 0) {
+    console.error('INVALID PRICE! ' + escrow);
+    return '0';
+  }
+
+  const tempAsaAmount = asaAmount && asaAmount > 0 ? asaAmount :
+    algoAmount / price
+  return (tempAsaAmount / (10**assetDecimals)).toFixed(assetDecimals);
+}
+
 export const serveGetOrdersByWallet = async (req, res) => {
   const db = getDatabase('formatted_escrow');
   const data = await db.query('formatted_escrow/orders', {
     key: ['ownerAddr', req.params.ownerAddress],
   });
 
-  const orders = data.rows.map(row => row.value);
+  const orders:DBOrder[] = data.rows.map(row => row.value);
+
+  const formattedOrders:V1Order[] = orders.map(order => {
+    const v1Order:V1Order = {
+      appId: order.isAlgoBuyEscrow ? parseInt(process.env.ALGODEX_ALGO_ESCROW_APP) :
+        parseInt(process.env.ALGODEX_ASA_ESCROW_APP),
+      assetLimitPriceInAlgos: order.asaPrice + '',
+      asaPrice: order.asaPrice + '',
+      assetLimitPriceD: order.assetLimitPriceD,
+      assetLimitPriceN: order.assetLimitPriceN,
+      algoAmount: order.algoAmount || 0,
+      asaAmount: order.asaAmount || 0,
+      escrowAddress: order.escrowAddress,
+      assetId: order.assetId,
+      ownerAddress: order.ownerAddress,
+      minimumExecutionSizeInAlgo: 0,
+      version: order.version.charCodeAt(0),
+      round: order.round,
+      unix_time: order.unix_time,
+      formattedPrice: order.formattedPrice + '',
+      formattedASAAmount: getFormattedAsaAmount(order.asaAmount, order.asaPrice,
+        order.algoAmount, order.decimals, order.escrowAddress),
+      decimals: order.decimals
+    };
+    return v1Order;
+  });
+
+  const buyOrders = formattedOrders
+    .filter(order => order.appId === parseInt(process.env.ALGODEX_ALGO_ESCROW_APP))
+  const sellOrders = formattedOrders
+    .filter(order => order.appId === parseInt(process.env.ALGODEX_ASA_ESCROW_APP))
+
+  const allOrders = {
+    sellASAOrdersInEscrow: sellOrders,
+    buyASAOrdersInEscrow: buyOrders
+  }
   res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(orders));
+  res.send(JSON.stringify(allOrders));
 }
