@@ -164,7 +164,7 @@ export const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1Orders
   return results;
 };
 
-export const getV2OrdersByAssetId =  async (assetId:number):Promise<Array<V2OrdersResult>> => {
+export const getV2OrdersByAssetId =  async (assetId:number):Promise<DBOrder[]> => {
   const db = getDatabase('formatted_escrow');
   const data = await db.query('formatted_escrow/orders', {
     key: ['assetId', assetId],
@@ -173,14 +173,10 @@ export const getV2OrdersByAssetId =  async (assetId:number):Promise<Array<V2Orde
   return data.rows.map(row => row.value);
 }
 
-
-export const serveGetOrdersByAssetId = async (req, res) => {
-  const assetId = parseInt(req.params.assetId);
-  const orders = await getV2OrdersByAssetId(assetId);
-  res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(orders));
+export interface V1OrderApi {
+  sellASAOrdersInEscrow:V1Order[],
+  buyASAOrdersInEscrow:V1Order[]
 }
-
 export interface V1Order {
   assetLimitPriceInAlgos: string
   asaPrice: string
@@ -219,17 +215,6 @@ export interface DBOrder {
     version: string
 }
 
-
-// function getFormattedASA_Amount($asaAmount, $decimals)
-// {
-//     if (!is_numeric($asaAmount)) {
-//         return null;
-//     }
-//     $val = $asaAmount / (10 ** $decimals);
-
-//     return number_format((float)$val, $decimals, '.', '');
-// }
-
 const getFormattedAsaAmount = (asaAmount:number, price: number,
   algoAmount:number, assetDecimals:number, escrow:string):string => {
 
@@ -243,14 +228,7 @@ const getFormattedAsaAmount = (asaAmount:number, price: number,
   return (tempAsaAmount / (10**assetDecimals)).toFixed(assetDecimals);
 }
 
-export const serveGetOrdersByWallet = async (req, res) => {
-  const db = getDatabase('formatted_escrow');
-  const data = await db.query('formatted_escrow/orders', {
-    key: ['ownerAddr', req.params.ownerAddress],
-  });
-
-  const orders:DBOrder[] = data.rows.map(row => row.value);
-
+const mapDBtoV1Orders = (orders:DBOrder[]):V1OrderApi => {
   const formattedOrders:V1Order[] = orders.map(order => {
     const v1Order:V1Order = {
       appId: order.isAlgoBuyEscrow ? parseInt(process.env.ALGODEX_ALGO_ESCROW_APP) :
@@ -285,6 +263,29 @@ export const serveGetOrdersByWallet = async (req, res) => {
     sellASAOrdersInEscrow: sellOrders,
     buyASAOrdersInEscrow: buyOrders
   }
+  return allOrders;
+}
+
+
+export const serveGetOrdersByAssetId = async (req, res) => {
+  const assetId = parseInt(req.params.assetId);
+  const orders:DBOrder[] = await getV2OrdersByAssetId(assetId);
+
+  const ordersConverted = mapDBtoV1Orders(orders);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(ordersConverted));
+}
+
+
+export const serveGetOrdersByWallet = async (req, res) => {
+  const db = getDatabase('formatted_escrow');
+  const data = await db.query('formatted_escrow/orders', {
+    key: ['ownerAddr', req.params.ownerAddress],
+  });
+
+  const orders:DBOrder[] = data.rows.map(row => row.value);
+  const allOrders = mapDBtoV1Orders(orders);
+
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(allOrders));
 }
