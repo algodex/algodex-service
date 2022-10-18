@@ -20,6 +20,7 @@ import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
   get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard, serveRewardsIsRecorded, serveRewardsData, serveVestedRewardsData, serveUnrecordedRewards } from "./rewards";
 import { serveCharts, serveAllAssetPrices, serveTradeHistoryByAssetId, serveTradeHistoryByOwner } from "./trade_history";
+import { serve_auth_check } from "./util";
 import { serveGetWalletAssets } from "./wallet";
 const nocache = require("nocache");
 /* eslint-disable @typescript-eslint/no-var-requires */
@@ -63,6 +64,10 @@ app.post('/query/:database/_design/:index/_view/:view', serveCouchProxy);
 // Rewards
 
 app.post('/save_rewards', save_rewards);
+
+// curl -v -H 'couch-password: <password>' -X POST http://localhost:3006/auth_check 
+app.post('/auth_check', serve_auth_check);
+
 app.get('/rewards/per_epoch/wallet/:wallet', get_rewards_per_epoch);
 app.get('/rewards/is_accruing/:wallet', isAccruingRewards);
 app.get('/rewards/unrecorded', serveUnrecordedRewards);
