@@ -68,6 +68,7 @@ pub struct InitialState {
     pub escrow_addr_to_data: HashMap<String, EscrowValue>,
     /// Addresses that are hidden in the GUI due to v1 API errors
     pub hidden_addresses_set: HashSet<String>,
+    pub couch_db_password: String
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -229,6 +230,9 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
 
     let couch_dburl = env.get("COUCHDB_BASE_URL_RUST").expect("Missing COUCHDB_BASE_URL_RUST")
         .replace('\\', "");
+    let couch_db_password = env.get("COUCHDB_PASSWORD_RUST").expect("Missing COUCHDB_PASSWORD_RUST")
+        .replace('\\', "");
+
     let api_url = env.get("API_PROXY_URL").expect("Missing API_PROXY_URL");
     let keys = [epoch.to_string()].to_vec();
     let account_epoch_data_query_res = query_couch_db::<String>(
@@ -238,6 +242,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         &"epochs".to_string(),
         &keys,
         false,
+        &couch_db_password
     )
     .await;
     let account_data = account_epoch_data_query_res.unwrap().rows;
@@ -251,6 +256,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         &"orderLookup".to_string(),
         &escrow_addrs,
         false,
+        &couch_db_password
     )
     .await;
 
@@ -285,6 +291,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         &"algx_balance2".to_string(),
         &owner_wallets,
         false,
+        &couch_db_password
     )
     .await;
     let mut algx_balance_data = algx_balance_data_query_res.unwrap().rows;
@@ -308,6 +315,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         &"blockToTime".to_string(),
         &blocks_vec,
         false,
+        &couch_db_password
     )
     .await;
     let block_times_data = block_times_data_query_res?.rows;
@@ -376,8 +384,10 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         .flat_map(|v| v)
         .collect();
 
-    let vestige_tvl_data = query_get_api::<Vec<VestigeFiAsset>>("https://free-api.vestige.fi/assets/list").await.unwrap();
-    let algodex_tvl_data = query_get_api::<Vec<AlgodexAssetTVL>>(&format!("{}/orders/tvl", api_url)).await.unwrap();
+    let vestige_tvl_data =
+        query_get_api::<Vec<VestigeFiAsset>>("https://free-api.vestige.fi/assets/list").await.unwrap();
+    let algodex_tvl_data =
+        query_get_api::<Vec<AlgodexAssetTVL>>(&format!("{}/orders/tvl", api_url)).await.unwrap();
     
     let asset_id_to_tvl = get_asset_to_usd_tvl(&vestige_tvl_data, &algodex_tvl_data);
 
@@ -403,6 +413,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         account_data,
         escrows,
         escrow_addr_to_data,
+        couch_db_password,
     };
 
     Ok(initial_state)

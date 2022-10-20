@@ -21,7 +21,7 @@ use serde::de::DeserializeOwned;
 use std::error::Error;
 
 pub async fn query_get_api<T: DeserializeOwned + Default>(
-    proxy_url: &str,
+    proxy_url: &str
 ) -> Result<T, Box<dyn Error>> {
     let client = reqwest::Client::new();
 

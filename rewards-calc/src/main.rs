@@ -129,6 +129,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
         initial_state.epoch,
         &state_machine.owner_wallet_asset_to_quality_result,
         &owner_rewards_res_to_final_rewards_entry,
+        &initial_state.couch_db_password
     )
     .await?;
 

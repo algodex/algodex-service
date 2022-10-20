@@ -43,6 +43,7 @@ pub async fn save_rewards(
     epoch: u16,
     owner_rewards: &HashMap<String, HashMap<u32, OwnerWalletAssetQualityResult>>,
     owner_rewards_res_to_final_rewards_entry: &HashMap<OwnerRewardsKey, EarnedAlgxEntry>,
+    couch_db_password: &str
 ) -> Result<Response, Box<dyn Error>> {
     let client = reqwest::Client::new();
     let full_url = format!("{}/save_rewards", "http://localhost:3006");
@@ -76,7 +77,9 @@ pub async fn save_rewards(
     println!("rewards length is:{}", owner_rewards.keys().len());
     let resp = client
         .post(full_url)
+        .header("couch-password", couch_db_password)
         .header(reqwest::header::CONTENT_TYPE, "application/json")
+
         .body(json.to_string())
         // .json(&save_entry)
         .send()
