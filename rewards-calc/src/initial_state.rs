@@ -68,6 +68,7 @@ pub struct InitialState {
     pub escrow_addr_to_data: HashMap<String, EscrowValue>,
     /// Addresses that are hidden in the GUI due to v1 API errors
     pub hidden_addresses_set: HashSet<String>,
+    pub couch_db_password: String
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -375,7 +376,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
 
     let hidden_address_urls: Vec<String> =
         all_assets.iter().map(|assetId| format!("{}/asset/hidden/{}", api_url, assetId)).collect();
-    let hidden_address_reqs = hidden_address_urls.iter().map(|u| query_get_api::<Vec<String>>(u, &couch_db_password));
+    let hidden_address_reqs = hidden_address_urls.iter().map(|u| query_get_api::<Vec<String>>(u));
     let hidden_addresses_set: HashSet<_> = join_all(hidden_address_reqs)
         .await
         .into_iter()
@@ -383,10 +384,10 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         .flat_map(|v| v)
         .collect();
 
-    let vestige_tvl_data = query_get_api::<Vec<VestigeFiAsset>>("https://free-api.vestige.fi/assets/list", 
-        &couch_db_password).await.unwrap();
-    let algodex_tvl_data = query_get_api::<Vec<AlgodexAssetTVL>>(&format!("{}/orders/tvl", api_url),
-        &couch_db_password).await.unwrap();
+    let vestige_tvl_data =
+        query_get_api::<Vec<VestigeFiAsset>>("https://free-api.vestige.fi/assets/list").await.unwrap();
+    let algodex_tvl_data =
+        query_get_api::<Vec<AlgodexAssetTVL>>(&format!("{}/orders/tvl", api_url)).await.unwrap();
     
     let asset_id_to_tvl = get_asset_to_usd_tvl(&vestige_tvl_data, &algodex_tvl_data);
 
@@ -412,6 +413,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         account_data,
         escrows,
         escrow_addr_to_data,
+        couch_db_password,
     };
 
     Ok(initial_state)
