@@ -163,6 +163,68 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
   return combinedCharts.slice(0, 1000); // Return up to 1000 items
 }
 
+interface V1TradeHistory {
+  transactions:V1TradeHistoryItem[]
+}
+interface V1TradeHistoryItem {
+  PK_trade_history_id: number
+  transaction_id: any
+  group_id: string
+  unix_time: number
+  block_round: number
+  application_id: number
+  asset_id: number
+  asaPrice: string
+  algoAmount: number
+  asaAmount: number
+  asaBuyerAddress: string
+  asaSellerAddress: string
+  tradeType: string
+  formattedPrice: string
+  formattedASAAmount: string
+}
+
+interface DBTradeHistory {
+  tradeType: string
+  executeType: string
+  escrowAddr: string
+  groupId: string
+  algoAmount: number
+  assetSellerAddr: string
+  asaAmount: number
+  asaId: number
+  assetBuyerAddr: string
+  block: number
+  unixTime: number
+  assetDecimals: number
+}
+
+const mapTradeHistory = (dbHistory: DBTradeHistory[]):V1TradeHistory => {
+  const historyItems:V1TradeHistoryItem[] = dbHistory.map(item => {
+    return {
+      PK_trade_history_id: -1,
+      transaction_id: '',
+      group_id: item.groupId,
+      unix_time: item.unixTime,
+      block_round: item.block,
+      application_id: item.tradeType === 'buy' ? parseInt(process.env.ALGODEX_ALGO_ESCROW_APP) : parseInt(process.env.ALGODEX_ASA_ESCROW_APP),
+      asset_id: item.asaId,
+      asaPrice: (item.algoAmount / item.asaAmount) + '',
+      algoAmount: item.algoAmount,
+      asaAmount: item.asaAmount,
+      asaBuyerAddress: item.assetBuyerAddr,
+      asaSellerAddress: item.assetSellerAddr,
+      tradeType: item.tradeType === 'buy' ? 'buyASA' : 'sellASA',
+      formattedPrice: (item.algoAmount / item.asaAmount) / (10**item.assetDecimals) + '',
+      formattedASAAmount: item.asaAmount / (10**item.assetDecimals) + '',
+    }
+  });
+
+  return {
+    transactions: historyItems
+  };
+}
+
 const getTradeHistory = async (key:TradeHistoryKey) => {
   const db = getDatabase('formatted_history');
   const {keyType, searchKey} = key;
@@ -177,7 +239,7 @@ const getTradeHistory = async (key:TradeHistoryKey) => {
       reduce: false
     });
   const history = data.rows.map(row => row.value);
-  return history;
+  return mapTradeHistory(history);
 }
 
 export const getChartsFromCache = async (assetId:number, period:Period) => {
