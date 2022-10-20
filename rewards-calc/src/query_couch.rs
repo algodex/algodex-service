@@ -35,6 +35,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(
     view_name: &String,
     keys: &[String],
     group: bool,
+    couch_db_password: &str,
 ) -> Result<CouchDBResp<T>, Box<dyn Error>> {
     let client = reqwest::Client::new();
 
@@ -59,6 +60,7 @@ pub async fn query_couch_db<T: DeserializeOwned>(
     let resp = client
         .post(full)
         //.header(reqwest::header::CONTENT_TYPE, "application/json")
+        .header("couch-password", couch_db_password)
         .json(&queries)
         .send()
         .await?;

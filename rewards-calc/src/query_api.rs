@@ -22,6 +22,7 @@ use std::error::Error;
 
 pub async fn query_get_api<T: DeserializeOwned + Default>(
     proxy_url: &str,
+    couch_db_password: &str,
 ) -> Result<T, Box<dyn Error>> {
     let client = reqwest::Client::new();
 
@@ -29,8 +30,10 @@ pub async fn query_get_api<T: DeserializeOwned + Default>(
 
     let mut attempts = 0;
     loop {
+        println!("couch-password: {}", couch_db_password); 
         let resp = client
             .get(proxy_url)
+            .header("couch-password", couch_db_password)
             //.header(reqwest::header::CONTENT_TYPE, "application/json")
             // .json(&queries)
             .send()
