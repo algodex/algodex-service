@@ -213,6 +213,15 @@ fn get_asset_to_usd_tvl(vestige_asset_data: &Vec<VestigeFiAsset>,
     asset_id_to_tvl
 }
 
+fn get_addrs_from_account_data(account_data: &[CouchDBResult<String>]) -> Vec<String>
+{
+    let mut escrow_addrs:Vec<String> =
+        account_data.iter().map(|row| String::clone(&row.value)).collect();
+    escrow_addrs.sort();
+    escrow_addrs.dedup();
+    escrow_addrs
+}
+
 pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
     let cli = Cli::parse();
 
@@ -234,7 +243,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         .replace('\\', "");
 
     let api_url = env.get("API_PROXY_URL").expect("Missing API_PROXY_URL");
-    let keys = [epoch.to_string()].to_vec();
+    let keys = [epoch.to_string(), "stillOpen".to_string()].to_vec();
     let account_epoch_data_query_res = query_couch_db::<String>(
         api_url,
         &"formatted_escrow".to_string(),
@@ -246,8 +255,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
     )
     .await;
     let account_data = account_epoch_data_query_res.unwrap().rows;
-    let escrow_addrs: Vec<String> =
-        account_data.iter().map(|row| String::clone(&row.value)).collect();
+    let escrow_addrs = get_addrs_from_account_data(&account_data);
 
     let formatted_escrow_data_query_res = query_couch_db::<EscrowValue>(
         api_url,
