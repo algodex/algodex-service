@@ -30,12 +30,20 @@ lazy_static! {
         let mut s = HashSet::new();
         s.insert(31566704); //USDC
         s.insert(465865291); //STBL
-
+        s.insert(841126810); //STBL2
         s.insert(386192725); //goBTC
         s.insert(386195940); //goETH
         s.insert(793124631); //gALGO
         s.insert(441139422); //goMINT
         s.insert(312769); //USDT
+        s.insert(684649988); //GARD
+        s.insert(744665252); //pTokens BTC
+        s.insert(792313023); //xSOL
+        s.insert(672913181); //goUSD
+        s.insert(694432641); //gALGO3
+        s.insert(2757561); //realioUSD
+        s.insert(320259224); //Wrapped Algo
+
         s
     };
 }
