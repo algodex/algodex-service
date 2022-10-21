@@ -28,7 +28,7 @@ import {DistributeRewardsInput} from '../src/rewards/distribute/vest-distribute-
 
 /* Usage
  *
- * ./vest-and-distribute-rewards [--dryRunWithDBSave] [--removeOldFirst]
+ * ./vest-and-distribute-rewards [--dryRunWithDBSave] [--dryRunNoSave] [--removeOldFirst]
  */
 
 const initAndDistribute = async () => {
@@ -37,6 +37,7 @@ const initAndDistribute = async () => {
   const mnemonic = process.env.REWARDS_WALLET_MNEMONIC;
   const assetId = process.env.ALGX_ASSET_ID;
   const dryRunWithDBSave = args.dryRunWithDBSave;
+  const dryRunNoSave = args.dryRunNoSave;
   const removeOldFirst = args.removeOldFirst;
 
   if (!mnemonic) {
@@ -50,7 +51,7 @@ const initAndDistribute = async () => {
 
   const config:DistributeRewardsInput = {algodClient,
     distributeNetwork, indexer,
-    dryRunWithDBSave, removeOldFirst,
+    dryRunWithDBSave, dryRunNoSave, removeOldFirst,
     fromAccount: account, sendAssetId: parseInt(assetId)};
 
   printIntro(config);

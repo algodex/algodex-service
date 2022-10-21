@@ -37,12 +37,7 @@ const getEpochKey = (accrualNetwork, epoch) => {
   return `${accrualNetwork}:${epoch}`;
 };
 
-interface RewardsKey {
-  ownerWallet: string,
-  accrualAssetId: number,
-  epoch: number
-}
-
+type RewardsKey = string;
 
 interface SendRewardsObject {
   algodClient: algosdk.Algod,
@@ -69,7 +64,9 @@ interface SendRewardsResult {
 const distributeRewards = async (input:DistributeRewardsInput) => {
   const plannedDistributions = await getPlannedDistributions(input);
 
-  const isDryRun = input.dryRunWithDBSave === true;
+  const isDryRun = input.dryRunWithDBSave === true || input.dryRunNoSave === true;
+  const saveToDB = !(input.dryRunNoSave === true);
+
   console.log({isDryRun});
   
   if (!isDryRun) {
@@ -97,14 +94,19 @@ const distributeRewards = async (input:DistributeRewardsInput) => {
     const distribution = plannedDistributions[i];
     console.log(`${i}/${plannedDistributions.length}`, {distribution})
     if (!isDryRun) {
-      await sendRewards(distribution).then(res => addDistributionToDB(res.result, "vested_rewards", res.distribution, res.transactionId, res.error));
+      console.log("REAL sending ALGX rewards!")
+      await sendRewards(distribution).then(res => addDistributionToDB(res.result, "vested_rewards", res.distribution,
+        res.transactionId, true, res.error));
     } else {
-      await fakeSendRewards(distribution).then(res => addDistributionToDB(res.result, "vested_rewards", res.distribution, res.transactionId, res.error));
+      console.log("FAKE sending ALGX rewards!")
+      await fakeSendRewards(distribution).then(res => addDistributionToDB(res.result, "vested_rewards", res.distribution,
+        res.transactionId, saveToDB, res.error));
     }
   };
 }
 
-const addDistributionToDB = async(result:string, dbName: string, distribution: SendRewardsObject, transactionId: string, error?: string) => {
+const addDistributionToDB = async(result:string, dbName: string, distribution: SendRewardsObject, transactionId: string,
+    saveToDB:boolean, error?: string) => {
   const vestedUnixTime = Math.round((new Date()).getTime() / 1000);
 
   const {
@@ -132,7 +134,11 @@ const addDistributionToDB = async(result:string, dbName: string, distribution: S
       }
     }
     try {
-      await databases[dbName].post(withDbSchemaCheck(dbName, dbItem));
+      if (saveToDB) {
+        await databases[dbName].post(withDbSchemaCheck(dbName, dbItem));
+      } else {
+        console.log('skipping save to DB due to dry run config!');
+      }
     } catch (e) {
       console.error(e);
       console.error('Attempted to save: ' + JSON.stringify(dbItem));
@@ -171,19 +177,20 @@ const getPlannedDistributions = async (input:DistributeRewardsInput): Promise<Ar
   const allRewardsDocs:Array<Rewards> = (await rewardsDB.allDocs({include_docs: true})).rows.map(row => row.doc);
   const allVestedRewardsDocs:Array<VestedRewards> = (await vestedRewardsDB.allDocs({include_docs: true})).rows.map(row => row.doc);
 
-  // const allRewardsKeys:Array<RewardsKey> = allRewardsDocs.map(doc => <RewardsKey>doc);
-
-  // console.log({allRewardsDocs});
-  // console.log({allVestedRewardsDocs});
-
   const allVestedRewardKeySet = allVestedRewardsDocs.reduce((set, vestedEntry) => {
-    const key:RewardsKey = <RewardsKey>vestedEntry;
-    set.add(key);
+    const {ownerWallet, accrualAssetId, epoch} = vestedEntry;
+    const key:RewardsKey = `${ownerWallet};${accrualAssetId};${epoch}`;
+
+    if (vestedEntry.result === 'success') {
+      // If already sent rewards and it was a successful transaction
+      set.add(key);
+    }
     return set;
   }, new Set<RewardsKey>);
 
   return allRewardsDocs.filter(rewardsDoc => {
-    const key = <RewardsKey>{...rewardsDoc};
+    const {ownerWallet, accrualAssetId, epoch} = rewardsDoc;
+    const key:RewardsKey = `${ownerWallet};${accrualAssetId};${epoch}`;
     return !allVestedRewardKeySet.has(key);
   })
   .filter(rewardsDoc => rewardsDoc.earnedRewardsFormatted >= 1)
