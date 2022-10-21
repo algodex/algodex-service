@@ -69,10 +69,10 @@ const printIntro = config => {
 };
 
 
-process.on('SIGINT', async function() {
-  console.log('Caught interrupt signal');
-  globalThis.isGloballyShuttingDown = true;
-});
+// process.on('SIGINT', async function() {
+//   console.log('Caught interrupt signal');
+//   globalThis.isGloballyShuttingDown = true;
+// });
 
 
 initAndDistribute();
