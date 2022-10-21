@@ -24,6 +24,7 @@ export interface DistributeRewardsInput {
   sendAssetId: number,
   indexer: algosdk.Indexer,
   dryRunWithDBSave?: boolean,
+  dryRunNoSave?: boolean,
   removeOldFirst?: boolean
 }
 
