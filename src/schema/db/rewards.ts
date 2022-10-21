@@ -25,7 +25,8 @@ export interface Rewards {
   algxAvg: number,
   qualityFinal: number,
   epoch: number,
-  assetId: number,
+  accrualAssetId: number,
+  rewardsAssetId: number,
   earnedRewards: number,
   earnedRewardsFormatted: number
 }

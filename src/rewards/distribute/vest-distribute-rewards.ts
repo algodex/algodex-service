@@ -66,8 +66,45 @@ interface SendRewardsResult {
   transactionId?:string
 }
 
+const distributeRewards = async (input:DistributeRewardsInput) => {
+  const plannedDistributions = await getPlannedDistributions(input);
 
-const addDistributionToDB = async(result:string, distribution: SendRewardsObject, transactionId: string, error?: string) => {
+  const isDryRun = input.dryRunWithDBSave === true;
+  console.log({isDryRun});
+  
+  if (!isDryRun) {
+    await checkHasNeededAlgx(input.fromAccount, input.indexer, plannedDistributions);
+  }
+
+  if (isDryRun && input.removeOldFirst === true) {
+    console.log("Going to delete all old records from vested_rewards");
+    const db = databases.vested_rewards;
+    const allDocs = await db.allDocs();
+    console.log(allDocs.rows.filter(row => row.id.includes(":")).length + " docs to delete");
+    const deletePromises = allDocs.rows
+      .filter(row => row.id.includes(":"))
+      .map(row => {
+        console.log("sending remove for: ", {id: row.id});
+       return db.get(row.id).then(doc => db.remove(doc))
+        .then(console.log("removed "+row.id)).catch(e => console.log("failed to remove " + row.id, e))
+      });
+    await Promise.allSettled(deletePromises);
+  }
+
+  // console.log({plannedDistributions});
+
+  for (let i = 0; i < plannedDistributions.length; i++) {
+    const distribution = plannedDistributions[i];
+    console.log(`${i}/${plannedDistributions.length}`, {distribution})
+    if (!isDryRun) {
+      await sendRewards(distribution).then(res => addDistributionToDB(res.result, "vested_rewards", res.distribution, res.transactionId, res.error));
+    } else {
+      await fakeSendRewards(distribution).then(res => addDistributionToDB(res.result, "vested_rewards", res.distribution, res.transactionId, res.error));
+    }
+  };
+}
+
+const addDistributionToDB = async(result:string, dbName: string, distribution: SendRewardsObject, transactionId: string, error?: string) => {
   const vestedUnixTime = Math.round((new Date()).getTime() / 1000);
 
   const {
@@ -95,47 +132,11 @@ const addDistributionToDB = async(result:string, distribution: SendRewardsObject
       }
     }
     try {
-      await databases.vested_rewards.post(withDbSchemaCheck('vested_rewards', dbItem));
+      await databases[dbName].post(withDbSchemaCheck(dbName, dbItem));
     } catch (e) {
       console.error(e);
       console.error('Attempted to save: ' + JSON.stringify(dbItem));
     }
-}
-
-const distributeRewards = async (input:DistributeRewardsInput) => {
-  const plannedDistributions = await getPlannedDistributions(input);
-
-  const isDryRun = input.dryRunWithDBSave === true;
-  console.log({isDryRun});
-  
-  if (!isDryRun) {
-    await checkHasNeededAlgx(input.fromAccount, input.indexer, plannedDistributions);
-  }
-
-  if (isDryRun && input.removeOldFirst === true) {
-    console.log("Going to delete all old records from vested_rewards");
-    const db = databases.vested_rewards;
-    const allDocs = await db.allDocs();
-    console.log(allDocs.rows.filter(row => row.id.includes(":")).length + " docs to delete");
-    const deletePromises = allDocs.rows
-      .filter(row => row.id.includes(":"))
-      .map(row => {
-        console.log("sending remove for: ", {id: row.id});
-       return db.get(row.id).then(doc => db.remove(doc))
-        .then(console.log("removed "+row.id)).catch(e => console.log("failed to remove " + row.id, e))
-      });
-    await Promise.allSettled(deletePromises);
-  }
-
-  const sendPromises = plannedDistributions.map(distribution => {
-    if (!isDryRun) {
-      sendRewards(distribution).then(res => addDistributionToDB(res.result, res.distribution, res.transactionId, res.error));
-    } else {
-      fakeSendRewards(distribution).then(res => addDistributionToDB(res.result, res.distribution, res.transactionId, res.error));
-    }
-  });
-
-  await Promise.all(sendPromises);
 }
 
 const checkHasNeededAlgx = async (fromAccount:algosdk.Account, indexer:algosdk.Indexer,
@@ -157,6 +158,8 @@ const checkHasNeededAlgx = async (fromAccount:algosdk.Account, indexer:algosdk.I
     // eslint-disable-next-line max-len
     throw new Error(`Not enough ALGO in wallet! ${totalNeededAlgo} vs ${algoBalance}`);
   }
+
+  console.log('TOTAL NEEDED: ' + totalNeededAlgo);
   return true;
 };
 
@@ -170,6 +173,9 @@ const getPlannedDistributions = async (input:DistributeRewardsInput): Promise<Ar
 
   // const allRewardsKeys:Array<RewardsKey> = allRewardsDocs.map(doc => <RewardsKey>doc);
 
+  // console.log({allRewardsDocs});
+  // console.log({allVestedRewardsDocs});
+
   const allVestedRewardKeySet = allVestedRewardsDocs.reduce((set, vestedEntry) => {
     const key:RewardsKey = <RewardsKey>vestedEntry;
     set.add(key);
@@ -177,20 +183,20 @@ const getPlannedDistributions = async (input:DistributeRewardsInput): Promise<Ar
   }, new Set<RewardsKey>);
 
   return allRewardsDocs.filter(rewardsDoc => {
-    const key = <RewardsKey>{...rewardsDoc, accrualAssetId: rewardsDoc.assetId};
+    const key = <RewardsKey>{...rewardsDoc};
     return !allVestedRewardKeySet.has(key);
   })
-  .filter(rewardsDoc => rewardsDoc.earnedRewards > 0)
+  .filter(rewardsDoc => rewardsDoc.earnedRewardsFormatted >= 1)
   .map(rewardsDoc => {
     const plannedSend:PlannedDistribution = {
       algodClient: input.algodClient,
       toWalletAddr: rewardsDoc.ownerWallet,
-      amount: rewardsDoc.earnedRewards,
+      amount: Math.round(rewardsDoc.earnedRewardsFormatted * 10**6),
       epoch: rewardsDoc.epoch,
       accrualNetwork: 'mainnet',
       fromAccount: input.fromAccount,
       sentAssetId: input.sendAssetId,
-      accrualAssetId: rewardsDoc.assetId
+      accrualAssetId: rewardsDoc.accrualAssetId
     };
     return plannedSend;
   });
