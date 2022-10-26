@@ -23,6 +23,66 @@ interface TradeHistoryKey {
   searchKey: number | string
 }
 
+export interface V1ChartsData {
+  current_price: string
+  previous_trade_price: string
+  last_period_closing_price: string
+  asset_info: AssetInfo
+  chart_data: V1ChartItem[]
+}
+
+export interface V1ChartItem {
+  asaVolume: number
+  algoVolume: number
+  low: string
+  formatted_low: string
+  high: string
+  formatted_high: string
+  close: string
+  formatted_close: string
+  open: string
+  formatted_open: string
+  dateTime: string
+  unixTime: number
+  date: string
+}
+
+export interface DBChartItem {
+  low: number
+  high: number
+  open: number
+  close: number
+  startUnixTime: number
+}
+
+export interface AssetInfo {
+  asset: Asset
+}
+
+export interface Asset {
+  "created-at-round": number
+  deleted: boolean
+  index: number
+  params: Params
+}
+
+export interface Params {
+  clawback: string
+  creator: string
+  decimals: number
+  "default-frozen": boolean
+  freeze: string
+  manager: string
+  name: string
+  "name-b64": string
+  reserve: string
+  total: number
+  "unit-name": string
+  "unit-name-b64": string
+  url: string
+  "url-b64": string
+}
+
 const getEndKey = (assetId:number, period:Period, cache) => {
   if (cache && cache.length > 0) {
     const date = new Date(cache[0].startUnixTime * 1000);
@@ -60,7 +120,7 @@ const getEndKey = (assetId:number, period:Period, cache) => {
   return [assetId, period, ""];
 }
 
-const getChartsData = async (db, startKey, endKey, period, debug) => {
+const getChartsData = async (db, startKey, endKey, period, debug):Promise<DBChartItem[]> => {
   const data = await db.query('formatted_history/charts', {
     startkey: startKey,
     endkey: endKey,
@@ -133,6 +193,12 @@ const getChartsData = async (db, startKey, endKey, period, debug) => {
   return charts;
 }
 
+const mapChartsData = async(chartsData:DBChartItem[]):V1ChartsData => {
+  const asset_info = 
+  const retdata:V1ChartsData = {
+    asset_info: 
+  }
+}
 export const getCharts = async (assetId:number, period:Period, cache, debug) => {
   const db = getDatabase('formatted_history');
 
