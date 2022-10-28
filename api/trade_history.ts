@@ -14,6 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { AssetInfo, getAssetInfo } from "./asset";
 import { getDatabase } from "./util";
 
 type WalletOrAsset = 'ownerAddr' | 'assetId';
@@ -53,34 +54,6 @@ export interface DBChartItem {
   open: number
   close: number
   startUnixTime: number
-}
-
-export interface AssetInfo {
-  asset: Asset
-}
-
-export interface Asset {
-  "created-at-round": number
-  deleted: boolean
-  index: number
-  params: Params
-}
-
-export interface Params {
-  clawback: string
-  creator: string
-  decimals: number
-  "default-frozen": boolean
-  freeze: string
-  manager: string
-  name: string
-  "name-b64": string
-  reserve: string
-  total: number
-  "unit-name": string
-  "unit-name-b64": string
-  url: string
-  "url-b64": string
 }
 
 const getEndKey = (assetId:number, period:Period, cache) => {
@@ -193,12 +166,38 @@ const getChartsData = async (db, startKey, endKey, period, debug):Promise<DBChar
   return charts;
 }
 
-const mapChartsData = async(chartsData:DBChartItem[]):V1ChartsData => {
-  const asset_info = 
+export const mapChartsData = async(assetId:number, chartsData:DBChartItem[]):Promise<V1ChartsData> => {
+  const asset_info = await getAssetInfo(assetId);
+
+  const chart_data:V1ChartItem[] = chartsData.map(item => {
+    return {
+      asaVolume: 0,
+      algoVolume: 0,
+      low: item.low + '',
+      formatted_low: item.low + '',
+      high: item.high + '',
+      formatted_high:item.high + '',
+      close: item.close + '',
+      formatted_close: item.close + '',
+      open: item.open + '',
+      formatted_open: item.open + '',
+      dateTime: '',
+      unixTime: item.startUnixTime,
+      date: '',
+    }
+  });
+
   const retdata:V1ChartsData = {
-    asset_info: 
-  }
+    asset_info,
+    chart_data,
+    current_price: '0',
+    previous_trade_price: '0', //FIXME
+    last_period_closing_price: '0', //FIXME
+  };
+
+  return retdata;
 }
+
 export const getCharts = async (assetId:number, period:Period, cache, debug) => {
   const db = getDatabase('formatted_history');
 
@@ -206,8 +205,9 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
   const endKey = getEndKey(assetId, period, cache); // end key is the most historical
   // The sorting is reverse sorting
 
-  const charts = await getChartsData(db, startKey, endKey, period, debug);
-
+  const initialChartsData = await getChartsData(db, startKey, endKey, period, debug);
+  const charts = await mapChartsData(assetId, initialChartsData);
+  
   console.log({startKey});
   console.log({endKey});
   
