@@ -63,7 +63,17 @@ module.exports = function(keys, values, rereduce) {
       yesterdayValue: calculateYesterdayValue(values),
     };
   }
-  result.dailyChange =
-    calculateDailyChangePct(result.lastValue.price, result.yesterdayValue.price);
+
+  let latestPrice = 0;
+  let yesterdayPrice = 0;
+
+  if (result.lastValue && result.lastValue.price) {
+    latestPrice = result.lastValue.price;
+  }
+  if (result.yesterdayValue && result.yesterdayValue.price) {
+    yesterdayPrice = result.yesterdayValue.price;
+  }
+
+  result.dailyChange = calculateDailyChangePct(latestPrice, yesterdayPrice);
   return result;
 };

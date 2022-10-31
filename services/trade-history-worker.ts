@@ -97,7 +97,8 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
     }).map(period => {
       console.log(`getting charts for ${assetId} ${period}`);
       const key = `trade_history:charts:${assetId}:${period}`;
-      const chartDataPromise = getCharts(assetId, period, keyToCurrentCache.get(key), false).then(chartData => {
+      // FIXME!!!
+      const chartDataPromise = getCharts(assetId, period, null, /*keyToCurrentCache.get(key)*/ false).then(chartData => {
         return {
           assetId, period, chartData
         };

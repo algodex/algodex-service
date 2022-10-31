@@ -198,7 +198,7 @@ export const mapChartsData = async(assetId:number, chartsData:DBChartItem[]):Pro
   return retdata;
 }
 
-export const getCharts = async (assetId:number, period:Period, cache, debug) => {
+export const getCharts = async (assetId:number, period:Period, cache:V1ChartsData|null|undefined, debug):Promise<V1ChartsData> => {
   const db = getDatabase('formatted_history');
 
   const startKey = [assetId, period, "zzzzz"]; // start key is the most recent
@@ -215,18 +215,22 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
   console.log(JSON.stringify(charts));
   console.log('printing first 5 of cache charts:');
 
-  const tempCache = cache || [];
+  const tempCachedHistory = cache?.chart_data || [];
 
-  console.log(JSON.stringify(tempCache.slice(0,5)));
+  console.log(JSON.stringify(tempCachedHistory.slice(0,5)));
 
   const timeSet:Set<number> = new Set<number>();
-  const combinedCharts = [...charts, ...tempCache].filter(item => {
-    const hasItem = timeSet.has(item.startUnixTime);
-    timeSet.add(item.startUnixTime);
+  const combinedCharts = [...charts.chart_data, ...tempCachedHistory].filter(item => {
+    const hasItem = timeSet.has(item.unixTime);
+    timeSet.add(item.unixTime);
     return !hasItem;
   });
 
-  return combinedCharts.slice(0, 1000); // Return up to 1000 items
+  const slicedCharts = combinedCharts.slice(0, 1000);
+  return {
+    ...charts,
+    chart_data: slicedCharts
+  }
 }
 
 interface V1TradeHistory {
@@ -339,6 +343,52 @@ export const serveCharts = async (req, res) => {
   }
 }
 
+export interface DBAssetPrice {
+  lastValue: AssetTimeValue
+  yesterdayValue: AssetTimeValue
+  dailyChange: number
+  assetId: number
+}
+
+export interface AssetTimeValue {
+  price: number
+  unixTime: number
+}
+
+export interface V1AllAssetData {
+  ok: boolean
+  rows: number
+  data: V1AssetPriceTimeValue[]
+}
+
+export interface V1AssetPriceTimeValue {
+  id: number
+  unix_time: number
+  price: number
+  priceBefore: number
+  price24Change: number
+  isTraded: boolean
+}
+
+const mapAssetPricesToV1 = (assetPrices:DBAssetPrice[]):V1AllAssetData => {
+  const dataRows:V1AssetPriceTimeValue[] = assetPrices.map(assetPrice => {
+    return {
+      id: assetPrice.assetId,
+      unix_time: assetPrice.lastValue?.unixTime,
+      price: assetPrice.lastValue?.price,
+      priceBefore: assetPrice.yesterdayValue?.price,
+      price24Change: assetPrice.dailyChange,
+      isTraded: true
+    }
+  });
+  const retval:V1AllAssetData = {
+    ok: true,
+    data: dataRows,
+    rows: dataRows.length
+  }
+  return retval;
+}
+
 export const getAllAssetPrices = async () => {
   const db = getDatabase('formatted_history');
   
@@ -346,8 +396,9 @@ export const getAllAssetPrices = async () => {
       reduce: true,
       group: true
     });
-  const allAssets = data.rows.map(row => row.value);
-  return allAssets;
+  const allTradedAssets:DBAssetPrice[] = data.rows.map(row => ({...row.value, assetId: row.key}));
+  // TODO: add untraded assets
+  return mapAssetPricesToV1(allTradedAssets);
 }
 
 
