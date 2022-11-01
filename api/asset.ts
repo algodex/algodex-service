@@ -35,3 +35,20 @@ export const getAssetInfo = async (assetId:number):Promise<AssetInfo> => {
   const assetInfo = await db.get(assetId+'');
   return assetInfo;
 }
+
+export interface AssetUnitName {
+  assetId: number
+  unitName: string
+}
+
+export const getUnitNames = async (assetIds:Set<number>):Promise<AssetUnitName[]> => {
+  const db = getDatabase('assets');
+
+  const assetIdsArr = Array.from(assetIds).map(assetId => ''+assetId);
+
+  const assetUnitNames = await db.query('assets/unitNames', {
+    keys: assetIdsArr
+  });
+
+  return assetUnitNames.rows.map(row => ({assetId: parseInt(row.key), unitName: row.value}));
+}

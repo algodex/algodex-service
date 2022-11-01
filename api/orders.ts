@@ -15,6 +15,7 @@
  */
 
 const axios = require('axios').default;
+import { AssetUnitName, getUnitNames } from "./asset";
 import { getDatabase } from "./util";
 
 const cachedAssetIdToOrders = new Map<number, V1OrdersResult>();
@@ -303,6 +304,7 @@ export const serveGetOrdersByWallet = async (req, res) => {
   });
 
   const orders:DBOrder[] = data.rows.map(row => row.value);
+
   const allOrders = mapDBtoV1Orders(orders);
 
   res.setHeader('Content-Type', 'application/json');

@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { AssetInfo, getAssetInfo } from "./asset";
+import { AssetInfo, AssetUnitName, getAssetInfo, getUnitNames } from "./asset";
 import { getV2Spreads } from "./orders";
 import { getDatabase } from "./util";
 
@@ -290,10 +290,11 @@ interface DBTradeHistory {
   assetDecimals: number
 }
 
-const mapTradeHistory = (dbHistory: DBTradeHistory[]):V1TradeHistory => {
+const mapTradeHistory = (dbHistory: DBTradeHistory[], unitNames: any):V1TradeHistory => {
+  let historyId = 1;
   const historyItems:V1TradeHistoryItem[] = dbHistory.map(item => {
     return {
-      PK_trade_history_id: -1,
+      PK_trade_history_id: historyId++,
       transaction_id: '',
       group_id: item.groupId,
       unix_time: item.unixTime,
@@ -306,14 +307,28 @@ const mapTradeHistory = (dbHistory: DBTradeHistory[]):V1TradeHistory => {
       asaBuyerAddress: item.assetBuyerAddr,
       asaSellerAddress: item.assetSellerAddr,
       tradeType: item.tradeType === 'buy' ? 'buyASA' : 'sellASA',
-      formattedPrice: (item.algoAmount / item.asaAmount) / (10**item.assetDecimals) + '',
+      formattedPrice: (item.algoAmount / item.asaAmount) / (10 ** (item.assetDecimals - 6)) + '',
       formattedASAAmount: item.asaAmount / (10**item.assetDecimals) + '',
     }
   });
 
   return {
-    transactions: historyItems
+    transactions: historyItems,
+    ...unitNames
   };
+}
+
+const getUnitNamesFromTradeHistory = async(key:TradeHistoryKey, assetIds:Set<number>) => {
+  if (key.keyType !== 'ownerAddr') {
+    return [];
+  }
+  const unitNames = await getUnitNames(assetIds);
+
+  const unitNameData = unitNames.map(entry => ({
+    params: {'unit-name': entry.unitName},
+    index: entry.assetId
+  }));
+  return {allAssets: unitNameData};
 }
 
 const getTradeHistory = async (key:TradeHistoryKey) => {
@@ -330,7 +345,10 @@ const getTradeHistory = async (key:TradeHistoryKey) => {
       reduce: false
     });
   const history = data.rows.map(row => row.value);
-  return mapTradeHistory(history);
+
+  const assetIds = new Set<number>(history.map(item => item.asaId));
+  const unitNames = await getUnitNamesFromTradeHistory(key, assetIds);
+  return mapTradeHistory(history, unitNames);
 }
 
 export const getChartsFromCache = async (assetId:number, period:Period):Promise<V1ChartsData> => {
