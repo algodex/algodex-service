@@ -19,7 +19,7 @@ import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, se
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
   get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard, serveRewardsIsRecorded, serveRewardsData, serveVestedRewardsData, serveUnrecordedRewards } from "./rewards";
-import { serveCharts, serveAllAssetPrices, serveTradeHistoryByAssetId, serveTradeHistoryByOwner, serveChartsNoCache } from "./trade_history";
+import { serveCharts, serveTradeHistoryByAssetId, serveTradeHistoryByOwner, serveChartsNoCache, serveCachedAssetPrices } from "./trade_history";
 import { serve_auth_check } from "./util";
 import { serveGetWalletAssets } from "./wallet";
 const nocache = require("nocache");
@@ -45,7 +45,7 @@ app.get('/orders/tvl', serveGetTVL);
 
 // Trade History
 
-app.get('/trades/assets/all', serveAllAssetPrices);
+app.get('/trades/assets/all', serveCachedAssetPrices);
 app.get('/trades/history/asset/:assetId', serveTradeHistoryByAssetId);
 app.get('/trades/history/wallet/:ownerAddress', serveTradeHistoryByOwner);
 
