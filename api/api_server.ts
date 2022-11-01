@@ -51,7 +51,7 @@ app.get('/trades/history/wallet/:ownerAddress', serveTradeHistoryByOwner);
 
 // Charts
 app.get('/trades/charts/asset/:assetId/period/:period', serveCharts);
-app.get('/trades/charts/asset/:assetId/period/:period/nocache', serveChartsNoCache);
+//app.get('/trades/charts/asset/:assetId/period/:period/nocache', serveChartsNoCache);
 
 
 // Wallet

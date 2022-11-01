@@ -432,7 +432,6 @@ export const getAssetPrices = async (assetId?:number):Promise<V1AllAssetData> =>
   return mapAssetPricesToV1(allTradedAssets);
 }
 
-
 export const serveAllAssetPrices = async (req, res) => {  
   const history = await getAssetPrices();
   res.setHeader('Content-Type', 'application/json');
