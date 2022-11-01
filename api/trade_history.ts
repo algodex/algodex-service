@@ -355,8 +355,25 @@ export const getChartsFromCache = async (assetId:number, period:Period):Promise<
   const db = getDatabase('view_cache');
   const key = `trade_history:charts:${assetId}:${period}`;
 
-  const cachedData = await db.get(key);
-  return cachedData.cachedData;
+  try {
+    const cachedData = await db.get(key);
+    if (!cachedData.cachedData.asset_info) {
+      throw {error: 'incorrect_cache_format'};
+    }
+    return cachedData.cachedData;
+  } catch (e) {
+    if (e.error === 'not_found' || e.error === 'incorrect_cache_format') {
+      return {
+        current_price: '',
+        previous_trade_price: '',
+        last_period_closing_price: '',
+        asset_info: undefined,
+        chart_data: []
+      }
+    } else {
+      throw e;
+    }
+  }
 }
 
 export const serveChartsNoCache = async (req, res) => {
@@ -379,16 +396,10 @@ export const serveCharts = async (req, res) => {
     res.send(JSON.stringify(charts));
     return;
   } catch (e) {
-    if (e.error === 'not_found') {
-      console.error(e);
-      res.sendStatus(404);
-      return;
-    } else {
-      console.error(e);
-      res.sendStatus(500);
-      res.send(e);
-      return;
-    }
+    console.error(e);
+    res.sendStatus(500);
+    res.send(e);
+    return;
   }
 }
 

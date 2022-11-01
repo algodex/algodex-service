@@ -43,10 +43,13 @@ app.get('/orders/asset/:assetId', serveGetOrdersByAssetId);
 app.get('/orders/wallet/:ownerAddress', serveGetOrdersByWallet);
 app.get('/orders/tvl', serveGetTVL);
 
+// Assets
+
+app.get('/assets/all', serveCachedAssetPrices);
+// app.get('/assets/all/nocache', serveAllAssetPrices);
+
 // Trade History
 
-app.get('/trades/assets/all', serveCachedAssetPrices);
-app.get('/trades/assets/all/nocache', serveAllAssetPrices);
 app.get('/trades/history/asset/:assetId', serveTradeHistoryByAssetId);
 app.get('/trades/history/wallet/:ownerAddress', serveTradeHistoryByOwner);
 
