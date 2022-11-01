@@ -132,6 +132,9 @@ const databases = [
         assets: {
           map: require('../../views/assets/assets-map').toString(),
         },
+        unitNames: {
+          map: require('../../views/assets/unitNames-map').toString(),
+        },
       },
     },
   },
