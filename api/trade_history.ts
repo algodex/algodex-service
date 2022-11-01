@@ -15,6 +15,7 @@
  */
 
 import { AssetInfo, getAssetInfo } from "./asset";
+import { getV2Spreads } from "./orders";
 import { getDatabase } from "./util";
 
 type WalletOrAsset = 'ownerAddr' | 'assetId';
@@ -393,14 +394,14 @@ export interface V1AllAssetData {
 
 export interface V1AssetPriceTimeValue {
   id: number
-  unix_time: number
-  price: number
-  priceBefore: number
-  price24Change: number
+  unix_time?: number
+  price?: number
+  priceBefore?: number
+  price24Change?: number
   isTraded: boolean
 }
 
-const mapAssetPricesToV1 = (assetPrices:DBAssetPrice[]):V1AllAssetData => {
+const mapAssetPricesToV1 = (assetPrices:DBAssetPrice[], untradedAssets:number[]):V1AllAssetData => {
   const dataRows:V1AssetPriceTimeValue[] = assetPrices.map(assetPrice => {
     return {
       id: assetPrice.assetId,
@@ -411,9 +412,14 @@ const mapAssetPricesToV1 = (assetPrices:DBAssetPrice[]):V1AllAssetData => {
       isTraded: true
     }
   });
+
+  const untradedAssetData = untradedAssets.map(assetId => ({id: assetId, 'isTraded': false}));
+
+  const allAssets = [...dataRows, ...untradedAssetData];
+
   const retval:V1AllAssetData = {
     ok: true,
-    data: dataRows,
+    data: allAssets,
     rows: dataRows.length
   }
   return retval;
@@ -428,8 +434,14 @@ export const getAssetPrices = async (assetId?:number):Promise<V1AllAssetData> =>
       key: assetId
     });
   const allTradedAssets:DBAssetPrice[] = data.rows.map(row => ({...row.value, assetId: row.key}));
+
+  const tradedAssetsSet = new Set(allTradedAssets.map(item => item.assetId));
+
+  const spreads = await getV2Spreads();
+  const untradedAssets = spreads.map(item => item.assetId).filter(assetId => !tradedAssetsSet.has(assetId));
+
   // TODO: add untraded assets
-  return mapAssetPricesToV1(allTradedAssets);
+  return mapAssetPricesToV1(allTradedAssets, untradedAssets);
 }
 
 const getAssetPricesFromCache = async() => {
