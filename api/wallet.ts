@@ -207,8 +207,9 @@ export const serveGetWalletAssets = async (req, res) => {
   do {
     assetResult = await getWalletAssets(wallet);
     if (!assetResult.error) {
+      const assetsV1 = {'allAssets': assetResult.walletAssets};
       res.setHeader('Content-Type', 'application/json');
-      res.send(JSON.stringify(assetResult.walletAssets,null,2));
+      res.send(JSON.stringify(assetsV1,null,2));
       return;
     }
 
