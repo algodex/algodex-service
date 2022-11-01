@@ -14,7 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getCharts, getAllAssetPrices, Period, getChartsFromCache } from "../api/trade_history";
+import { getCharts, getAssetPrices, Period, getChartsFromCache, V1ChartsData } from "../api/trade_history";
 import { waitForBlock } from "../src/explorer";
 import map from "../views/chart/map";
 
@@ -47,7 +47,7 @@ const getChartCacheKeyToRev = async (oldCacheDocs):Promise<Map<string,string>> =
 interface CurrentChartsCache {
   assetId:number,
   period:Period,
-  cache:any
+  cache:V1ChartsData|undefined
 }
 
 const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<number>) => {
@@ -70,7 +70,7 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
       }).catch(e => {
          if (e.error === 'not_found') {
           return <CurrentChartsCache>{
-            assetId, period, cache:[]
+            assetId, period, cache:undefined
           };
          } else {
           throw e;
@@ -79,7 +79,7 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
   const currentCaches = await Promise.all(currentChartsCachePromises);
   const keyToCurrentCache:Map<string,CurrentChartsCache> = currentCaches.reduce((map, cache) => {
     const key = `trade_history:charts:${cache.assetId}:${cache.period}`;
-    map.set(key, cache.cache);
+    map.set(key, cache);
     console.log(`Setting current cache key: ${key}`);
     return map;
   }, new Map<string,CurrentChartsCache>);
@@ -98,7 +98,7 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
       console.log(`getting charts for ${assetId} ${period}`);
       const key = `trade_history:charts:${assetId}:${period}`;
       // FIXME!!!
-      const chartDataPromise = getCharts(assetId, period, null, /*keyToCurrentCache.get(key)*/ false).then(chartData => {
+      const chartDataPromise = getCharts(assetId, period, keyToCurrentCache.get(key)?.cache, false).then(chartData => {
         return {
           assetId, period, chartData
         };
@@ -163,7 +163,7 @@ const rebuildCurrentOrdersCache = async (viewCacheDB, queueRound:number) => {
 
   const rev = docs.rows.length > 0 ? docs.rows[0].value.rev : undefined;
 
-  const allAssetPriceData = await getAllAssetPrices();
+  const allAssetPriceData = await getAssetPrices();
   const id = `allPrices`;
 
   const newDoc = {
