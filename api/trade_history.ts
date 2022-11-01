@@ -14,6 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { AssetInfo, getAssetInfo } from "./asset";
 import { getDatabase } from "./util";
 
 type WalletOrAsset = 'ownerAddr' | 'assetId';
@@ -23,9 +24,41 @@ interface TradeHistoryKey {
   searchKey: number | string
 }
 
-const getEndKey = (assetId:number, period:Period, cache) => {
-  if (cache && cache.length > 0) {
-    const date = new Date(cache[0].startUnixTime * 1000);
+export interface V1ChartsData {
+  current_price: string
+  previous_trade_price: string
+  last_period_closing_price: string
+  asset_info: AssetInfo
+  chart_data: V1ChartItem[]
+}
+
+export interface V1ChartItem {
+  asaVolume: number
+  algoVolume: number
+  low: string
+  formatted_low: string
+  high: string
+  formatted_high: string
+  close: string
+  formatted_close: string
+  open: string
+  formatted_open: string
+  dateTime: string
+  unixTime: number
+  date: string
+}
+
+export interface DBChartItem {
+  low: number
+  high: number
+  open: number
+  close: number
+  startUnixTime: number
+}
+
+const getEndKey = (assetId:number, period:Period, cache:V1ChartsData|null|undefined) => {
+  if (cache && cache.asset_info && cache.chart_data && cache.chart_data.length > 0) {
+    const date = new Date(cache.chart_data[0].unixTime * 1000);
     const month = `${date.getMonth() + 1}`.padStart(2, '0');
     const year = date.getFullYear();
     const day = `${date.getUTCDate()}`.padStart(2, '0'); ;
@@ -54,13 +87,13 @@ const getEndKey = (assetId:number, period:Period, cache) => {
       timeKey = `${YMD}:${hour4}:00`;
     }
 
-    console.log('Due to cache, created key of: ' + timeKey + ' from: ' + cache[0].startUnixTime);
+    console.log('Due to cache, created key of: ' + timeKey + ' from: ' + cache.chart_data[0].unixTime);
     return [assetId, period, timeKey];
   }
   return [assetId, period, ""];
 }
 
-const getChartsData = async (db, startKey, endKey, period, debug) => {
+const getChartsData = async (db, startKey, endKey, period, debug):Promise<DBChartItem[]> => {
   const data = await db.query('formatted_history/charts', {
     startkey: startKey,
     endkey: endKey,
@@ -133,15 +166,68 @@ const getChartsData = async (db, startKey, endKey, period, debug) => {
   return charts;
 }
 
-export const getCharts = async (assetId:number, period:Period, cache, debug) => {
+export const mapChartsData = async(assetId:number, chartsData:DBChartItem[]):Promise<V1ChartsData> => {
+  const asset_info = await getAssetInfo(assetId);
+  const asset_prices = await getAssetPrices(assetId);
+
+  const chart_data:V1ChartItem[] = chartsData.map(item => {
+    return {
+      asaVolume: 0,
+      algoVolume: 0,
+      low: item.low + '',
+      formatted_low: item.low + '',
+      high: item.high + '',
+      formatted_high:item.high + '',
+      close: item.close + '',
+      formatted_close: item.close + '',
+      open: item.open + '',
+      formatted_open: item.open + '',
+      dateTime: '',
+      unixTime: item.startUnixTime,
+      date: '',
+    }
+  });
+
+  let current_price = '0';
+  let previous_trade_price = '0';
+  let last_period_closing_price = '0';
+
+  if (asset_prices?.data?.length > 0) {
+    current_price = asset_prices.data[0].price + '';
+    previous_trade_price = asset_prices.data[0].priceBefore + '';
+    last_period_closing_price = asset_prices.data[0].price * (1-(asset_prices.data[0].price24Change/100)) + ''; //FIXME check for accuracy
+  }
+  const retdata:V1ChartsData = {
+    asset_info,
+    chart_data,
+    current_price,
+    previous_trade_price,
+    last_period_closing_price
+  };
+
+  return retdata;
+}
+
+const getTempCacheHistory = (cache:V1ChartsData|null|undefined):V1ChartItem[] => {
+  if (!cache) {
+    return [];
+  }
+  if (!cache.asset_info) {
+    return [];
+  }
+  return cache.chart_data;
+};
+
+export const getCharts = async (assetId:number, period:Period, cache:V1ChartsData|null|undefined, debug):Promise<V1ChartsData> => {
   const db = getDatabase('formatted_history');
 
   const startKey = [assetId, period, "zzzzz"]; // start key is the most recent
   const endKey = getEndKey(assetId, period, cache); // end key is the most historical
   // The sorting is reverse sorting
 
-  const charts = await getChartsData(db, startKey, endKey, period, debug);
-
+  const initialChartsData = await getChartsData(db, startKey, endKey, period, debug);
+  const charts = await mapChartsData(assetId, initialChartsData);
+  
   console.log({startKey});
   console.log({endKey});
   
@@ -149,18 +235,22 @@ export const getCharts = async (assetId:number, period:Period, cache, debug) => 
   console.log(JSON.stringify(charts));
   console.log('printing first 5 of cache charts:');
 
-  const tempCache = cache || [];
+  let tempCachedHistory = getTempCacheHistory(cache);
 
-  console.log(JSON.stringify(tempCache.slice(0,5)));
+  console.log(JSON.stringify(tempCachedHistory.slice(0,5)));
 
   const timeSet:Set<number> = new Set<number>();
-  const combinedCharts = [...charts, ...tempCache].filter(item => {
-    const hasItem = timeSet.has(item.startUnixTime);
-    timeSet.add(item.startUnixTime);
+  const combinedCharts = [...charts.chart_data, ...tempCachedHistory].filter(item => {
+    const hasItem = timeSet.has(item.unixTime);
+    timeSet.add(item.unixTime);
     return !hasItem;
   });
 
-  return combinedCharts.slice(0, 1000); // Return up to 1000 items
+  const slicedCharts = combinedCharts.slice(0, 1000);
+  return {
+    ...charts,
+    chart_data: slicedCharts
+  }
 }
 
 interface V1TradeHistory {
@@ -242,12 +332,22 @@ const getTradeHistory = async (key:TradeHistoryKey) => {
   return mapTradeHistory(history);
 }
 
-export const getChartsFromCache = async (assetId:number, period:Period) => {
+export const getChartsFromCache = async (assetId:number, period:Period):Promise<V1ChartsData> => {
   const db = getDatabase('view_cache');
   const key = `trade_history:charts:${assetId}:${period}`;
 
   const cachedData = await db.get(key);
   return cachedData.cachedData;
+}
+
+export const serveChartsNoCache = async (req, res) => {
+  const assetId = parseInt(req.params.assetId);
+  const period = req.params.period;
+  const debug = req.query.debug || false;
+  const charts = await getCharts(assetId, period, undefined, debug);
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(charts));
+  return;
 }
 
 export const serveCharts = async (req, res) => {
@@ -273,20 +373,67 @@ export const serveCharts = async (req, res) => {
   }
 }
 
-export const getAllAssetPrices = async () => {
+export interface DBAssetPrice {
+  lastValue: AssetTimeValue
+  yesterdayValue: AssetTimeValue
+  dailyChange: number
+  assetId: number
+}
+
+export interface AssetTimeValue {
+  price: number
+  unixTime: number
+}
+
+export interface V1AllAssetData {
+  ok: boolean
+  rows: number
+  data: V1AssetPriceTimeValue[]
+}
+
+export interface V1AssetPriceTimeValue {
+  id: number
+  unix_time: number
+  price: number
+  priceBefore: number
+  price24Change: number
+  isTraded: boolean
+}
+
+const mapAssetPricesToV1 = (assetPrices:DBAssetPrice[]):V1AllAssetData => {
+  const dataRows:V1AssetPriceTimeValue[] = assetPrices.map(assetPrice => {
+    return {
+      id: assetPrice.assetId,
+      unix_time: assetPrice.lastValue?.unixTime,
+      price: assetPrice.lastValue?.price,
+      priceBefore: assetPrice.yesterdayValue?.price,
+      price24Change: assetPrice.dailyChange,
+      isTraded: true
+    }
+  });
+  const retval:V1AllAssetData = {
+    ok: true,
+    data: dataRows,
+    rows: dataRows.length
+  }
+  return retval;
+}
+
+export const getAssetPrices = async (assetId?:number):Promise<V1AllAssetData> => {
   const db = getDatabase('formatted_history');
   
   const data = await db.query('formatted_history/allAssets', {
       reduce: true,
-      group: true
+      group: true,
+      key: assetId
     });
-  const allAssets = data.rows.map(row => row.value);
-  return allAssets;
+  const allTradedAssets:DBAssetPrice[] = data.rows.map(row => ({...row.value, assetId: row.key}));
+  // TODO: add untraded assets
+  return mapAssetPricesToV1(allTradedAssets);
 }
 
-
 export const serveAllAssetPrices = async (req, res) => {  
-  const history = await getAllAssetPrices();
+  const history = await getAssetPrices();
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(history));
 }

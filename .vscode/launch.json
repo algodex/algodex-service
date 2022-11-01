@@ -21,9 +21,9 @@
             "program": "${cargo:program}",
             "args": [
                 "--epoch",
-                "36",
+                "37",
                 "--debug",
-                "1"
+                "0"
             ]
         },
         {
