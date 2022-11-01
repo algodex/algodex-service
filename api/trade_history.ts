@@ -432,10 +432,38 @@ export const getAssetPrices = async (assetId?:number):Promise<V1AllAssetData> =>
   return mapAssetPricesToV1(allTradedAssets);
 }
 
+const getAssetPricesFromCache = async() => {
+  const db = getDatabase('view_cache');
+  const key = 'allPrices';
+
+  const cachedData = await db.get(key);
+  return cachedData.cachedData;
+}
+
+export const serveCachedAssetPrices = async (req, res) => {  
+  try {
+    const prices = await getAssetPricesFromCache();
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(prices));
+    return;
+  } catch (e) {
+    if (e.error === 'not_found') {
+      console.error(e);
+      res.sendStatus(404);
+      return;
+    } else {
+      console.error(e);
+      res.sendStatus(500);
+      res.send(e);
+      return;
+    }
+  }
+}
+
 export const serveAllAssetPrices = async (req, res) => {  
-  const history = await getAssetPrices();
+  const prices = await getAssetPrices();
   res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(history));
+  res.send(JSON.stringify(prices));
 }
 
 export const serveTradeHistoryByAssetId = async (req, res) => {
