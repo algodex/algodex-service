@@ -36,6 +36,7 @@ module.exports = function(keys, values, rereduce) {
     const today = Date.now() / 1000;
     values.forEach(value => {
       if (value.unixTime === null || value.unixTime === undefined) {
+        // This might not be necessary
         value.unixTime = 0;
       }
     });
