@@ -480,12 +480,22 @@ const getAssetPricesFromCache = async() => {
   const cachedData = await db.get(key);
   return cachedData.cachedData;
 }
+const filterPrices = (assetIdStr:string, prices) => {
+  if (!assetIdStr) {
+    return prices;
+  }
+  const assetId = parseInt(assetIdStr);
+  const filteredPrices = prices.data.filter(item => item.id === assetId);
+  return {...prices, data:filteredPrices};
+}
 
-export const serveCachedAssetPrices = async (req, res) => {  
+export const serveCachedAssetPrices = async (req, res) => {
+  const assetId = req.params.assetId; // optional parameter
   try {
     const prices = await getAssetPricesFromCache();
+    const filteredPrices = filterPrices(assetId, prices);
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(prices));
+    res.send(JSON.stringify(filteredPrices));
     return;
   } catch (e) {
     if (e.error === 'not_found') {
