@@ -46,6 +46,7 @@ app.get('/orders/tvl', serveGetTVL);
 // Assets
 
 app.get('/assets/all', serveCachedAssetPrices);
+app.get('/assets/:assetId', serveCachedAssetPrices);
 // app.get('/assets/all/nocache', serveAllAssetPrices);
 
 // Trade History

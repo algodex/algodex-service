@@ -16,7 +16,6 @@
 
 
 // @ts-nocheck
-
 module.exports = function(keys, values, rereduce) {
   const calculateLastValue = values => {
     const lastValue = values.reduce( (finalValue, value) => {
@@ -31,8 +30,15 @@ module.exports = function(keys, values, rereduce) {
 
   const calculateYesterdayValue = values => {
     // const today = 1663255814; // for debugging
+    if (!values) {
+      return null;
+    }
     const today = Date.now() / 1000;
-
+    values.forEach(value => {
+      if (value.unixTime === null || value.unixTime === undefined) {
+        value.unixTime = 0;
+      }
+    });
     values.sort((a, b) => b.unixTime - a.unixTime);
     const yesterdayValue = values.find( value => value.unixTime <= today - 86400);
     return yesterdayValue;
@@ -46,7 +52,6 @@ module.exports = function(keys, values, rereduce) {
     const res = (lastValue - yesterdayValue) / yesterdayValue * 100;
     return res;
   };
-
 
   let result;
 
@@ -75,5 +80,6 @@ module.exports = function(keys, values, rereduce) {
   }
 
   result.dailyChange = calculateDailyChangePct(latestPrice, yesterdayPrice);
+
   return result;
 };
