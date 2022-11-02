@@ -31,8 +31,15 @@ module.exports = function(keys, values, rereduce) {
 
   const calculateYesterdayValue = values => {
     // const today = 1663255814; // for debugging
+    if (!values) {
+      return null;
+    }
     const today = Date.now() / 1000;
-
+    values.forEach(value => {
+      if (value.unixTime === null || value.unixTime === undefined) {
+        value.unixTime = 0;
+      }
+    });
     values.sort((a, b) => b.unixTime - a.unixTime);
     const yesterdayValue = values.find( value => value.unixTime <= today - 86400);
     return yesterdayValue;
@@ -47,12 +54,13 @@ module.exports = function(keys, values, rereduce) {
     return res;
   };
 
-
   let result;
 
   if (rereduce) {
     const lastValues = values.map(value => value.lastValue);
-    const yesterdayValues = values.map(value => value.yesterdayValue);
+    const yesterdayValues = values.filter(value => value.yesterdayValue !== null &&
+            value.yesterdayValue !== undefined)
+        .map(value => value.yesterdayValue);
     result = {
       lastValue: calculateLastValue(lastValues),
       yesterdayValue: calculateYesterdayValue(yesterdayValues),
@@ -75,5 +83,6 @@ module.exports = function(keys, values, rereduce) {
   }
 
   result.dailyChange = calculateDailyChangePct(latestPrice, yesterdayPrice);
+
   return result;
 };
