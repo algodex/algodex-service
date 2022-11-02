@@ -14,7 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { AssetInfo, getAssetInfo } from "./asset";
+import { AssetInfo, AssetUnitName, getAssetInfo, getUnitNames } from "./asset";
+import { getV2Spreads } from "./orders";
 import { getDatabase } from "./util";
 
 type WalletOrAsset = 'ownerAddr' | 'assetId';
@@ -289,10 +290,11 @@ interface DBTradeHistory {
   assetDecimals: number
 }
 
-const mapTradeHistory = (dbHistory: DBTradeHistory[]):V1TradeHistory => {
+const mapTradeHistory = (dbHistory: DBTradeHistory[], unitNames: any):V1TradeHistory => {
+  let historyId = 1;
   const historyItems:V1TradeHistoryItem[] = dbHistory.map(item => {
     return {
-      PK_trade_history_id: -1,
+      PK_trade_history_id: historyId++,
       transaction_id: '',
       group_id: item.groupId,
       unix_time: item.unixTime,
@@ -305,14 +307,28 @@ const mapTradeHistory = (dbHistory: DBTradeHistory[]):V1TradeHistory => {
       asaBuyerAddress: item.assetBuyerAddr,
       asaSellerAddress: item.assetSellerAddr,
       tradeType: item.tradeType === 'buy' ? 'buyASA' : 'sellASA',
-      formattedPrice: (item.algoAmount / item.asaAmount) / (10**item.assetDecimals) + '',
+      formattedPrice: (item.algoAmount / item.asaAmount) / (10 ** (item.assetDecimals - 6)) + '',
       formattedASAAmount: item.asaAmount / (10**item.assetDecimals) + '',
     }
   });
 
   return {
-    transactions: historyItems
+    transactions: historyItems,
+    ...unitNames
   };
+}
+
+const getUnitNamesFromTradeHistory = async(key:TradeHistoryKey, assetIds:Set<number>) => {
+  if (key.keyType !== 'ownerAddr') {
+    return [];
+  }
+  const unitNames = await getUnitNames(assetIds);
+
+  const unitNameData = unitNames.map(entry => ({
+    params: {'unit-name': entry.unitName},
+    index: entry.assetId
+  }));
+  return {allAssets: unitNameData};
 }
 
 const getTradeHistory = async (key:TradeHistoryKey) => {
@@ -329,15 +345,35 @@ const getTradeHistory = async (key:TradeHistoryKey) => {
       reduce: false
     });
   const history = data.rows.map(row => row.value);
-  return mapTradeHistory(history);
+
+  const assetIds = new Set<number>(history.map(item => item.asaId));
+  const unitNames = await getUnitNamesFromTradeHistory(key, assetIds);
+  return mapTradeHistory(history, unitNames);
 }
 
 export const getChartsFromCache = async (assetId:number, period:Period):Promise<V1ChartsData> => {
   const db = getDatabase('view_cache');
   const key = `trade_history:charts:${assetId}:${period}`;
 
-  const cachedData = await db.get(key);
-  return cachedData.cachedData;
+  try {
+    const cachedData = await db.get(key);
+    if (!cachedData.cachedData.asset_info) {
+      throw {error: 'incorrect_cache_format'};
+    }
+    return cachedData.cachedData;
+  } catch (e) {
+    if (e.error === 'not_found' || e.error === 'incorrect_cache_format') {
+      return {
+        current_price: '',
+        previous_trade_price: '',
+        last_period_closing_price: '',
+        asset_info: undefined,
+        chart_data: []
+      }
+    } else {
+      throw e;
+    }
+  }
 }
 
 export const serveChartsNoCache = async (req, res) => {
@@ -360,16 +396,10 @@ export const serveCharts = async (req, res) => {
     res.send(JSON.stringify(charts));
     return;
   } catch (e) {
-    if (e.error === 'not_found') {
-      console.error(e);
-      res.sendStatus(404);
-      return;
-    } else {
-      console.error(e);
-      res.sendStatus(500);
-      res.send(e);
-      return;
-    }
+    console.error(e);
+    res.sendStatus(500);
+    res.send(e);
+    return;
   }
 }
 
@@ -393,14 +423,14 @@ export interface V1AllAssetData {
 
 export interface V1AssetPriceTimeValue {
   id: number
-  unix_time: number
-  price: number
-  priceBefore: number
-  price24Change: number
+  unix_time?: number
+  price?: number
+  priceBefore?: number
+  price24Change?: number
   isTraded: boolean
 }
 
-const mapAssetPricesToV1 = (assetPrices:DBAssetPrice[]):V1AllAssetData => {
+const mapAssetPricesToV1 = (assetPrices:DBAssetPrice[], untradedAssets:number[]):V1AllAssetData => {
   const dataRows:V1AssetPriceTimeValue[] = assetPrices.map(assetPrice => {
     return {
       id: assetPrice.assetId,
@@ -411,9 +441,14 @@ const mapAssetPricesToV1 = (assetPrices:DBAssetPrice[]):V1AllAssetData => {
       isTraded: true
     }
   });
+
+  const untradedAssetData = untradedAssets.map(assetId => ({id: assetId, 'isTraded': false}));
+
+  const allAssets = [...dataRows, ...untradedAssetData];
+
   const retval:V1AllAssetData = {
     ok: true,
-    data: dataRows,
+    data: allAssets,
     rows: dataRows.length
   }
   return retval;
@@ -428,8 +463,14 @@ export const getAssetPrices = async (assetId?:number):Promise<V1AllAssetData> =>
       key: assetId
     });
   const allTradedAssets:DBAssetPrice[] = data.rows.map(row => ({...row.value, assetId: row.key}));
+
+  const tradedAssetsSet = new Set(allTradedAssets.map(item => item.assetId));
+
+  const spreads = await getV2Spreads();
+  const untradedAssets = spreads.map(item => item.assetId).filter(assetId => !tradedAssetsSet.has(assetId));
+
   // TODO: add untraded assets
-  return mapAssetPricesToV1(allTradedAssets);
+  return mapAssetPricesToV1(allTradedAssets, untradedAssets);
 }
 
 const getAssetPricesFromCache = async() => {
@@ -439,12 +480,22 @@ const getAssetPricesFromCache = async() => {
   const cachedData = await db.get(key);
   return cachedData.cachedData;
 }
+const filterPrices = (assetIdStr:string, prices) => {
+  if (!assetIdStr) {
+    return prices;
+  }
+  const assetId = parseInt(assetIdStr);
+  const filteredPrices = prices.data.filter(item => item.id === assetId);
+  return {...prices, data:filteredPrices};
+}
 
-export const serveCachedAssetPrices = async (req, res) => {  
+export const serveCachedAssetPrices = async (req, res) => {
+  const assetId = req.params.assetId; // optional parameter
   try {
     const prices = await getAssetPricesFromCache();
+    const filteredPrices = filterPrices(assetId, prices);
     res.setHeader('Content-Type', 'application/json');
-    res.send(JSON.stringify(prices));
+    res.send(JSON.stringify(filteredPrices));
     return;
   } catch (e) {
     if (e.error === 'not_found') {

@@ -15,6 +15,7 @@
  */
 
 const axios = require('axios').default;
+import { AssetUnitName, getUnitNames } from "./asset";
 import { getDatabase } from "./util";
 
 const cachedAssetIdToOrders = new Map<number, V1OrdersResult>();
@@ -80,6 +81,25 @@ export const getOpenOrders = async (wallet:string):Promise<Array<Order>> => {
 
   return data.rows.map(entry => entry.value);
 }
+
+interface V2Spread {
+  assetId: number //assetId
+  formattedPrice: number
+  isAlgoBuyEscrow: boolean
+}
+
+export const getV2Spreads = async ():Promise<V2Spread[]> => {
+  const db = getDatabase('formatted_escrow');
+  const data = await db.query('formatted_escrow/spreads', {
+    // keys: assetIds,
+    reduce: true,
+    group: true
+  });
+  return data.rows.map(item => ({
+    assetId: item.key,
+    ...item.value
+  }));
+};
 
 export const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spread>> => {
   // const db = getDatabase('formatted_escrow');
@@ -284,6 +304,7 @@ export const serveGetOrdersByWallet = async (req, res) => {
   });
 
   const orders:DBOrder[] = data.rows.map(row => row.value);
+
   const allOrders = mapDBtoV1Orders(orders);
 
   res.setHeader('Content-Type', 'application/json');
