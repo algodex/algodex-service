@@ -58,7 +58,9 @@ module.exports = function(keys, values, rereduce) {
 
   if (rereduce) {
     const lastValues = values.map(value => value.lastValue);
-    const yesterdayValues = values.map(value => value.yesterdayValue);
+    const yesterdayValues = values.filter(value => value.yesterdayValue !== null &&
+            value.yesterdayValue !== undefined)
+        .map(value => value.yesterdayValue);
     result = {
       lastValue: calculateLastValue(lastValues),
       yesterdayValue: calculateYesterdayValue(yesterdayValues),
