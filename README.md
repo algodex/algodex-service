@@ -33,6 +33,9 @@ docker-compose up -f docker-compose.yml -f docker-compose.docker.yml
 ### Set up reverse-proxy
 
 (todo)
+The reverse proxy sits in front of algodex-service. The basic request flow is nginx -> reverse-proxy-rust -> algodex-service API
+
+Some instructions are at https://github.com/algodex/reverse-proxy-rust
 
 ### Integration Test Run
 
