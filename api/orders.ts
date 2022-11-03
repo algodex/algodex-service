@@ -291,7 +291,10 @@ export const serveGetOrdersByAssetId = async (req, res) => {
   const assetId = parseInt(req.params.assetId);
   const orders:DBOrder[] = await getV2OrdersByAssetId(assetId);
 
-  const ordersConverted = mapDBtoV1Orders(orders);
+  // FIXME - screen out by whether orders are opted in
+  const filteredOrders = orders.filter(order => order.escrowAddress !== 'PJHUELDZLJL4RCKWNROMM3XNWFKVCFTO76NO24WRE3OAWRWEMNQYSMPAB4');
+
+  const ordersConverted = mapDBtoV1Orders(filteredOrders);
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(ordersConverted));
 }
