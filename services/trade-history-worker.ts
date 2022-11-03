@@ -130,7 +130,16 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
     'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
 
   const clearOwnerCachePromises = Array.from(ownerAddrSet)
-  .map(ownerAddr => `${reverseProxyAddr}/trades/history/wallet/${ownerAddr}`)
+    .map(ownerAddr => `${reverseProxyAddr}/trades/history/wallet/${ownerAddr}`)
+    .map(url => axios({
+      method: 'get',
+      url: url,
+      timeout: 3000,
+      headers
+    }));
+
+  const clearOwnerCachePromises2 = Array.from(ownerAddrSet)
+  .map(ownerAddr => `${reverseProxyAddr}/wallet/assets/${ownerAddr}`)
   .map(url => axios({
     method: 'get',
     url: url,
@@ -147,7 +156,17 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
     headers
   }));
 
-  await Promise.all([...clearOwnerCachePromises, ...clearAssetCachePromises]);
+  const clearAssetCachePromises2 = Array.from(assetSet)
+    .map(assetId => `${reverseProxyAddr}/assets/${assetId}`)
+    .map(url => axios({
+      method: 'get',
+      url: url,
+      timeout: 3000,
+      headers
+    }));
+
+  await Promise.all([...clearOwnerCachePromises, ...clearAssetCachePromises,
+    ...clearAssetCachePromises2, ...clearOwnerCachePromises2]);
 };
 
 const rebuildCurrentOrdersCache = async (viewCacheDB, queueRound:number) => {
