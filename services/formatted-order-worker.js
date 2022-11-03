@@ -76,6 +76,7 @@ const deleteCache = async (ownerAddr, assetId) => {
   const clearCacheUrls = [
     `${reverseProxyAddr}/orders/asset/${assetId}`,
     `${reverseProxyAddr}/orders/wallet/${ownerAddr}`,
+    `${reverseProxyAddr}/wallet/assets/${ownerAddr}`,
   ];
 
   const clearCachePromises = clearCacheUrls.map(url => axios({
