@@ -40,9 +40,9 @@ lazy_static! {
         s.insert(744665252); //pTokens BTC
         s.insert(792313023); //xSOL
         s.insert(672913181); //goUSD
-        s.insert(694432641); //gALGO3
-        s.insert(2757561); //realioUSD
-        s.insert(320259224); //Wrapped Algo
+        //s.insert(694432641); //gALGO3
+        //s.insert(2757561); //realioUSD
+        //s.insert(320259224); //Wrapped Algo
 
         s
     };
@@ -94,12 +94,12 @@ fn get_total_quality(
                       * global_tvl.powf(0.1)
                     }
                     MainnetPeriod::Version2 => {
-                        quality_sum.val().powf(0.45)
+                        quality_sum.val().powf(0.5)
                             * uptimef64.powi(5)
-                            * depth.val().powf(0.27)
-                            * algx_avg.powf(0.18)
+                            * depth.val().powf(0.3)
+                            * algx_avg.powf(0.2)
                             * asset_grade as f64
-                            * global_tvl.powf(0.1)
+                            * global_tvl.powf(0.65)
                     }
                 });
                 let owner_rewards_key =
