@@ -560,7 +560,7 @@ const mapSearchAllData = (assetSet:Set<number>, prices:V1AllAssetData,
     const formattedASALiquidity = (assetIdToTVL.get(assetId)?.formattedAssetTVL || 0) + '';
     const formattedAlgoLiquidity = (assetIdToTVL.get(assetId)?.formattedAlgoTVL || 0) + '';
     const formattedPrice = (assetIdToPrice.get(assetId)?.price || 0) + '';
-    const price = (assetIdToPrice.get(assetId)?.price || 0) * (Math.pow(10, 6 - decimals)) + ''; // FIXME: is this correct?
+    const price = (assetIdToPrice.get(assetId)?.price || 0) * (Math.pow(10, 6 - decimals)) + '';
 
     return {
       assetId,
