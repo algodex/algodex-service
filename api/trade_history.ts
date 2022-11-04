@@ -14,8 +14,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { AssetInfo, AssetUnitName, getAssetInfo, getUnitNames } from "./asset";
-import { getV2Spreads } from "./orders";
+import { AssetInfo, AssetSummaryInfo, AssetUnitName, getAssetInfo, getSummaryInfo, getUnitNames } from "./asset";
+import { AssetTVL, getTVL, getV2Spreads } from "./orders";
 import { getDatabase } from "./util";
 
 type WalletOrAsset = 'ownerAddr' | 'assetId';
@@ -508,6 +508,100 @@ export const serveCachedAssetPrices = async (req, res) => {
       res.send(e);
       return;
     }
+  }
+}
+
+interface V1SearchItem {
+  assetName: string
+  unitName: string
+  verified: boolean
+  assetId: number
+  isTraded: boolean
+  decimals: number
+  total: number
+  priceChg24Pct: number
+  price: string
+  formattedPrice: string
+  hasOrders: boolean
+  formattedASALiquidity: string
+  formattedAlgoLiquidity: string
+}
+
+
+const mapSearchAllData = (assetSet:Set<number>, prices:V1AllAssetData,
+    tvl:AssetTVL[], assetSummaryInfo:AssetSummaryInfo[]):V1SearchItem[] => {
+  
+  const assetIdToPrice = prices.data.reduce((map, priceItem) => {
+    map.set(priceItem.id, priceItem);
+    return map;
+  }, new Map<number, V1AssetPriceTimeValue>);
+
+  const assetIdToTVL = tvl.reduce((map, tvlItem) => {
+    map.set(tvlItem.assetId, tvlItem);
+    return map;
+  }, new Map<number, AssetTVL>);
+
+  const assetIdToSummaryInfo = assetSummaryInfo.reduce((map, assetItem) => {
+    map.set(assetItem.assetId, assetItem);
+    return map;
+  }, new Map<number, AssetSummaryInfo>);
+
+  const searchResults:V1SearchItem[] = Array.from(assetSet).map(assetId => {
+    const assetName = assetIdToSummaryInfo.get(assetId).name;
+    const unitName = assetIdToSummaryInfo.get(assetId).unitName;
+    const isTraded = assetIdToPrice.get(assetId)?.isTraded ? true : false;
+    const decimals = assetIdToSummaryInfo.get(assetId).decimals;
+    const verified = assetIdToSummaryInfo.get(assetId).verified;
+    const total = assetIdToSummaryInfo.get(assetId).total;
+    const price24Change = assetIdToPrice.get(assetId)?.price24Change || 0;
+    const hasOrders = assetIdToTVL.has(assetId) && 
+      (assetIdToTVL.get(assetId).formattedAlgoTVL > 0 || assetIdToTVL.get(assetId).formattedAssetTVL > 0);
+    
+    const formattedASALiquidity = (assetIdToTVL.get(assetId)?.formattedAssetTVL || 0) + '';
+    const formattedAlgoLiquidity = (assetIdToTVL.get(assetId)?.formattedAlgoTVL || 0) + '';
+    const formattedPrice = (assetIdToPrice.get(assetId)?.price || 0) + '';
+    const price = (assetIdToPrice.get(assetId)?.price || 0) * (Math.pow(10, 6 - decimals)) + ''; // FIXME: is this correct?
+
+    return {
+      assetId,
+      assetName,
+      unitName,
+      isTraded,
+      decimals,
+      verified,
+      priceChg24Pct: price24Change,
+      total,
+      hasOrders,
+      formattedASALiquidity,
+      formattedAlgoLiquidity,
+      formattedPrice,
+      price
+    }
+  });
+
+  return searchResults;
+
+}
+
+export const serveSearchAll = async (req, res) => {
+  const prices:V1AllAssetData = await getAssetPricesFromCache();
+  const tvl = await getTVL();
+  const assetSet1:Set<number> = new Set(prices.data.map(price => price.id));
+  const assetSet2:Set<number> = new Set(tvl.map(asset => asset.assetId));
+  const assetSet:Set<number> = new Set([...assetSet1, ...assetSet2]);
+
+  const assetSummaryInfo = await getSummaryInfo(assetSet);
+  
+  const searchData = mapSearchAllData(assetSet, prices, tvl, assetSummaryInfo);
+
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(searchData));
+}
+
+export const serveSearch = async (req, res) => {
+  const searchQuery = req.query.searchStr || '';
+  if (searchQuery.length === 0) {
+    return serveSearchAll(req,res);
   }
 }
 
