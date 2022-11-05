@@ -19,7 +19,7 @@ import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, se
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
   get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard, serveRewardsIsRecorded, serveRewardsData, serveVestedRewardsData, serveUnrecordedRewards } from "./rewards";
-import { serveCharts, serveTradeHistoryByAssetId, serveTradeHistoryByOwner, serveChartsNoCache, serveCachedAssetPrices, serveAllAssetPrices } from "./trade_history";
+import { serveCharts, serveTradeHistoryByAssetId, serveTradeHistoryByOwner, serveChartsNoCache, serveCachedAssetPrices, serveAllAssetPrices, serveSearch } from "./trade_history";
 import { serve_auth_check } from "./util";
 import { serveGetWalletAssets } from "./wallet";
 const nocache = require("nocache");
@@ -46,6 +46,8 @@ app.get('/orders/tvl', serveGetTVL);
 // Assets
 
 app.get('/assets/all', serveCachedAssetPrices);
+app.get('/assets/search', serveSearch);
+
 app.get('/assets/:assetId', serveCachedAssetPrices);
 // app.get('/assets/all/nocache', serveAllAssetPrices);
 

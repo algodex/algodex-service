@@ -54,6 +54,10 @@ const databases = [
         tinymanTrades: {
           map: require('../../views/blocks/tinymanTrades-map').toString(),
         },
+        orderOptinStatus: {
+          map: require('../../views/blocks/orderOptinStatus-map').toString(),
+          reduce: require('../../views/blocks/orderOptinStatus-reduce').toString(),
+        },
       },
     },
   },
@@ -134,6 +138,9 @@ const databases = [
         },
         unitNames: {
           map: require('../../views/assets/unitNames-map').toString(),
+        },
+        summaryInfo: {
+          map: require('../../views/assets/summaryInfo-map').toString(),
         },
       },
     },

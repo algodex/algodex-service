@@ -52,3 +52,25 @@ export const getUnitNames = async (assetIds:Set<number>):Promise<AssetUnitName[]
 
   return assetUnitNames.rows.map(row => ({assetId: parseInt(row.key), unitName: row.value}));
 }
+
+export interface AssetSummaryInfo {
+  assetId: number
+  unitName: string
+  name: string
+  decimals: number
+  verified: boolean
+  total: number
+}
+
+
+export const getSummaryInfo = async (assetIds:Set<number>):Promise<AssetSummaryInfo[]> => {
+  const db = getDatabase('assets');
+
+  const assetIdsArr = Array.from(assetIds).map(assetId => ''+assetId);
+
+  const assetSummaryInfo = await db.query('assets/summaryInfo', {
+    keys: assetIdsArr
+  });
+
+  return assetSummaryInfo.rows.map(row => ({assetId: parseInt(row.key), ...row.value}));
+}

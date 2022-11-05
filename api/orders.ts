@@ -52,7 +52,7 @@ export interface AssetTVL {
 
 export type AssetId = number
 
-const getTVL = async ():Promise<AssetTVL[]> => {
+export const getTVL = async ():Promise<AssetTVL[]> => {
   const db = getDatabase('formatted_escrow');
   const tvlData = await db.query('formatted_escrow/tvl', {
     reduce: true, group: true
