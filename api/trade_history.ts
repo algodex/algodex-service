@@ -547,20 +547,24 @@ const mapSearchAllData = (assetSet:Set<number>, prices:V1AllAssetData,
   }, new Map<number, AssetSummaryInfo>);
 
   const searchResults:V1SearchItem[] = Array.from(assetSet).map(assetId => {
-    const assetName = assetIdToSummaryInfo.get(assetId).name;
-    const unitName = assetIdToSummaryInfo.get(assetId).unitName;
-    const isTraded = assetIdToPrice.get(assetId)?.isTraded ? true : false;
-    const decimals = assetIdToSummaryInfo.get(assetId).decimals;
-    const verified = assetIdToSummaryInfo.get(assetId).verified;
-    const total = assetIdToSummaryInfo.get(assetId).total;
-    const price24Change = assetIdToPrice.get(assetId)?.price24Change || 0;
-    const hasOrders = assetIdToTVL.has(assetId) && 
-      (assetIdToTVL.get(assetId).formattedAlgoTVL > 0 || assetIdToTVL.get(assetId).formattedAssetTVL > 0);
+    const summaryInfo = assetIdToSummaryInfo.get(assetId);
+    const priceInfo = assetIdToPrice.get(assetId);
+    const tvlInfo = assetIdToTVL.get(assetId);
+
+    const assetName = summaryInfo.name;
+    const unitName = summaryInfo.unitName;
+    const isTraded = priceInfo.isTraded ? true : false;
+    const decimals = summaryInfo.decimals;
+    const verified = summaryInfo.verified;
+    const total = summaryInfo.total;
+    const price24Change = priceInfo?.price24Change || 0;
+    const hasOrders = tvlInfo && 
+      (tvlInfo.formattedAlgoTVL > 0 || tvlInfo.formattedAssetTVL > 0);
     
-    const formattedASALiquidity = (assetIdToTVL.get(assetId)?.formattedAssetTVL || 0) + '';
-    const formattedAlgoLiquidity = (assetIdToTVL.get(assetId)?.formattedAlgoTVL || 0) + '';
-    const formattedPrice = (assetIdToPrice.get(assetId)?.price || 0) + '';
-    const price = (assetIdToPrice.get(assetId)?.price || 0) * (Math.pow(10, 6 - decimals)) + '';
+    const formattedASALiquidity = (tvlInfo?.formattedAssetTVL || 0) + '';
+    const formattedAlgoLiquidity = (tvlInfo?.formattedAlgoTVL || 0) + '';
+    const formattedPrice = (priceInfo?.price || 0) + '';
+    const price = (priceInfo?.price || 0) * (Math.pow(10, 6 - decimals)) + '';
 
     return {
       assetId,
