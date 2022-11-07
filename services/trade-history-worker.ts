@@ -121,6 +121,22 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
   });
 
   await viewCacheDB.bulkDocs(newDocs);
+
+  const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
+  const headers = {'Clear-Cache': true,
+   'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
+
+  const clearCachePromises = Array.from(assetIds).flatMap(assetId =>
+    periods.map(period => (axios({
+      method: 'get',
+      url: `${reverseProxyAddr}/trades/charts/asset/${assetId}/period/${period}`,
+      timeout: 3000,
+      headers
+    })))
+  );
+
+  await Promise.all(clearCachePromises);
+
 }
 
 // Delete the cache of the reverse proxy so it gets refreshed again
@@ -169,7 +185,7 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
     ...clearAssetCachePromises2, ...clearOwnerCachePromises2]);
 };
 
-const rebuildCurrentOrdersCache = async (viewCacheDB, queueRound:number) => {
+const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number) => {
   await getLatestBlock();
   const latestBlockRound = latestBlock['last-round'];
   if (queueRound < latestBlockRound - 5) {
@@ -193,6 +209,18 @@ const rebuildCurrentOrdersCache = async (viewCacheDB, queueRound:number) => {
   };
 
   await viewCacheDB.put(newDoc);
+
+  const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
+  const headers = {'Clear-Cache': true,
+   'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
+
+  await axios({
+    method: 'get',
+    url: `${reverseProxyAddr}/assets/all`,
+    timeout: 3000,
+    headers
+  });
+
 }
 module.exports = ({queues, databases}) =>{
   const blockDB = databases.blocks;
@@ -294,7 +322,7 @@ module.exports = ({queues, databases}) =>{
                   const assetSet = new Set<number>(validHistoryRows.map(row => row.asaId));
                   return Promise.all([
                     deleteCache(assetSet, ownerAddrSet),
-                    rebuildCurrentOrdersCache(viewCacheDB, parseInt(blockId)),
+                    rebuildAllAssetsCache(viewCacheDB, parseInt(blockId)),
                     rebuildChartsCache(viewCacheDB, parseInt(blockId), assetSet)
                   ]);
                 });
