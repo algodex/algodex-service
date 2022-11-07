@@ -199,7 +199,7 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
     ...clearOwnerCachePromises2]);
 };
 
-const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number) => {
+const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number, assetSet: Set<number>) => {
   await getLatestBlock();
   const latestBlockRound = latestBlock['last-round'];
   if (queueRound < latestBlockRound - 5) {
@@ -235,6 +235,9 @@ const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number) => {
     timeout: 3000,
     headers
   });
+
+  await deleteAssetPriceCache(assetSet),
+
   await axiosWithDebug({
     method: 'get',
     url: `${reverseProxyAddr}/assets/search`,
@@ -244,11 +247,12 @@ const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number) => {
 
   // Refresh search cache (no deletion headers)
 
-  axiosWithDebug({
+  await axiosWithDebug({
     method: 'get',
     url: `${reverseProxyAddr}/assets/search`,
     timeout: 3000,
   });
+
 }
 
 module.exports = ({queues, databases}) =>{
@@ -351,8 +355,7 @@ module.exports = ({queues, databases}) =>{
                   const assetSet = new Set<number>(validHistoryRows.map(row => row.asaId));
                   return Promise.all([
                     deleteCache(assetSet, ownerAddrSet),
-                    rebuildAllAssetsCache(viewCacheDB, parseInt(blockId)),
-                    deleteAssetPriceCache(assetSet),
+                    rebuildAllAssetsCache(viewCacheDB, parseInt(blockId), assetSet),
                     rebuildChartsCache(viewCacheDB, parseInt(blockId), assetSet)
                   ]);
                 });
