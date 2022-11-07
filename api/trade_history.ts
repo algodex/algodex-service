@@ -618,7 +618,7 @@ interface AlgoExplorerResult {
 }
 
 const getPossiblyCachedSearchAllResults = async ():Promise<V1SearchItem[]> => {
-  const searchResultsUrl = process.env.CACHE_REVERSE_PROXY_SERVER + '/assets/search';
+  const searchResultsUrl = process.env.CACHE_REVERSE_PROXY_SERVER + '/assets/searchall';
   const fetchRes = await axios.get(searchResultsUrl);
   const results:V1SearchItem[] = fetchRes.data;
   return results;
@@ -659,7 +659,7 @@ const sortSearchItems = (a,b) => {
 }
 
 export const serveSearch = async (req, res) => {
-  const searchQuery = req.query.searchStr || '';
+  const searchQuery = req.params.searchStr || '';
   if (searchQuery.length === 0) {
     return serveSearchAll(req,res);
   }
@@ -715,6 +715,7 @@ export const serveSearch = async (req, res) => {
       }
       return false;
     });
+
     const searchResults:V1SearchItem[] = [...explorerAsAlgodexResults, ...filteredAlgodexResults]
       .slice(0, 50);
 
