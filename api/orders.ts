@@ -286,13 +286,49 @@ const mapDBtoV1Orders = (orders:DBOrder[]):V1OrderApi => {
   return allOrders;
 }
 
+interface OrderOptInStatus {
+  round:number,
+  apan:number,
+  onComplete:string,
+  orderType:string,
+  txnCount:number
+}
+
+const filterNonOptedInOrders = async (orders:DBOrder[]):Promise<DBOrder[]> => {
+  const escrowAddrs = orders
+    .filter(order => order.isAlgoBuyEscrow === true) // This is only a problem for buy orders
+    .map(order => order.escrowAddress);
+  //TODO: only check up to a certain amount of escrow addresses sorted by price
+  const db = getDatabase('blocks');
+  let data;
+  try {
+   data = await db.query('orderOptinStatus/orderOptinStatus', {
+    keys: escrowAddrs,
+    reduce: true,
+    group: true
+  });
+} catch (e) {
+  console.error(e);
+  throw e;
+}
+
+  const optedInOrders:string[] = data.rows
+    .filter(row => row.value.onComplete === 'OptIn')
+    .map(row => row.key); //key contains escrow address
+  const optedInOrdersSet = new Set<string>(optedInOrders);
+
+  // Allow any sell order (since this problem only occurs with buy orders), or buy
+  // orders that are opted into the smart contract
+  return orders.filter(order => order.isAlgoBuyEscrow === false ||
+    optedInOrdersSet.has(order.escrowAddress));
+}
 
 export const serveGetOrdersByAssetId = async (req, res) => {
   const assetId = parseInt(req.params.assetId);
   const orders:DBOrder[] = await getV2OrdersByAssetId(assetId);
 
-  // FIXME - screen out by whether orders are opted in
-  const filteredOrders = orders.filter(order => order.escrowAddress !== 'PJHUELDZLJL4RCKWNROMM3XNWFKVCFTO76NO24WRE3OAWRWEMNQYSMPAB4');
+  // screen out by whether orders are opted in
+  const filteredOrders = await filterNonOptedInOrders(orders);
 
   const ordersConverted = mapDBtoV1Orders(filteredOrders);
   res.setHeader('Content-Type', 'application/json');
@@ -308,7 +344,10 @@ export const serveGetOrdersByWallet = async (req, res) => {
 
   const orders:DBOrder[] = data.rows.map(row => row.value);
 
-  const allOrders = mapDBtoV1Orders(orders);
+  // screen out by whether orders are opted in. TODO: show orders to user which are not opted in
+  const filteredOrders = await filterNonOptedInOrders(orders);
+
+  const allOrders = mapDBtoV1Orders(filteredOrders);
 
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(allOrders));
