@@ -220,6 +220,12 @@ const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number) => {
     timeout: 3000,
     headers
   });
+  await axios({
+    method: 'get',
+    url: `${reverseProxyAddr}/assets/search`,
+    timeout: 3000,
+    headers
+  });
 
 }
 module.exports = ({queues, databases}) =>{
