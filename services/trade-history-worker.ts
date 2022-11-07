@@ -240,7 +240,7 @@ const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number, assetSet: S
 
   await axiosWithDebug({
     method: 'get',
-    url: `${reverseProxyAddr}/assets/search`,
+    url: `${reverseProxyAddr}/assets/searchall`,
     timeout: 3000,
     headers
   });
@@ -249,7 +249,7 @@ const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number, assetSet: S
 
   await axiosWithDebug({
     method: 'get',
-    url: `${reverseProxyAddr}/assets/search`,
+    url: `${reverseProxyAddr}/assets/searchall`,
     timeout: 3000,
   });
 
