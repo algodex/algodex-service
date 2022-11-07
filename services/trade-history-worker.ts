@@ -139,6 +139,11 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
 
 }
 
+const axiosWithDebug = async (props) => {
+  console.log('fetching: ' + props.url);
+  return axios(props);
+};
+
 // Delete the cache of the reverse proxy so it gets refreshed again
 const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
   const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
@@ -147,7 +152,7 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
 
   const clearOwnerCachePromises = Array.from(ownerAddrSet)
     .map(ownerAddr => `${reverseProxyAddr}/trades/history/wallet/${ownerAddr}`)
-    .map(url => axios({
+    .map(url => axiosWithDebug({
       method: 'get',
       url: url,
       timeout: 3000,
@@ -156,7 +161,7 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
 
   const clearOwnerCachePromises2 = Array.from(ownerAddrSet)
   .map(ownerAddr => `${reverseProxyAddr}/wallet/assets/${ownerAddr}`)
-  .map(url => axios({
+  .map(url => axiosWithDebug({
     method: 'get',
     url: url,
     timeout: 3000,
@@ -165,7 +170,7 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
 
   const clearAssetCachePromises = Array.from(assetSet)
   .map(assetId => `${reverseProxyAddr}/trades/history/asset/${assetId}`)
-  .map(url => axios({
+  .map(url => axiosWithDebug({
     method: 'get',
     url: url,
     timeout: 3000,
@@ -174,7 +179,7 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
 
   const clearAssetCachePromises2 = Array.from(assetSet)
     .map(assetId => `${reverseProxyAddr}/assets/${assetId}`)
-    .map(url => axios({
+    .map(url => axiosWithDebug({
       method: 'get',
       url: url,
       timeout: 3000,
@@ -214,13 +219,13 @@ const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number) => {
   const headers = {'Clear-Cache': true,
    'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
 
-  await axios({
+  await axiosWithDebug({
     method: 'get',
     url: `${reverseProxyAddr}/assets/all`,
     timeout: 3000,
     headers
   });
-  await axios({
+  await axiosWithDebug({
     method: 'get',
     url: `${reverseProxyAddr}/assets/search`,
     timeout: 3000,
