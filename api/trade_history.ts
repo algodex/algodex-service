@@ -14,6 +14,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import axios from "axios";
 import { AssetInfo, AssetSummaryInfo, AssetUnitName, getAssetInfo, getSummaryInfo, getUnitNames } from "./asset";
 import { AssetTVL, getTVL, getV2Spreads } from "./orders";
 import { getDatabase } from "./util";
@@ -553,7 +554,7 @@ const mapSearchAllData = (assetSet:Set<number>, prices:V1AllAssetData,
 
     const assetName = summaryInfo.name;
     const unitName = summaryInfo.unitName;
-    const isTraded = priceInfo.isTraded ? true : false;
+    const isTraded = priceInfo?.isTraded ? true : false;
     const decimals = summaryInfo.decimals;
     const verified = summaryInfo.verified;
     const total = summaryInfo.total;
@@ -602,10 +603,128 @@ export const serveSearchAll = async (req, res) => {
   res.send(JSON.stringify(searchData));
 }
 
+export interface Verification {
+  score: number
+  reputation: string
+  name: string
+}
+
+interface AlgoExplorerResult {
+  id: number
+  name: string
+  "unit-name": string
+  destroyed: boolean
+  verification?: Verification 
+}
+
+const getPossiblyCachedSearchAllResults = async ():Promise<V1SearchItem[]> => {
+  const searchResultsUrl = process.env.CACHE_REVERSE_PROXY_SERVER + '/assets/search';
+  const fetchRes = await axios.get(searchResultsUrl);
+  const results:V1SearchItem[] = fetchRes.data;
+  return results;
+}
+
+interface AllSearchResult { 
+  algoExplorerSearchResults: AlgoExplorerResult[]
+  searchAlgodexResults: V1SearchItem[]
+}
+
+const getAlgoExplorerAndAlgodexSearchResults = async (searchUrl:string):Promise<AllSearchResult> => {
+  const algoExplorerSearchResultsFetch = (axios.get(searchUrl)).then((res) => res.data.assets);
+  const searchAlgodexResultsFetch = getPossiblyCachedSearchAllResults();
+  const results = await Promise.all([algoExplorerSearchResultsFetch, searchAlgodexResultsFetch]);
+  return {
+    algoExplorerSearchResults: results[0],
+    searchAlgodexResults: results[1]
+  };
+}
+
 export const serveSearch = async (req, res) => {
   const searchQuery = req.query.searchStr || '';
   if (searchQuery.length === 0) {
     return serveSearchAll(req,res);
+  }
+
+  const algoExplorer = process.env.ALGORAND_NETWORK === 'mainnet' ? 'https://indexer.algoexplorerapi.io'
+    : 'https://indexer.testnet.algoexplorerapi.io';
+
+  try {
+    const searchUrl = algoExplorer + '/rl/v1/search?keywords=' + encodeURIComponent(searchQuery);
+    const {algoExplorerSearchResults, searchAlgodexResults} =
+      await getAlgoExplorerAndAlgodexSearchResults(searchUrl);
+
+    const algodexAssetIdToAsset = searchAlgodexResults.reduce((map, asset) => {
+        map.set(asset.assetId, asset);
+        return map;
+      }, new Map<number, V1SearchItem>());
+
+    const algoExplorerAssetSet = new Set<number>();
+    const explorerAsAlgodexResults:V1SearchItem[] = algoExplorerSearchResults
+    .map(searchResult => {
+      algoExplorerAssetSet.add(searchResult.id);
+
+      if (algodexAssetIdToAsset.has(searchResult.id)) {
+        return algodexAssetIdToAsset.get(searchResult.id);
+      }
+
+      return {
+        assetName: searchResult.name,
+        unitName: searchResult['unit-name'],
+        verified: searchResult.verification !== undefined,
+        assetId: searchResult.id,
+        isTraded: false,
+        decimals: 6, // assume 6 - shouldn't matter
+        total: 0,
+        price: "",
+        priceChg24Pct: 0,
+        formattedAlgoLiquidity: "0",
+        formattedASALiquidity: "0",
+        formattedPrice: "",
+        hasOrders: false
+      }
+    });
+
+    const filteredAlgodexResults = searchAlgodexResults.filter(result => {
+      if (algoExplorerAssetSet.has(result.assetId)) {
+        return false;
+      }
+      if (searchQuery.length >= 2 && 
+        (result.assetName?.includes(searchQuery) 
+        || result.unitName?.includes(searchQuery))
+        || `${result.assetId}`.startsWith(searchQuery)) {
+        return true;
+      }
+      return false;
+    });
+    const searchResults:V1SearchItem[] = [...explorerAsAlgodexResults, ...filteredAlgodexResults]
+      .slice(0, 50);
+
+    searchResults.sort((a,b) => {
+     if (a.isTraded && b.isTraded) {
+      return parseFloat(b.formattedAlgoLiquidity || '0') - parseFloat(a.formattedAlgoLiquidity || '0');
+     }
+     if (a.isTraded && !b.isTraded) {
+      return -1;
+     }
+     if (b.isTraded && !a.isTraded) {
+      return 1;
+     }
+     if (a.verified && !b.verified) {
+      return -1;
+     }
+     if (b.verified && !a.verified) {
+      return 1;
+     }
+     return 0;
+    });
+    res.setHeader('Content-Type', 'application/json');
+    res.json(searchResults);
+    return;
+  } catch (e) {
+    console.error(e);
+    res.status(500);
+    res.send(JSON.stringify(e));
+    return;
   }
 }
 
