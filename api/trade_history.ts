@@ -598,7 +598,7 @@ export const serveSearchAll = async (req, res) => {
   const assetSummaryInfo = await getSummaryInfo(assetSet);
   
   const searchData = mapSearchAllData(assetSet, prices, tvl, assetSummaryInfo);
-
+  searchData.sort(sortSearchItems);
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(searchData));
 }
@@ -637,6 +637,25 @@ const getAlgoExplorerAndAlgodexSearchResults = async (searchUrl:string):Promise<
     algoExplorerSearchResults: results[0],
     searchAlgodexResults: results[1]
   };
+}
+
+const sortSearchItems = (a,b) => {
+  if (a.isTraded && b.isTraded) {
+   return parseFloat(b.formattedAlgoLiquidity || '0') - parseFloat(a.formattedAlgoLiquidity || '0');
+  }
+  if (a.isTraded && !b.isTraded) {
+   return -1;
+  }
+  if (b.isTraded && !a.isTraded) {
+   return 1;
+  }
+  if (a.verified && !b.verified) {
+   return -1;
+  }
+  if (b.verified && !a.verified) {
+   return 1;
+  }
+  return 0;
 }
 
 export const serveSearch = async (req, res) => {
@@ -699,24 +718,7 @@ export const serveSearch = async (req, res) => {
     const searchResults:V1SearchItem[] = [...explorerAsAlgodexResults, ...filteredAlgodexResults]
       .slice(0, 50);
 
-    searchResults.sort((a,b) => {
-     if (a.isTraded && b.isTraded) {
-      return parseFloat(b.formattedAlgoLiquidity || '0') - parseFloat(a.formattedAlgoLiquidity || '0');
-     }
-     if (a.isTraded && !b.isTraded) {
-      return -1;
-     }
-     if (b.isTraded && !a.isTraded) {
-      return 1;
-     }
-     if (a.verified && !b.verified) {
-      return -1;
-     }
-     if (b.verified && !a.verified) {
-      return 1;
-     }
-     return 0;
-    });
+    searchResults.sort(sortSearchItems);
     res.setHeader('Content-Type', 'application/json');
     res.json(searchResults);
     return;
