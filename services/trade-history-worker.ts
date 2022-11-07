@@ -140,9 +140,27 @@ const rebuildChartsCache = async (viewCacheDB, queueRound:number, assetIds:Set<n
 }
 
 const axiosWithDebug = async (props) => {
-  console.log('fetching: ' + props.url);
-  return axios(props);
+  // console.log('fetching: ' + props.url, {headers: props.headers});
+  const result = await axios(props);
+  // console.log(`${props.url} code: ${result.status}`);
 };
+
+const deleteAssetPriceCache = async(assetSet:Set<number>) => {
+  const reverseProxyAddr = process.env.CACHE_REVERSE_PROXY_SERVER;
+   const headers = {'Clear-Cache': true,
+    'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
+
+  const clearAssetCachePromises2 = Array.from(assetSet)
+    .map(assetId => `${reverseProxyAddr}/assets/${assetId}`)
+    .map(url => axiosWithDebug({
+      method: 'get',
+      url: url,
+      timeout: 3000,
+      headers
+    }));
+
+  await Promise.all(clearAssetCachePromises2);
+}
 
 // Delete the cache of the reverse proxy so it gets refreshed again
 const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
@@ -177,17 +195,8 @@ const deleteCache = async (assetSet:Set<number>, ownerAddrSet:Set<string>) => {
     headers
   }));
 
-  const clearAssetCachePromises2 = Array.from(assetSet)
-    .map(assetId => `${reverseProxyAddr}/assets/${assetId}`)
-    .map(url => axiosWithDebug({
-      method: 'get',
-      url: url,
-      timeout: 3000,
-      headers
-    }));
-
   await Promise.all([...clearOwnerCachePromises, ...clearAssetCachePromises,
-    ...clearAssetCachePromises2, ...clearOwnerCachePromises2]);
+    ...clearOwnerCachePromises2]);
 };
 
 const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number) => {
@@ -219,6 +228,7 @@ const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number) => {
   const headers = {'Clear-Cache': true,
    'Clear-Cache-Key': process.env.CACHE_REVERSE_PROXY_KEY};
 
+  // Clear caches
   await axiosWithDebug({
     method: 'get',
     url: `${reverseProxyAddr}/assets/all`,
@@ -232,7 +242,15 @@ const rebuildAllAssetsCache = async (viewCacheDB, queueRound:number) => {
     headers
   });
 
+  // Refresh search cache (no deletion headers)
+
+  axiosWithDebug({
+    method: 'get',
+    url: `${reverseProxyAddr}/assets/search`,
+    timeout: 3000,
+  });
 }
+
 module.exports = ({queues, databases}) =>{
   const blockDB = databases.blocks;
   const escrowDB = databases.escrow;
@@ -334,6 +352,7 @@ module.exports = ({queues, databases}) =>{
                   return Promise.all([
                     deleteCache(assetSet, ownerAddrSet),
                     rebuildAllAssetsCache(viewCacheDB, parseInt(blockId)),
+                    deleteAssetPriceCache(assetSet),
                     rebuildChartsCache(viewCacheDB, parseInt(blockId), assetSet)
                   ]);
                 });
