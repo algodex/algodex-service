@@ -309,7 +309,7 @@ const mapTradeHistory = (dbHistory: DBTradeHistory[], unitNames: any):V1TradeHis
       asaBuyerAddress: item.assetBuyerAddr,
       asaSellerAddress: item.assetSellerAddr,
       tradeType: item.tradeType === 'buy' ? 'buyASA' : 'sellASA',
-      formattedPrice: (item.algoAmount / item.asaAmount) / (10 ** (item.assetDecimals - 6)) + '',
+      formattedPrice: (item.algoAmount / item.asaAmount) * (10 ** (item.assetDecimals - 6)) + '',
       formattedASAAmount: item.asaAmount / (10**item.assetDecimals) + '',
     }
   });
