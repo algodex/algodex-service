@@ -15,6 +15,7 @@
  */
 
 import axios from "axios";
+import asset from "../src/schema/queue/asset";
 import { AssetInfo, AssetSummaryInfo, AssetUnitName, getAssetInfo, getSummaryInfo, getUnitNames } from "./asset";
 import { AssetTVL, getTVL, getV2Spreads } from "./orders";
 import { getDatabase } from "./util";
@@ -591,9 +592,17 @@ const mapSearchAllData = (assetSet:Set<number>, prices:V1AllAssetData,
 export const serveSearchAll = async (req, res) => {
   const prices:V1AllAssetData = await getAssetPricesFromCache();
   const tvl = await getTVL();
+  const assetToTVL = tvl.reduce((map, asset) => {
+    map.set(asset.assetId, asset.formattedAlgoTVL);
+    return map;
+  }, new Map<number, number>());
+
   const assetSet1:Set<number> = new Set(prices.data.map(price => price.id));
   const assetSet2:Set<number> = new Set(tvl.map(asset => asset.assetId));
-  const assetSet:Set<number> = new Set([...assetSet1, ...assetSet2]);
+  const assetSet:Set<number> = new Set([...assetSet1, ...assetSet2].filter(assetId => {
+    const algoTvl = assetToTVL.get(assetId);
+    return algoTvl >= 10;
+  }));
 
   const assetSummaryInfo = await getSummaryInfo(assetSet);
   
