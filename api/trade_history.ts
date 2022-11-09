@@ -311,7 +311,6 @@ const mapTradeHistory = (dbHistory: DBTradeHistory[], unitNames: any):V1TradeHis
       tradeType: item.tradeType === 'buy' ? 'buyASA' : 'sellASA',
       formattedPrice: (item.algoAmount / item.asaAmount) * (10 ** (item.assetDecimals - 6)) + '',
       formattedASAAmount: item.asaAmount / (10**item.assetDecimals) + '',
-      decimals: item.assetDecimals
     }
   });
 
