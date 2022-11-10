@@ -382,16 +382,18 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
         });
     let all_assets: Vec<u32> = all_assets_set.clone().into_iter().collect();
 
-    let hidden_address_urls: Vec<String> =
-        all_assets.iter().map(|assetId| format!("{}/asset/hidden/{}", api_url, assetId)).collect();
-    let hidden_address_reqs = hidden_address_urls.iter().map(|u| query_get_api::<Vec<String>>(u));
-    let hidden_addresses_set: HashSet<_> = join_all(hidden_address_reqs)
-        .await
-        .into_iter()
-        .map(|res| res.unwrap())
-        .flat_map(|v| v)
-        .collect();
+    // No longer needed since we moved away from V1 and no longer have any API discrepancies
+    // let hidden_address_urls: Vec<String> =
+    //     all_assets.iter().map(|assetId| format!("{}/asset/hidden/{}", api_url, assetId)).collect();
+    // let hidden_address_reqs = hidden_address_urls.iter().map(|u| query_get_api::<Vec<String>>(u));
+    // let hidden_addresses_set: HashSet<_> = join_all(hidden_address_reqs)
+    //     .await
+    //     .into_iter()
+    //     .map(|res| res.unwrap())
+    //     .flat_map(|v| v)
+    //     .collect();
 
+    let hidden_addresses_set: HashSet<String> = HashSet::new();
     let vestige_tvl_data =
         query_get_api::<Vec<VestigeFiAsset>>("https://free-api.vestige.fi/assets/list").await.unwrap();
     let algodex_tvl_data =
