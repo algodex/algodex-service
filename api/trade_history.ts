@@ -17,7 +17,7 @@
 import axios from "axios";
 import asset from "../src/schema/queue/asset";
 import { AssetInfo, AssetSummaryInfo, AssetUnitName, getAssetInfo, getSummaryInfo, getUnitNames } from "./asset";
-import { AssetTVL, getTVL, getV2Spreads } from "./orders";
+import { AssetTVL, getAlgoAndAsaTVLByAsset, getTVL, getV2Spreads } from "./orders";
 import { getDatabase } from "./util";
 
 type WalletOrAsset = 'ownerAddr' | 'assetId';
@@ -591,7 +591,7 @@ const mapSearchAllData = (assetSet:Set<number>, prices:V1AllAssetData,
 
 export const serveSearchAll = async (req, res) => {
   const prices:V1AllAssetData = await getAssetPricesFromCache();
-  const tvl = await getTVL();
+  const tvl = await getAlgoAndAsaTVLByAsset();
   const assetToTVL = tvl.reduce((map, asset) => {
     map.set(asset.assetId, asset.formattedAlgoTVL);
     return map;

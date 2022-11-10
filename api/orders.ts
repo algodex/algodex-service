@@ -44,6 +44,11 @@ export const serveGetHiddenOrders = async (req, res) => {
   }
 };
 
+export interface V1AssetTVL {
+  assetId:number,
+  asaAmountTotal:number
+}
+
 export interface AssetTVL {
   assetId:number,
   formattedAlgoTVL:number,
@@ -52,7 +57,37 @@ export interface AssetTVL {
 
 export type AssetId = number
 
-export const getTVL = async ():Promise<AssetTVL[]> => {
+interface TvlEntry {
+  algoAmount:number
+  asaAmount:number
+}
+
+interface DbTvlData {
+  key:number //assetId
+  value:TvlEntry
+}
+
+export const getTVL = async ():Promise<V1AssetTVL[]> => {
+  const db = getDatabase('formatted_escrow');
+  const tvlData:DbTvlData[] = (await db.query('formatted_escrow/tvl', {
+    reduce: true, group: true
+  })).rows;
+
+  const algoTvl = tvlData.reduce((sum, item) => sum + item.value.algoAmount, 0);
+
+  const finalTvlData = tvlData.map(row => ({
+      assetId: row.key,
+      asaAmountTotal: row.value.asaAmount
+    }));
+  finalTvlData.push({
+    assetId: 0,
+    asaAmountTotal: algoTvl
+  });
+
+  return finalTvlData;
+}
+
+export const getAlgoAndAsaTVLByAsset = async ():Promise<AssetTVL[]> => {
   const db = getDatabase('formatted_escrow');
   const tvlData = await db.query('formatted_escrow/tvl', {
     reduce: true, group: true
@@ -66,6 +101,7 @@ export const getTVL = async ():Promise<AssetTVL[]> => {
     };
   });
 }
+
 
 export const serveGetTVL = async (req, res) => {
   const tvl = await getTVL();
