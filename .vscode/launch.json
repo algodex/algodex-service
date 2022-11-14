@@ -177,6 +177,14 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "Check Index Differences",
+            "program": "${workspaceFolder}/bin/check-index-differences.js",
+            "args": ["endpoint-here"],
+            "preLaunchTask": "npm: build",
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Bullboard (Integration Test)",
             "skipFiles": [
                 "<node_internals>/**"
