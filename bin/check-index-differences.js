@@ -6,8 +6,6 @@ const PouchDB = require('pouchdb');
 PouchDB.plugin(require('pouchdb-find'));
 
 // const databases = require('../src/db/db-config.js')();
-const getDatabases = require('../src/db/get-databases');
-const databases = getDatabases();
 const databaseConfigs = require('../src/db/db-config.js')();
 const fs = require('fs');
 
@@ -83,7 +81,8 @@ finder.on('file', function(file) {
     return;
   }
   if (extension === 'js' || extension === 'ts') {
-    const allText = fs.readFileSync(file, {encoding: 'utf8', flag: 'r'}).replaceAll('\n', '');
+    const allText =
+      fs.readFileSync(file, {encoding: 'utf8', flag: 'r'}).replaceAll('\n', '');
     const regex = /query\('([^']*)'/gi;
     let result;
     while (result = regex.exec(allText)) {
