@@ -330,6 +330,15 @@ interface OrderOptInStatus {
   txnCount:number
 }
 
+const makeSmallerList = (orders:DBOrder[]) => {
+  const buyOrders = orders.filter(order => order.isAlgoBuyEscrow);
+  const sellOrders = orders.filter(order => !order.isAlgoBuyEscrow);
+
+  buyOrders.sort((a, b) => b.asaPrice - a.asaPrice);
+  sellOrders.sort((a, b) => a.asaPrice - b.asaPrice);
+  return [...buyOrders.slice(0, 200), ...sellOrders.slice(0, 200)];
+}
+
 const filterNonOptedInOrders = async (orders:DBOrder[]):Promise<DBOrder[]> => {
   const escrowAddrs = orders
     .filter(order => order.isAlgoBuyEscrow === true) // This is only a problem for buy orders
@@ -337,16 +346,16 @@ const filterNonOptedInOrders = async (orders:DBOrder[]):Promise<DBOrder[]> => {
   //TODO: only check up to a certain amount of escrow addresses sorted by price
   const db = getDatabase('blocks');
   let data;
-  try {
-   data = await db.query('orderOptinStatus/orderOptinStatus', {
-    keys: escrowAddrs,
-    reduce: true,
-    group: true
-  });
-} catch (e) {
-  console.error(e);
-  throw e;
-}
+    try {
+    data = await db.query('orderOptinStatus/orderOptinStatus', {
+      keys: escrowAddrs,
+      reduce: true,
+      group: true
+    });
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
 
   const optedInOrders:string[] = data.rows
     .filter(row => row.value.onComplete === 'OptIn')
@@ -364,8 +373,7 @@ export const serveGetOrdersByAssetId = async (req, res) => {
   const orders:DBOrder[] = await getV2OrdersByAssetId(assetId);
 
   // screen out by whether orders are opted in
-  const filteredOrders = await filterNonOptedInOrders(orders);
-
+  const filteredOrders = await filterNonOptedInOrders(makeSmallerList(orders));
   const ordersConverted = mapDBtoV1Orders(filteredOrders);
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(ordersConverted));
