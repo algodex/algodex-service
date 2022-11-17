@@ -270,7 +270,7 @@ const databases = [
     design: {
       _id: '_design/rewards',
       views: {
-        ownerAddr: {
+        rewards: {
           map: require('../../views/rewards/rewards-map').toString(),
         },
         topWallets: {
@@ -288,7 +288,7 @@ const databases = [
     design: {
       _id: '_design/vested_rewards',
       views: {
-        ownerAddr: {
+        vested_rewards: {
           map: require('../../views/vested_rewards/vested_rewards-map').toString(),
         },
       },
