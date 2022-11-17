@@ -11,6 +11,7 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
+.env.mainnet-11*
 .env.mainnet-services-2
 *.diff
 built
