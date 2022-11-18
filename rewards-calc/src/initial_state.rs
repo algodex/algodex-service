@@ -397,7 +397,7 @@ pub async fn get_initial_state() -> Result<InitialState, Box<dyn Error>> {
     let vestige_tvl_data =
         query_get_api::<Vec<VestigeFiAsset>>("https://free-api.vestige.fi/assets/list").await.unwrap();
     let algodex_tvl_data =
-        query_get_api::<Vec<AlgodexAssetTVL>>(&format!("{}/orders/tvl", api_url)).await.unwrap();
+        query_get_api::<Vec<AlgodexAssetTVL>>(&format!("{}/orders/tvl2", api_url)).await.unwrap();
     
     let asset_id_to_tvl = get_asset_to_usd_tvl(&vestige_tvl_data, &algodex_tvl_data);
 

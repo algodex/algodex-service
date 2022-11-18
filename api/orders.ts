@@ -93,15 +93,24 @@ export const getAlgoAndAsaTVLByAsset = async ():Promise<AssetTVL[]> => {
     reduce: true, group: true
   });
 
-  return tvlData.rows.map(row => {
+  console.log(tvlData.rows.length);
+  const retdata = tvlData.rows.map(row => {
+    console.log({row});
     return {
       assetId: row.key,
       formattedAlgoTVL: row.value.algoAmount,
       formattedAssetTVL: row.value.asaAmount
     };
   });
+  return retdata;
 }
 
+export const serveGetTVL2 = async (req, res) => {
+  // const tvl = await getAlgoAndAsaTVLByAsset();
+  const tvl = await getAlgoAndAsaTVLByAsset();
+  res.setHeader('Content-Type', 'application/json');
+  res.send(JSON.stringify(tvl));
+}
 
 export const serveGetTVL = async (req, res) => {
   const tvl = await getTVL();

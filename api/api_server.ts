@@ -15,7 +15,7 @@
  */
 
 import { logRemote, serveGetLogs } from "./log_remote";
-import { getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, serveGetOrdersByWallet, serveGetTVL } from "./orders";
+import { getAlgoAndAsaTVLByAsset, getV2OrdersByAssetId, serveGetHiddenOrders, serveGetOrdersByAssetId, serveGetOrdersByWallet, serveGetTVL, serveGetTVL2 } from "./orders";
 import { serveCouchProxy } from "./proxy";
 import { isAccruingRewards, 
   get_rewards_per_epoch, save_rewards, serveIsOptedIn, serveGetRewardsDistribution, serveGetLeaderboard, serveRewardsIsRecorded, serveRewardsData, serveVestedRewardsData, serveUnrecordedRewards } from "./rewards";
@@ -42,6 +42,9 @@ app.get('/asset/hidden/:assetId', serveGetHiddenOrders);
 app.get('/orders/asset/:assetId', serveGetOrdersByAssetId);
 app.get('/orders/wallet/:ownerAddress', serveGetOrdersByWallet);
 app.get('/orders/tvl', serveGetTVL);
+app.get('/orders/tvl2', serveGetTVL2);
+
+
 
 // Assets
 
