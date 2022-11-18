@@ -48,7 +48,7 @@ export const schema = {
     error: {type: 'string'},
   },
   required: ['_id', 'ownerWallet', 'vestedRewards', 'formattedVestedRewards', 'epoch',
-    'vestedUnixTime', 'sentAssetId', 'accrualAssetId', 'result', 'transactionId', 'fromWallet'],
+    'vestedUnixTime', 'sentAssetId', 'accrualAssetId', 'result', 'fromWallet'],
 };
 
 
