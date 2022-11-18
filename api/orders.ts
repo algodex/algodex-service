@@ -93,9 +93,7 @@ export const getAlgoAndAsaTVLByAsset = async ():Promise<AssetTVL[]> => {
     reduce: true, group: true
   });
 
-  console.log(tvlData.rows.length);
   const retdata = tvlData.rows.map(row => {
-    console.log({row});
     return {
       assetId: row.key,
       formattedAlgoTVL: row.value.algoAmount,
