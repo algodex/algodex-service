@@ -10,7 +10,7 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
-
+.env.testnet-*
 .env.mainnet-11*
 .env.mainnet-services-2
 *.diff

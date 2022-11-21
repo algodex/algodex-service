@@ -189,41 +189,22 @@ export const getSpreads = async (assetIds:Array<number>):Promise<Map<number, Spr
   return map;
 }
 
-export const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1OrdersResult>> => {
-  const getEmptyOrderPromise = (assetId:number):Promise<V1OrdersResult> => {
-    return new Promise((resolve) => resolve({
-      buyASAOrdersInEscrow:[],
-      sellASAOrdersInEscrow:[],
-      assetId,
-      timer:undefined
-    }));
-  };
 
-  const promises:Array<Promise<V1OrdersResult>> = assetIds.map(assetId => {
-    if (assetId === 399383365) { // V1 API doesn't work with this
-      return getEmptyOrderPromise(assetId);
-    }
-    if (cachedAssetIdToOrders.has(assetId)) {
-      clearTimeout(cachedAssetIdToOrders.get(assetId)!.timer);
-      cachedAssetIdToOrders.get(assetId)!.timer = setTimeout(() => {
-        cachedAssetIdToOrders.delete(assetId);
-      }, 60*1000);
-      return new Promise((resolve) => resolve(cachedAssetIdToOrders.get(assetId)!));
-    }
-    return axios.get(`https://app.algodex.com/algodex-backend/orders.php?assetId=${assetId}`)
-      .then(async (res) => {
-        const json:V1OrdersResult = res.data;
-        json.assetId = assetId;
-        json.timer = setTimeout(() => {
-          cachedAssetIdToOrders.delete(assetId);
-        }, 60*1000);
-        cachedAssetIdToOrders.set(assetId, json);
-        return json;
-      }).catch((err) => {
-        console.error(err, `https://app.algodex.com/algodex-backend/orders.php?assetId=${assetId}`);
-      });
+const getOrdersFromProxy = async(assetId):Promise<V1OrderApi> => {
+  const ordersResult = process.env.CACHE_REVERSE_PROXY_SERVER + '/orders/asset/' + assetId;
+  const fetchRes = await axios.get(ordersResult);
+  const results:V1OrderApi = fetchRes.data;
+  return results;
+}
+
+export const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1OrderApi>> => {
+  const promises:Array<Promise<V1OrderApi>> = assetIds.map(assetId => {
+    return getOrdersFromProxy(assetId).then(res => {
+      res.assetId = assetId;
+      return res;
+    });
   });
-  let results:Array<V1OrdersResult> = await Promise.all(promises);
+  let results:Array<V1OrderApi> = await Promise.all(promises);
   return results;
 };
 
@@ -238,7 +219,8 @@ export const getV2OrdersByAssetId =  async (assetId:number):Promise<DBOrder[]> =
 
 export interface V1OrderApi {
   sellASAOrdersInEscrow:V1Order[],
-  buyASAOrdersInEscrow:V1Order[]
+  buyASAOrdersInEscrow:V1Order[],
+  assetId?:number
 }
 export interface V1Order {
   assetLimitPriceInAlgos: string
@@ -375,15 +357,24 @@ const filterNonOptedInOrders = async (orders:DBOrder[]):Promise<DBOrder[]> => {
     optedInOrdersSet.has(order.escrowAddress));
 }
 
-export const serveGetOrdersByAssetId = async (req, res) => {
-  const assetId = parseInt(req.params.assetId);
+export const getFilteredV2OrdersByAssetId = async(assetId:number):Promise<DBOrder[]> => {
   const orders:DBOrder[] = await getV2OrdersByAssetId(assetId);
-
   // screen out by whether orders are opted in
   const filteredOrders = await filterNonOptedInOrders(makeSmallerList(orders));
+  return filteredOrders;
+}
+
+export const getFilteredV1OrdersByAssetId = async(assetId:number):Promise<V1OrderApi> => {
+  const filteredOrders = await getFilteredV2OrdersByAssetId(assetId);
   const ordersConverted = mapDBtoV1Orders(filteredOrders);
+  return ordersConverted;
+}
+
+export const serveGetOrdersByAssetId = async (req, res) => {
+  const orders = await getFilteredV1OrdersByAssetId(parseInt(req.params.assetId));
+
   res.setHeader('Content-Type', 'application/json');
-  res.send(JSON.stringify(ordersConverted));
+  res.send(JSON.stringify(orders));
 }
 
 
