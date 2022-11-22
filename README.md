@@ -9,7 +9,9 @@ You can find the contribution guides for getting started in [CONTRIBUTING.md](.g
 
 Algodex Documentation: https://docs.algodex.com
 
-# Getting Started
+# Getting Started 
+
+## Todo: Below instructions are very incomplete!
 
 ## Building rust rewards calculation on ubuntu
 
