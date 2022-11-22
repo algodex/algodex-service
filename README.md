@@ -11,7 +11,7 @@ Algodex Documentation: https://docs.algodex.com
 
 # Getting Started 
 
-## *Todo: Below instructions are very incomplete!*
+### *Todo: Below instructions are very incomplete!*
 
 ## Building rust rewards calculation on ubuntu
 
