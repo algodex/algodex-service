@@ -206,10 +206,18 @@ export const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1OrderA
   return results;
 };
 
+export interface OrderAssetUnitName {
+ 'unit-name': string
+}
+export interface OrderAssetInfo {
+ [key: string]: OrderAssetUnitName
+}
+
 export interface V1OrderApi {
   sellASAOrdersInEscrow:V1Order[],
   buyASAOrdersInEscrow:V1Order[],
   assetId?:number
+  allAssets?:OrderAssetInfo
 }
 export interface V1Order {
   assetLimitPriceInAlgos: string
@@ -392,6 +400,15 @@ export const serveGetOrdersByWallet = async (req, res) => {
   const filteredOrders = await filterNonOptedInOrders(orders);
 
   const allOrders = mapDBtoV1Orders(filteredOrders);
+
+  const allAssets = new Set(filteredOrders.map(order => order.assetId));
+
+  const unitNames = await getUnitNames(allAssets);
+  const unitToName:OrderAssetInfo = unitNames.reduce((obj, asset) => {
+    obj[asset.assetId] = {'unit-name': asset.unitName};
+    return obj;
+  }, {});
+  allOrders.allAssets = unitToName;
 
   res.setHeader('Content-Type', 'application/json');
   res.send(JSON.stringify(allOrders));
