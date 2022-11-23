@@ -179,7 +179,7 @@ const getWalletAssets = async (walletAddr:string):Promise<WalletAssetsResult> =>
     const amount = asaInOrder + walletAssetAmount;
     const formattedTotalASAAmount = formattedASAInOrder + formattedASAAvailable;
     const walletAsset:WalletAsset = {
-      "assetId": asset.asset["asset-id"],
+      "assetId": asset.asset.index,
       "amount": amount,
       "asaInOrder": asaInOrder,
       "name": asset.asset.params.name,
