@@ -44,8 +44,6 @@ app.get('/orders/wallet/:ownerAddress', serveGetOrdersByWallet);
 app.get('/orders/tvl', serveGetTVL);
 app.get('/orders/tvl2', serveGetTVL2);
 
-
-
 // Assets
 
 app.get('/assets/all', serveCachedAssetPrices);
