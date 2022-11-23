@@ -206,8 +206,12 @@ export const getV1Orders = async (assetIds:Array<number>):Promise<Array<V1OrderA
   return results;
 };
 
-export interface OrderAssetInfo {
+interface OrderAssetParams {
   'unit-name': string,
+}
+
+export interface OrderAssetInfo {
+  params: OrderAssetParams,
   index: number // asset id
 }
 
@@ -404,7 +408,7 @@ export const serveGetOrdersByWallet = async (req, res) => {
   const unitNames = await getUnitNames(allAssets);
   const orderUnitNames:OrderAssetInfo[] = unitNames.map(asset => ({
     index: asset.assetId,
-    'unit-name': asset.unitName
+    params: {'unit-name': asset.unitName}
   }));
   allOrders.allAssets = orderUnitNames;
 
