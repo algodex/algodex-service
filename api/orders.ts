@@ -348,7 +348,30 @@ const filterNonOptedInOrders = async (orders:DBOrder[]):Promise<DBOrder[]> => {
   const optedInOrders:string[] = data.rows
     .filter(row => row.value.onComplete === 'OptIn')
     .map(row => row.key); //key contains escrow address
+
   const optedInOrdersSet = new Set<string>(optedInOrders);
+
+  const allOwners = new Set<string>(orders
+    .filter(order => optedInOrdersSet.has(order.escrowAddress))
+    .map(order => JSON.stringify([order.ownerAddress, order.assetId])));
+
+  let ownerOptInResults;
+
+  try {
+    ownerOptInResults = await db.query('assetOptIn/assetOptIn', {
+      keys: allOwners,
+      reduce: true,
+      group: true
+    });
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+  const optedInOwners:string[] = ownerOptInResults.rows
+    .filter(row => row.value.assetChangeType === 'optIn')
+    .map(row => row.key[0]); //key contains escrow address
+
+  console.log(optedInOwners);
 
   // Allow any sell order (since this problem only occurs with buy orders), or buy
   // orders that are opted into the smart contract
