@@ -8,7 +8,8 @@ module.exports = function(doc) {
         assetChangeType: 'notAssetChangeTxn',
       };
     }
-    if (txn.snd === txn.arcv && typeof(txn.aamt) === 'undefined' && typeof(txn.aclose) === 'undefined' ) {
+    if (txn.snd === txn.arcv && typeof(txn.aamt) === 'undefined' &&
+        typeof(txn.aclose) === 'undefined' ) {
       return {
         sender: txn.snd,
         assetChangeType: 'optIn',
