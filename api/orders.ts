@@ -351,9 +351,8 @@ const filterNonOptedInOrders = async (orders:DBOrder[]):Promise<DBOrder[]> => {
 
   const optedInOrdersSet = new Set<string>(optedInOrders);
 
-  const allOwners = new Set<string>(orders
-    .filter(order => optedInOrdersSet.has(order.escrowAddress))
-    .map(order => JSON.stringify([order.ownerAddress, order.assetId])));
+  const allOwners = orders
+    .map(order => order.ownerAddress + ':' + order.assetId);
 
   let ownerOptInResults;
 
@@ -369,14 +368,17 @@ const filterNonOptedInOrders = async (orders:DBOrder[]):Promise<DBOrder[]> => {
   }
   const optedInOwners:string[] = ownerOptInResults.rows
     .filter(row => row.value.assetChangeType === 'optIn')
-    .map(row => row.key[0]); //key contains escrow address
+    .map(row => row.key.split(':')[0]); //key contains escrow address
 
-  console.log(optedInOwners);
+  const optedInOwnersSet = new Set<string>(optedInOwners);
 
-  // Allow any sell order (since this problem only occurs with buy orders), or buy
-  // orders that are opted into the smart contract
-  return orders.filter(order => order.isAlgoBuyEscrow === false ||
-    optedInOrdersSet.has(order.escrowAddress));
+  // Allow sell orders with opted-in owners, or buy
+  // orders that are opted into the smart contract and the owner is opted in.
+  return orders.filter(order =>
+    (order.isAlgoBuyEscrow === false && optedInOwnersSet.has(order.ownerAddress)) ||
+    (order.isAlgoBuyEscrow === true && optedInOrdersSet.has(order.escrowAddress) &&
+      optedInOwnersSet.has(order.ownerAddress))
+  );
 }
 
 export const getHiddenOrderAddrs = async (assetId:number):Promise<Array<string>> => {
