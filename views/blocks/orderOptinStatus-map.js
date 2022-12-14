@@ -1,4 +1,5 @@
-// IMPORTANT!! This needs to be orderOptinStatus/orderOptinStatus not blocks/orderOptinStatus
+// IMPORTANT!! This needs to be orderOptinStatus/orderOptinStatus
+// not blocks/orderOptinStatus
 
 module.exports = function(doc) {
   if (typeof(doc.txns) === 'undefined') {
