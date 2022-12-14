@@ -55,8 +55,16 @@ const databases = [
           map: require('../../views/blocks/tinymanTrades-map').toString(),
         },
         orderOptinStatus: {
+          // PLEASE READ!! This needs to be switched to orderOptinStatus/orderOptinStatus after the DB views are configured
+          // This should be done automatically but the add-views tool is not updated yet
           map: require('../../views/blocks/orderOptinStatus-map').toString(),
           reduce: require('../../views/blocks/orderOptinStatus-reduce').toString(),
+        },
+        assetOptIn: {
+          // PLEASE READ!! This needs to be switched to assetOptIn/assetOptIn after the DB views are configured
+          // This should be done automatically but the add-views tool is not updated yet
+          map: require('../../views/blocks/assetOptIn-map').toString(),
+          reduce: require('../../views/blocks/assetOptIn-reduce').toString(),
         },
       },
     },

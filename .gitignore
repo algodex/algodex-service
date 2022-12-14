@@ -12,6 +12,7 @@ lerna-debug.log*
 .pnpm-debug.log*
 .env.testnet-*
 .env.mainnet-11*
+.env.mainnet.dec12
 .env.mainnet-services-2
 *.diff
 built
