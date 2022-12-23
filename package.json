@@ -22,7 +22,8 @@
     "record-rewards": "node built/bin/record-unrecorded-rewards",
     "check-types": "tsc --project jsconfig.json --maxNodeModuleJsDepth 0",
     "end-to-end-heavy": "node built/bin/run-end-to-end-test.js --mode=heavy && jest -- built/src/__tests__/verify-end",
-    "end-to-end-light": "node built/bin/run-end-to-end-test.js --mode=light && jest -- built/src/__tests__/verify-end"
+    "end-to-end-light": "node built/bin/run-end-to-end-test.js --mode=light && jest -- built/src/__tests__/verify-end",
+    "record-and-vest-rewards": "npm run record-rewards && node built/bin/vest-and-distribute-rewards.js"
   },
   "author": "Michael Feher",
   "license": "UNLICENSED",
