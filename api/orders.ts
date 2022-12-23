@@ -366,9 +366,13 @@ const filterNonOptedInOrders = async (orders:DBOrder[]):Promise<DBOrder[]> => {
     console.error(e);
     throw e;
   }
-  const optedInOwners:string[] = ownerOptInResults.rows
-    .filter(row => row.value.assetChangeType === 'optIn')
-    .map(row => row.key.split(':')[0]); //key contains escrow address
+
+  const optedOutOwnersSet = new Set<string>(ownerOptInResults.rows
+    .filter(row => row.value.assetChangeType === 'optOut')
+    .map(row => row.key.split(':')[0]));
+
+  const optedInOwners:string[] = orders.map(order => order.ownerAddress)
+    .filter(owner => !optedOutOwnersSet.has(owner))
 
   const optedInOwnersSet = new Set<string>(optedInOwners);
 
