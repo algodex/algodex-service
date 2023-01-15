@@ -1,4 +1,5 @@
 import { exec } from 'child_process';
+require('dotenv').config();
 
 const runExec = (cmd:string):Promise<String> => {
   console.log(cmd);
@@ -48,6 +49,7 @@ const checkBrokerActive = async () => {
     await runExec('pm2 restart all');
   } else {
     console.log('seconds is ' + secondsSinceBlock + ' not restarting ' );
+    await runExec(`curl -fsS -m 10 --retry 5 -o /dev/null ${process.env.BROKER_HEALTHCHECK_URL}`);
   }
 }
 
