@@ -29,7 +29,7 @@ function sleep(ms:number) {
 const checkBrokerActive = async () => {
   await sleep(1000);  
   const logText = await runExec('pm2 logs --nostream broker');
-  console.log(logText);
+  // console.log(logText);
   const lines = logText.split('\n');
   const regex = /\s+([0-9]{13})\s*/mg;
   let lastBlockTime;
