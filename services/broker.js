@@ -100,6 +100,7 @@ module.exports = ({queues, events, databases}) => {
         next: latestBlock['last-round'],
       });
 
+      // WARNING: DO *NOT* REMOVE BELOW CONSOLE LOG AS IT IS USED BY check-active SCRIPT
       console.debug(new Date().getTime());
       await sleepWhileWaitingForQueues(['blocks']);
       await waitForBlockToBeStored(databases.blocks, round['last-round']);
