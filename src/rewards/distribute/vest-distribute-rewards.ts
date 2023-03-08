@@ -194,6 +194,7 @@ const getPlannedDistributions = async (input:DistributeRewardsInput): Promise<Ar
     return !allVestedRewardKeySet.has(key);
   })
   .filter(rewardsDoc => rewardsDoc.earnedRewardsFormatted >= 1)
+  .filter(rewardsDoc => rewardsDoc.epoch > 38) // Ignore earlier failed transactions
   .map(rewardsDoc => {
     const plannedSend:PlannedDistribution = {
       algodClient: input.algodClient,
